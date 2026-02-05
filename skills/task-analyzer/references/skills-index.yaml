@@ -1,6 +1,6 @@
 # Skills Metadata Index
 # Used to select appropriate skills based on task analysis
-# Canonical source: ${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml
+# Default template — run /sync-skills to generate the project-local copy
 
 skills:
   coding-principles:

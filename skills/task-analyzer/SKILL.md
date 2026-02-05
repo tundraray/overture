@@ -11,11 +11,11 @@ Provides metacognitive task analysis and skill selection guidance.
 
 ### Skills Index Reference
 
-Load skills metadata from `skills-index.yaml` in the skills root directory for tag-based matching. Use the `tags` field to match against task keywords and the `typical_use` field to validate relevance.
+Load skills metadata from the project-local `skills-index.yaml` for tag-based matching. Use the `tags` field to match against task keywords and the `typical_use` field to validate relevance.
 
-The canonical skills metadata registry is at **`${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`**.
+The skills-index.yaml is a **project-local file** maintained by the `/sync-skills` command at `.claude/skills/task-analyzer/references/skills-index.yaml`. It is NOT inside the plugin — each project maintains its own copy.
 
-A local copy is also available at **[skills-index.yaml](${CLAUDE_PLUGIN_ROOT}/skills/task-analyzer/references/skills-index.yaml)** for direct reference from this skill.
+A default template is bundled with the plugin at **[skills-index.yaml](${CLAUDE_PLUGIN_ROOT}/skills/task-analyzer/references/skills-index.yaml)** as a starting point. Run `/sync-skills` to generate or update the local version.
 
 ## Task Analysis Process
 
@@ -59,7 +59,7 @@ Identify the fundamental purpose beyond surface-level work:
 
 ### 4. Tag-Based Skill Matching
 
-Extract relevant tags from task description and match against `${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`:
+Extract relevant tags from task description and match against the project-local `skills-index.yaml`:
 
 ```yaml
 Task: "Implement user authentication with tests"
@@ -84,7 +84,7 @@ Consider hidden dependencies:
 
 ## Output Format
 
-Return structured analysis with skill metadata from `${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`:
+Return structured analysis with skill metadata from the project-local `skills-index.yaml`:
 
 ```yaml
 taskAnalysis:
