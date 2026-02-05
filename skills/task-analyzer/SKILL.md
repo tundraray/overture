@@ -15,7 +15,7 @@ Load skills metadata from `skills-index.yaml` in the skills root directory for t
 
 The canonical skills metadata registry is at **`${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`**.
 
-A local copy is also available at **[skills-index.yaml](references/skills-index.yaml)** for direct reference from this skill.
+A local copy is also available at **[skills-index.yaml](${CLAUDE_PLUGIN_ROOT}/skills/task-analyzer/references/skills-index.yaml)** for direct reference from this skill.
 
 ## Task Analysis Process
 

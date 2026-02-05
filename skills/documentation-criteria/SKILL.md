@@ -7,12 +7,12 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 ## Templates
 
-- **[prd-template.md](references/prd-template.md)** - Product Requirements Document template
-- **[adr-template.md](references/adr-template.md)** - Architecture Decision Record template
-- **[design-template.md](references/design-template.md)** - Technical Design Document template
-- **[plan-template.md](references/plan-template.md)** - Work Plan template
-- **[task-template.md](references/task-template.md)** - Task file template for implementation tasks
-- **[uxrd-template.md](references/uxrd-template.md)** - UX Requirements Document template
+- **[prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md)** - Product Requirements Document template
+- **[adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md)** - Architecture Decision Record template
+- **[design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md)** - Technical Design Document template
+- **[plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md)** - Work Plan template
+- **[task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md)** - Task file template for implementation tasks
+- **[uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md)** - UX Requirements Document template
 
 ## Creation Decision Matrix
 
@@ -165,12 +165,12 @@ Interface Change Matrix:
 
 | Document | Path | Naming Convention | Template |
 |----------|------|------------------|----------|
-| PRD | `docs/prd/` | `[feature-name]-prd.md` | [prd-template.md](references/prd-template.md) |
-| ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](references/adr-template.md) |
-| Design Doc | `docs/design/` | `[feature-name]-design.md` | [design-template.md](references/design-template.md) |
-| Work Plan | `docs/plans/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](references/plan-template.md) |
-| Task File | `docs/plans/tasks/{plan-name}/` | `task-{number}.md` | [task-template.md](references/task-template.md) |
-| UXRD | `docs/uxrd/` | `[feature-name]-uxrd.md` | [uxrd-template.md](references/uxrd-template.md) |
+| PRD | `docs/prd/` | `[feature-name]-prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
+| ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
+| Design Doc | `docs/design/` | `[feature-name]-design.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
+| Work Plan | `docs/plans/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
+| Task File | `docs/plans/tasks/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
+| UXRD | `docs/uxrd/` | `[feature-name]-uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 
 *Note: Work plans are excluded by `.gitignore`
 
