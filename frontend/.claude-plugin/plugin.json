@@ -23,6 +23,7 @@
   ],
   "commands": [
     "./commands/add-integration-tests.md",
+    "./commands/audit.md",
     "./commands/brand-context.md",
     "./commands/build.md",
     "./commands/design.md",
@@ -44,10 +45,13 @@
     "./commands/uxdoc.md"
   ],
   "agents": [
+    "./agents/codebase-scanner.md",
+    "./agents/cleanup-executor.md",
     "./agents/code-reviewer.md",
     "./agents/code-verifier.md",
     "./agents/design-sync.md",
     "./agents/document-reviewer.md",
+    "./agents/expert-analyst.md",
     "./agents/investigator.md",
     "./agents/prd-creator.md",
     "./agents/quality-fixer-frontend.md",
@@ -67,6 +71,7 @@
     "./skills/brand-system-guide",
     "./skills/coding-principles",
     "./skills/documentation-criteria",
+    "./skills/expert-analysis-guide",
     "./skills/frontend-ai-guide",
     "./skills/implementation-approach",
     "./skills/project-context",

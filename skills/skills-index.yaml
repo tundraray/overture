@@ -27,6 +27,7 @@ skills:
       - "Documentation"
       - "Version Control Practices"
       - "Language-Specific Adaptations"
+      - "Expert References (Reasoning Calibration)"
 
   ai-development-guide:
     description: "Technical anti-patterns, fail-fast design, debugging techniques, and quality check workflow"
@@ -44,6 +45,7 @@ skills:
       - "Continuous Improvement Mindset"
       - "Implementation Completeness Assurance"
       - "Complexity Management Metrics"
+      - "Expert References (Reasoning Calibration)"
 
   testing-principles:
     description: "Language-agnostic testing principles including TDD, coverage, and test design"
@@ -67,6 +69,7 @@ skills:
       - "Continuous Integration"
       - "Common Anti-Patterns to Avoid"
       - "Regression Testing"
+      - "Expert References (Reasoning Calibration)"
 
   documentation-criteria:
     description: "PRD, ADR, Design Doc, Work Plan, and Task file templates with creation decision matrices"
@@ -248,6 +251,18 @@ skills:
       - "Arrange by Importance"
       - "Clarify Scope Boundaries"
       - "Quality Checklist"
+
+  expert-analysis-guide:
+    description: "Multi-perspective expert analysis framework for pre-design evaluation with parallel fan-out pattern"
+    tags: [expert-analysis, multi-perspective, parallel-analysis, security, api-design, architecture, performance, data-modeling, testability, error-handling, ux-impact]
+    typical_use: "Pre-design expert evaluation, parallel expert spawning, aspect selection, synthesis of expert recommendations"
+    size: medium
+    key_sections:
+      - "Expert Persona Reference Table"
+      - "Fan-Out Pattern (Parallel Spawning)"
+      - "Fan-In Synthesis (Merging Results)"
+      - "Aspect Selection Heuristics"
+      - "Skip Conditions"
 
   type-safety-standards:
     description: "Frontend type safety patterns for React/TypeScript applications"

@@ -353,3 +353,15 @@ External API response types may exceed these thresholds. In such cases:
 | Cyclomatic complexity | ≤10 | Simplify conditional logic or extract strategy pattern |
 | File length | ≤300 lines | Split into focused modules |
 | Import count | ≤15 per file | Module may have too many responsibilities |
+
+## Expert References (Reasoning Calibration)
+
+When facing technical decisions about resilience, complexity, or quality trade-offs, calibrate your reasoning against these established principles:
+
+| Expert | Key Principle | Apply When |
+|--------|--------------|------------|
+| Michael Nygard | "Cynical software expects bad things to happen and is never surprised when they do." | Designing error handling, resilience, and defensive patterns |
+| Gene Kim | "Improving daily work is even more important than doing daily work." | Weighing tech debt remediation vs. new feature delivery |
+| Kent Beck | "Optimism is an occupational hazard of programming; feedback is the treatment." | Resisting the urge to skip tests or validation |
+| Ward Cunningham | "Technical debt is the gap between what code is and what it should be." | Assessing whether shortcuts are acceptable or creating future burden |
+| John Ousterhout | "Complexity is anything related to the structure of a software system that makes it hard to understand and modify." | Evaluating whether design choices add unnecessary complexity |

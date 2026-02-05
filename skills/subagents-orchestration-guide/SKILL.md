@@ -64,6 +64,9 @@ The following subagents are available:
 11. **document-reviewer**: Single document quality and rule compliance check
 12. **design-sync**: Design Doc consistency verification across multiple documents
 13. **acceptance-test-generator**: Generate integration and E2E test skeletons from Design Doc ACs
+14. **expert-analyst**: Parallel multi-perspective analysis from expert viewpoint (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact)
+15. **codebase-scanner**: Scans for dead code, orphan files, unused exports, and suspicious areas (read-only)
+16. **cleanup-executor**: Safely removes confirmed dead code with git backup and build verification
 
 ## Orchestration Principles
 
@@ -164,6 +167,9 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **design-sync**: sync_status, total_conflicts, conflicts (severity, type, source_file, target_file)
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage
+- **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
+- **codebase-scanner**: status, items (id, name, category, suspicionLevel, files, signals, evidence), scanMetrics
+- **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 
 
 ## Handling Requirement Changes
@@ -210,24 +216,26 @@ According to scale determination:
 4. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
 5. technical-designer(-frontend) → ADR creation (if architecture changes, new technology, or data flow changes)
 6. document-reviewer → ADR review (if ADR created) **[Stop: ADR Approval]**
-7. technical-designer(-frontend) → Design Doc creation
-8. document-reviewer → Design Doc review
-9. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
-10. acceptance-test-generator → Integration and E2E test skeleton generation
+7. [Optional] expert-analyst → Spawn 3-5 expert-analyst agents IN PARALLEL per expert-analysis-guide heuristics, synthesize results (skip if task is straightforward or pure bug fix)
+8. technical-designer(-frontend) → Design Doc creation (include expert analysis synthesis if performed)
+9. document-reviewer → Design Doc review
+10. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
+11. acceptance-test-generator → Integration and E2E test skeleton generation
     → Orchestrator: Verify generation, then pass information to work-planner (*1)
-11. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-12. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+12. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
+13. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
 
 ### Medium Scale (3-5 Files)
 1. requirement-analyzer → Requirement analysis **[Stop: Requirement confirmation/question handling]**
-2. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
-3. technical-designer(-frontend) → Design Doc creation
-4. document-reviewer → Design Doc review
-5. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
-6. acceptance-test-generator → Integration and E2E test skeleton generation
+2. [Optional] expert-analyst → Spawn 3-5 expert-analyst agents IN PARALLEL per expert-analysis-guide heuristics, synthesize results (skip if task is straightforward or pure bug fix)
+3. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
+4. technical-designer(-frontend) → Design Doc creation (include expert analysis synthesis if performed)
+5. document-reviewer → Design Doc review
+6. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
+7. acceptance-test-generator → Integration and E2E test skeleton generation
    → Orchestrator: Verify generation, then pass information to work-planner (*1)
-7. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-8. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+8. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
+9. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
 
 ### Small Scale (1-2 Files)
 1. Create simplified plan **[Stop: Batch approval for entire implementation phase]**

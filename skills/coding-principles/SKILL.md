@@ -231,3 +231,15 @@ While these principles are language-agnostic, adapt them to your specific progra
 - Learn from code reviews
 - Study well-maintained open source projects
 - Regularly refactor and improve existing code
+
+## Expert References (Reasoning Calibration)
+
+When facing design or implementation trade-offs, calibrate your reasoning against these established principles:
+
+| Expert | Key Principle | Apply When |
+|--------|--------------|------------|
+| Martin Fowler | "Any fool can write code that a computer can understand. Good programmers write code that humans can understand." | Choosing between clever/compact code and readable/explicit code |
+| Martin Fowler | "Refactoring is the process of changing a software system in a way that does not alter the external behavior of the code yet improves its internal structure." | Deciding when and how to refactor |
+| Kent Beck | "Make it work, make it right, make it fast — in that order." | Choosing implementation sequence and resisting premature optimization |
+| Sandi Metz | "Prefer duplication over the wrong abstraction." | Deciding whether to abstract or keep code inline |
+| Robert C. Martin | "A function should do one thing. It should do it well. It should do it only." | Determining function scope and responsibility boundaries |
