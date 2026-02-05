@@ -12,6 +12,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 - **[design-template.md](references/design-template.md)** - Technical Design Document template
 - **[plan-template.md](references/plan-template.md)** - Work Plan template
 - **[task-template.md](references/task-template.md)** - Task file template for implementation tasks
+- **[uxrd-template.md](references/uxrd-template.md)** - UX Requirements Document template
 
 ## Creation Decision Matrix
 
@@ -169,6 +170,7 @@ Interface Change Matrix:
 | Design Doc | `docs/design/` | `[feature-name]-design.md` | [design-template.md](references/design-template.md) |
 | Work Plan | `docs/plans/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](references/plan-template.md) |
 | Task File | `docs/plans/tasks/{plan-name}/` | `task-{number}.md` | [task-template.md](references/task-template.md) |
+| UXRD | `docs/uxrd/` | `[feature-name]-uxrd.md` | [uxrd-template.md](references/uxrd-template.md) |
 
 *Note: Work plans are excluded by `.gitignore`
 
