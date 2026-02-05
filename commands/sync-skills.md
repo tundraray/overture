@@ -10,23 +10,44 @@ argument-hint: (no arguments - syncs all skills)
 
 ## Execution Flow
 
-### 1. Scan Skill Files
+### 1. Discover Skills from All Sources
+
+Scan **two** directories to build a unified skill inventory:
 
 ```bash
-# Runtime skills directory
-SKILLS_DIR=".claude/skills"
+# Source 1: Plugin-provided skills (read-only baseline)
+PLUGIN_SKILLS_DIR="${CLAUDE_PLUGIN_ROOT}/skills"
+
+# Source 2: Project-local skills (user customizations / additions)
+LOCAL_SKILLS_DIR=".claude/skills"
+
+# Output: project-local index
 INDEX_FILE=".claude/skills/task-analyzer/references/skills-index.yaml"
 
-# Analyze all skill files
-find "${SKILLS_DIR}" -name "SKILL.md" -type f | sort
+# Discover all SKILL.md files from both sources
+# Plugin skills first (baseline), then local skills (overrides)
+find "${PLUGIN_SKILLS_DIR}" -name "SKILL.md" -type f 2>/dev/null | sort
+find "${LOCAL_SKILLS_DIR}" -name "SKILL.md" -type f 2>/dev/null | sort
 ```
+
+#### Merge Rules
+
+| Situation | Action |
+|-----------|--------|
+| Skill exists only in plugin | Add to index as `source: plugin` |
+| Skill exists only in project-local | Add to index as `source: local` |
+| Skill exists in both (same name) | **Project-local wins** — override plugin version |
+
+**Source tracking**: Each skill entry in the generated index MUST include a `source` field (`plugin` or `local`) so users can tell where each skill originates.
 
 ### 2. Synchronize and Optimize Metadata
 
+For every discovered skill (from both sources):
+
 #### Automatic Section Synchronization
 
-- Extract `## ` sections from each SKILL.md
-- Update sections in skills-index.yaml automatically
+- Extract `## ` and `### ` level headings from each SKILL.md
+- Update `key_sections` in skills-index.yaml automatically
 
 #### Tag Optimization
 
@@ -44,13 +65,21 @@ find "${SKILLS_DIR}" -name "SKILL.md" -type f | sort
 - Detect newly introduced concepts or methodologies
 - Suggest relevant reference additions
 
+#### Description Extraction
+
+- Read the `description` field from SKILL.md YAML frontmatter
+- Use it as the `description` value in the index entry
+
 ### 3. Rule-Advisor Precision Optimization
 
 Enhance metadata quality to enable accurate skill selection by rule-advisor:
 
 ```
 === Skill Metadata Synchronization ===
-Target: .claude/skills
+Sources:
+  Plugin: ${CLAUDE_PLUGIN_ROOT}/skills (11 skills)
+  Local:  .claude/skills (3 skills)
+  Merged: 13 skills (1 local override)
 
 Updates executed:
 ✅ Sections synchronized
@@ -63,6 +92,9 @@ Updates executed:
 
 ✅ Typical-use improved
   - 3 skills updated with more specific descriptions
+
+✅ Source tracking
+  - 11 skills from plugin, 2 local-only, 1 local override
 
 Final result: Rule-advisor precision optimization complete
 ```
@@ -94,7 +126,8 @@ Final result: Rule-advisor precision optimization complete
 ## Execution Timing
 
 - After skill file edits (mandatory)
-- When adding new skill files
+- When adding new skill files (plugin or project-local)
+- After plugin updates that introduce new skills
 - After major skill revisions
 - When rule-advisor selection accuracy appears degraded
 
@@ -102,22 +135,40 @@ Final result: Rule-advisor precision optimization complete
 
 ```
 === Skill Metadata Synchronization Started ===
-Target: .claude/skills (13 skills)
+Sources:
+  Plugin: ${CLAUDE_PLUGIN_ROOT}/skills (11 skills found)
+  Local:  .claude/skills (3 skills found)
+Output:  .claude/skills/task-analyzer/references/skills-index.yaml
 
-[1/13] typescript-rules
+[1/14] coding-principles (plugin)
+  ✅ sections: 15 synchronized
+  ✅ tags: No changes needed
+  ✅ typical-use: Maintained
+
+[2/14] typescript-rules (plugin)
   ✅ sections: 7 synchronized
   💡 tags proposed: +[functional-programming, dependency-injection]
   💡 typical-use: "General TypeScript implementation" → "Type-safe implementation with modern TypeScript features"
 
-[2/13] typescript-testing
+[3/14] typescript-testing (plugin)
   ✅ sections: 2 added (Test Granularity Principles, Mock Type Safety Enforcement)
   ✅ tags: No changes needed
   ✅ typical-use: Maintained
 
+[4/14] my-custom-skill (local)
+  🆕 New skill added to index
+  ✅ sections: 4 extracted
+  ✅ tags: [custom, project-specific]
+
+[5/14] coding-principles (local override)
+  ⚠️ Overrides plugin skill — local version used
+  ✅ sections: 16 synchronized (+1 custom section)
+
 ...
 
 === Synchronization Complete ===
-Updated: 3 skills
+Skills: 11 plugin + 2 local-only + 1 local override = 14 total
+Updated: 4 skills
 Proposals: 5 items (approval required)
 
 Rule-advisor precision improvement: Estimated 15% enhancement
