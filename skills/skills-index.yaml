@@ -248,3 +248,20 @@ skills:
       - "Arrange by Importance"
       - "Clarify Scope Boundaries"
       - "Quality Checklist"
+
+  type-safety-standards:
+    description: "Frontend type safety patterns for React/TypeScript applications"
+    tags: [type-safety, typescript, react, zod, runtime-validation, type-guards, branded-types, discriminated-unions, generics, props]
+    typical_use: "Ensuring type safety in React components, API boundaries, form handling, and state management"
+    size: medium
+    key_sections:
+      - "Runtime Validation with Zod"
+      - "Discriminated Unions and Type Guards"
+      - "Branded Types"
+      - "Type Assertion Avoidance"
+      - "Generic Component Typing"
+      - "State Type Safety"
+      - "Result Type Pattern for Typed Error Handling"
+      - "Zod Performance Optimization"
+      - "Testing Type Safety"
+      - "Risks and Mitigations"
