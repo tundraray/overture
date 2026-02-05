@@ -53,7 +53,7 @@ Follow the planning process below:
 **Scope**: Up to work plan creation and obtaining approval for plan content.
 
 ## Response at Completion
-✅ **Recommended**: End with the following standard response after plan content approval
+✅ **REQUIRED**: End with the following standard response after plan content approval
 ```
 Planning phase completed.
 - Work plan: docs/plans/[plan-name].md

@@ -85,7 +85,12 @@ Evaluate each test for:
   "requiredFixes": [
     "[specific fix 1]",
     "[specific fix 2]"
-  ]
+  ],
+  "propertyTestCompliance": {
+    "candidatesIdentified": 0,
+    "candidatesImplemented": 0,
+    "complianceRate": "0%"
+  }
 }
 ```
 

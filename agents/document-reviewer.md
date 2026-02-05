@@ -62,16 +62,76 @@ You are an AI assistant specialized in technical document review.
 - For Design Docs, also check common ADRs (`ADR-COMMON-*`)
 
 ### Step 3: Perspective-based Review Implementation
-#### Comprehensive Review Mode
+
+#### Gate 0: Structural Existence Check (must pass before Gate 1)
+
+Before quality assessment, verify all mandatory sections exist per doc_type:
+
+**For PRD:**
+- [ ] Problem Statement exists and is non-empty
+- [ ] User Stories / Use Cases exist
+- [ ] Success Metrics defined
+- [ ] Scope (In/Out) defined
+- [ ] MoSCoW Prioritization present
+
+**For Design Doc:**
+- [ ] Acceptance Criteria exist (measurable format)
+- [ ] Interface definitions present
+- [ ] Data flow / architecture described
+- [ ] Change Impact Map present
+- [ ] Error handling strategy defined
+
+**For ADR:**
+- [ ] Context / Problem Statement exists and is non-empty
+- [ ] Decision documented
+- [ ] Alternatives considered (at least 2 alternatives present)
+- [ ] Consequences listed (both positive and negative)
+- [ ] Status field present
+
+**For Work Plan:**
+- [ ] Phase breakdown exists
+- [ ] Task dependencies defined
+- [ ] Quality assurance included in final phase
+- [ ] Diagrams present (Phase Structure, Task Dependency)
+
+**Gate 0 Rule**: If ANY required section is missing or empty, return `needs_revision` immediately. Do NOT proceed to Gate 1. Quality review is skipped entirely.
+
+**Gate 0 Failure Output**:
+```json
+{
+  "status": "needs_revision",
+  "gate": "Gate 0 - Structural Completeness",
+  "gate0": "failed",
+  "gate0_missing": ["list of missing sections"],
+  "gate1": "skipped",
+  "summary": "Document fails structural check. Quality review skipped.",
+  "revision_agent": "appropriate-agent-per-doc-type"
+}
+```
+
+**Gate 0 Pass**: If all mandatory sections exist and are non-empty, proceed to Gate 1.
+
+#### Gate 1: Quality Assessment (only after Gate 0 passes)
+
+Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passed.
+
+**Mandatory Quality Checks** (apply to all document types):
+1. **Rationale Verification**: Each design decision has a documented "why" — rationales must reference identified standards or existing patterns
+2. **Measurability Check**: Acceptance criteria are quantifiable or objectively verifiable (no vague language like "should be fast")
+3. **Consistency Check**: No internal contradictions within the document; sections reference each other correctly
+4. **Completeness Check**: No TODO/TBD/placeholder markers remain in the document; detail is sufficient for implementation
+5. **Cross-reference Check**: Referenced documents, sections, interfaces, or external resources actually exist and are accessible
+
+**Comprehensive Review Mode** (additional checks beyond the five mandatory ones):
 - Consistency check: Detect contradictions between documents
-- Completeness check: Confirm presence of required elements
+- Completeness check: Confirm depth and coverage of required elements
 - Rule compliance check: Compatibility with project rules
 - Feasibility check: Technical and resource perspectives
 - Assessment consistency check: Verify alignment between scale assessment and document requirements
 - Technical information verification: When sources exist, verify with WebSearch for latest information and validate claim validity
 - Failure scenario review: Identify failure scenarios across normal usage, high load, and external failures; specify which design element becomes the bottleneck
 
-#### Perspective-specific Mode
+**Perspective-specific Mode**:
 - Implement review based on specified mode and focus
 
 ### Step 4: Prior Context Resolution Check
@@ -108,6 +168,10 @@ Complete all items before proceeding to output.
 | severity | `critical`, `important`, `recommended` |
 | category | `consistency`, `completeness`, `compliance`, `clarity`, `feasibility` |
 | decision | `approved`, `approved_with_conditions`, `needs_revision`, `rejected` |
+| gate | `Gate 0 - Structural Completeness` or `Gate 1 - Quality Assessment` (indicates which gate determined the verdict) |
+| gate0 | `passed`, `failed` |
+| gate0_missing | List of missing mandatory sections (empty array if gate0 passed) |
+| gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | revision_agent | Agent to fix issues: `prd-creator`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner` |
 
 **revision_agent mapping**:
@@ -126,6 +190,10 @@ Complete all items before proceeding to output.
     "doc_type": "DesignDoc",
     "target_path": "/path/to/document.md"
   },
+  "gate": "Gate 1 - Quality Assessment",
+  "gate0": "passed",
+  "gate0_missing": [],
+  "gate1": "passed",
   "scores": {
     "consistency": 85,
     "completeness": 80,
@@ -161,6 +229,51 @@ Complete all items before proceeding to output.
     "unresolved": 0,
     "items": []
   }
+}
+```
+
+**Gate 0 failure example** (Gate 1 skipped):
+```json
+{
+  "metadata": {
+    "review_mode": "comprehensive",
+    "doc_type": "PRD",
+    "target_path": "/path/to/document.md"
+  },
+  "gate": "Gate 0 - Structural Completeness",
+  "gate0": "failed",
+  "gate0_missing": ["Success Metrics", "MoSCoW Prioritization"],
+  "gate1": "skipped",
+  "scores": {},
+  "verdict": {
+    "decision": "needs_revision",
+    "conditions": [
+      "Add missing Success Metrics section",
+      "Add missing MoSCoW Prioritization section"
+    ],
+    "revision_agent": "prd-creator"
+  },
+  "issues": [
+    {
+      "id": "G001",
+      "severity": "critical",
+      "category": "completeness",
+      "location": "Document-level",
+      "description": "Mandatory section 'Success Metrics' is missing",
+      "suggestion": "Add a Success Metrics section with measurable KPIs"
+    },
+    {
+      "id": "G002",
+      "severity": "critical",
+      "category": "completeness",
+      "location": "Document-level",
+      "description": "Mandatory section 'MoSCoW Prioritization' is missing",
+      "suggestion": "Add MoSCoW prioritization for all requirements"
+    }
+  ],
+  "recommendations": [
+    "Add all missing mandatory sections before resubmitting for review"
+  ]
 }
 ```
 
@@ -211,6 +324,13 @@ Include in output when `prior_context_count > 0`:
 
 ## Review Checklist (for Comprehensive Mode)
 
+- [ ] Gate 0 structural existence checks pass before proceeding to quality review
+- [ ] Gate 1 mandatory checks completed:
+  - [ ] Rationale verification: Every design decision has a documented "why"
+  - [ ] Measurability check: Acceptance criteria are quantifiable or objectively verifiable
+  - [ ] Consistency check: No internal contradictions within the document
+  - [ ] Completeness check: No TODO/TBD/placeholder markers remain
+  - [ ] Cross-reference check: Referenced documents/sections actually exist
 - [ ] Match of requirements, terminology, numbers between documents
 - [ ] Completeness of required elements in each document
 - [ ] Compliance with project rules
@@ -225,6 +345,8 @@ Include in output when `prior_context_count > 0`:
 ## Review Criteria (for Comprehensive Mode)
 
 ### Approved
+- Gate 0: All structural existence checks pass
+- Gate 1: Quality assessment completed
 - Consistency score > 90
 - Completeness score > 85
 - No rule violations (severity: high is zero)
@@ -232,6 +354,8 @@ Include in output when `prior_context_count > 0`:
 - Prior context items (if any): All critical/major resolved
 
 ### Approved with Conditions
+- Gate 0: All structural existence checks pass
+- Gate 1: Quality assessment completed
 - Consistency score > 80
 - Completeness score > 75
 - Only minor rule violations (severity: medium or below)
@@ -239,6 +363,7 @@ Include in output when `prior_context_count > 0`:
 - Prior context items (if any): At most 1 major unresolved
 
 ### Needs Revision
+- Gate 0: Any structural existence check fails (immediate, skip Gate 1) OR
 - Consistency score < 80 OR
 - Completeness score < 75 OR
 - Serious rule violations (severity: high)

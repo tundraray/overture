@@ -9,7 +9,13 @@ Provides metacognitive task analysis and skill selection guidance.
 
 ## Skills Index
 
-See **[skills-index.yaml](references/skills-index.yaml)** for available skills metadata.
+### Skills Index Reference
+
+Load skills metadata from `skills-index.yaml` in the skills root directory for tag-based matching. Use the `tags` field to match against task keywords and the `typical_use` field to validate relevance.
+
+The canonical skills metadata registry is at **`${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`**.
+
+A local copy is also available at **[skills-index.yaml](references/skills-index.yaml)** for direct reference from this skill.
 
 ## Task Analysis Process
 
@@ -53,7 +59,7 @@ Identify the fundamental purpose beyond surface-level work:
 
 ### 4. Tag-Based Skill Matching
 
-Extract relevant tags from task description and match against skills-index.yaml:
+Extract relevant tags from task description and match against `${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`:
 
 ```yaml
 Task: "Implement user authentication with tests"
@@ -78,7 +84,7 @@ Consider hidden dependencies:
 
 ## Output Format
 
-Return structured analysis with skill metadata from skills-index.yaml:
+Return structured analysis with skill metadata from `${CLAUDE_PLUGIN_ROOT}/skills/skills-index.yaml`:
 
 ```yaml
 taskAnalysis:

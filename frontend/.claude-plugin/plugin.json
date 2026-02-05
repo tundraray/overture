@@ -39,7 +39,8 @@
     "./commands/reverse-engineer.md",
     "./commands/review.md",
     "./commands/sync-skills.md",
-    "./commands/task.md"
+    "./commands/task.md",
+    "./commands/update-doc.md"
   ],
   "agents": [
     "./agents/code-reviewer.md",

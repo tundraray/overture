@@ -300,6 +300,102 @@ Stop autonomous execution and escalate to user in the following cases:
 4. **When user explicitly stops**
    - Direct stop instruction or interruption
 
+## Quantitative Auto-Stop Triggers
+
+The following numeric thresholds MUST trigger immediate orchestrator action. These are non-negotiable safety boundaries:
+
+| Trigger Condition | Required Action |
+|---|---|
+| **5+ files changed** in a single task | STOP immediately. Create impact report listing all changed files and affected modules. Present to user before continuing. |
+| **Same error occurs 3 times** | STOP. Mandatory root cause analysis using 5 Whys technique. Do NOT attempt another fix without completing analysis. |
+| **3 files edited** without TodoWrite update | Force TodoWrite status update. Cannot proceed with next Edit until TodoWrite reflects current progress. |
+| **2nd consecutive error fix attempt** | Auto re-execute rule-advisor. Previous approach has failed — reassess task essence and strategy before continuing. |
+| **5 cumulative Edit tool uses** | Force creation of impact report. Document: files changed, modules affected, tests impacted. |
+| **3 edits to the same file** | STOP. Consider whether refactoring is needed instead of incremental patches. Present refactoring proposal to user. |
+
+### Auto-Stop Enforcement Rules
+
+1. Counters reset at the start of each new task
+2. Orchestrator MUST track edit counts per-file and cumulative
+3. Auto-stop triggers take priority over autonomous execution mode
+4. After any auto-stop, the orchestrator MUST present a status report before resuming
+5. User can explicitly override a stop with "continue" — but the stop MUST occur first
+
+## Error-Fixing Impulse Control Protocol
+
+When an error is discovered during implementation, the orchestrator MUST follow this protocol instead of immediately attempting a fix:
+
+### Protocol Steps
+
+1. **PAUSE** — Do NOT attempt to fix the error immediately
+2. **Re-execute rule-advisor** — Reassess the task with the error context:
+   ```yaml
+   subagent_type: rule-advisor
+   prompt: "Re-analyze task considering this error: [error details]. Determine if the original approach is still valid or if a different strategy is needed."
+   ```
+3. **Root Cause Analysis** — Apply 5 Whys technique:
+   ```
+   Error: [observed error]
+   Why 1: [immediate cause]
+   Why 2: [cause of Why 1]
+   Why 3: [cause of Why 2]
+   Why 4: [cause of Why 3]
+   Why 5: [root cause]
+   ```
+4. **Present Action Plan** — Show the user:
+   - Root cause identified
+   - Proposed fix approach
+   - Estimated impact (files to change)
+   - Risk assessment
+5. **Fix ONLY after user approval** — Execute the fix only when user confirms the action plan
+
+### When This Protocol Applies
+
+- Any error that occurs during task-executor execution
+- Build failures after code changes
+- Test failures that weren't expected
+- Quality-fixer reporting persistent issues
+
+### When This Protocol Does NOT Apply
+
+- Expected test failures during Red-Green-Refactor (TDD red phase)
+- Linting warnings that quality-fixer can auto-fix
+- Known/documented environment issues
+
+## Metacognitive TodoWrite Integration
+
+When rule-advisor returns its analysis, the orchestrator MUST formalize the metacognitive outputs into TodoWrite entries for tracking:
+
+### Mapping Rule-Advisor Output → TodoWrite
+
+| Rule-Advisor Output Field | TodoWrite Usage |
+|---|---|
+| `metaCognitiveGuidance.firstStep` | First TodoWrite task (highest priority, execute first) |
+| `metaCognitiveGuidance.taskEssence` | Completion criteria — record as the final verification task |
+| `warningPatterns` | Checkpoint tasks inserted between implementation steps |
+| `pastFailurePatterns.countermeasures` | Guard tasks — verify these are not violated during execution |
+
+### TodoWrite Structure After Rule-Advisor
+
+```
+1. [in_progress] {firstStep from rule-advisor}
+2. [pending] Checkpoint: Verify {warningPattern[0]} not triggered
+3. [pending] Implementation step 1
+4. [pending] Checkpoint: Verify {warningPattern[1]} not triggered
+5. [pending] Implementation step 2
+...
+N-1. [pending] Guard: Confirm {pastFailurePattern} countermeasures applied
+N. [pending] Verify task essence: {taskEssence}
+```
+
+### Rules
+
+1. Checkpoints are inserted between every 2-3 implementation steps
+2. Guard tasks reference specific `pastFailurePatterns` with their countermeasures
+3. The final task ALWAYS verifies `taskEssence` from rule-advisor
+4. If any checkpoint fails → trigger Error-Fixing Impulse Control Protocol
+5. TodoWrite updates MUST happen before and after each checkpoint evaluation
+
 ### Commit Strategy Selection
 
 **Ask user at workflow start** (after requirement-analyzer, before implementation):

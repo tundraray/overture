@@ -115,3 +115,51 @@ The test runner or framework in the project determines the appropriate file exte
 - Multiple behaviors per test
 - Shared mutable state
 - Time-dependent assertions without mocking
+
+## Property-Based Testing
+
+Property-based testing generates random inputs to verify invariants that should hold for ALL possible values, not just specific test cases.
+
+### When to Apply
+
+| Scenario | Property Example |
+|---|---|
+| Sorting algorithms | `sort(arr).length === arr.length` AND each element <= next |
+| Serialization | `decode(encode(value)) === value` for any valid value |
+| Data transformations | `transform(transform_inverse(x)) === x` |
+| Validation functions | Valid inputs always pass, structurally invalid inputs always fail |
+| Mathematical operations | Commutativity, associativity, distributivity |
+| Collection operations | Map preserves length, filter reduces or preserves length |
+
+### Property Test Structure (Language-Agnostic)
+
+```
+PROPERTY: "Description of the invariant"
+FOR ALL: generator description (e.g., "arbitrary arrays of integers, length 0-1000")
+ASSERT: invariant expression
+SHRINK: how to minimize failing cases
+
+Example:
+  PROPERTY: "Sorting preserves all elements"
+  FOR ALL: arrays of comparable elements
+  ASSERT:
+    - sorted.length === original.length
+    - every element in original exists in sorted
+    - sorted[i] <= sorted[i+1] for all valid i
+  SHRINK: reduce array size until minimal failing case found
+```
+
+### ROI Assessment for Property Tests
+
+| Factor | Score Guidance |
+|---|---|
+| Input space size | Large (>100 meaningful variations) → High ROI |
+| Bug severity if invariant broken | Data corruption / security → High ROI |
+| Implementation complexity | Simple property → High ROI |
+| Existing coverage | No edge case coverage → High ROI |
+
+**Minimum ROI threshold**: Only create property tests when at least 2 factors score High.
+
+### Integration with Test Budget
+
+Property tests count toward the integration test budget. Each property test replaces approximately 5-10 specific input unit tests, making them highly budget-efficient for the right scenarios.

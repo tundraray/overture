@@ -53,6 +53,27 @@ Clearly present design alternatives and trade-offs.
 
 **Scope**: Up to design document (ADR/Design Doc) approval. Work planning and beyond are outside the scope of this command.
 
+### Consistency Verification via design-sync
+
+After document-reviewer approves the Design Doc, verify cross-document consistency:
+
+```yaml
+subagent_type: design-sync
+prompt: "Verify consistency between all documents in docs/ directory. Check for conflicts between PRD, ADR, and Design Doc."
+```
+
+**Conflict Resolution Flow**:
+- **IF conflicts found**:
+  1. Present conflict report to user with specific inconsistencies
+  2. **STOP** — Wait for user decision on resolution approach
+  3. Call technical-designer to update the Design Doc resolving identified conflicts:
+     ```yaml
+     subagent_type: technical-designer
+     prompt: "Update Design Doc at [path] to resolve the following conflicts: [conflict details from design-sync]. Preserve existing approved content where possible."
+     ```
+  4. Re-run design-sync to verify resolution
+- **IF no conflicts**: Present clean verification result and proceed
+
 ## Completion Criteria
 
 - [ ] Executed requirement-analyzer and determined scale

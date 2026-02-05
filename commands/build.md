@@ -103,6 +103,23 @@ For EACH task, YOU MUST:
 
 VERIFY approval status before proceeding. Once confirmed, INITIATE autonomous execution mode. STOP IMMEDIATELY upon detecting ANY requirement changes.
 
+## Responsibility Boundary
+
+### IN SCOPE
+- Reading and executing tasks from existing work plan
+- Calling task-executor / task-executor-frontend for each task
+- Running quality-fixer / quality-fixer-frontend after each task
+- Executing commits according to selected commit strategy
+- Reporting progress and completion status
+- Escalating blockers and design deviations
+
+### OUT OF SCOPE
+- Creating new design documents (use `/design` instead)
+- Modifying requirements or PRD (use `/update-doc` instead)
+- Changing work plan structure (use `/plan` instead)
+- Deployment or release operations
+- Changing project configuration or dependencies not specified in tasks
+
 ## Output Example
 Implementation phase completed.
 - Task decomposition: Generated under docs/plans/tasks/
