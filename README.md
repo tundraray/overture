@@ -78,10 +78,13 @@ graph TB
     A[👤 User Request] --> B[🔍 requirement-analyzer]
 
     B --> |"📦 Large (6+ files)"| C[📄 prd-creator]
-    B --> |"📦 Medium (3-5 files)"| D[📐 technical-designer]
+    B --> |"📦 Medium (3-5 files)"| EX{Expert Analysis?}
     B --> |"📦 Small (1-2 files)"| E[⚡ Direct Implementation]
 
-    C --> D
+    C --> EX
+    EX --> |Optional| EA[🎭 expert-analyst ×3-5 in parallel]
+    EX --> |Skip| D[📐 technical-designer]
+    EA --> D
     D --> DR[📋 document-reviewer]
     DR --> DS[🔄 design-sync]
     DS --> F[🧪 acceptance-test-generator]
@@ -105,6 +108,17 @@ graph LR
     ASS --> |No| SOL[💡 solver]
     VER --> |Validated Conclusion| SOL
     SOL --> |Solutions + Steps| R[📋 Report]
+```
+
+### The Audit Workflow
+
+```mermaid
+graph LR
+    A[🧹 /audit] --> S[🔍 codebase-scanner]
+    S --> |Findings| R{Review each item}
+    R --> |Delete / Keep / Deprecate| C[✅ Confirm cleanup]
+    C --> X[🧹 cleanup-executor]
+    X --> |Safety branch + build check| D[📋 Report]
 ```
 
 ### The Reverse Engineering Workflow
@@ -131,10 +145,11 @@ graph TB
 ### What Happens Behind the Scenes
 
 1. **Analysis** - Figures out how complex your task is
-2. **Planning** - Creates the right docs (PRD, design doc, work plan) based on complexity
-3. **Execution** - Specialized agents handle implementation autonomously
-4. **Quality** - Runs tests, checks types, fixes errors automatically
-5. **Review** - Makes sure everything matches the design
+2. **Expert Analysis** - (Optional) Parallel multi-perspective evaluation before design
+3. **Planning** - Creates the right docs (PRD, design doc, work plan) based on complexity
+4. **Execution** - Specialized agents handle implementation autonomously
+5. **Quality** - Runs tests, checks types, fixes errors automatically
+6. **Review** - Makes sure everything matches the design
 6. **Done** - Clean, production-ready code
 
 ---
