@@ -1,5 +1,5 @@
 {
-  "name": "claude-code-workflows",
+  "name": "overture",
   "version": "0.17.0",
   "owner": {
     "name": "Mikhail Andreev",
@@ -10,17 +10,17 @@
   },
   "plugins": [
     {
-      "name": "node-workflow",
+      "name": "backend-overture",
       "source": "./backend",
       "description": "Backend development with orchestrated agents, coding best-practices skills, and MCP integration"
     },
     {
-      "name": "react-workflow",
+      "name": "frontend-overture",
       "source": "./frontend",
       "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration"
     },
     {
-      "name": "fullstack-workflow",
+      "name": "fullstack-overture",
       "source": "./fullstack",
       "description": "Full-stack development combining backend + frontend agents, skills, and MCP integration"
     }
