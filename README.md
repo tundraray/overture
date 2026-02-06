@@ -78,10 +78,13 @@ graph TB
     A[👤 User Request] --> B[🔍 requirement-analyzer]
 
     B --> |"📦 Large (6+ files)"| C[📄 prd-creator]
-    B --> |"📦 Medium (3-5 files)"| D[📐 technical-designer]
+    B --> |"📦 Medium (3-5 files)"| EX{Expert Analysis?}
     B --> |"📦 Small (1-2 files)"| E[⚡ Direct Implementation]
 
-    C --> D
+    C --> EX
+    EX --> |Optional| EA[🎭 expert-analyst ×3-5 in parallel]
+    EX --> |Skip| D[📐 technical-designer]
+    EA --> D
     D --> DR[📋 document-reviewer]
     DR --> DS[🔄 design-sync]
     DS --> F[🧪 acceptance-test-generator]
@@ -105,6 +108,17 @@ graph LR
     ASS --> |No| SOL[💡 solver]
     VER --> |Validated Conclusion| SOL
     SOL --> |Solutions + Steps| R[📋 Report]
+```
+
+### The Audit Workflow
+
+```mermaid
+graph LR
+    A[🧹 /audit] --> S[🔍 codebase-scanner]
+    S --> |Findings| R{Review each item}
+    R --> |Delete / Keep / Deprecate| C[✅ Confirm cleanup]
+    C --> X[🧹 cleanup-executor]
+    X --> |Safety branch + build check| D[📋 Report]
 ```
 
 ### The Reverse Engineering Workflow
@@ -131,11 +145,12 @@ graph TB
 ### What Happens Behind the Scenes
 
 1. **Analysis** - Figures out how complex your task is
-2. **Planning** - Creates the right docs (PRD, design doc, work plan) based on complexity
-3. **Execution** - Specialized agents handle implementation autonomously
-4. **Quality** - Runs tests, checks types, fixes errors automatically
-5. **Review** - Makes sure everything matches the design
-6. **Done** - Clean, production-ready code
+2. **Expert Analysis** - (Optional) Parallel multi-perspective evaluation before design
+3. **Planning** - Creates the right docs (PRD, design doc, work plan) based on complexity
+4. **Execution** - Specialized agents handle implementation autonomously
+5. **Quality** - Runs tests, checks types, fixes errors automatically
+6. **Review** - Makes sure everything matches the design
+7. **Done** - Clean, production-ready code
 
 ---
 
@@ -170,6 +185,7 @@ graph TB
 | `/front-reverse-design` | Generate frontend Design Docs from existing code using PRD | Frontend component documentation |
 | `/task` | Execute single task with precision | Component fixes, small updates |
 | `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
+| `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
 | `/project-context` | Initialize project-context skill | New project setup |
 | `/brand-context` | Initialize brand-system-guide skill | Brand/design system setup |
 | `/refine-skill` | Improve and refine existing skills | Skill optimization |
@@ -181,18 +197,21 @@ graph TB
 
 ## 📦 Specialized Agents
 
-### Shared Agents (Available in Both Plugins)
+### Shared Agents (Available in All Plugins)
 
 These agents work the same way whether you're building a REST API or a React app:
 
 | Agent | What It Does |
 |-------|--------------|
 | **requirement-analyzer** | Figures out how complex your task is and picks the right workflow |
+| **expert-analyst** | Multi-perspective analysis from expert viewpoint (Security, Architecture, Performance, etc.) — spawned in parallel |
 | **work-planner** | Breaks down design docs into actionable tasks |
 | **task-decomposer** | Splits work into small, commit-ready chunks |
 | **code-reviewer** | Checks your code against design docs to make sure nothing's missing |
 | **document-reviewer** | Reviews single document quality, completeness, and rule compliance |
 | **design-sync** | Verifies consistency across multiple Design Docs and detects conflicts |
+| **codebase-scanner** | Scans for dead code, orphan files, unused exports across 7 categories |
+| **cleanup-executor** | Safely removes confirmed dead code with git branch backup and build verification |
 | **investigator** | Collects evidence, enumerates hypotheses, builds evidence matrix for problem diagnosis |
 | **verifier** | Validates investigation results using ACH and Devil's Advocate methods |
 | **solver** | Generates solutions with tradeoff analysis and implementation steps |
@@ -234,8 +253,9 @@ Skills are knowledge modules that agents load automatically when relevant.
 | Skill | Description |
 |-------|-------------|
 | **ai-development-guide** | AI-assisted development patterns and anti-patterns |
-| **coding-principles** | Code quality standards |
+| **coding-principles** | Code quality standards with expert reasoning calibration |
 | **documentation-criteria** | PRD/ADR/Design Doc templates and criteria |
+| **expert-analysis-guide** | Multi-expert parallel analysis framework |
 | **implementation-approach** | Design decisions and trade-offs |
 | **integration-e2e-testing** | Integration and E2E test patterns |
 | **project-context** | Project-specific context (customizable via `/project-context`) |
@@ -338,7 +358,7 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 # 4. Fixes lint and build errors
 ```
 
-### Quick Fixes (Both Plugins)
+### Quick Fixes (All Plugins)
 
 ```bash
 /task "Fix validation error message"
@@ -356,7 +376,7 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 # Catches missing features or inconsistencies
 ```
 
-### Problem Diagnosis (Both Plugins)
+### Problem Diagnosis (All Plugins)
 
 ```bash
 /diagnose "API returns 500 error on user login"
@@ -367,6 +387,19 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 # 3. Verifier validates findings with ACH and Devil's Advocate
 # 4. Solver generates solutions with tradeoff analysis
 # 5. Presents actionable implementation steps
+```
+
+### Codebase Audit (All Plugins)
+
+```bash
+/audit "src/"
+
+# What happens:
+# 1. Scans for dead code, orphan files, unused exports
+# 2. Reviews each finding with you interactively
+# 3. Creates safety branch before any deletions
+# 4. Removes confirmed dead code with build verification
+# 5. Reverts automatically if anything breaks
 ```
 
 ### Reverse Engineering
