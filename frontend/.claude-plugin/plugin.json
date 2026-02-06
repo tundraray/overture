@@ -1,13 +1,13 @@
 {
-  "name": "react-workflow",
+  "name": "frontend-overture",
   "version": "0.17.0",
   "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, sequential-thinking, playwright)",
   "author": {
     "name": "Mikhail Andreev",
     "url": "https://github.com/tundraray"
   },
-  "homepage": "https://github.com/tundraray/claude-code-workflows",
-  "repository": "https://github.com/tundraray/claude-code-workflows.git",
+  "homepage": "https://github.com/tundraray/overture",
+  "repository": "https://github.com/tundraray/overture.git",
   "license": "MIT",
   "keywords": [
     "react",
