@@ -148,6 +148,25 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 
 ## Task Decomposition Principles
 
+### Property-Based Test Documentation in Work Plans
+
+When the Design Doc or acceptance-test-generator identifies property-based test candidates, the work plan MUST include:
+
+1. **Property Test Tasks**: Dedicated tasks for implementing property tests, placed in the phase AFTER the feature implementation they verify
+2. **Generator Specification**: Each property test task must specify what input generators are needed
+3. **Invariant Documentation**: Clear statement of what property must hold
+
+Example task entry:
+```
+### Task: Implement property tests for [feature]
+- Properties to verify: [list from acceptance-test-generator]
+- Generator requirements: [input types and ranges]
+- Expected shrink behavior: [what minimal failing case looks like]
+- Dependencies: [feature implementation task must complete first]
+```
+
+**Placement Rule**: Property test tasks go in the same phase as integration tests for the related feature. They should NOT be in the final E2E phase.
+
 ### Test Placement Principles
 **Phase Placement Rules**:
 - Integration tests: Include in relevant phase tasks like "[Feature name] implementation with integration test creation"

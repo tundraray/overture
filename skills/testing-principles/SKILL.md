@@ -490,3 +490,15 @@ Eliminate tests that fail intermittently:
 - Add tests for discovered edge cases
 - Improve test coverage where gaps found
 - Share learnings with team
+
+## Expert References (Reasoning Calibration)
+
+When facing testing strategy decisions, calibrate your reasoning against these established principles:
+
+| Expert | Key Principle | Apply When |
+|--------|--------------|------------|
+| Kent C. Dodds | "Write tests. Not too many. Mostly integration." | Deciding test type distribution across the pyramid |
+| Kent C. Dodds | "The more your tests resemble the way your software is used, the more confidence they can give you." | Choosing between behavior-based vs. implementation-based tests |
+| Michael Feathers | "Legacy code is simply code without tests." | Prioritizing test coverage for untested code areas |
+| Gerard Meszaros | "Each test should have a single reason to fail." | Determining test granularity and assertion scope |
+| James Shore | "TDD isn't about testing. TDD is about design." | Using TDD as a design feedback mechanism, not just validation |

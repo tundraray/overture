@@ -132,7 +132,7 @@ validateEmail(email, context) { /* ... */ }
 ### Pattern 2: Circumventing Correctness Guarantees
 **Symptom**: Bypassing safety mechanisms (type systems, validation, contracts)
 **Cause**: Impulse to avoid correctness errors
-**Avoidance**: Use language-appropriate safety mechanisms (static checking, runtime validation, contracts, assertions)
+**Avoidance**: Use language-appropriate safety mechanisms (static checking, runtime validation, contracts, assertions). For functions with clear invariants, consider property-based testing to automatically discover edge cases.
 
 ### Pattern 3: Implementation Without Sufficient Testing
 **Symptom**: Many bugs after implementation
@@ -325,3 +325,43 @@ In use? No → Delete
 ```
 
 **Principle**: Prefer clean implementation over patching broken code
+
+## Complexity Management Metrics
+
+Quantitative thresholds for managing code complexity. When thresholds are exceeded, redesign rather than work around.
+
+### Data Structure Complexity
+
+| Metric | Threshold | Action if Exceeded |
+|---|---|---|
+| Field count per type/interface | ≤20 fields | Split by responsibility (exception: external API types) |
+| Optional field ratio | ≤30% | Separate required and optional into distinct types |
+| Nesting depth | ≤3 levels | Flatten nested structures |
+| Type assertions / casts | ≤3 per file | Review design — excessive casting indicates type system mismatch |
+
+### Exception: External API Types
+External API response types may exceed these thresholds. In such cases:
+- Define the external type as-is (matching reality)
+- Create an internal domain type within thresholds
+- Map external → internal at the boundary layer
+
+### Code Complexity
+
+| Metric | Threshold | Action if Exceeded |
+|---|---|---|
+| Function length | ≤20 lines | Extract helper functions |
+| Cyclomatic complexity | ≤10 | Simplify conditional logic or extract strategy pattern |
+| File length | ≤300 lines | Split into focused modules |
+| Import count | ≤15 per file | Module may have too many responsibilities |
+
+## Expert References (Reasoning Calibration)
+
+When facing technical decisions about resilience, complexity, or quality trade-offs, calibrate your reasoning against these established principles:
+
+| Expert | Key Principle | Apply When |
+|--------|--------------|------------|
+| Michael Nygard | "Cynical software expects bad things to happen and is never surprised when they do." | Designing error handling, resilience, and defensive patterns |
+| Gene Kim | "Improving daily work is even more important than doing daily work." | Weighing tech debt remediation vs. new feature delivery |
+| Kent Beck | "Optimism is an occupational hazard of programming; feedback is the treatment." | Resisting the urge to skip tests or validation |
+| Ward Cunningham | "Technical debt is the gap between what code is and what it should be." | Assessing whether shortcuts are acceptable or creating future burden |
+| John Ousterhout | "Complexity is anything related to the structure of a software system that makes it hard to understand and modify." | Evaluating whether design choices add unnecessary complexity |

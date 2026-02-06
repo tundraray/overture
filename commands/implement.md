@@ -41,7 +41,57 @@ When continuing existing flow, verify:
 - Current phase position (Requirements/Design/Planning/Implementation/QA)
 - Identify next step in subagents-orchestration-guide skill corresponding flow
 
-### 3. Next Action Execution
+### Scope Change Detection
+
+After requirement-analyzer returns, evaluate scope implications before proceeding:
+
+**Think deeply** about whether the requirements imply scope changes beyond what was initially apparent.
+
+#### Scope Dependency Analysis
+
+For each identified requirement, assess:
+
+```yaml
+scopeDependencies:
+  - question: "Does this require API contract changes?"
+    impact: "high"
+    confidence: 0.7
+  - question: "Are database schema changes needed?"
+    impact: "high"
+    confidence: 0.5
+  - question: "Does this affect existing user-facing behavior?"
+    impact: "medium"
+    confidence: 0.9
+```
+
+#### Decision Rules
+
+| Condition | Action |
+|---|---|
+| Any dependency with `impact: high` AND `confidence < 0.8` | **STOP** — Present the question to user with impact explanation. Do not proceed until confirmed. |
+| Any dependency with `impact: high` AND `confidence >= 0.8` | Proceed but flag in TodoWrite as high-impact item |
+| All dependencies `impact: medium/low` | Proceed normally |
+| `confidence < 0.5` on any item | **STOP** — Insufficient information. Ask user for clarification before proceeding. |
+
+#### Scope Change Report (presented to user at stop points)
+
+```
+## Scope Change Detection Report
+
+### High-Impact Dependencies Requiring Confirmation:
+1. [question] — Impact: [impact], Confidence: [confidence]
+   Explanation: [why this matters and what could go wrong]
+
+### Confirmed Scope Items:
+- [items with high confidence that will proceed]
+
+### Recommendation:
+[proceed / stop for clarification / rescope]
+```
+
+**CRITICAL**: This check MUST happen before any document creation begins. Discovering scope changes after creating a Design Doc wastes significant effort.
+
+### 4. Next Action Execution
 
 **MANDATORY subagents-orchestration-guide skill reference**:
 - Verify scale-based flow (Large/Medium/Small scale)
@@ -49,7 +99,7 @@ When continuing existing flow, verify:
 - Recognize mandatory stopping points
 - Invoke next sub-agent defined in flow
 
-### 4. Register All Flow Steps to TodoWrite (MANDATORY)
+### 5. Register All Flow Steps to TodoWrite (MANDATORY)
 
 **After scale determination, register all steps of the applicable flow to TodoWrite**:
 - First todo: "Confirm skill constraints"

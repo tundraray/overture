@@ -64,6 +64,9 @@ The following subagents are available:
 11. **document-reviewer**: Single document quality and rule compliance check
 12. **design-sync**: Design Doc consistency verification across multiple documents
 13. **acceptance-test-generator**: Generate integration and E2E test skeletons from Design Doc ACs
+14. **expert-analyst**: Parallel multi-perspective analysis from expert viewpoint (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact)
+15. **codebase-scanner**: Scans for dead code, orphan files, unused exports, and suspicious areas (read-only)
+16. **cleanup-executor**: Safely removes confirmed dead code with git backup and build verification
 
 ## Orchestration Principles
 
@@ -164,6 +167,9 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **design-sync**: sync_status, total_conflicts, conflicts (severity, type, source_file, target_file)
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage
+- **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
+- **codebase-scanner**: status, items (id, name, category, suspicionLevel, files, signals, evidence), scanMetrics
+- **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 
 
 ## Handling Requirement Changes
@@ -210,24 +216,26 @@ According to scale determination:
 4. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
 5. technical-designer(-frontend) → ADR creation (if architecture changes, new technology, or data flow changes)
 6. document-reviewer → ADR review (if ADR created) **[Stop: ADR Approval]**
-7. technical-designer(-frontend) → Design Doc creation
-8. document-reviewer → Design Doc review
-9. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
-10. acceptance-test-generator → Integration and E2E test skeleton generation
+7. [Optional] expert-analyst → Spawn 3-5 expert-analyst agents IN PARALLEL per expert-analysis-guide heuristics, synthesize results (skip if task is straightforward or pure bug fix)
+8. technical-designer(-frontend) → Design Doc creation (include expert analysis synthesis if performed)
+9. document-reviewer → Design Doc review
+10. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
+11. acceptance-test-generator → Integration and E2E test skeleton generation
     → Orchestrator: Verify generation, then pass information to work-planner (*1)
-11. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-12. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+12. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
+13. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
 
 ### Medium Scale (3-5 Files)
 1. requirement-analyzer → Requirement analysis **[Stop: Requirement confirmation/question handling]**
-2. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
-3. technical-designer(-frontend) → Design Doc creation
-4. document-reviewer → Design Doc review
-5. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
-6. acceptance-test-generator → Integration and E2E test skeleton generation
+2. [Optional] expert-analyst → Spawn 3-5 expert-analyst agents IN PARALLEL per expert-analysis-guide heuristics, synthesize results (skip if task is straightforward or pure bug fix)
+3. ux-designer → UXRD creation (if frontend/UI work) → document-reviewer **[Stop: UXRD Approval]**
+4. technical-designer(-frontend) → Design Doc creation (include expert analysis synthesis if performed)
+5. document-reviewer → Design Doc review
+6. design-sync → Design Doc consistency verification **[Stop: Design Doc Approval]**
+7. acceptance-test-generator → Integration and E2E test skeleton generation
    → Orchestrator: Verify generation, then pass information to work-planner (*1)
-7. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-8. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+8. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
+9. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
 
 ### Small Scale (1-2 Files)
 1. Create simplified plan **[Stop: Batch approval for entire implementation phase]**
@@ -299,6 +307,102 @@ Stop autonomous execution and escalate to user in the following cases:
 
 4. **When user explicitly stops**
    - Direct stop instruction or interruption
+
+## Quantitative Auto-Stop Triggers
+
+The following numeric thresholds MUST trigger immediate orchestrator action. These are non-negotiable safety boundaries:
+
+| Trigger Condition | Required Action |
+|---|---|
+| **5+ files changed** in a single task | STOP immediately. Create impact report listing all changed files and affected modules. Present to user before continuing. |
+| **Same error occurs 3 times** | STOP. Mandatory root cause analysis using 5 Whys technique. Do NOT attempt another fix without completing analysis. |
+| **3 files edited** without TodoWrite update | Force TodoWrite status update. Cannot proceed with next Edit until TodoWrite reflects current progress. |
+| **2nd consecutive error fix attempt** | Auto re-execute rule-advisor. Previous approach has failed — reassess task essence and strategy before continuing. |
+| **5 cumulative Edit tool uses** | Force creation of impact report. Document: files changed, modules affected, tests impacted. |
+| **3 edits to the same file** | STOP. Consider whether refactoring is needed instead of incremental patches. Present refactoring proposal to user. |
+
+### Auto-Stop Enforcement Rules
+
+1. Counters reset at the start of each new task
+2. Orchestrator MUST track edit counts per-file and cumulative
+3. Auto-stop triggers take priority over autonomous execution mode
+4. After any auto-stop, the orchestrator MUST present a status report before resuming
+5. User can explicitly override a stop with "continue" — but the stop MUST occur first
+
+## Error-Fixing Impulse Control Protocol
+
+When an error is discovered during implementation, the orchestrator MUST follow this protocol instead of immediately attempting a fix:
+
+### Protocol Steps
+
+1. **PAUSE** — Do NOT attempt to fix the error immediately
+2. **Re-execute rule-advisor** — Reassess the task with the error context:
+   ```yaml
+   subagent_type: rule-advisor
+   prompt: "Re-analyze task considering this error: [error details]. Determine if the original approach is still valid or if a different strategy is needed."
+   ```
+3. **Root Cause Analysis** — Apply 5 Whys technique:
+   ```
+   Error: [observed error]
+   Why 1: [immediate cause]
+   Why 2: [cause of Why 1]
+   Why 3: [cause of Why 2]
+   Why 4: [cause of Why 3]
+   Why 5: [root cause]
+   ```
+4. **Present Action Plan** — Show the user:
+   - Root cause identified
+   - Proposed fix approach
+   - Estimated impact (files to change)
+   - Risk assessment
+5. **Fix ONLY after user approval** — Execute the fix only when user confirms the action plan
+
+### When This Protocol Applies
+
+- Any error that occurs during task-executor execution
+- Build failures after code changes
+- Test failures that weren't expected
+- Quality-fixer reporting persistent issues
+
+### When This Protocol Does NOT Apply
+
+- Expected test failures during Red-Green-Refactor (TDD red phase)
+- Linting warnings that quality-fixer can auto-fix
+- Known/documented environment issues
+
+## Metacognitive TodoWrite Integration
+
+When rule-advisor returns its analysis, the orchestrator MUST formalize the metacognitive outputs into TodoWrite entries for tracking:
+
+### Mapping Rule-Advisor Output → TodoWrite
+
+| Rule-Advisor Output Field | TodoWrite Usage |
+|---|---|
+| `metaCognitiveGuidance.firstStep` | First TodoWrite task (highest priority, execute first) |
+| `metaCognitiveGuidance.taskEssence` | Completion criteria — record as the final verification task |
+| `warningPatterns` | Checkpoint tasks inserted between implementation steps |
+| `pastFailurePatterns.countermeasures` | Guard tasks — verify these are not violated during execution |
+
+### TodoWrite Structure After Rule-Advisor
+
+```
+1. [in_progress] {firstStep from rule-advisor}
+2. [pending] Checkpoint: Verify {warningPattern[0]} not triggered
+3. [pending] Implementation step 1
+4. [pending] Checkpoint: Verify {warningPattern[1]} not triggered
+5. [pending] Implementation step 2
+...
+N-1. [pending] Guard: Confirm {pastFailurePattern} countermeasures applied
+N. [pending] Verify task essence: {taskEssence}
+```
+
+### Rules
+
+1. Checkpoints are inserted between every 2-3 implementation steps
+2. Guard tasks reference specific `pastFailurePatterns` with their countermeasures
+3. The final task ALWAYS verifies `taskEssence` from rule-advisor
+4. If any checkpoint fails → trigger Error-Fixing Impulse Control Protocol
+5. TodoWrite updates MUST happen before and after each checkpoint evaluation
 
 ### Commit Strategy Selection
 

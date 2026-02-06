@@ -42,6 +42,55 @@ Details of documentation creation criteria follow documentation-criteria skill.
 
 ## Mandatory Process Before Design Doc Creation
 
+### Standards Identification Gate【Required】
+Must be performed before any investigation:
+
+**REQUIRED**: Before beginning design work, identify all applicable standards in the project:
+
+#### Explicit Standards (from configuration files)
+Scan the project for:
+- Linter configurations (ESLint, Biome, Pylint, etc.)
+- Formatter configurations (Prettier, Black, etc.)
+- CI/CD pipeline rules
+- Type checking configurations (tsconfig, mypy, etc.)
+- Test coverage thresholds
+- Build tool configs (webpack, vite, etc.)
+- Test framework configs
+
+#### Implicit Standards (from code patterns)
+Analyze existing code to identify:
+- Naming conventions in use
+- Error handling patterns
+- Module organization patterns
+- API design patterns
+- Data access patterns
+- Architecture patterns (layered, hexagonal, etc.)
+- Dependency injection approach
+
+#### Classification Table (required in Design Doc)
+```
+| Standard | Type | Source | Impact on Design |
+|----------|------|--------|-----------------|
+| Example: Biome strict mode | Explicit | biome.json | All new code must pass strict linting |
+| Example: Repository pattern | Implicit | src/repos/*.ts | Data access must follow repository pattern |
+```
+
+**Gate Rule**: Design work cannot proceed until at least 3 explicit and 2 implicit standards are identified. If fewer are found, investigate more thoroughly.
+
+#### Recording and Alignment
+1. **Identify Project Standards**
+   - Scan project configuration, rule files, and existing code patterns
+   - Classify each: **Explicit** (documented) or **Implicit** (observed pattern only)
+
+2. **Record in Design Doc**
+   - List in "Applicable Standards" section with `[explicit]`/`[implicit]` tags
+   - Include the Classification Table above
+   - Implicit standards require user confirmation before design proceeds
+
+3. **Alignment Rule**
+   - Design decisions must reference applicable standards
+   - Deviations require documented rationale
+
 ### Existing Code Investigation【Required】
 Must be performed before Design Doc creation:
 
@@ -67,6 +116,32 @@ Must be performed before Design Doc creation:
    - Clearly document similar functionality search results (found implementations or "none")
    - Record adopted decision (use existing/improvement proposal/new implementation) and rationale
 
+5. **Code Inspection Evidence** (Required Section)
+   The Design Doc MUST include a "Code Inspection Evidence" section documenting:
+
+   #### What Was Examined
+   - List of files/modules inspected (with paths)
+   - Specific functions/classes analyzed
+   - Number of files inspected vs total in affected area
+
+   #### Key Findings
+   - Existing patterns that the design must follow
+   - Existing code that will be reused
+   - Existing code that will need modification
+   - Potential conflicts with existing implementation
+
+   #### How Findings Influence Design
+   - Design decisions driven by existing code patterns
+   - Constraints imposed by current architecture
+   - Opportunities identified from code inspection
+
+   Format:
+   | File Inspected | Key Finding | Design Impact |
+   |---------------|-------------|---------------|
+   | src/auth/handler.ts:45 | Uses middleware pattern | Adopt same pattern for new feature |
+
+   **Rule**: A Design Doc without Code Inspection Evidence section is considered incomplete and will fail document-reviewer Gate 0.
+
 ### Integration Point Analysis【Important】
 Clarify integration points with existing systems when adding new features or modifying existing ones:
 
@@ -89,6 +164,40 @@ Clarify integration points with existing systems when adding new features or mod
    - Create "## Integration Point Map" section
    - Clarify responsibilities and boundaries at each integration point
    - Define error behavior at design phase
+
+### Data Representation Decision【Required】
+For every new data structure in the design, explicitly document the reuse-vs-new decision:
+
+**Decision Record (required in Design Doc):**
+| Data Structure | Decision | Rationale |
+|---|---|---|
+| Example: UserProfile | **Reuse** existing User type + extend | Existing type covers 80% of fields, extension is cleaner than duplication |
+| Example: AuditLog | **New** dedicated type | No existing type matches audit requirements, forcing fit would compromise both |
+
+**Decision Criteria:**
+1. **Can existing types be reused?** Search for types with >60% field overlap
+2. **Would reuse require breaking changes?** If yes, consider new type
+3. **Are there consumers of existing types?** Reuse impacts all consumers
+4. **Is the domain concept truly new?** New concepts deserve new types
+
+**Reuse Assessment:**
+- Search existing codebase for similar data structures
+- If existing structure covers 80%+ of needs -> Extend existing
+- If existing structure covers <80% -> Create new with clear justification
+
+**Evaluation Criteria:**
+- Semantic fit: Does the existing structure represent the same concept?
+- Responsibility fit: Does it belong to the same bounded context?
+- Lifecycle fit: Do instances share creation/deletion patterns?
+- Boundary/interop cost: Would reuse create unwanted coupling?
+
+**Decision Rule:**
+- All criteria satisfied -> Reuse existing
+- 1-2 criteria fail -> Evaluate extension with adapter
+- 3+ criteria fail -> New structure justified
+- Record decision and rationale in Design Doc
+
+**Rule**: Every Design Doc must explicitly state for each new data structure whether it reuses existing types or creates new ones, with rationale.
 
 ### Agreement Checklist【Most Important】
 Must be performed at the beginning of Design Doc creation:
@@ -132,6 +241,44 @@ Indirect Impact:
 No Ripple Effect:
   - [Explicitly list unaffected components]
 ```
+
+### Field Propagation Map【Required for multi-layer changes】
+When the design involves data flowing between layers or modules, the Design Doc MUST include a Field Propagation Map:
+
+```yaml
+# Field Propagation Map
+fields:
+  - name: "fieldName"
+    origin: "API Request / Database / User Input / etc."
+    transformations:
+      - layer: "API Layer"
+        type: "RequestDTO"
+        validation: "required, max 255 chars"
+      - layer: "Service Layer"
+        type: "DomainModel"
+        transformation: "trimmed, lowercased"
+      - layer: "Repository Layer"
+        type: "Entity"
+        transformation: "mapped to DB column"
+    destination: "Database table.column / API Response / UI Component"
+    loss_risk: "none | low | medium | high"
+    loss_risk_reason: "Optional explanation if risk > none"
+```
+
+This map prevents data loss between layers and ensures all transformations are intentional.
+
+#### When Required
+- New fields added to existing data flows
+- Changes to data transformation logic
+- Cross-layer feature implementations
+- API contract changes
+
+#### When NOT Required
+- Pure UI changes with no data flow
+- Configuration-only changes
+- Documentation updates
+
+Skip if no fields cross component boundaries.
 
 ### Interface Change Impact Analysis【Required】
 
@@ -296,6 +443,10 @@ Implementation sample creation checklist:
 - [ ] Implementation approach selection rationale (vertical/horizontal/hybrid)
 - [ ] Latest best practices researched and references cited
 - [ ] **Complexity assessment**: complexity_level set; if medium/high, complexity_rationale specifies (1) requirements/ACs, (2) constraints/risks
+- [ ] **Standards Identification Gate completed** (required) — at least 3 explicit and 2 implicit standards identified, Classification Table included
+- [ ] **Code Inspection Evidence section included** (required) — "What Was Examined", "Key Findings", and "How Findings Influence Design" subsections present
+- [ ] **Field Propagation Map included** (if multi-layer) — with loss_risk assessment for each field, "When Required" criteria checked
+- [ ] **Data Representation Decisions documented** (when new structures introduced) — explicit reuse-vs-new decision with rationale for every new data structure
 
 
 ## Acceptance Criteria Creation Guidelines

@@ -1,6 +1,6 @@
 {
   "name": "fullstack-workflow",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "description": "Full-stack development with backend + frontend orchestrated agents, comprehensive skills, and MCP integration (context7, sequential-thinking, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -25,6 +25,7 @@
   ],
   "commands": [
     "./commands/add-integration-tests.md",
+    "./commands/audit.md",
     "./commands/brand-context.md",
     "./commands/build.md",
     "./commands/design.md",
@@ -41,14 +42,19 @@
     "./commands/reverse-engineer.md",
     "./commands/review.md",
     "./commands/sync-skills.md",
-    "./commands/task.md"
+    "./commands/task.md",
+    "./commands/update-doc.md",
+    "./commands/uxdoc.md"
   ],
   "agents": [
     "./agents/acceptance-test-generator.md",
+    "./agents/codebase-scanner.md",
+    "./agents/cleanup-executor.md",
     "./agents/code-reviewer.md",
     "./agents/code-verifier.md",
     "./agents/design-sync.md",
     "./agents/document-reviewer.md",
+    "./agents/expert-analyst.md",
     "./agents/integration-test-reviewer.md",
     "./agents/investigator.md",
     "./agents/prd-creator.md",
@@ -72,6 +78,7 @@
     "./skills/brand-system-guide",
     "./skills/coding-principles",
     "./skills/documentation-criteria",
+    "./skills/expert-analysis-guide",
     "./skills/frontend-ai-guide",
     "./skills/implementation-approach",
     "./skills/integration-e2e-testing",
@@ -80,6 +87,7 @@
     "./skills/task-analyzer",
     "./skills/technical-spec",
     "./skills/testing-principles",
+    "./skills/type-safety-standards",
     "./skills/typescript-rules",
     "./skills/typescript-testing"
   ],

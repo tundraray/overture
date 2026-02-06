@@ -86,6 +86,31 @@ For each valid AC from Phase 1:
    - Integration test candidate (feature-level interaction)
    - E2E test candidate (complete user journey)
 
+### Property-Based Test Candidates
+
+In addition to Integration and E2E classifications, identify candidates for property-based testing:
+
+**Classification Criteria — When to use Property-Based Tests:**
+- Mathematical properties (commutativity, associativity, idempotency)
+- Serialization/deserialization roundtrips: `deserialize(serialize(x)) === x`
+- Invariants that must hold for ALL inputs (e.g., sorted array length equals input length)
+- Data transformation reversibility
+- Boundary conditions across large input spaces
+- Encoder/decoder pairs
+
+**Property Test Candidate Annotation:**
+```
+// Test Type: Property
+// Property: For any valid [input type], [invariant description]
+// Generator: [description of input generation strategy]
+// Shrinking: [what minimal failing case might look like]
+```
+
+**When NOT to use Property-Based Tests:**
+- UI interaction testing (use E2E instead)
+- Specific business rule validation with known expected outputs (use unit tests)
+- External API integration (use integration tests with mocks)
+
 3. **Annotate metadata**:
    - Business value: 0-10 (revenue impact)
    - User frequency: 0-10 (% of users)
