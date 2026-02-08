@@ -1,5 +1,5 @@
 ---
-name: project-context
+name: setup-context
 description: Inject project-specific context into project-context.md
 argument-hint: (no arguments - interactive setup)
 ---

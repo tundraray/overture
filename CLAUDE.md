@@ -201,7 +201,7 @@ Update version in `/.claude-plugin/marketplace.json`
 ### Backend Commands (backend-overture)
 - `/implement` - Full-cycle feature development
 - `/design` - Design document creation
-- `/plan` - Work plan generation
+- `/create-plan` - Work plan generation
 - `/build` - Execute from existing task plan
 - `/task` - Single task with precision
 - `/review` - Design compliance check
