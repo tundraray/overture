@@ -1,4 +1,4 @@
-# Overture 🚀
+# Overture
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple)](https://claude.ai/code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -7,15 +7,13 @@
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
-This marketplace includes three plugins:
+This marketplace includes three workflow plugins:
 
 - **backend-overture** - Node.js/TypeScript backend development
 - **frontend-overture** - React/TypeScript frontend development
 - **fullstack-overture** - Full-stack development (backend + frontend)
-
-Choose what fits your project:
 
 ### Backend Development (Node.js/TypeScript)
 
@@ -59,7 +57,7 @@ claude
 
 Or install backend + frontend separately for more control.
 
-> **Note**: If you encounter SSH errors during installation, see [SSH Setup FAQ](#ssh-authentication-error-during-plugin-installation) below.
+> **Note**: If you encounter SSH errors during installation, see [FAQ](docs/overture/faq.md#ssh-authentication-error-during-plugin-installation).
 >
 > **Windows users**: This plugin uses symlinks. Before installing, enable symlink support in Git:
 > ```bash
@@ -69,215 +67,85 @@ Or install backend + frontend separately for more control.
 
 ---
 
-## 🔧 How It Works
-
-### The Workflow
+## How It Works
 
 ```mermaid
 graph TB
-    A[👤 User Request] --> B[🔍 requirement-analyzer]
+    A[User Request] --> B[requirement-analyzer]
 
-    B --> |"📦 Large (6+ files)"| C[📄 prd-creator]
-    B --> |"📦 Medium (3-5 files)"| EX{Expert Analysis?}
-    B --> |"📦 Small (1-2 files)"| E[⚡ Direct Implementation]
+    B --> |"Large (6+ files)"| C[prd-creator]
+    B --> |"Medium (3-5 files)"| EX{Expert Analysis?}
+    B --> |"Small (1-2 files)"| E[Direct Implementation]
 
     C --> EX
-    EX --> |Optional| EA[🎭 expert-analyst ×3-5 in parallel]
-    EX --> |Skip| D[📐 technical-designer]
+    EX --> |Optional| EA[expert-analyst x3-5 in parallel]
+    EX --> |Skip| D[technical-designer]
     EA --> D
-    D --> DR[📋 document-reviewer]
-    DR --> DS[🔄 design-sync]
-    DS --> F[🧪 acceptance-test-generator]
-    F --> G[📋 work-planner]
-    G --> H[✂️ task-decomposer]
+    D --> DR[document-reviewer]
+    DR --> DS[design-sync]
+    DS --> F[acceptance-test-generator]
+    F --> G[work-planner]
+    G --> H[task-decomposer]
 
-    H --> I[🔨 task-executor]
+    H --> I[task-executor]
     E --> I
 
-    I --> J[✅ quality-fixer]
-    J --> K[🎉 Ready to Commit]
+    I --> J[quality-fixer]
+    J --> K[Ready to Commit]
 ```
 
-### The Diagnosis Workflow
-
-```mermaid
-graph LR
-    P[🐛 Problem] --> INV[🔍 investigator]
-    INV --> |Evidence Matrix| ASS{Complex?}
-    ASS --> |Yes| VER[⚖️ verifier]
-    ASS --> |No| SOL[💡 solver]
-    VER --> |Validated Conclusion| SOL
-    SOL --> |Solutions + Steps| R[📋 Report]
-```
-
-### The Audit Workflow
-
-```mermaid
-graph LR
-    A[🧹 /audit] --> S[🔍 codebase-scanner]
-    S --> |Findings| R{Review each item}
-    R --> |Delete / Keep / Deprecate| C[✅ Confirm cleanup]
-    C --> X[🧹 cleanup-executor]
-    X --> |Safety branch + build check| D[📋 Report]
-```
-
-### The Reverse Engineering Workflow
-
-```mermaid
-graph TB
-    subgraph Phase1[Phase 1: PRD Generation]
-        CMD[📜 /reverse-engineer] --> SD1[🔍 scope-discoverer]
-        SD1 --> PRD[📄 prd-creator]
-        PRD --> CV1[✅ code-verifier]
-        CV1 --> DR1[📋 document-reviewer]
-    end
-
-    subgraph Phase2[Phase 2: Design Doc Generation]
-        SD2[🔍 scope-discoverer] --> DD[📐 technical-designer]
-        DD --> CV2[✅ code-verifier]
-        CV2 --> DR2[📋 document-reviewer]
-        DR2 --> DONE[📚 Complete]
-    end
-
-    DR1 --> |All PRDs Approved| SD2
-```
-
-### What Happens Behind the Scenes
-
-1. **Analysis** - Figures out how complex your task is
-2. **Expert Analysis** - (Optional) Parallel multi-perspective evaluation before design
-3. **Planning** - Creates the right docs (PRD, design doc, work plan) based on complexity
-4. **Execution** - Specialized agents handle implementation autonomously
-5. **Quality** - Runs tests, checks types, fixes errors automatically
-6. **Review** - Makes sure everything matches the design
-7. **Done** - Clean, production-ready code
+The plugin analyzes your request, scales the workflow to match complexity, and delegates to specialized agents -- each with fresh context and enforced best practices. See [all workflow diagrams](docs/overture/workflows.md).
 
 ---
 
-## ⚡ Workflow Commands
+## Commands
 
-### Backend Development (backend-overture)
+### Backend (backend-overture)
 
-| Command | Purpose | When to Use |
-|---------|---------|-------------|
-| `/implement` | End-to-end feature development | New features, complete workflows |
-| `/task` | Execute single task with precision | Bug fixes, small changes |
-| `/design` | Create design documentation | Architecture planning |
-| `/create-plan` | Generate work plan from design | Planning phase |
-| `/build` | Execute from existing task plan | Resume implementation |
-| `/review` | Verify code against design docs | Post-implementation check |
-| `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
-| `/reverse-engineer` | Generate PRD/Design Docs from existing code | Legacy system documentation, codebase understanding |
-| `/add-integration-tests` | Add integration/E2E tests to existing code | Test coverage for existing implementations |
-| `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
-| `/setup-context` | Initialize project-context skill | New project setup |
-| `/refine-skill` | Improve and refine existing skills | Skill optimization |
-| `/sync-skills` | Synchronize skills across plugins | Skill management |
+| Command | Purpose |
+|---------|---------|
+| `/implement` | End-to-end feature development |
+| `/task` | Single task with precision |
+| `/diagnose` | Root cause analysis |
+| `/reverse-engineer` | Generate docs from existing code |
 
-### Frontend Development (frontend-overture)
+[All backend commands](docs/overture/commands.md#backend-development-backend-overture)
 
-| Command | Purpose | When to Use |
-|---------|---------|-------------|
-| `/front-design` | Create frontend design docs | React component architecture |
-| `/front-plan` | Generate frontend work plan | Component breakdown planning |
-| `/front-build` | Execute frontend task plan | Resume React implementation |
-| `/front-review` | Verify code against design docs | Post-implementation check |
-| `/front-reverse-design` | Generate frontend Design Docs from existing code using PRD | Frontend component documentation |
-| `/task` | Execute single task with precision | Component fixes, small updates |
-| `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
-| `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
-| `/setup-context` | Initialize project-context skill | New project setup |
-| `/brand-context` | Initialize brand-system-guide skill | Brand/design system setup |
-| `/refine-skill` | Improve and refine existing skills | Skill optimization |
-| `/sync-skills` | Synchronize skills across plugins | Skill management |
+### Frontend (frontend-overture)
 
-> **Tip**: All plugins share `/task`, `/diagnose`, `/audit`, `/setup-context`, `/refine-skill`, and `/sync-skills`. `/brand-context` is only in frontend-overture. For reverse engineering, use `/reverse-engineer` (backend-overture) to generate PRD, then `/front-reverse-design` (frontend-overture) to generate frontend Design Docs from that PRD.
+| Command | Purpose |
+|---------|---------|
+| `/front-design` | Frontend design docs |
+| `/front-build` | Execute React implementation |
+| `/task` | Single task with precision |
+| `/diagnose` | Root cause analysis |
+
+[All frontend commands](docs/overture/commands.md#frontend-development-frontend-overture)
 
 ---
 
-## 📦 Specialized Agents
+## Expert Plugins
 
-### Shared Agents (Available in All Plugins)
+Standalone skill plugins that give Claude Code deep domain expertise:
 
-These agents work the same way whether you're building a REST API or a React app:
+| Plugin | Domain | Description |
+|--------|--------|-------------|
+| [**javascript-expert**](docs/experts/javascript.md) | Language | ES2024+, async patterns, Node.js 22+, V8 internals, security |
+| [**nestjs-expert**](docs/experts/nestjs.md) | Backend | Enterprise NestJS architecture, DI, CQRS, database patterns |
+| [**nextjs-developer**](docs/experts/nextjs.md) | Frontend | App Router, RSC, caching architecture, deployment |
+| [**playwright-expert**](docs/experts/playwright.md) | Quality | E2E test architecture, Page Object Model, CI optimization |
+| [**postgres-expert**](docs/experts/postgres.md) | Infrastructure | Query planner, partitioning, replication, security hardening |
 
-| Agent | What It Does |
-|-------|--------------|
-| **requirement-analyzer** | Figures out how complex your task is and picks the right workflow |
-| **expert-analyst** | Multi-perspective analysis from expert viewpoint (Security, Architecture, Performance, etc.) — spawned in parallel |
-| **work-planner** | Breaks down design docs into actionable tasks |
-| **task-decomposer** | Splits work into small, commit-ready chunks |
-| **code-reviewer** | Checks your code against design docs to make sure nothing's missing |
-| **document-reviewer** | Reviews single document quality, completeness, and rule compliance |
-| **design-sync** | Verifies consistency across multiple Design Docs and detects conflicts |
-| **codebase-scanner** | Scans for dead code, orphan files, unused exports across 7 categories |
-| **cleanup-executor** | Safely removes confirmed dead code with git branch backup and build verification |
-| **investigator** | Collects evidence, enumerates hypotheses, builds evidence matrix for problem diagnosis |
-| **verifier** | Validates investigation results using ACH and Devil's Advocate methods |
-| **solver** | Generates solutions with tradeoff analysis and implementation steps |
-| **scope-discoverer** | Discovers PRD/Design Doc targets from codebase for reverse engineering |
-| **code-verifier** | Validates consistency between documentation and code implementation |
+Install any expert plugin:
 
-### Backend-Specific Agents (backend-overture)
-
-| Agent | What It Does |
-|-------|--------------|
-| **prd-creator** | Writes product requirement docs for complex features |
-| **technical-designer** | Plans architecture and tech stack decisions |
-| **acceptance-test-generator** | Creates E2E and integration test scaffolds from requirements |
-| **integration-test-reviewer** | Reviews integration/E2E tests for skeleton compliance and quality |
-| **task-executor** | Implements backend features with TDD |
-| **quality-fixer** | Runs tests, fixes type errors, handles linting - everything quality-related |
-| **rule-advisor** | Picks the best coding rules for your current task |
-
-### Frontend-Specific Agents (frontend-overture)
-
-| Agent | What It Does |
-|-------|--------------|
-| **prd-creator** | Writes product requirement docs for complex features |
-| **technical-designer-frontend** | Plans React component architecture and state management |
-| **ux-designer** | Creates UX Requirement Documentation (UXRD) with interaction patterns and accessibility specs |
-| **task-executor-frontend** | Implements React components with Testing Library |
-| **quality-fixer-frontend** | Handles React-specific tests, TypeScript checks, and builds |
-| **rule-advisor** | Picks the best coding rules for your current task |
-| **design-sync** | Verifies consistency across multiple Design Docs and detects conflicts |
+```bash
+/plugin marketplace add tundraray/overture
+/plugin install <plugin-name>@overture
+```
 
 ---
 
-## 📚 Skills (Best Practices)
-
-Skills are knowledge modules that agents load automatically when relevant.
-
-### backend-overture (11 skills)
-
-| Skill | Description |
-|-------|-------------|
-| **ai-development-guide** | AI-assisted development patterns and anti-patterns |
-| **coding-principles** | Code quality standards with expert reasoning calibration |
-| **documentation-criteria** | PRD/ADR/Design Doc templates and criteria |
-| **expert-analysis-guide** | Multi-expert parallel analysis framework |
-| **implementation-approach** | Design decisions and trade-offs |
-| **integration-e2e-testing** | Integration and E2E test patterns |
-| **project-context** | Project-specific context (customizable via `/setup-context`) |
-| **subagents-orchestration-guide** | Agent coordination rules |
-| **task-analyzer** | Task complexity analysis |
-| **technical-spec** | Technical design rules and build/testing commands |
-| **testing-principles** | TDD, coverage, test patterns |
-
-### frontend-overture (15 skills)
-
-All skills from backend-overture (except integration-e2e-testing) plus:
-
-| Skill | Description |
-|-------|-------------|
-| **brand-system-guide** | Design system setup (customizable via `/brand-context`) |
-| **frontend-ai-guide** | React-specific AI development patterns |
-| **typescript-rules** | TypeScript best practices for React |
-| **typescript-testing** | React Testing Library patterns |
-
----
-
-## 🚀 Why Use These Plugins?
+## Why Use These Plugins?
 
 ### The Problem
 
@@ -308,275 +176,36 @@ The frontend plugin is built specifically for React development:
 
 ---
 
-## 💡 Real-World Examples
+## Documentation
 
-### What People Have Built
+### Overture Plugins
 
-#### [Sub-Agents MCP Server](https://github.com/shinpr/sub-agents-mcp)
-Built in 2 days - 30 TypeScript files with full test coverage, now running in production.
+- [Workflows](docs/overture/workflows.md) - All workflow diagrams and how they work
+- [Commands](docs/overture/commands.md) - Complete command reference
+- [Agents](docs/overture/agents.md) - All specialized agents
+- [Skills](docs/overture/skills.md) - Knowledge modules loaded by agents
+- [Examples](docs/overture/examples.md) - Real-world examples and typical workflows
+- [Architecture](docs/overture/architecture.md) - Repository structure
+- [FAQ](docs/overture/faq.md) - Common questions and SSH setup
 
-#### [MCP Image Generator](https://github.com/shinpr/mcp-image)
-Built in 1.5 days - Complete creative tool with multi-image blending and character consistency.
+### Expert Plugins
 
-> The right workflow structure + specialized agents = production-quality code at AI speed.
-
----
-
-## 🎯 Typical Workflows
-
-### Backend Feature Development
-
-```bash
-/implement "Add user authentication with JWT"
-
-# What happens:
-# 1. Analyzes your requirements
-# 2. Creates design documents
-# 3. Breaks down into tasks
-# 4. Implements with TDD
-# 5. Runs tests and fixes issues
-# 6. Reviews against design docs
-```
-
-### Frontend Feature Development
-
-```bash
-/front-design "Build a user profile dashboard"
-
-# What happens:
-# 1. Plans React component structure
-# 2. Defines state management approach
-# 3. Creates work plan
-#
-# Then run:
-/front-build
-
-# This:
-# 1. Implements components with Testing Library
-# 2. Writes tests for each component
-# 3. Handles TypeScript types
-# 4. Fixes lint and build errors
-```
-
-### Quick Fixes (All Plugins)
-
-```bash
-/task "Fix validation error message"
-
-# Direct implementation with quality checks
-# Works the same in both plugins
-```
-
-### Code Review
-
-```bash
-/review
-
-# Checks your implementation against design docs
-# Catches missing features or inconsistencies
-```
-
-### Problem Diagnosis (All Plugins)
-
-```bash
-/diagnose "API returns 500 error on user login"
-
-# What happens:
-# 1. Investigator collects evidence from code, logs, git history
-# 2. Builds evidence matrix with multiple hypotheses
-# 3. Verifier validates findings with ACH and Devil's Advocate
-# 4. Solver generates solutions with tradeoff analysis
-# 5. Presents actionable implementation steps
-```
-
-### Codebase Audit (All Plugins)
-
-```bash
-/audit "src/"
-
-# What happens:
-# 1. Scans for dead code, orphan files, unused exports
-# 2. Reviews each finding with you interactively
-# 3. Creates safety branch before any deletions
-# 4. Removes confirmed dead code with build verification
-# 5. Reverts automatically if anything breaks
-```
-
-### Reverse Engineering
-
-**Backend (backend-overture):**
-
-```bash
-/reverse-engineer "src/auth module"
-
-# What happens:
-# 1. Discovers PRD targets (user value units) from code
-# 2. Generates PRD for each feature
-# 3. Verifies PRD against actual code
-# 4. Reviews and revises until consistent
-# 5. Discovers Design Doc targets (technical components)
-# 6. Generates backend Design Docs with code verification
-# 7. Produces complete documentation from existing code
-```
-
-**Frontend (frontend-overture):**
-
-```bash
-# First, generate PRD using backend-overture's /reverse-engineer
-# Then, generate frontend Design Docs from existing PRD:
-
-/front-reverse-design "docs/prd/my-feature-prd.md"
-
-# What happens:
-# 1. Uses existing PRD as basis
-# 2. Discovers frontend component targets
-# 3. Generates frontend Design Docs with code verification
-# 4. Reviews and revises until consistent
-```
-
-> If you're working with undocumented legacy code, these commands are designed to make it AI-friendly by generating PRD and design docs.
-> For a quick walkthrough, see: [How I Made Legacy Code AI-Friendly with Auto-Generated Docs](https://dev.to/shinpr/how-i-made-legacy-code-ai-friendly-with-auto-generated-docs-4353)
+- [JavaScript Expert](docs/experts/javascript.md)
+- [NestJS Expert](docs/experts/nestjs.md)
+- [Next.js Developer](docs/experts/nextjs.md)
+- [Playwright Expert](docs/experts/playwright.md)
+- [PostgreSQL Expert](docs/experts/postgres.md)
 
 ---
 
-## 📂 Repository Structure
+## Acknowledgments
 
-```
-overture/
-├── .claude-plugin/
-│   └── marketplace.json        # Manages all plugins
-│
-├── agents/                     # Shared agents (symlinked by all plugins)
-│   ├── code-reviewer.md
-│   ├── expert-analyst.md       # Multi-expert analysis
-│   ├── codebase-scanner.md     # Dead code detection
-│   ├── cleanup-executor.md     # Safe code removal
-│   ├── investigator.md         # Diagnosis workflow
-│   ├── verifier.md             # Diagnosis workflow
-│   ├── solver.md               # Diagnosis workflow
-│   ├── scope-discoverer.md     # Reverse engineering workflow
-│   ├── code-verifier.md        # Reverse engineering workflow
-│   ├── ux-designer.md          # UX/UI design (frontend)
-│   ├── task-executor.md
-│   ├── technical-designer.md
-│   └── ...
-│
-├── commands/                   # Shared commands
-│   ├── implement.md
-│   ├── design.md
-│   ├── audit.md                # Dead code audit
-│   ├── diagnose.md             # Problem diagnosis
-│   ├── reverse-engineer.md     # Reverse documentation
-│   ├── project-context.md      # Project context initialization
-│   ├── brand-context.md        # Brand system initialization
-│   ├── plan.md
-│   ├── build.md
-│   └── ...
-│
-├── skills/                     # Skills (auto-loaded by agents)
-│   ├── ai-development-guide/
-│   ├── coding-principles/
-│   ├── testing-principles/
-│   ├── expert-analysis-guide/  # Multi-expert analysis framework
-│   ├── implementation-approach/
-│   ├── project-context/        # Project-specific context
-│   ├── technical-spec/         # Technical design rules
-│   ├── brand-system-guide/     # Brand design system
-│   ├── typescript-rules/       # Frontend-specific
-│   └── ...
-│
-├── backend/                    # backend-overture plugin
-│   ├── agents/                 # Symlinks to shared agents
-│   ├── commands/               # Symlinks to shared commands
-│   ├── skills/                 # Symlinks to shared skills
-│   └── .claude-plugin/
-│       └── plugin.json
-│
-├── frontend/                   # frontend-overture plugin
-│   ├── agents/                 # Symlinks to shared agents
-│   ├── commands/               # Symlinks to shared commands
-│   ├── skills/                 # Symlinks to shared skills
-│   └── .claude-plugin/
-│       └── plugin.json
-│
-├── fullstack/                  # fullstack-overture plugin
-│   ├── agents/                 # Symlinks to shared agents
-│   ├── commands/               # Symlinks to shared commands
-│   ├── skills/                 # Symlinks to shared skills
-│   └── .claude-plugin/
-│       └── plugin.json
-│
-├── LICENSE
-└── README.md
-```
+Special thanks to [Shinsuke Kagawa](https://github.com/shinpr) for creating the original Claude Code Workflows -- an excellent foundation for building production-ready software with Claude Code. The well-designed agent orchestration architecture and comprehensive workflow system made this project possible.
 
 ---
 
-## 🤔 FAQ
-
-**Q: Which plugin should I install?**
-
-A: Depends on what you're building:
-- **Node.js backend, APIs, CLI tools** → Install `backend-overture`
-- **React/TypeScript frontend** → Install `frontend-overture`
-- **Full-stack projects** → Install `fullstack-overture` (or both backend + frontend separately)
-
-**Q: Can I use both plugins at the same time?**
-
-A: Yes! They're designed to work together. Install both if you're building a full-stack app.
-
-**Q: Do I need to learn special commands?**
-
-A: Not really. For backend, just use `/implement`. For frontend, use `/front-design`. The plugins handle everything else automatically.
-
-**Q: What if there are errors?**
-
-A: The quality-fixer agents (one in each plugin) automatically fix most issues like test failures, type errors, and lint problems. If something can't be auto-fixed, you'll get clear guidance on what needs attention.
-
-**Q: SSH authentication error during plugin installation?**
-A: Set up SSH keys for GitHub:
-
-```bash
-# 1. Check if SSH key already exists
-ls ~/.ssh/id_ed25519.pub
-
-# 2. Generate new SSH key (if needed)
-ssh-keygen -t ed25519 -C "your_email@example.com"
-# → Press Enter to save to default location
-# → Enter a strong passphrase when prompted (recommended for security)
-
-# 3. Add SSH key to ssh-agent
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
-
-# 4. Copy public key to clipboard
-cat ~/.ssh/id_ed25519.pub
-# → Copy the output
-
-# 5. Add to GitHub
-# Go to https://github.com/settings/keys
-# Click "New SSH key"
-# Paste your public key and save
-
-# 6. Test connection
-ssh -T git@github.com
-# → Should see: "Hi username! You've successfully authenticated..."
-```
-
----
-
-## 🙏 Acknowledgments
-
-Special thanks to [Shinsuke Kagawa](https://github.com/shinpr) for creating the original Claude Code Workflows — an excellent foundation for building production-ready software with Claude Code. The well-designed agent orchestration architecture and comprehensive workflow system made this project possible.
-
----
-
-## 📄 License
+## License
 
 MIT License - Free to use, modify, and distribute.
 
 See [LICENSE](LICENSE) for full details.
-
----
-
-**Happy Coding with Overture!** 🚀✨

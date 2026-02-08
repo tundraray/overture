@@ -1,6 +1,6 @@
 {
   "name": "postgres-expert",
-  "version": "0.17.0",
+  "version": "0.18.2",
   "description": "Senior+ PostgreSQL expert covering query planner internals, index design, JSONB at scale, replication/failover, partitioning, transaction isolation, security hardening, and production maintenance",
   "author": {
     "name": "Mikhail Andreev",
