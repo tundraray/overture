@@ -1,16 +1,16 @@
 ---
 name: setup-context
-description: Inject project-specific context into project-context.md
+description: Inject project-specific context into project-context skill SKILL.md
 argument-hint: (no arguments - interactive setup)
 ---
 
-**Command Context**: When using the boilerplate, collect project-specific context and update project-context.md.
+**Command Context**: When using the boilerplate, collect project-specific context and update `skills/project-context/SKILL.md`.
 
 ## Execution Process
 
 ### 1. Current State Verification
 
-! ls -la .claude/skills/project-context/SKILL.md
+! ls -la skills/project-context/SKILL.md
 ! cat package.json | grep -E '"name":|"description":'
 
 ### 2. Project Context Collection
@@ -38,11 +38,11 @@ Examples: "7-year audit log retention" "Mandatory approval workflow" "Real-time 
 
 **Think deeply** From the collected information, understand the project's essence and construct context focused on single responsibility.
 
-### 3. Generate project-context.md
+### 3. Generate SKILL.md
 
 ## AI Execution Accuracy Maximization Criteria
 
-Generated project-context.md must follow these criteria:
+Generated `skills/project-context/SKILL.md` must follow these criteria:
 
 ### Principles of Description
 
@@ -53,7 +53,7 @@ Generated project-context.md must follow these criteria:
 
 ### Responsibility Boundaries
 
-project-context.md's single responsibility is "project-specific contextual information" only:
+SKILL.md's single responsibility is "project-specific contextual information" only:
 
 - ✅ Include: Project objectives, target users, business constraints
 - ❌ Exclude: Tech stack (→technical-spec.md), implementation principles (→typescript.md), architecture (→technical-spec.md)
@@ -84,4 +84,4 @@ project-context.md's single responsibility is "project-specific contextual infor
 
 Update the typical-use in the project-context section to match the project.
 
-**Scope**: Update project-context.md only. Technology choices are the responsibility of other skills.
+**Scope**: Update `skills/project-context/SKILL.md` only. Technology choices are the responsibility of other skills.
