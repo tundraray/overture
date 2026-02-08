@@ -1,6 +1,6 @@
 {
   "name": "playwright-expert",
-  "version": "0.17.0",
+  "version": "0.18.2",
   "description": "Senior E2E testing specialist with Playwright test architecture, Page Object Model, API mocking, and debugging expertise",
   "author": {
     "name": "Mikhail Andreev",
