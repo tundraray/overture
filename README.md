@@ -163,14 +163,14 @@ graph TB
 | `/implement` | End-to-end feature development | New features, complete workflows |
 | `/task` | Execute single task with precision | Bug fixes, small changes |
 | `/design` | Create design documentation | Architecture planning |
-| `/plan` | Generate work plan from design | Planning phase |
+| `/create-plan` | Generate work plan from design | Planning phase |
 | `/build` | Execute from existing task plan | Resume implementation |
 | `/review` | Verify code against design docs | Post-implementation check |
 | `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
 | `/reverse-engineer` | Generate PRD/Design Docs from existing code | Legacy system documentation, codebase understanding |
 | `/add-integration-tests` | Add integration/E2E tests to existing code | Test coverage for existing implementations |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
-| `/project-context` | Initialize project-context skill | New project setup |
+| `/setup-context` | Initialize project-context skill | New project setup |
 | `/refine-skill` | Improve and refine existing skills | Skill optimization |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 
@@ -186,12 +186,12 @@ graph TB
 | `/task` | Execute single task with precision | Component fixes, small updates |
 | `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
-| `/project-context` | Initialize project-context skill | New project setup |
+| `/setup-context` | Initialize project-context skill | New project setup |
 | `/brand-context` | Initialize brand-system-guide skill | Brand/design system setup |
 | `/refine-skill` | Improve and refine existing skills | Skill optimization |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 
-> **Tip**: All plugins share `/task`, `/diagnose`, `/audit`, `/project-context`, `/refine-skill`, and `/sync-skills`. `/brand-context` is only in frontend-overture. For reverse engineering, use `/reverse-engineer` (backend-overture) to generate PRD, then `/front-reverse-design` (frontend-overture) to generate frontend Design Docs from that PRD.
+> **Tip**: All plugins share `/task`, `/diagnose`, `/audit`, `/setup-context`, `/refine-skill`, and `/sync-skills`. `/brand-context` is only in frontend-overture. For reverse engineering, use `/reverse-engineer` (backend-overture) to generate PRD, then `/front-reverse-design` (frontend-overture) to generate frontend Design Docs from that PRD.
 
 ---
 
@@ -258,7 +258,7 @@ Skills are knowledge modules that agents load automatically when relevant.
 | **expert-analysis-guide** | Multi-expert parallel analysis framework |
 | **implementation-approach** | Design decisions and trade-offs |
 | **integration-e2e-testing** | Integration and E2E test patterns |
-| **project-context** | Project-specific context (customizable via `/project-context`) |
+| **project-context** | Project-specific context (customizable via `/setup-context`) |
 | **subagents-orchestration-guide** | Agent coordination rules |
 | **task-analyzer** | Task complexity analysis |
 | **technical-spec** | Technical design rules and build/testing commands |

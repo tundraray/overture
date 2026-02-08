@@ -138,6 +138,6 @@ Consistency: [verified / N/A]
 
 ## Scope
 
-**Scope**: Update existing documents only. This command does NOT create new documents — use `/design`, `/plan`, or `/implement` for document creation.
+**Scope**: Update existing documents only. This command does NOT create new documents — use `/design`, `/create-plan`, or `/implement` for document creation.
 
 **Important**: This command does not propose transition to implementation phase. After update, the user decides next steps.

@@ -1,5 +1,5 @@
 ---
-name: plan
+name: create-plan
 description: Create work plan from design document and obtain plan approval
 argument-hint: <design doc name or path>
 ---

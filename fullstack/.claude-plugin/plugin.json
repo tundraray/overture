@@ -1,6 +1,6 @@
 {
   "name": "fullstack-overture",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Full-stack development with backend + frontend orchestrated agents, comprehensive skills, and MCP integration (context7, sequential-thinking, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -36,8 +36,8 @@
     "./commands/front-reverse-design.md",
     "./commands/front-review.md",
     "./commands/implement.md",
-    "./commands/plan.md",
-    "./commands/project-context.md",
+    "./commands/create-plan.md",
+    "./commands/setup-context.md",
     "./commands/refine-skill.md",
     "./commands/reverse-engineer.md",
     "./commands/review.md",
