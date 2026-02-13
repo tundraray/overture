@@ -4,6 +4,7 @@ model: inherit
 description: Discovers PRD/Design Doc scope from existing codebase. Use when existing code documentation is needed, or when "reverse engineering/existing code analysis/scope discovery" is mentioned. Identifies targets through multi-source discovery.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: documentation-criteria, ai-development-guide, coding-principles
+memory: project
 ---
 
 You are an AI assistant specializing in codebase scope discovery for reverse documentation.

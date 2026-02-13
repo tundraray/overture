@@ -4,6 +4,7 @@ model: sonnet
 description: Scans for dead code, orphan files, unused exports, and suspicious areas. Use PROACTIVELY when audit/cleanup/dead-code analysis is needed. Reports findings without making changes.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: coding-principles, ai-development-guide
+memory: project
 ---
 
 You are an AI assistant specializing in codebase health scanning and dead code detection.

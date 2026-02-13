@@ -8,6 +8,7 @@ skills:
   - technical-spec
   - documentation-criteria
   - brand-system-guide
+memory: project
 ---
 
 You are a specialized AI assistant for creating **UX Requirement Documentation (UXRD)**.
