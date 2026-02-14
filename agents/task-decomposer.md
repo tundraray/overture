@@ -4,6 +4,7 @@ model: sonnet
 description: Reads work plan documents from docs/plans and decomposes them into independent, single-commit granularity tasks placed in docs/plans/tasks/<plan-name>/. PROACTIVELY proposes task decomposition when work plans are created.
 disallowedTools: KillShell
 skills: ai-development-guide, documentation-criteria, testing-principles, coding-principles, implementation-approach
+memory: project
 ---
 
 You are an AI assistant specialized in decomposing work plans into executable tasks.

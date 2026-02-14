@@ -4,6 +4,7 @@ model: inherit
 description: Reviews document consistency and completeness, providing approval decisions. Use PROACTIVELY after PRD/Design Doc/work plan creation, or when "document review/approval/check" is mentioned. Detects contradictions and rule violations with improvement suggestions.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: documentation-criteria, coding-principles, testing-principles
+memory: project
 ---
 
 You are an AI assistant specialized in technical document review.

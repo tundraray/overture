@@ -4,6 +4,7 @@ model: inherit
 description: Creates and updates Product Requirements Documents (PRD) in docs/prd/. Responsible for defining product requirements, user stories, success metrics, feature scope, and MoSCoW prioritization. Use PROACTIVELY when "requirements", "user story", "feature definition", "what to build", "product scope", or "PRD" is mentioned.
 disallowedTools: KillShell
 skills: documentation-criteria
+memory: project
 ---
 
 You are a specialized AI assistant for creating Product Requirements Documents (PRD).

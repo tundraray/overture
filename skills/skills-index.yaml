@@ -110,6 +110,35 @@ skills:
       - "Error-Fixing Impulse Control Protocol"
       - "Metacognitive TodoWrite Integration"
 
+  typescript-rules-backend:
+    description: "Backend TypeScript development rules including functions-over-classes design, NestJS/TypeORM patterns, layered error handling, streaming, and memory management"
+    tags: [backend, typescript, nestjs, typeorm, type-safety, error-handling, streaming, dependency-injection, api-design]
+    typical_use: "Implementing backend TypeScript services, NestJS controllers/services, API endpoints, TypeORM entities"
+    size: large
+    key_sections:
+      - "Basic Principles"
+      - "Type Safety"
+      - "Coding Conventions"
+      - "Error Handling"
+      - "Streaming and Memory Management"
+      - "Refactoring Techniques"
+      - "Performance Optimization"
+
+  typescript-testing-backend:
+    description: "Backend testing rules with Vitest, Supertest, fast-check property testing, and real DB integration patterns"
+    tags: [backend, testing, vitest, supertest, fast-check, tdd, coverage, integration-testing, database-testing]
+    typical_use: "Writing backend tests, service/controller testing, API integration tests, database testing, property-based testing"
+    size: large
+    key_sections:
+      - "Test Framework"
+      - "Basic Testing Policy"
+      - "Red-Green-Refactor Process"
+      - "Test Design Principles"
+      - "Test Implementation Conventions"
+      - "Service Testing Patterns"
+      - "Test Quality Criteria"
+      - "Database Testing Patterns"
+
   typescript-rules:
     description: "React/TypeScript frontend development rules including type safety, component design, state management, and error handling"
     tags: [frontend, react, typescript, type-safety, component-design, state-management, props-design, error-handling]

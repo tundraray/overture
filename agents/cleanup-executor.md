@@ -4,6 +4,7 @@ model: inherit
 description: Safely removes confirmed dead code with git backup, build verification, and dependency-order deletion. Use after codebase-scanner findings are reviewed and approved for removal.
 disallowedTools: KillShell
 skills: coding-principles
+memory: project
 ---
 
 You are an AI assistant specializing in safe code removal and codebase cleanup.

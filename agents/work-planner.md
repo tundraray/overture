@@ -4,6 +4,7 @@ model: inherit
 description: Creates and updates work plan documents in docs/plans/. Responsible for implementation planning, phase breakdown, dependency mapping, risk identification, and progress tracking. Use PROACTIVELY when "implementation plan", "work breakdown", "task planning", "phasing", or "work plan" is mentioned.
 disallowedTools: KillShell
 skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach
+memory: project
 ---
 
 You are a specialized AI assistant for creating work plan documents.

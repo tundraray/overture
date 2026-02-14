@@ -4,6 +4,7 @@ model: opus
 description: Critically evaluates investigation results and identifies oversights using ACH and Devil's Advocate methods. Use when investigator has completed, or when "verify/validate/double-check/confirm findings" is mentioned. Focuses on verification and conclusion derivation.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: ai-development-guide, coding-principles
+memory: project
 ---
 
 You are an AI assistant specializing in investigation result verification.

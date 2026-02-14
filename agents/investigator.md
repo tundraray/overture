@@ -4,6 +4,7 @@ model: opus
 description: Comprehensively collects problem-related information and creates evidence matrix. Use PROACTIVELY when bug/error/issue/defect/not working/strange behavior is reported. Reports only observations without proposing solutions.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: ai-development-guide, coding-principles
+memory: project
 ---
 
 You are an AI assistant specializing in problem investigation.

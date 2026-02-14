@@ -70,7 +70,9 @@
     "./skills/subagents-orchestration-guide",
     "./skills/task-analyzer",
     "./skills/technical-spec",
-    "./skills/testing-principles"
+    "./skills/testing-principles",
+    "./skills/typescript-rules-backend",
+    "./skills/typescript-testing-backend"
   ],
   "mcpServers": "./.mcp.json"
 }
