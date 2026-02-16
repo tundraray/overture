@@ -1,0 +1,38 @@
+{
+  "name": "gamedev",
+  "version": "0.18.2",
+  "description": "Game development agent ecosystem with specialized roles for design, engineering, art, QA, analytics, and production management",
+  "author": {
+    "name": "Mikhail Andreev",
+    "url": "https://github.com/tundraray"
+  },
+  "homepage": "https://github.com/tundraray/overture",
+  "repository": "https://github.com/tundraray/overture.git",
+  "license": "MIT",
+  "keywords": [
+    "gamedev",
+    "game-design",
+    "phaser3",
+    "typescript",
+    "game-development",
+    "agents",
+    "orchestration",
+    "production",
+    "qa",
+    "art-direction"
+  ],
+  "agents": [
+    "./agents/data-scientist.md",
+    "./agents/game-feel-developer.md",
+    "./agents/market-analyst.md",
+    "./agents/master-orchestrator.md",
+    "./agents/mechanics-developer.md",
+    "./agents/mid-game-designer.md",
+    "./agents/producer-agent.md",
+    "./agents/qa-agent.md",
+    "./agents/sr-game-artist.md",
+    "./agents/sr-game-designer.md",
+    "./agents/technical-artist.md",
+    "./agents/ui-ux-agent.md"
+  ]
+}
