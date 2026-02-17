@@ -84,32 +84,33 @@ Or install backend + frontend separately for more control.
 
 ## How It Works
 
-```mermaid
-graph TB
-    A[User Request] --> B[requirement-analyzer]
+Overture uses an **orchestrator pattern** — your command delegates work to specialized agents, each with fresh context and enforced best practices.
 
-    B --> |"Large (6+ files)"| C[prd-creator]
-    B --> |"Medium (3-5 files)"| EX{Expert Analysis?}
-    B --> |"Small (1-2 files)"| E[Direct Implementation]
+### Scale-Based Workflow Routing
 
-    C --> EX
-    EX --> |Optional| EA[expert-analyst x3-5 in parallel]
-    EX --> |Skip| D[technical-designer]
-    EA --> D
-    D --> DR[document-reviewer]
-    DR --> DS[design-sync]
-    DS --> F[acceptance-test-generator]
-    F --> G[work-planner]
-    G --> H[task-decomposer]
+The plugin analyzes your request and scales the workflow to match complexity:
 
-    H --> I[task-executor]
-    E --> I
+- **Small (1-2 files)** — Direct implementation → quality check → commit
+- **Medium (3-5 files)** — Design doc → work plan → phased implementation → review
+- **Large (6+ files)** — PRD → design doc → work plan → phased implementation → review
 
-    I --> J[quality-fixer]
-    J --> K[Ready to Commit]
-```
+### Key Advantages
 
-The plugin analyzes your request, scales the workflow to match complexity, and delegates to specialized agents -- each with fresh context and enforced best practices. The gamedev plugin extends this with game-specific phases (market analysis, GDD, art direction, analytics). See [all workflow diagrams](docs/overture/workflows.md).
+- **Fresh context per agent** — Each agent starts clean, avoiding context exhaustion in long sessions
+- **Automated quality gates** — Tests, types, and lint run after every task and auto-fix on failure
+- **Document-driven development** — Requirements and design docs keep implementation aligned across agents
+- **Explicit stop points** — Autonomous work pauses for your approval at critical decisions
+
+### Gamedev Extension
+
+The gamedev plugin adds game-specific phases on top of the shared workflow:
+
+- Market analysis with Go/No-Go gate before committing to a project
+- GDD as first-class artifact driving all design decisions
+- 6-phase work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
+- 12 specialized game agents (designers, artists, mechanics, QA, analytics)
+
+See [workflow diagrams](docs/overture/workflows.md) and [gamedev workflow diagrams](docs/overture/gamedev-workflows.md) for detailed flows.
 
 ---
 
