@@ -6,6 +6,7 @@ A: Depends on what you're building:
 - **Node.js backend, APIs, CLI tools** -- Install `backend-overture`
 - **React/TypeScript frontend** -- Install `frontend-overture`
 - **Full-stack projects** -- Install `fullstack-overture` (or both backend + frontend separately)
+- **Games with Phaser 3** -- Install `gamedev-overture`
 
 **Q: Can I use both plugins at the same time?**
 
@@ -13,7 +14,16 @@ A: Yes! They're designed to work together. Install both if you're building a ful
 
 **Q: Do I need to learn special commands?**
 
-A: Not really. For backend, just use `/implement`. For frontend, use `/front-design`. The plugins handle everything else automatically.
+A: Not really. For backend, just use `/implement`. For frontend, use `/front-design`. For gamedev, use `/implement` (it detects game context automatically). The plugins handle everything else automatically.
+
+**Q: How does the gamedev plugin differ from backend?**
+
+A: The gamedev plugin uses game-specific agents and workflows:
+- Replaces PRD with GDD (Game Design Document) + Market Analysis
+- Adds 12 game-specialized agents (designers, artists, mechanics engineer, QA, analytics)
+- Uses 6-phase planning (Core Mechanics → Game Feel → Art → UI → Analytics → QA) instead of generic 4-phase
+- Supports three development modes: Full Development, Design Only (docs only), and Prototype (rapid core loop)
+- Detects new project vs existing project and adjusts the flow accordingly
 
 **Q: What if there are errors?**
 

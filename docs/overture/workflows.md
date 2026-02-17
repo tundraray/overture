@@ -71,6 +71,25 @@ graph TB
     DR1 --> |All PRDs Approved| SD2
 ```
 
+## The Gamedev Implementation Workflow
+
+```mermaid
+graph TB
+    A[User Request] --> B[requirement-analyzer]
+    B --> |Scenario A: New Project| MA[market-analyst → Go/No-Go]
+    B --> |Scenario B: Existing| SGD2[sr-game-designer → GDD update]
+    MA --> SGD[sr-game-designer → GDD]
+    SGD --> GAME[mid-game-designer → mechanics-developer<br/>→ game-feel-developer → artists → ui-ux → analytics]
+    SGD2 --> GAME
+    GAME --> TD[technical-designer → Design Doc]
+    TD --> DR[document-reviewer → design-sync]
+    DR --> WP[gamedev-work-planner → 6-phase plan]
+    WP --> AUTO[task-decomposer → task-executor → quality-fixer]
+    AUTO --> DONE[Ready to Commit]
+```
+
+The gamedev plugin adds market analysis, GDD-driven design, and 12 specialized game agents. See [detailed gamedev workflow diagrams](gamedev-workflows.md).
+
 ## What Happens Behind the Scenes
 
 1. **Analysis** - Figures out how complex your task is

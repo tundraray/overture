@@ -44,3 +44,22 @@ These agents work the same way whether you're building a REST API or a React app
 | **quality-fixer-frontend** | Handles React-specific tests, TypeScript checks, and builds |
 | **rule-advisor** | Picks the best coding rules for your current task |
 | **design-sync** | Verifies consistency across multiple Design Docs and detects conflicts |
+
+## Game Development Agents (gamedev-overture)
+
+| Agent | What It Does |
+|-------|--------------|
+| **sr-game-designer** | Owns game vision, creates GDD (core loop, pillars, progression) |
+| **mid-game-designer** | Feature specifications, user stories, balancing parameters |
+| **mechanics-developer** | Core systems architecture (state machines, physics, object pooling, events) |
+| **game-feel-developer** | Game feel and polish (screen shake, particles, audio cues, tweens) |
+| **market-analyst** | Market analysis, competitor research, Go/No-Go recommendations |
+| **producer-agent** | Project config, team selection, resource planning, timeline |
+| **sr-game-artist** | Art direction, style guide, color palette, reference sheets |
+| **technical-artist** | Pipeline specs, atlas optimization, shader requirements |
+| **ui-ux-agent** | Game UI/UX: HUD, menus, interaction patterns, accessibility |
+| **data-scientist** | Analytics/telemetry design, KPIs, A/B tests, dashboards |
+| **qa-agent** | Test plans, performance validation, playtesting protocols |
+| **gamedev-work-planner** | 6-phase game work planning (Core Mechanics → Game Feel → Art → UI → Analytics → QA) |
+
+> **Note**: gamedev-overture replaces `prd-creator` with `market-analyst` + `sr-game-designer`, `ux-designer` with `ui-ux-agent`, and `work-planner` with `gamedev-work-planner`.

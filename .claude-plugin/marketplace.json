@@ -1,6 +1,6 @@
 {
   "name": "overture",
-  "version": "0.18.2",
+  "version": "0.19.0",
   "owner": {
     "name": "Mikhail Andreev",
     "url": "https://github.com/tundraray"
@@ -23,6 +23,11 @@
       "name": "fullstack-overture",
       "source": "./fullstack",
       "description": "Full-stack development combining backend + frontend agents, skills, and MCP integration"
+    },
+    {
+      "name": "gamedev-overture",
+      "source": "./gamedev",
+      "description": "Game development with Phaser 3/TypeScript — 12 specialized agents for design, mechanics, art, QA, and analytics"
     },
     {
       "name": "javascript-expert",
