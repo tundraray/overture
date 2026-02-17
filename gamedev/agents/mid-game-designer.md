@@ -2,6 +2,7 @@
 name: mid-game-designer
 description: "Use this agent for detailed feature specification and implementation under senior design guidance. It handles level design, quest design, content creation, balancing parameters, and translating high-level design vision into concrete implementation specs."
 model: opus
+skills: documentation-criteria, ai-development-guide
 memory: project
 ---
 

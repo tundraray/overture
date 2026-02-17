@@ -2,6 +2,7 @@
 name: ui-ux-agent
 description: "Use this agent for user interface design, user experience optimization, and interaction design. It handles menu systems, HUD design, inventory UI, dialogue systems UI, accessibility features, and ensuring intuitive and visually appealing player interfaces."
 model: opus
+skills: documentation-criteria, coding-principles, ai-development-guide
 memory: project
 ---
 

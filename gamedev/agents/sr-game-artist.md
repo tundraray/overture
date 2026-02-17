@@ -2,6 +2,7 @@
 name: sr-game-artist
 description: "Use this agent for visual direction, art pipeline management, and art asset specifications. It handles art style definition, sprite sheet design, tilemap art direction, animation guidelines, color palettes, and overall visual consistency of the game."
 model: opus
+skills: documentation-criteria
 memory: project
 ---
 

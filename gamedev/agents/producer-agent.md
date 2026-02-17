@@ -2,6 +2,7 @@
 name: producer-agent
 description: "Use this agent for project management, production planning, sprint management, and delivery coordination. It handles task prioritization, milestone tracking, risk assessment, resource allocation, and ensuring game development stays on schedule and within scope."
 model: opus
+skills: documentation-criteria, ai-development-guide
 memory: project
 ---
 

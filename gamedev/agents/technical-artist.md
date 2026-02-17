@@ -2,6 +2,7 @@
 name: technical-artist
 description: "Use this agent for bridging art and technology — shader development, rendering pipelines, art tool creation, performance optimization of visual systems, and ensuring art assets work correctly within the game engine's technical constraints."
 model: opus
+skills: coding-principles, ai-development-guide, implementation-approach
 memory: project
 ---
 

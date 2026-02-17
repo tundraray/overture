@@ -2,6 +2,7 @@
 name: game-feel-developer
 description: "Use this agent for implementing player feedback systems, game juice, polish, and feel. It specializes in screen shake, particle effects, hit feedback, animation curves, input responsiveness, and all the subtle details that make gameplay satisfying."
 model: opus
+skills: coding-principles, testing-principles, ai-development-guide, implementation-approach
 memory: project
 ---
 

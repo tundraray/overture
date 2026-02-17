@@ -2,6 +2,7 @@
 name: market-analyst
 description: "Use this agent for competitive analysis, market intelligence, and business strategy for game development. It provides market research, competitor analysis, pricing strategy, audience segmentation, and data-driven recommendations for project viability."
 model: opus
+skills: documentation-criteria
 memory: project
 ---
 

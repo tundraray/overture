@@ -2,6 +2,7 @@
 name: sr-game-designer
 description: "Use this agent for high-level game design decisions, vision ownership, and design authority. It handles core gameplay loops, progression systems, narrative design, world building, systems design, and ensuring all game features align with the overall creative vision."
 model: opus
+skills: documentation-criteria, ai-development-guide
 memory: project
 ---
 

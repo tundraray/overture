@@ -2,6 +2,7 @@
 name: qa-agent
 description: "Use this agent for quality assurance, testing strategy, bug tracking, and test automation. It handles test plan creation, regression testing, performance testing, compatibility testing, and ensuring all game systems meet quality standards."
 model: opus
+skills: testing-principles, coding-principles, ai-development-guide, integration-e2e-testing
 memory: project
 ---
 

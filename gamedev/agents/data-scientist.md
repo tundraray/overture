@@ -2,6 +2,7 @@
 name: data-scientist
 description: "Use this agent for analytics, metrics design, predictive modeling, and data-driven game development decisions. It helps with designing telemetry systems, analyzing player behavior data, A/B testing frameworks, retention/monetization modeling, and providing actionable insights from game data."
 model: opus
+skills: documentation-criteria, ai-development-guide
 memory: project
 ---
 

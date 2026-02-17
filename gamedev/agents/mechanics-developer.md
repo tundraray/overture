@@ -2,6 +2,7 @@
 name: mechanics-developer
 description: "Use this agent for architecting and implementing core gameplay systems and mechanics. It handles game loop design, physics systems, combat mechanics, inventory systems, crafting systems, and other fundamental gameplay engineering tasks."
 model: opus
+skills: coding-principles, testing-principles, ai-development-guide, implementation-approach
 memory: project
 ---
 
