@@ -106,7 +106,7 @@ Interactive dead code detection and cleanup. Scans the codebase for unused expor
 
 ```mermaid
 graph LR
-    A[/audit] --> S[codebase-scanner]
+    A["/audit"] --> S[codebase-scanner]
     S --> |Findings| R{Review each item}
     R --> |Delete / Keep / Deprecate| C[Confirm cleanup]
     C --> X[cleanup-executor]
@@ -144,7 +144,7 @@ The workflow runs in two phases with a gate between them:
 ```mermaid
 graph TB
     subgraph Phase1[Phase 1: PRD Generation]
-        CMD[/reverse-engineer] --> SD1[scope-discoverer]
+        CMD["/reverse-engineer"] --> SD1[scope-discoverer]
         SD1 --> PRD[prd-creator]
         PRD --> CV1[code-verifier]
         CV1 --> DR1[document-reviewer]
