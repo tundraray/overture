@@ -28,3 +28,14 @@ All skills from backend-overture (except integration-e2e-testing) plus:
 | **frontend-ai-guide** | React-specific AI development patterns |
 | **typescript-rules** | TypeScript best practices for React |
 | **typescript-testing** | React Testing Library patterns |
+
+## gamedev-overture (13 skills)
+
+All shared skills from backend-overture (except typescript-rules-backend, typescript-testing-backend) plus:
+
+| Skill | Description |
+|-------|-------------|
+| **subagents-gamedev-orchestration** | Gamedev-specific agent coordination with 4 flows, scenario detection, development modes |
+| **documentation-criteria** | Extended with GDD, market analysis, feature spec templates and game doc types |
+| **brand-system-guide** | Visual design system and brand guidelines |
+| **type-safety-standards** | Type safety patterns and standards |

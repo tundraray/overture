@@ -65,6 +65,28 @@ overture/
 │   └── .claude-plugin/
 │       └── plugin.json
 │
+├── gamedev/                    # gamedev-overture plugin
+│   ├── agents/                 # 19 symlinks + 12 local gamedev agents
+│   │   ├── sr-game-designer.md       # GDD creation, vision ownership
+│   │   ├── mid-game-designer.md      # Feature specs, balancing
+│   │   ├── mechanics-developer.md    # Core systems, physics, state machines
+│   │   ├── game-feel-developer.md    # Polish, juice, screen shake
+│   │   ├── market-analyst.md         # Market analysis, Go/No-Go
+│   │   ├── producer-agent.md         # Project management, timeline
+│   │   ├── sr-game-artist.md         # Art direction, style guide
+│   │   ├── technical-artist.md       # Pipeline, atlases, shaders
+│   │   ├── ui-ux-agent.md            # HUD, menus, accessibility
+│   │   ├── data-scientist.md         # Analytics, telemetry, A/B tests
+│   │   ├── qa-agent.md               # Test plans, performance
+│   │   ├── gamedev-work-planner.md   # 6-phase game work planning
+│   │   └── ... (19 shared symlinks)
+│   ├── commands/               # 14 symlinks + 1 local (implement.md)
+│   ├── skills/                 # 11 symlinks + 2 local
+│   │   ├── subagents-gamedev-orchestration/  # Gamedev flows
+│   │   └── documentation-criteria/           # Extended with game templates
+│   └── .claude-plugin/
+│       └── plugin.json
+│
 ├── LICENSE
 └── README.md
 ```

@@ -126,3 +126,52 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 
 > If you're working with undocumented legacy code, these commands are designed to make it AI-friendly by generating PRD and design docs.
 > For a quick walkthrough, see: [How I Made Legacy Code AI-Friendly with Auto-Generated Docs](https://dev.to/shinpr/how-i-made-legacy-code-ai-friendly-with-auto-generated-docs-4353)
+
+### Game Development - New Project
+
+```bash
+/implement "Create a 2D platformer with wall jumping and collectibles"
+
+# What happens (Scenario A: New Project):
+# 1. Analyzes requirements, detects no existing GDD → Scenario A
+# 2. Market analyst evaluates genre viability → Go/No-Go gate
+# 3. Producer sets up project config and team
+# 4. Sr Game Designer creates GDD (core loop, pillars, progression)
+# 5. Mid Game Designer writes feature specs from GDD
+# 6. Mechanics Developer architects state machines, physics, events
+# 7. Game Feel Developer specs screen shake, particles, audio cues
+# 8. Sr Game Artist + Technical Artist define art direction & pipeline
+# 9. UI/UX Agent designs HUD, menus, game flow
+# 10. Data Scientist plans analytics and telemetry
+# 11. Technical Designer creates Design Doc integrating all specs
+# 12. Gamedev Work Planner creates 6-phase plan
+# 13. Autonomous execution: task-decomposer → task-executor → quality-fixer
+```
+
+### Game Development - New Feature (Existing Project)
+
+```bash
+/implement "Add a boss fight system with pattern-based attacks"
+
+# What happens (Scenario B: Existing Project):
+# 1. Analyzes requirements, detects existing GDD → Scenario B
+# 2. Sr Game Designer updates GDD for boss fight system
+# 3. Mechanics Developer architects boss AI state machine
+# 4. Game Feel Developer specs boss attack feedback
+# 5. Technical Designer creates Design Doc
+# 6. Gamedev Work Planner creates plan
+# 7. Autonomous execution
+```
+
+### Game Development - Prototype Mode
+
+```bash
+/implement "Prototype a match-3 core loop"
+# Select "Prototype" mode when asked
+
+# Simplified flow:
+# 1. Requirement analysis
+# 2. Sr Game Designer creates core loop only
+# 3. Simplified plan → mechanics-focused execution
+# Skips: market analysis, art direction, analytics
+```

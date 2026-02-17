@@ -9,11 +9,12 @@
 
 ## Quick Start
 
-This marketplace includes three workflow plugins:
+This marketplace includes four workflow plugins:
 
 - **backend-overture** - Node.js/TypeScript backend development
 - **frontend-overture** - React/TypeScript frontend development
 - **fullstack-overture** - Full-stack development (backend + frontend)
+- **gamedev-overture** - Game development with Phaser 3/TypeScript
 
 ### Backend Development (Node.js/TypeScript)
 
@@ -57,6 +58,20 @@ claude
 
 Or install backend + frontend separately for more control.
 
+### Game Development (Phaser 3/TypeScript)
+
+```bash
+# 1-2. Same as above (start Claude Code and add marketplace)
+
+# 3. Install gamedev plugin
+/plugin install gamedev-overture@overture
+
+# 4-5. Same as above (restart and start building)
+
+# Build a game
+/implement <your game concept>
+```
+
 > **Note**: If you encounter SSH errors during installation, see [FAQ](docs/overture/faq.md#ssh-authentication-error-during-plugin-installation).
 >
 > **Windows users**: This plugin uses symlinks. Before installing, enable symlink support in Git:
@@ -94,7 +109,7 @@ graph TB
     J --> K[Ready to Commit]
 ```
 
-The plugin analyzes your request, scales the workflow to match complexity, and delegates to specialized agents -- each with fresh context and enforced best practices. See [all workflow diagrams](docs/overture/workflows.md).
+The plugin analyzes your request, scales the workflow to match complexity, and delegates to specialized agents -- each with fresh context and enforced best practices. The gamedev plugin extends this with game-specific phases (market analysis, GDD, art direction, analytics). See [all workflow diagrams](docs/overture/workflows.md).
 
 ---
 
@@ -121,6 +136,17 @@ The plugin analyzes your request, scales the workflow to match complexity, and d
 | `/diagnose` | Root cause analysis |
 
 [All frontend commands](docs/overture/commands.md#frontend-development-frontend-overture)
+
+### Game Development (gamedev-overture)
+
+| Command | Purpose |
+|---------|---------|
+| `/implement` | End-to-end game development with market analysis, GDD, and 6-phase planning |
+| `/task` | Single task with precision |
+| `/diagnose` | Root cause analysis |
+| `/design` | Create design documentation |
+
+[All gamedev commands](docs/overture/commands.md#game-development-gamedev-overture)
 
 ---
 
@@ -174,6 +200,16 @@ The frontend plugin is built specifically for React development:
 - TypeScript-first approach with automatic type generation
 - Handles build errors, test failures, and type issues automatically
 
+### Gamedev-Specific Benefits
+
+The gamedev plugin is built for game development with Phaser 3:
+
+- Market analysis with Go/No-Go gate before committing to a project
+- GDD (Game Design Document) as first-class artifact driving all design decisions
+- 12 specialized game agents: designers, mechanics engineer, game feel developer, artists, QA, analytics
+- 6-phase work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
+- Three development modes: Full Development, Design Only, Prototype
+
 ---
 
 ## Documentation
@@ -187,6 +223,7 @@ The frontend plugin is built specifically for React development:
 - [Examples](docs/overture/examples.md) - Real-world examples and typical workflows
 - [Architecture](docs/overture/architecture.md) - Repository structure
 - [FAQ](docs/overture/faq.md) - Common questions and SSH setup
+- [Gamedev Workflows](docs/overture/gamedev-workflows.md) - Game development workflow diagrams
 
 ### Expert Plugins
 
