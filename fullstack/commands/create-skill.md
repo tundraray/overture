@@ -1,0 +1,1 @@
+../../commands/create-skill.md

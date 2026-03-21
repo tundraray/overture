@@ -1,6 +1,6 @@
 {
   "name": "gamedev-overture",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "description": "Game development orchestration with specialized agents for design, engineering, art, QA, analytics, and production — built on the overture framework",
   "author": {
     "name": "Mikhail Andreev",
@@ -37,7 +37,8 @@
     "./commands/refine-skill.md",
     "./commands/sync-skills.md",
     "./commands/update-doc.md",
-    "./commands/uxdoc.md"
+    "./commands/uxdoc.md",
+    "./commands/create-skill.md"
   ],
   "agents": [
     "./agents/acceptance-test-generator.md",
@@ -70,7 +71,9 @@
     "./agents/sr-game-artist.md",
     "./agents/sr-game-designer.md",
     "./agents/technical-artist.md",
-    "./agents/ui-ux-agent.md"
+    "./agents/ui-ux-agent.md",
+    "./agents/security-reviewer.md",
+    "./agents/ui-spec-designer.md"
   ],
   "skills": [
     "./skills/ai-development-guide",
@@ -85,7 +88,9 @@
     "./skills/task-analyzer",
     "./skills/technical-spec",
     "./skills/testing-principles",
-    "./skills/type-safety-standards"
+    "./skills/type-safety-standards",
+    "./skills/security-checks",
+    "./skills/skill-optimization"
   ],
   "mcpServers": "./.mcp.json"
 }

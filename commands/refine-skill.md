@@ -83,6 +83,25 @@ Design template:
 Proceed with this design? (y/n)
 ```
 
+#### Before/After Visualization
+
+Present changes in clear diff format for easy review:
+```diff
+- "Handle errors appropriately" (ambiguous)
++ "Error handling: try-catch required for external API calls, file I/O, parsing.
++  Log: error.name, error.stack, ISO timestamp.
++  User notification: no technical details, clear action items."
+```
+
+### 2.5 Quality Grading (Optional)
+
+Apply skill-optimization grading system to evaluate the proposed change:
+- **A grade**: All critical patterns resolved, clear decision criteria
+- **B grade**: Critical patterns resolved, minor gaps
+- **C grade**: Critical patterns remaining — recommend additional revision before approval
+
+Include grade in the approval presentation at Step 4.
+
 ### 3. Three-Pass Review Process
 
 #### Pass 1: Add for Maximum Accuracy【Addition-Only Mode】

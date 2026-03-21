@@ -3,7 +3,7 @@
 # Run /sync-skills after any skill modifications
 
 version: "1.0"
-last_updated: "2026-02-06"
+last_updated: "2026-03-21"
 
 skills:
   coding-principles:
@@ -95,6 +95,7 @@ skills:
     size: large
     key_sections:
       - "Role: The Orchestrator"
+      - "Session Initialization Protocol"
       - "Decision Flow When Receiving Tasks"
       - "Available Subagents"
       - "Orchestration Principles"
@@ -309,3 +310,25 @@ skills:
       - "Zod Performance Optimization"
       - "Testing Type Safety"
       - "Risks and Mitigations"
+
+  security-checks:
+    description: "Security patterns and detection rules for automated code review — stable patterns (credentials, injection, XSS) and trend-sensitive patterns (CVEs, JWT)"
+    tags: [security, vulnerability, cve, xss, sql-injection, path-traversal, ssrf, credentials, jwt, dependency-audit, owasp]
+    typical_use: "Security review, vulnerability detection, security compliance validation, dependency auditing"
+    size: medium
+    key_sections:
+      - "Stable Detection Patterns"
+      - "Trend-Sensitive Patterns"
+      - "Severity Classification Guide"
+      - "Expert References (Reasoning Calibration)"
+
+  skill-optimization:
+    description: "Optimization patterns (8 BP) and A/B/C grading system for skill quality assessment"
+    tags: [skill-quality, optimization, grading, bp-patterns, skill-assessment, prompt-engineering, skill-creation]
+    typical_use: "Creating new skills, evaluating skill quality, improving existing skills, skill review"
+    size: small
+    key_sections:
+      - "BP Patterns (Best Practice Patterns)"
+      - "Editing Principles"
+      - "Grading System"
+      - "Assessment Checklist"

@@ -45,6 +45,15 @@ Validate:
 - Code quality check
 - Implementation completeness assessment
 
+### Step 2.5: Execute security-reviewer
+
+Invoke security-reviewer using Task tool:
+- `subagent_type`: "security-reviewer"
+- `description`: "Security compliance review"
+- `prompt`: "Review security compliance for implementation files from Step 1. Design Doc: [path from Step 1]"
+
+Include security findings in the Step 3 verdict. If `blocked`, override verdict to "needs-redesign" regardless of compliance rate.
+
 ### Step 3: Verdict and Response
 
 **Criteria (considering project stage)**:

@@ -132,6 +132,32 @@ Follow the test pyramid structure:
 /________\ ← Many Unit Tests (Fast, foundational)
 ```
 
+### Property-Based Testing
+
+**Purpose**: Verify invariants that hold for ALL possible inputs, not just specific test cases.
+
+**When to use:**
+- Mathematical properties (commutativity, associativity, idempotency)
+- Serialization/deserialization roundtrips (encode → decode = identity)
+- Data transformation reversibility (sort stability, filter idempotency)
+- Invariants across large input spaces (e.g., "output length <= input length")
+- Boundary conditions that are hard to enumerate manually
+
+**When NOT to use:**
+- UI interaction testing (use integration/E2E tests instead)
+- Specific business rules with known expected outputs (use example-based tests)
+- External API integration (non-deterministic, use mocks)
+
+**Structure:**
+```
+PROPERTY: "Description of the invariant that must always hold"
+FOR ALL: generator description (e.g., "arbitrary strings of length 1-1000")
+ASSERT: invariant expression (e.g., "decode(encode(input)) === input")
+SHRINK: how to minimize failing cases to smallest reproducer
+```
+
+**Relationship to example-based tests**: Property tests complement (not replace) example-based tests. Use property tests for invariants, example-based tests for specific business scenarios with known expected outputs.
+
 ## Test Design Principles
 
 ### AAA Pattern (Arrange-Act-Assert)

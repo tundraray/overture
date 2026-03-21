@@ -265,6 +265,21 @@ Store selected strategy for autonomous execution mode.
 - Skipping quality-fixer
 - Committing without asking strategy first
 
+### Security Review (Post-Implementation)
+
+After all tasks complete and before generating the final completion report:
+
+1. Invoke security-reviewer using Task tool:
+   - `subagent_type`: "security-reviewer"
+   - `description`: "Security compliance review"
+   - `prompt`: "Review implementation for security compliance. Design Doc: [path]. Files modified: [all modified files from task execution]."
+
+2. **Handle security-reviewer response**:
+   - `blocked` → **STOP immediately**. Report credentials/critical vulnerability to user. Do NOT commit.
+   - `needs_revision` → Create security fix task file, execute via task-executor → quality-fixer → re-run security-reviewer
+   - `approved_with_notes` → Include security notes in completion report. Proceed to commit.
+   - `approved` → Proceed to completion report.
+
 ### Test Information Communication
 After acceptance-test-generator execution, when calling work-planner, communicate:
 - Generated integration test file path
