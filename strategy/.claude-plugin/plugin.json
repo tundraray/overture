@@ -1,0 +1,53 @@
+{
+  "name": "strategy-overture",
+  "version": "0.19.3",
+  "description": "McKinsey-grade business strategy and marketing analysis with orchestrated agents — market sizing, competitive intelligence, GTM strategy, growth frameworks, and full strategic reports",
+  "author": {
+    "name": "Mikhail Andreev",
+    "url": "https://github.com/tundraray"
+  },
+  "homepage": "https://github.com/tundraray/overture",
+  "repository": "https://github.com/tundraray/overture.git",
+  "license": "MIT",
+  "keywords": [
+    "strategy",
+    "marketing",
+    "business",
+    "mckinsey",
+    "market-sizing",
+    "competitive-analysis",
+    "gtm",
+    "growth",
+    "blue-ocean",
+    "pricing",
+    "lean-canvas",
+    "agents",
+    "orchestration",
+    "overture"
+  ],
+  "commands": [
+    "./commands/strategy-report.md",
+    "./commands/analyze-market.md",
+    "./commands/strategy-canvas.md",
+    "./commands/gtm-plan.md",
+    "./commands/growth-audit.md",
+    "./commands/business-model.md",
+    "./commands/competitive-map.md",
+    "./commands/pricing-strategy.md",
+    "./commands/prioritize.md"
+  ],
+  "agents": [
+    "./agents/context-analyzer.md",
+    "./agents/market-analyst.md",
+    "./agents/strategy-architect.md",
+    "./agents/gtm-planner.md",
+    "./agents/growth-strategist.md",
+    "./agents/business-modeler.md",
+    "./agents/report-compiler.md"
+  ],
+  "skills": [
+    "./skills/strategy-overture",
+    "./skills/strategy-orchestration-guide",
+    "./skills/strategy-documentation-criteria"
+  ]
+}

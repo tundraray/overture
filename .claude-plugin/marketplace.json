@@ -53,6 +53,11 @@
       "name": "postgres-expert",
       "source": "./postgres-expert",
       "description": "Senior PostgreSQL expert with query optimization, JSONB, replication, and maintenance"
+    },
+    {
+      "name": "strategy-overture",
+      "source": "./strategy",
+      "description": "McKinsey-grade business strategy with orchestrated agents — market sizing, competitive intelligence, GTM, growth, and full strategic reports"
     }
   ]
 }
