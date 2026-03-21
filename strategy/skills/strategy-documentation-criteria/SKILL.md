@@ -19,6 +19,13 @@ description: This skill should be used when creating strategy documents — cont
 - **[growth-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/growth-plan-template.md)** — AARRR funnel, experiments, 90-day plan
 - **[prioritized-initiatives-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/prioritized-initiatives-template.md)** — ICE/RICE scored master list
 - **[strategic-report-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategic-report-template.md)** — Unified McKinsey-grade final report
+- **[rat-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md)** — RAT analysis with P×I risk scoring
+- **[segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md)** — AJTBD segment discovery (B2B/B2C)
+- **[jobs-graph-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/jobs-graph-template.md)** — Jobs graph below Core Job level
+- **[opportunity-map-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/opportunity-map-template.md)** — Opportunity Solution Tree (outcomes → opportunities → solutions → tests)
+- **[feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/feature-spec-template.md)** — Individual feature specification (Shape Up pitch + cross-references)
+- **[product-roadmap-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/product-roadmap-template.md)** — Now/Next/Later product roadmap with feature links
+- **[mvp-definition-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/mvp-definition-template.md)** — MVP scope, MoSCoW, success metrics, validation plan
 
 ## Creation Decision Matrix
 
@@ -33,6 +40,12 @@ description: This skill should be used when creating strategy documents — cont
 | Competitive Only (`/competitive-map`) | Context → Competitive Landscape | Context → Competitive (1) |
 | Pricing Only (`/pricing-strategy`) | Context + [Market] → Pricing Analysis | Prereqs → Pricing (1) |
 | Prioritize Only (`/prioritize`) | [All existing docs] → Prioritized Initiatives | Collect → Prioritize (1) |
+| RAT Only (`/rat`) | Context → RAT | Context → RAT (1) |
+| B2B Segments (`/b2b-segments`) | Context → Segments | Context → Segments (1) |
+| B2C Segments (`/b2c-segments`) | Context → Segments | Context → Segments (1) |
+| Jobs Graph (`/jobs-graph`) | Context + [Segments] → Jobs Graph | Prereqs → Jobs (1) |
+| Landing (`/landing`) | Context + Segments + [Jobs Graph] → Landing | Prereqs → Landing (1) |
+| Product Plan (`/product-plan`) | All strategy docs → Opportunity Map + Features + Roadmap + MVP | Strategy → Product Plan (3+N) |
 
 `[brackets]` = optional but recommended prerequisite
 
@@ -43,6 +56,12 @@ graph TD
     CB[context-brief] --> MA[market-analysis]
     CB --> CL[competitive-landscape]
     CB --> CS[customer-segments]
+    CB --> RAT[rat]
+    CB --> SEG[segments]
+    SEG --> JG[jobs-graph]
+    RAT --> BM
+    SEG --> CS
+    SEG --> MA
     MA --> SC[strategy-canvas]
     CL --> SC
     CS --> SC
@@ -64,6 +83,14 @@ graph TD
     PI --> SR[strategic-report]
     GTM --> SR
     GP --> SR
+    PI --> OM[opportunity-map]
+    SC --> OM
+    JG --> OM
+    OM --> FS[features/*]
+    FS --> PR[product-roadmap]
+    FS --> MVP[mvp-definition]
+    GP --> MVP
+    RAT --> MVP
 ```
 
 ## Storage Locations
@@ -82,6 +109,13 @@ graph TD
 | Growth Plan | `docs/strategy/growth-plan.md` | growth-strategist | [growth-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/growth-plan-template.md) |
 | Prioritized Initiatives | `docs/strategy/prioritized-initiatives.md` | growth-strategist | [prioritized-initiatives-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/prioritized-initiatives-template.md) |
 | Strategic Report | `docs/strategy/strategic-report.md` | report-compiler | [strategic-report-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategic-report-template.md) |
+| RAT Analysis | `docs/strategy/rat.md` | product-analyst | [rat-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md) |
+| AJTBD Segments | `docs/strategy/segments.md` | product-analyst | [segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md) |
+| Jobs Graph | `docs/strategy/jobs-graph.md` | product-analyst | [jobs-graph-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/jobs-graph-template.md) |
+| Opportunity Map | `docs/strategy/opportunity-map.md` | product-planner | [opportunity-map-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/opportunity-map-template.md) |
+| Feature Specs | `docs/strategy/features/feature-NNN-[slug].md` | product-planner | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/feature-spec-template.md) |
+| Product Roadmap | `docs/strategy/product-roadmap.md` | product-planner | [product-roadmap-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/product-roadmap-template.md) |
+| MVP Definition | `docs/strategy/mvp-definition.md` | product-planner | [mvp-definition-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/mvp-definition-template.md) |
 
 ## Quality Standards (All Documents)
 

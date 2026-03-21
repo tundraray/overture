@@ -33,7 +33,27 @@
 
 [Synthesized from context-brief.md — what the business is, what problem it solves, where it stands today]
 
-## 2. Market Landscape
+## 2. AJTBD Analysis
+
+[Synthesized from rat.md + segments.md + jobs-graph.md]
+
+### Core Job & Job Hierarchy
+- **Core Job**: [what customer hires the product for]
+- **Big Job**: [higher-level motivation]
+- **Critical Job Sequence**: [key jobs in order]
+
+### Job-Based Segments (Top 5)
+| # | Segment | Core Jobs | Big Job | Attractiveness |
+|---|---------|-----------|---------|---------------|
+
+### Top Risky Assumptions
+| # | Risk | Score (P×I) | Category | Validation Method |
+|---|------|------------|----------|------------------|
+
+### Jobs Graph Summary
+[Critical path + top problems by severity]
+
+## 3. Market Landscape
 
 [Synthesized from market-analysis.md]
 
@@ -45,7 +65,7 @@
 ### Industry Trends
 [Top 3 trends with impact assessment]
 
-## 3. Competitive Landscape
+## 4. Competitive Landscape
 
 [Synthesized from competitive-landscape.md]
 
@@ -61,7 +81,7 @@
 ### Strategic Responses (TOWS)
 [Top 3 TOWS actions]
 
-## 4. Customer Segments
+## 5. Customer Segments
 
 [Synthesized from customer-segments.md]
 
@@ -71,7 +91,7 @@
 ### Secondary Segment: [name]
 [Profile + rationale for secondary priority]
 
-## 5. Strategic Positioning
+## 6. Strategic Positioning
 
 [Synthesized from strategy-canvas.md + brand-positioning.md]
 
@@ -90,7 +110,7 @@
 ### Competitive Moat
 [Strongest moat + moat to build]
 
-## 6. Business Model
+## 7. Business Model
 
 [Synthesized from business-model.md]
 
@@ -107,7 +127,7 @@
 ### PMF Status
 [Assessment + key gap]
 
-## 7. Go-to-Market Strategy
+## 8. Go-to-Market Strategy
 
 [Synthesized from gtm-plan.md]
 
@@ -128,7 +148,7 @@
 ### Launch Timeline
 [3 phases with key milestones]
 
-## 8. Pricing Strategy
+## 9. Pricing Strategy
 
 [Synthesized from pricing-analysis.md]
 
@@ -145,7 +165,7 @@
 ### Competitive Position
 [Premium / Parity / Discount — rationale]
 
-## 9. Growth Strategy
+## 10. Growth Strategy
 
 [Synthesized from growth-plan.md]
 
@@ -163,7 +183,33 @@
 ### 90-Day Plan
 [Sprint 1-3 summary]
 
-## 10. Aggregated Risk Assessment
+## 11. Product Execution Plan
+
+[Synthesized from opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md]
+
+### Opportunity Map
+[Key opportunities derived from jobs-graph problems, linked to outcomes]
+
+### Feature Overview
+| Category | Count | Total Appetite |
+|----------|-------|---------------|
+| Must-Be | [N] | [X weeks] |
+| Performance | [N] | [X weeks] |
+| Attractive | [N] | [X weeks] |
+
+### Product Roadmap
+**Now (0-6 weeks)**: [top 3 features with WSJF scores]
+**Next (6-12 weeks)**: [top 3 features]
+**Later (3-6 months)**: [top 3 features]
+
+### MVP Definition
+- **Type**: [MVP type]
+- **Must-Have features**: [N features, X weeks appetite]
+- **Success metric**: [North Star target]
+- **Kill criteria**: [threshold]
+- **First 10 users**: [from where]
+
+## 12. Aggregated Risk Assessment
 
 [Risks from ALL documents, deduplicated and ranked]
 
@@ -171,7 +217,7 @@
 |---|------|--------|------------|--------|-----------|
 | 1 | [risk] | [doc] | H/M/L | H/M/L | [action] |
 
-## 11. Prioritized Action Plan
+## 13. Prioritized Action Plan
 
 [Based on prioritized-initiatives.md]
 
@@ -189,23 +235,30 @@
 ### Kill (Not Recommended)
 [Listed with rationale]
 
-## 12. Appendix
+## 14. Appendix
 
 ### Source Documents Index
 
 | # | Document | Agent | Key Contribution |
 |---|----------|-------|-----------------|
 | 1 | context-brief.md | context-analyzer | Business definition |
-| 2 | market-analysis.md | market-analyst | TAM/SAM/SOM |
-| 3 | competitive-landscape.md | market-analyst | Competitor intelligence |
-| 4 | customer-segments.md | market-analyst | Segment prioritization |
-| 5 | strategy-canvas.md | strategy-architect | Blue Ocean + growth direction |
-| 6 | brand-positioning.md | strategy-architect | Positioning strategy |
-| 7 | business-model.md | business-modeler | Canvas + unit economics |
-| 8 | gtm-plan.md | gtm-planner | Go-to-market execution |
-| 9 | pricing-analysis.md | gtm-planner | Pricing strategy |
-| 10 | growth-plan.md | growth-strategist | Growth experiments |
-| 11 | prioritized-initiatives.md | growth-strategist | Master priority list |
+| 2 | rat.md | product-analyst | RAT risk analysis |
+| 3 | segments.md | product-analyst | AJTBD job-based segments |
+| 4 | jobs-graph.md | product-analyst | Critical job sequence |
+| 5 | market-analysis.md | market-analyst | TAM/SAM/SOM |
+| 6 | competitive-landscape.md | market-analyst | Competitor intelligence |
+| 7 | customer-segments.md | market-analyst | Segment prioritization |
+| 8 | strategy-canvas.md | strategy-architect | Blue Ocean + growth direction |
+| 9 | brand-positioning.md | strategy-architect | Positioning strategy |
+| 10 | business-model.md | business-modeler | Canvas + unit economics |
+| 11 | gtm-plan.md | gtm-planner | Go-to-market execution |
+| 12 | pricing-analysis.md | gtm-planner | Pricing strategy |
+| 13 | growth-plan.md | growth-strategist | Growth experiments |
+| 14 | prioritized-initiatives.md | growth-strategist | Master priority list |
+| 15 | opportunity-map.md | product-planner | Opportunity Solution Tree |
+| 16 | features/*.md | product-planner | Feature specifications |
+| 17 | product-roadmap.md | product-planner | Now/Next/Later roadmap |
+| 18 | mvp-definition.md | product-planner | MVP scope + validation |
 
 ### Assumptions Register
 

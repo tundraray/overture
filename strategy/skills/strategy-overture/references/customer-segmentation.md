@@ -68,18 +68,13 @@ Tiers:
 
 ### 5. Jobs-to-Be-Done Segmentation
 
-Groups by the outcome customers seek, not who they are.
+For comprehensive job-based segmentation, see the **ajtbd-methodology** skill which provides the complete AJTBD framework including:
+- Job hierarchy (Big Job → Core Job → Small Jobs → Micro Jobs)
+- Critical job sequences
+- Segment-by-jobs methodology (segment = job bundles + context + criteria)
+- RAT framework for segment economic validation
 
-```yaml
-Job Statement: "[When ___], I want to [___], so I can [___]"
-
-Dimensions:
-  Functional: "What task do they need done?"
-  Emotional: "How do they want to feel?"
-  Social: "How do they want to be perceived?"
-```
-
-**Integration with AJTBD**: If AJTBD plugin is available, use its jobs graph output as segmentation input.
+Use `/b2b-segments` or `/b2c-segments` commands for guided job-based segmentation.
 
 ## Segment Attractiveness Scoring
 
@@ -101,7 +96,7 @@ Rate each segment on:
 ```markdown
 # Customer Segmentation Analysis
 
-## Primary Segmentation Approach: [Behavioral / JTBD / Value-Based]
+## Primary Segmentation Approach: [Behavioral / Value-Based / AJTBD]
 **Rationale**: [why this approach for this business]
 
 ## Identified Segments
@@ -109,8 +104,8 @@ Rate each segment on:
 ### Segment 1: "[Name]" (Priority: HIGH)
 - **Size**: [X]% of addressable market
 - **Profile**: [behavioral/psychographic description]
-- **Primary Job**: [JTBD statement]
 - **Willingness to pay**: $[X]/month
+> See segments.md for full AJTBD job analysis if available
 - **Acquisition channel**: [where to find them]
 - **Attractiveness score**: [X/5]
 - **Key insight**: [non-obvious finding]

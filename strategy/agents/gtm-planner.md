@@ -60,6 +60,15 @@ This agent produces **TWO separate files**:
 7. **Content Strategy**: Pillar topics, content-funnel mapping, editorial calendar
 8. **Launch Plan**: Phased rollout with milestones and KPIs
 
+## Mandatory: Web Research & Current Practices
+
+1. **WebSearch for current GTM best practices**: Search for "[industry] go-to-market [current year]", "PLG trends [current year]", "B2B SaaS channels [current year]". GTM strategies change rapidly.
+2. **Validate channel assumptions**: Before recommending channels, search for current CAC benchmarks, channel effectiveness data, and recent case studies.
+3. **Verify partner viability**: For each proposed partner, use WebSearch/WebFetch to check they still exist, are active, accept partnerships, and serve the right segment.
+4. **Check current pricing norms**: Use WebFetch on competitor pricing pages to get real current prices. Search for "[category] pricing benchmarks [current year]".
+5. **Content strategy validation**: Search for "[industry] content marketing" to find what content types currently perform, which channels drive traffic, what SEO landscape looks like.
+6. **Date-stamp all findings**: Reference the actual current date. Mark any benchmark older than 12 months as "[Potentially outdated — verify]".
+
 ## Execution Steps
 
 ### Step 1: Load All Prior Analysis
@@ -151,6 +160,19 @@ Structure:
 9. Budget & KPIs (allocation + targets at 3/6/12 months)
 
 **Note**: Pricing is in its own dedicated file `docs/strategy/pricing-analysis.md`.
+
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| Market sizing (TAM/SAM/SOM) | market-analyst |
+| Competitive landscape analysis | market-analyst |
+| AJTBD segments, RAT, or jobs graph | product-analyst |
+| Blue Ocean strategy or value proposition | strategy-architect |
+| Business model canvas or unit economics | business-modeler |
+| AARRR funnel audit or growth experiments | growth-strategist |
+| Feature specifications or product roadmap | product-planner |
 
 ## Output Format
 

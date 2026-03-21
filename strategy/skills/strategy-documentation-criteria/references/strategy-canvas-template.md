@@ -88,6 +88,11 @@
 - **Product-Market Fit**: [Yes / Partial / No] — Evidence: [what supports this]
 - **Differentiation Level**: [Parity / Feature / Experience / Platform / Category]
 
+### Critical Job Sequence (from AJTBD, if available)
+| # | Job | Completed by Product? | Gap |
+|---|-----|----------------------|-----|
+| 1 | [job from jobs-graph] | Yes / Partial / No | [what's missing] |
+
 ## Strategic Requirements
 
 | Capability Needed | Current State | Gap | Priority |

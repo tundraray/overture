@@ -97,6 +97,11 @@
 
 **Priority**: Test cheapest high-impact, low-confidence assumptions first.
 
+### RAT Cross-Reference (if docs/strategy/rat.md exists)
+| RAT Risk | RAT Score (P×I) | Corresponding Assumption | Alignment |
+|----------|-----------------|------------------------|-----------|
+| [risk from RAT] | [score] | [matching assumption above] | Aligned / Gap |
+
 ## Financial Scenarios (12-month)
 
 | Metric | Pessimistic | Base | Optimistic |

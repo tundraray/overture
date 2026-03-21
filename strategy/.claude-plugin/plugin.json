@@ -1,6 +1,6 @@
 {
   "name": "strategy-overture",
-  "version": "0.19.3",
+  "version": "0.20.0",
   "description": "McKinsey-grade business strategy and marketing analysis with orchestrated agents — market sizing, competitive intelligence, GTM strategy, growth frameworks, and full strategic reports",
   "author": {
     "name": "Mikhail Andreev",
@@ -34,7 +34,13 @@
     "./commands/business-model.md",
     "./commands/competitive-map.md",
     "./commands/pricing-strategy.md",
-    "./commands/prioritize.md"
+    "./commands/prioritize.md",
+    "./commands/rat.md",
+    "./commands/b2b-segments.md",
+    "./commands/b2c-segments.md",
+    "./commands/jobs-graph.md",
+    "./commands/landing.md",
+    "./commands/product-plan.md"
   ],
   "agents": [
     "./agents/context-analyzer.md",
@@ -43,11 +49,16 @@
     "./agents/gtm-planner.md",
     "./agents/growth-strategist.md",
     "./agents/business-modeler.md",
-    "./agents/report-compiler.md"
+    "./agents/report-compiler.md",
+    "./agents/product-analyst.md",
+    "./agents/product-planner.md"
   ],
   "skills": [
     "./skills/strategy-overture",
     "./skills/strategy-orchestration-guide",
-    "./skills/strategy-documentation-criteria"
-  ]
+    "./skills/strategy-documentation-criteria",
+    "./skills/ajtbd-methodology",
+    "./skills/product-execution"
+  ],
+  "mcpServers": "./.mcp.json"
 }
