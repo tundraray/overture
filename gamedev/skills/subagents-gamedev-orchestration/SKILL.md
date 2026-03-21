@@ -96,6 +96,7 @@ graph TD
 10. **data-scientist**: Analytics/telemetry design, KPIs, A/B tests, dashboards
 11. **qa-agent**: Test plans, performance validation, playtesting protocols
 12. **gamedev-work-planner**: Game-specific work planning with 6-phase structure
+13. **game-researcher**: External game research, data collection, source code analysis (used by game-analyze command)
 
 **Dropped agents** (replaced by gamedev agents): prd-creator (→ market-analyst + sr-game-designer), ux-designer (→ ui-ux-agent), work-planner (→ gamedev-work-planner)
 
@@ -139,6 +140,7 @@ Assign work based on each subagent's responsibilities:
 | `docs/plans/*.md` (work plans) | gamedev-work-planner |
 | `docs/plans/tasks/<plan-name>/*.md` | task-decomposer |
 | `src/**/*`, `tests/**/*` (code) | task-executor |
+| `docs/game-research/**/*.md` | game-researcher |
 | Any file (quality fixes) | quality-fixer |
 
 **Rules**:
@@ -221,6 +223,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **data-scientist**: status, eventSchema, kpiDefinitions, abTestDesigns, dashboardSpecs
 - **qa-agent**: status, testPlan, performanceTargets, playtestProtocol, frameBudget
 - **gamedev-work-planner**: status, planPath, phases[6], taskCount, dependencies
+- **game-researcher**: status, mode (research/synthesis), gameName, gameSlug, depthLevel, sourcesCollected, dataQuality (verified/inferred/estimated/speculative counts), outputFiles, missingData, sourceCodeAnalyzed
 
 ## Scenario Detection Logic
 
