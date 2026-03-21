@@ -15,6 +15,10 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
+
 ## Detection Criteria (The Only Rule)
 
 **Detection Target**: Items explicitly documented in the source file that have different values in other files

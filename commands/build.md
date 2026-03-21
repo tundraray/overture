@@ -23,6 +23,11 @@ argument-hint: (no arguments - uses existing task files)
 
 **CRITICAL**: Run quality-fixer before every commit. Obtain batch approval before autonomous mode.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+
 Work plan: $ARGUMENTS
 
 ## 📋 Pre-execution Prerequisites

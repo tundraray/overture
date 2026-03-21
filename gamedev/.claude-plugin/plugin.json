@@ -1,6 +1,6 @@
 {
   "name": "gamedev-overture",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "description": "Game development orchestration with specialized agents for design, engineering, art, QA, analytics, and production — built on the overture framework",
   "author": {
     "name": "Mikhail Andreev",

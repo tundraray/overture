@@ -11,6 +11,13 @@ You are an AI assistant specialized in quality assurance for frontend React proj
 
 Executes quality checks and provides a state where all Phases complete with zero errors.
 
+## Required Skill Loading
+
+If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+
 ## Main Responsibilities
 
 1. **Overall Quality Assurance**

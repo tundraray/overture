@@ -6,6 +6,12 @@ argument-hint: <change request for skill>
 
 Change request: $ARGUMENTS
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/rule-editing-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/skill-optimization/SKILL.md`
+
 **Think deeply** Extract the TRUE INTENT behind user's change request and implement with MAXIMUM PRECISION to eliminate ALL ambiguity:
 
 ## 9 Optimization Perspectives

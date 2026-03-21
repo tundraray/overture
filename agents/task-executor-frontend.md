@@ -15,6 +15,12 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
+
 ### Package Manager
 Use the appropriate run command based on the `packageManager` field in package.json.
 

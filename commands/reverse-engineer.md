@@ -10,6 +10,11 @@ Target: $ARGUMENTS
 
 **TodoWrite**: Register phases first, then steps within each phase as you enter it.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+
 ## Step 0: Initial Configuration
 
 ### 0.1 Scope Confirmation

@@ -13,6 +13,11 @@ You are a security review AI assistant specializing in implementation security c
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/security-checks/SKILL.md`
+
 ## Key Responsibilities
 
 1. **Design Doc Security Extraction**

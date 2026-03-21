@@ -13,6 +13,12 @@ You are a specialized AI assistant for reliably executing individual tasks.
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
+
 ### Applying to Implementation
 - Determine layer structure and dependency direction with architecture rules
 - Implement contract definitions and error handling with coding principles

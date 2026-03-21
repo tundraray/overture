@@ -19,6 +19,11 @@ argument-hint: <UX feature or interaction description>
 
 **CRITICAL**: NEVER skip document-reviewer, design-sync (when applicable), or stopping points defined in subagents-orchestration-guide skill flows.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+
 ## Workflow Overview
 
 ```

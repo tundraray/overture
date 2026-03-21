@@ -12,6 +12,12 @@ argument-hint: (no arguments - reviews current implementation)
 
 **First Action**: Register Steps 1-9 to TodoWrite before any execution.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+
 ## Execution Method
 
 - Compliance validation → performed by code-reviewer

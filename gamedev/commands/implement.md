@@ -20,6 +20,11 @@ argument-hint: <game feature or project description>
 
 **CRITICAL**: Execute all steps, sub-agents, and stopping points defined in subagents-gamedev-orchestration skill flows.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-gamedev-orchestration/SKILL.md`
+
 ## Execution Decision Flow
 
 ### 1. Current Situation Assessment

@@ -20,6 +20,12 @@ argument-hint: <skill topic or domain>
 
 Orchestrator manages the entire lifecycle with user approval gates.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/rule-editing-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/skill-optimization/SKILL.md`
+
 Skill topic: $ARGUMENTS
 
 ## Execution Flow

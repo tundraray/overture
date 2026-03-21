@@ -20,6 +20,11 @@ argument-hint: <feature description>
 
 **CRITICAL**: Execute all steps, sub-agents, and stopping points defined in subagents-orchestration-guide skill flows.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+
 ## Execution Decision Flow
 
 ### 1. Current Situation Assessment
