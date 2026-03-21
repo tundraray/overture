@@ -58,17 +58,20 @@ Mentioned Competitors: "[any named]"
 Stated Goals: "[what the user wants from this analysis]"
 ```
 
-### Step 2: Research & Validate
+### Step 2: Research & Validate (WebSearch MANDATORY)
 
-- Use WebSearch to verify market context
-- Check if mentioned competitors exist and are correctly characterized
-- Identify competitors NOT mentioned by the user
-- Find recent industry news or trends
+**Every claim must be web-verified. Do not rely on training data for market context.**
+
+- Use WebSearch to verify market context — search for "[industry/category] market [current year]"
+- Check if mentioned competitors exist and are correctly characterized — visit their websites via WebFetch
+- Identify competitors NOT mentioned by the user — search for "[category] competitors", "[category] alternatives"
+- Find recent industry news or trends — search for "[industry] trends [current year]", "[industry] news"
 - **MANDATORY: TrustMRR check** — Use WebFetch on https://trustmrr.com/ to search the relevant category:
   - How many startups exist in this space? (idea validation signal)
   - What MRR levels do they achieve? (market ceiling)
   - Are there startups for sale? (market maturity signal)
   - Tag all TrustMRR data as **Tier 1** (Stripe-verified)
+- **Date-stamp all findings**: Reference the actual current date. Mark any data older than 12 months as "[Potentially outdated — verify]"
 
 ### Step 2.5: Extract AJTBD Hypotheses
 

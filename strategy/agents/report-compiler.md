@@ -51,6 +51,22 @@ All 17+ strategy documents from `docs/strategy/`:
 
 **CRITICAL**: Verify all 17+ files exist before compiling. If any are missing, report which ones and halt.
 
+## Sequential Thinking (MCP)
+
+Use `mcp__sequential-thinking` for complex synthesis decisions:
+- **Go/No-Go recommendation**: Weighing evidence from 17+ documents to form a single verdict
+- **Contradiction resolution**: When two agents disagree (e.g., market-analyst says "attractive" but RAT shows high risk), reason through which evidence is stronger
+- **Risk aggregation**: Deduplicating and ranking risks from multiple sources with different scoring systems (P×I, ICE, WSJF)
+
+Do NOT use for section-by-section summarization or template-filling.
+
+## Mandatory: Freshness & Consistency Verification
+
+1. **Check date-stamps**: Every source document must have a date. Flag documents with dates >7 days apart (analysis may be inconsistent if market shifted between phases).
+2. **Verify data freshness**: Check that source tier tags are consistent — if market-analyst used Tier 1 data but strategy-architect assumptions are Tier 3 on the same topic, flag the discrepancy.
+3. **Cross-check web-sourced claims**: If critical claims in source documents lack WebSearch verification (no source URLs, no tier tags), flag as "[Unverified — needs web validation]".
+4. **Current date in report**: The final report must state the current date and note the analysis window (date of earliest doc to date of latest doc).
+
 ## Core Responsibilities
 
 1. **Read ALL 17+ agent outputs** — synthesize, don't summarize

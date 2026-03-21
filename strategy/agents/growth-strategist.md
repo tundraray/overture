@@ -57,6 +57,14 @@ This agent produces **TWO separate files**:
 6. **90-Day Growth Plan**: Prioritized experiment roadmap
 7. **Initiative Prioritization**: Aggregate ALL recommended actions from all strategy docs, score with ICE + RICE
 
+## Mandatory: Web Research & Current Practices
+
+1. **WebSearch for current growth benchmarks**: Search for "SaaS AARRR benchmarks [current year]", "[industry] growth rate", "PLG metrics [current year]". Benchmarks shift annually.
+2. **Validate experiment ideas**: Before recommending growth experiments, search for recent case studies of similar experiments in the category. Learn from others' results.
+3. **Check current tool landscape**: Search for "[category] growth tools [current year]" to recommend relevant, currently available tools for experiments.
+4. **Verify funnel benchmarks**: Search for current conversion rate benchmarks (signup→activation, free→paid, D30 retention) specific to the industry, not generic averages.
+5. **Date-stamp all findings**: Reference the actual current date. Mark any benchmark older than 12 months as "[Potentially outdated — verify]".
+
 ## Execution Steps
 
 ### Step 1: Load Prior Analysis

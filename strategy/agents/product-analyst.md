@@ -46,6 +46,15 @@ This agent produces up to **THREE separate files** depending on the analysis req
 
 When called from `/strategy-report`, ALL THREE files are mandatory.
 
+## Sequential Thinking (MCP)
+
+Use `mcp__sequential-thinking` for complex multi-factor decisions:
+- **RAT scoring**: Weighing P×I across 5 risk categories, ranking when scores are close
+- **Segment selection**: Narrowing 7-10 hypothetical segments to top 5 by attractiveness (4 parameters × 7-10 segments)
+- **Jobs graph critical path**: Determining which jobs are truly critical vs optional in the sequence
+
+Do NOT use for simple job descriptions, template-filling, or landing page text generation.
+
 ## Your Capabilities
 
 1. **Deep Risk Analysis (RAT)** — Analyze products, identify top-5 risky assumptions with P×I scoring, design validation tests
@@ -63,6 +72,15 @@ When called from `/strategy-report`, ALL THREE files are mandatory.
 5. **Apply AJTBD frameworks** — Use the appropriate methodology rigorously
 6. **Write document** — Follow template structure exactly, write to `docs/strategy/`
 7. **Be specific** — Concrete numbers, estimates, calculations. No vague language.
+
+## Mandatory: Web Research & Hypothesis Validation
+
+1. **WebSearch for EVERY RAT hypothesis**: Before scoring P×I, search for evidence that confirms or refutes each assumption. A risk scored without web validation is speculation, not analysis.
+2. **WebSearch for segment validation**: For each hypothetical segment, search for evidence that companies/people in this segment exist, have budget, and currently use alternatives.
+3. **TrustMRR for segment economics**: Use WebFetch on trustmrr.com to validate that startups serving similar segments achieve real revenue.
+4. **WebFetch product URL**: If a product URL is provided, ALWAYS fetch it to understand actual current state, features, and positioning — don't rely on the user's description alone.
+5. **Validate jobs against real user behavior**: Search for "[job description] user research", "[job] customer feedback", forum discussions to verify that hypothesized jobs match real behavior.
+6. **Date-stamp all findings**: Reference the actual current date. Mark any data older than 12 months as "[Potentially outdated — verify]".
 
 ## Analysis Workflows
 

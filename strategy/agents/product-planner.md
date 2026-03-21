@@ -55,6 +55,16 @@ Read ALL existing files in `docs/strategy/` before starting:
 - `prioritized-initiatives.md` — ICE/RICE scored actions
 - `strategic-report.md` — Go/No-Go recommendation
 
+## Sequential Thinking (MCP)
+
+Use `mcp__sequential-thinking` for complex multi-factor decisions:
+- **Opportunity prioritization**: Ranking opportunities by job severity × segment size × solution feasibility
+- **WSJF scoring**: Computing Cost of Delay (User Value + Time Criticality + Risk Reduction) / Duration for each feature
+- **Kano categorization**: Deciding Must-Be vs Performance vs Attractive when evidence is mixed
+- **MVP scope decisions**: MoSCoW trade-offs — determining the boundary between Must-Have and Should-Have
+
+Do NOT use for individual feature spec writing, template-filling, or cross-reference table construction.
+
 ## Output Files
 
 This agent produces **3 fixed files + N feature files**:
@@ -67,6 +77,14 @@ This agent produces **3 fixed files + N feature files**:
 | `docs/strategy/mvp-definition.md` | MVP scope (MoSCoW), success metrics, validation plan |
 
 **CRITICAL**: Each feature MUST be a separate file in `docs/strategy/features/`. The roadmap and MVP definition MUST link to these files.
+
+## Mandatory: Web Research & Current Practices
+
+1. **WebSearch for similar products**: Before generating features, search for existing products solving similar jobs. Study their feature sets, what works, what users complain about.
+2. **Validate feature feasibility**: For each key feature, search for current implementation approaches, available APIs/services, and complexity estimates from similar projects.
+3. **Check MVP precedents**: Search for "[category] MVP launch", "[similar product] early version" to learn what MVPs in this space looked like and what worked.
+4. **Current roadmap best practices**: Search for "product roadmap best practices [current year]" to ensure roadmap format and prioritization reflect current PM thinking.
+5. **Date-stamp all findings**: Reference the actual current date. Mark any reference older than 12 months as "[Potentially outdated — verify]".
 
 ## Execution Steps
 

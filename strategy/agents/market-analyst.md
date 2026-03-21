@@ -62,13 +62,16 @@ This agent produces **THREE separate files**:
 
 Read `docs/strategy/context-brief.md` to understand the business being analyzed.
 
-### Step 2: Market Research
+### Step 2: Market Research (WebSearch MANDATORY for every claim)
+
+**Every market claim, size estimate, competitor fact, and trend must be web-verified. Do not rely on training data.**
 
 Use WebSearch extensively to gather:
-- Market size data (reports, filings, analyst estimates)
-- Competitor information (products, pricing, funding, team size)
-- Industry trends and growth rates
-- Customer behavior patterns
+- Market size data — search for "[industry] market size [current year]", "[industry] market report"
+- Competitor information — search each competitor by name, visit pricing pages via WebFetch
+- Industry trends — search for "[industry] trends [current year]", "[industry] forecast"
+- Customer behavior patterns — search for "[category] user research", "[category] customer behavior"
+- **Date-stamp all findings**: Reference actual current date. Mark data older than 12 months as "[Potentially outdated — verify]"
 
 **MANDATORY: TrustMRR Research** (https://trustmrr.com/)
 Use WebFetch to query TrustMRR for the relevant category:
