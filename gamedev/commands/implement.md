@@ -20,6 +20,11 @@ argument-hint: <game feature or project description>
 
 **CRITICAL**: Execute all steps, sub-agents, and stopping points defined in subagents-gamedev-orchestration skill flows.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-gamedev-orchestration/SKILL.md`
+
 ## Execution Decision Flow
 
 ### 1. Current Situation Assessment
@@ -264,6 +269,21 @@ Store selected strategy for autonomous execution mode.
 - Skipping escalation check
 - Skipping quality-fixer
 - Committing without asking strategy first
+
+### Security Review (Post-Implementation)
+
+After all tasks complete and before generating the final completion report:
+
+1. Invoke security-reviewer using Task tool:
+   - `subagent_type`: "security-reviewer"
+   - `description`: "Security compliance review"
+   - `prompt`: "Review implementation for security compliance. Design Doc: [path]. Files modified: [all modified files from task execution]."
+
+2. **Handle security-reviewer response**:
+   - `blocked` → **STOP immediately**. Report credentials/critical vulnerability to user. Do NOT commit.
+   - `needs_revision` → Create security fix task file, execute via task-executor → quality-fixer → re-run security-reviewer
+   - `approved_with_notes` → Include security notes in completion report. Proceed to commit.
+   - `approved` → Proceed to completion report.
 
 ### Test Information Communication
 After acceptance-test-generator execution, when calling work-planner, communicate:

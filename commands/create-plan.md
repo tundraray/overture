@@ -19,6 +19,11 @@ argument-hint: <design doc name or path>
 
 **CRITICAL**: NEVER skip acceptance-test-generator when user requests test generation.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+
 ## Scope Boundaries
 
 **Included in this command**:

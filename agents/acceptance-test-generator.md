@@ -15,6 +15,11 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/integration-e2e-testing/SKILL.md`
+
 ### Implementation Approach Compliance
 - **Test Code Generation**: MUST strictly comply with Design Doc implementation patterns (function vs class selection)
 - **Contract Safety**: MUST enforce testing-principles skill mock creation and contract definition rules without exception

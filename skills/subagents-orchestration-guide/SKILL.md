@@ -24,6 +24,16 @@ All investigation, analysis, and implementation work flows through specialized s
 
 **Every new task begins with requirement-analyzer.**
 
+### Session Initialization Protocol
+
+Before the orchestrator performs any other action in a new session:
+
+1. **Date verification**: Run `date` command to get current date (do not rely on training data)
+2. **Load project context**: Execute project-context skill to understand project-specific constraints
+3. **Pre-edit gate**: Before any editing operation, run rule-advisor first to assess the task
+
+These steps ensure the orchestrator has current context before making decisions.
+
 ## Decision Flow When Receiving Tasks
 
 ```mermaid
@@ -53,6 +63,7 @@ The following subagents are available:
 2. **task-decomposer**: Appropriate task decomposition of work plans
 3. **task-executor**: Individual task execution and structured response
 4. **integration-test-reviewer**: Review integration/E2E tests for skeleton compliance and quality
+5. **security-reviewer**: Security compliance review against Design Doc and coding-principles (read-only)
 
 ### Document Creation Agents
 5. **requirement-analyzer**: Requirement analysis and work scale determination
@@ -170,6 +181,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
 - **codebase-scanner**: status, items (id, name, category, suspicionLevel, files, signals, evidence), scanMetrics
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
+- **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
 
 
 ## Handling Requirement Changes
@@ -223,7 +235,9 @@ According to scale determination:
 11. acceptance-test-generator → Integration and E2E test skeleton generation
     → Orchestrator: Verify generation, then pass information to work-planner (*1)
 12. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-13. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+13. **Start autonomous execution mode**: task-decomposer → Execute all tasks
+14. security-reviewer → Security compliance review (if `blocked` → halt and report; if `needs_revision` → create fix tasks via task-executor + quality-fixer)
+15. Completion report
 
 ### Medium Scale (3-5 Files)
 1. requirement-analyzer → Requirement analysis **[Stop: Requirement confirmation/question handling]**
@@ -235,7 +249,9 @@ According to scale determination:
 7. acceptance-test-generator → Integration and E2E test skeleton generation
    → Orchestrator: Verify generation, then pass information to work-planner (*1)
 8. work-planner → Work plan creation (including integration and E2E test information) **[Stop: Batch approval for entire implementation phase]**
-9. **Start autonomous execution mode**: task-decomposer → Execute all tasks → Completion report
+9. **Start autonomous execution mode**: task-decomposer → Execute all tasks
+10. security-reviewer → Security compliance review (if `blocked` → halt; if `needs_revision` → create fix tasks)
+11. Completion report
 
 ### Small Scale (1-2 Files)
 1. Create simplified plan **[Stop: Batch approval for entire implementation phase]**

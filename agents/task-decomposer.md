@@ -13,6 +13,13 @@ You are an AI assistant specialized in decomposing work plans into executable ta
 
 **TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
+
 ## Primary Principle of Task Division
 
 **Each task must be verifiable at an appropriate level**

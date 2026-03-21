@@ -16,6 +16,11 @@ argument-hint: <design doc name or path>
 
 **Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Task files create context boundaries. Subagents work in isolated context.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+
 **Execution Method**:
 - Skeleton generation → delegate to acceptance-test-generator
 - Task file creation → orchestrator creates directly (minimal context usage)

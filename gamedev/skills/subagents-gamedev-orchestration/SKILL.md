@@ -24,6 +24,16 @@ All investigation, analysis, and implementation work flows through specialized s
 
 **Every new task begins with requirement-analyzer.**
 
+### Session Initialization Protocol
+
+Before the orchestrator performs any other action in a new session:
+
+1. **Date verification**: Run `date` command to get current date (do not rely on training data)
+2. **Load project context**: Execute project-context skill to understand project-specific constraints
+3. **Pre-edit gate**: Before any editing operation, run rule-advisor first to assess the task
+
+These steps ensure the orchestrator has current context before making decisions.
+
 ## Decision Flow When Receiving Tasks
 
 ```mermaid
@@ -56,8 +66,9 @@ graph TD
 3. **task-decomposer**: Appropriate task decomposition of work plans
 4. **task-executor**: Individual task execution and structured response
 5. **integration-test-reviewer**: Review integration/E2E tests for skeleton compliance and quality
-6. **technical-designer**: ADR/Design Doc creation
-7. **document-reviewer**: Single document quality and rule compliance check
+6. **security-reviewer**: Security compliance review against Design Doc and coding-principles (read-only)
+7. **technical-designer**: ADR/Design Doc creation
+8. **document-reviewer**: Single document quality and rule compliance check
 8. **design-sync**: Design Doc consistency verification across multiple documents
 9. **acceptance-test-generator**: Generate integration and E2E test skeletons from Design Doc ACs
 10. **expert-analyst**: Parallel multi-perspective analysis from expert viewpoint
@@ -196,6 +207,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
 - **codebase-scanner**: status, items (id, name, category, suspicionLevel, files, signals, evidence), scanMetrics
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
+- **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
 
 ### Gamedev Agent Responses
 - **market-analyst**: status, recommendation (go/no-go/conditional), marketSize, competitors, risks, targetAudience, monetizationPotential
@@ -301,6 +313,8 @@ According to scale determination and scenario detection:
 16. acceptance-test-generator → Test skeletons
 17. gamedev-work-planner → Work plan with 6 game phases **[Stop: Batch approval for entire implementation phase]**
 18. **Start autonomous execution mode**: task-decomposer → (task-executor → quality-fixer → commit) loop
+19. security-reviewer → Security compliance review (if `blocked` → halt; if `needs_revision` → create fix tasks)
+20. Completion report
 
 ### Large Scale — Scenario B: Large Feature (existing project/GDD)
 
@@ -316,6 +330,8 @@ According to scale determination and scenario detection:
 10. acceptance-test-generator → Test skeletons
 11. gamedev-work-planner → Work plan **[Stop: Batch approval for entire implementation phase]**
 12. **Start autonomous execution mode**: task-decomposer → (task-executor → quality-fixer → commit) loop
+13. security-reviewer → Security compliance review (if `blocked` → halt; if `needs_revision` → create fix tasks)
+14. Completion report
 
 ### Medium Scale (3-5 Files)
 
@@ -330,6 +346,8 @@ According to scale determination and scenario detection:
 8. acceptance-test-generator → Test skeletons
 9. gamedev-work-planner → Work plan **[Stop: Batch approval for entire implementation phase]**
 10. **Start autonomous execution mode**: task-decomposer → (task-executor → quality-fixer → commit) loop
+11. security-reviewer → Security compliance review (if `blocked` → halt; if `needs_revision` → create fix tasks)
+12. Completion report
 
 ### Small Scale (1-2 Files)
 

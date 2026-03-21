@@ -212,6 +212,12 @@ Before starting work, load and follow the skills defined in the frontmatter:
 - **documentation-criteria**: Documentation creation criteria (storage locations and naming conventions)
 - **brand-system-guide**: Brand book (colors, fonts, visual guidelines)
 
+**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
+- `${CLAUDE_PLUGIN_ROOT}/skills/project-context/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/technical-spec/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/brand-system-guide/SKILL.md`
+
 ## Responsibilities
 
 1. Design user experiences and interaction patterns

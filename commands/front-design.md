@@ -17,6 +17,11 @@ argument-hint: <feature description>
 
 Orchestrator invokes sub-agents and passes structured JSON between them.
 
+## Required Skills
+
+Before executing, load these skill files for guidance:
+- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+
 ## Scope Boundaries
 
 **Included in this command**:

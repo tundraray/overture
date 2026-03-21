@@ -1,6 +1,6 @@
 {
   "name": "backend-overture",
-  "version": "0.18.2",
+  "version": "0.18.4",
   "description": "Backend development with orchestrated agents, coding best-practices skills, and MCP integration (context7, sequential-thinking, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -34,7 +34,8 @@
     "./commands/sync-skills.md",
     "./commands/task.md",
     "./commands/audit.md",
-    "./commands/update-doc.md"
+    "./commands/update-doc.md",
+    "./commands/create-skill.md"
   ],
   "agents": [
     "./agents/acceptance-test-generator.md",
@@ -57,7 +58,8 @@
     "./agents/task-executor.md",
     "./agents/technical-designer.md",
     "./agents/verifier.md",
-    "./agents/work-planner.md"
+    "./agents/work-planner.md",
+    "./agents/security-reviewer.md"
   ],
   "skills": [
     "./skills/ai-development-guide",
@@ -72,7 +74,9 @@
     "./skills/technical-spec",
     "./skills/testing-principles",
     "./skills/typescript-rules-backend",
-    "./skills/typescript-testing-backend"
+    "./skills/typescript-testing-backend",
+    "./skills/security-checks",
+    "./skills/skill-optimization"
   ],
   "mcpServers": "./.mcp.json"
 }
