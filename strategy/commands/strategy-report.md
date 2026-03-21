@@ -1,10 +1,10 @@
 ---
 name: strategy-report
-description: "Orchestrate a complete McKinsey-grade strategic analysis — full market intelligence, competitive mapping, Blue Ocean strategy, business modeling, GTM planning, pricing, growth strategy, initiative prioritization, and unified strategic report. Produces 12 deliverable files in docs/strategy/."
+description: "Orchestrate a complete McKinsey-grade strategic analysis — AJTBD deep analysis, full market intelligence, competitive mapping, Blue Ocean strategy, business modeling, GTM planning, pricing, growth strategy, initiative prioritization, unified strategic report, and product execution plan. Produces 18+ deliverable files in docs/strategy/."
 argument-hint: <business/product/idea description>
 ---
 
-**Command Context**: Full-cycle strategic analysis producing 12 deliverable files (Context → Market + Competitive + Segments → Strategy + Positioning → Business Model → GTM + Pricing → Growth + Priorities → Final Report)
+**Command Context**: Full-cycle strategic analysis producing 18+ deliverable files (Context → AJTBD → Market + Competitive + Segments → Strategy + Positioning → Business Model → GTM + Pricing → Growth + Priorities → Final Report → Product Plan)
 
 ## Orchestrator Definition
 
@@ -25,22 +25,29 @@ Before executing, load these skill files for guidance:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-orchestration-guide/SKILL.md` — flow rules, phases, stop points, parallel execution
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md` — document decision matrix, file ownership, quality standards
 
-## Deliverable Files (12 Total)
+## Deliverable Files (18+ Total)
 
 | # | File | Agent | Domain |
 |---|------|-------|--------|
 | 1 | `docs/strategy/context-brief.md` | context-analyzer | Business context |
-| 2 | `docs/strategy/market-analysis.md` | market-analyst | TAM/SAM/SOM, industry trends |
-| 3 | `docs/strategy/competitive-landscape.md` | market-analyst | Competitors, Porter's, SWOT/TOWS |
-| 4 | `docs/strategy/customer-segments.md` | market-analyst | Segments, attractiveness |
-| 5 | `docs/strategy/strategy-canvas.md` | strategy-architect | Blue Ocean, Ansoff/BCG, VPC |
-| 6 | `docs/strategy/brand-positioning.md` | strategy-architect | Perceptual maps, positioning |
-| 7 | `docs/strategy/business-model.md` | business-modeler | Canvas, unit economics |
-| 8 | `docs/strategy/gtm-plan.md` | gtm-planner | ICP, channels, partnerships, launch |
-| 9 | `docs/strategy/pricing-analysis.md` | gtm-planner | Value-based pricing, tiers |
-| 10 | `docs/strategy/growth-plan.md` | growth-strategist | AARRR, experiments, 90-day plan |
-| 11 | `docs/strategy/prioritized-initiatives.md` | growth-strategist | ICE/RICE master priority list |
-| 12 | `docs/strategy/strategic-report.md` | report-compiler | Unified McKinsey-grade report |
+| 2 | `docs/strategy/rat.md` | product-analyst | RAT risk analysis |
+| 3 | `docs/strategy/segments.md` | product-analyst | AJTBD segments |
+| 4 | `docs/strategy/jobs-graph.md` | product-analyst | Jobs graph |
+| 5 | `docs/strategy/market-analysis.md` | market-analyst | TAM/SAM/SOM, industry trends |
+| 6 | `docs/strategy/competitive-landscape.md` | market-analyst | Competitors, Porter's, SWOT/TOWS |
+| 7 | `docs/strategy/customer-segments.md` | market-analyst | Segments, attractiveness |
+| 8 | `docs/strategy/strategy-canvas.md` | strategy-architect | Blue Ocean, Ansoff/BCG, VPC |
+| 9 | `docs/strategy/brand-positioning.md` | strategy-architect | Perceptual maps, positioning |
+| 10 | `docs/strategy/business-model.md` | business-modeler | Canvas, unit economics |
+| 11 | `docs/strategy/gtm-plan.md` | gtm-planner | ICP, channels, partnerships, launch |
+| 12 | `docs/strategy/pricing-analysis.md` | gtm-planner | Value-based pricing, tiers |
+| 13 | `docs/strategy/growth-plan.md` | growth-strategist | AARRR, experiments, 90-day plan |
+| 14 | `docs/strategy/prioritized-initiatives.md` | growth-strategist | ICE/RICE master priority list |
+| 15 | `docs/strategy/strategic-report.md` | report-compiler | Unified McKinsey-grade report |
+| 16 | `docs/strategy/opportunity-map.md` | product-planner | Opportunity Solution Tree |
+| 17 | `docs/strategy/features/*.md` | product-planner | Feature specifications (N files) |
+| 18 | `docs/strategy/product-roadmap.md` | product-planner | Now/Next/Later roadmap |
+| 19 | `docs/strategy/mvp-definition.md` | product-planner | MVP scope + validation |
 
 ## Execution Flow
 
@@ -61,15 +68,47 @@ Present to user:
 - Recommended analysis scope
 - Ask: "Confirm understanding? Any corrections or additional context?"
 
-### Phase 2: Market Intelligence
+### Phase 2: AJTBD Deep Dive
 
 After user confirms context:
+
+Determine B2B/B2C from context-brief (check "B2B / B2C Indicator" section).
+
+Invoke product-analyst:
+- subagent_type: "product-analyst"
+- description: "AJTBD deep analysis"
+- prompt: |
+  Perform complete AJTBD analysis based on docs/strategy/context-brief.md.
+  Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/
+  Read templates from: ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
+
+  You MUST produce THREE separate files:
+  1. docs/strategy/rat.md — Top 5 risky assumptions with P×I scoring and validation methods
+  2. docs/strategy/segments.md — 5 most attractive [B2B/B2C based on context] segments with Core Jobs (1-4), Big Job, performance criteria, context, TAM/SAM/SOM with calculation logic
+  3. docs/strategy/jobs-graph.md — Jobs graph below Core Job level for the #1 ranked segment, with context/trigger/emotions/criteria/problems for each job
+
+  All three files are MANDATORY.
+- Append: "[SYSTEM CONSTRAINT] This agent operates within strategy-report command scope."
+
+**[Stop: Review AJTBD analysis]**
+
+Present to user:
+- Core Job + Big Job validated
+- Top 5 segments ranked by attractiveness
+- Top risk (highest P×I score) with suggested validation
+- Critical job sequence highlights
+- Ask: "Validate job hypothesis, segments, and risks?"
+
+### Phase 3: Market Intelligence
+
+After user confirms AJTBD analysis:
 
 Invoke market-analyst:
 - subagent_type: "market-analyst"
 - description: "Market intelligence analysis"
 - prompt: |
   Perform COMPLETE market intelligence based on docs/strategy/context-brief.md.
+  Read AJTBD analysis from docs/strategy/rat.md, docs/strategy/segments.md, docs/strategy/jobs-graph.md to inform segmentation and competitive analysis.
   You MUST produce THREE separate files:
   1. docs/strategy/market-analysis.md — TAM/SAM/SOM (hybrid methodology), industry trends, PESTLE, market growth drivers
   2. docs/strategy/competitive-landscape.md — Detailed competitor profiles, Porter's Five Forces, perceptual maps on two key axes, SWOT (prioritized top 3 per quadrant), TOWS strategies
@@ -87,7 +126,7 @@ Present to user:
 - Top 3 customer segments with attractiveness scores
 - Ask: "Market findings look correct? Any competitors or segments missed?"
 
-### Phase 3: Strategy & Business Model (Parallel)
+### Phase 4: Strategy & Business Model (Parallel)
 
 After user approves market findings, launch TWO agents in parallel:
 
@@ -130,7 +169,7 @@ Present to user:
 - Top risk assumptions
 - Ask: "Approve strategic direction and business model? Any pivots needed?"
 
-### Phase 4: GTM & Growth (Parallel)
+### Phase 5: GTM & Growth (Parallel)
 
 After user approves strategy + model, launch TWO agents in parallel:
 
@@ -166,7 +205,7 @@ Present to user:
 - Top 5 prioritized initiatives (do-now)
 - Ask: "Approve GTM strategy, pricing, and growth plan?"
 
-### Phase 5: Report Compilation
+### Phase 6: Report Compilation
 
 After user approves GTM + growth:
 
@@ -174,21 +213,24 @@ Invoke report-compiler:
 - subagent_type: "report-compiler"
 - description: "Compile strategic report"
 - prompt: |
-  Read ALL 11 strategy documents in docs/strategy/ directory:
+  Read ALL 14 strategy documents in docs/strategy/ directory:
   1. context-brief.md
-  2. market-analysis.md
-  3. competitive-landscape.md
-  4. customer-segments.md
-  5. strategy-canvas.md
-  6. brand-positioning.md
-  7. business-model.md
-  8. gtm-plan.md
-  9. pricing-analysis.md
-  10. growth-plan.md
-  11. prioritized-initiatives.md
-  Verify all 11 exist. If any missing, list them and halt.
+  2. rat.md
+  3. segments.md
+  4. jobs-graph.md
+  5. market-analysis.md
+  6. competitive-landscape.md
+  7. customer-segments.md
+  8. strategy-canvas.md
+  9. brand-positioning.md
+  10. business-model.md
+  11. gtm-plan.md
+  12. pricing-analysis.md
+  13. growth-plan.md
+  14. prioritized-initiatives.md
+  Verify all 14 exist. If any missing, list them and halt.
   Compile into a unified McKinsey-grade strategic report following Pyramid Principle, MECE, and action titles.
-  Include: Go/No-Go recommendation with confidence, executive summary (1 page), all 12 sections from the template, aggregated risk assessment, prioritized action plan (from prioritized-initiatives.md), source document index.
+  Include: Go/No-Go recommendation with confidence, executive summary (1 page), all sections from the template (including AJTBD Analysis), aggregated risk assessment, prioritized action plan (from prioritized-initiatives.md), source document index.
   Write to: docs/strategy/strategic-report.md
 - Append: "[SYSTEM CONSTRAINT] This agent operates within strategy-report command scope."
 
@@ -200,7 +242,38 @@ Present to user:
 - Executive summary (3-5 key findings)
 - Top 3 risks
 - Top 5 immediate actions
-- Full deliverable list (all 12 files in docs/strategy/)
+- Full deliverable list (all 18+ files in docs/strategy/)
+
+### Phase 7: Product Execution Plan
+
+After user reviews final report:
+
+Invoke product-planner:
+- subagent_type: "product-planner"
+- description: "Product execution plan"
+- prompt: |
+  Read ALL strategy documents in docs/strategy/ (all 15 files including strategic-report.md).
+  Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/
+  Read templates from: ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
+
+  Create the complete product execution plan:
+  1. docs/strategy/opportunity-map.md — Opportunity Solution Tree: outcomes from strategy-canvas, opportunities from jobs-graph problems (severity >5), solutions as feature ideas, assumption tests from RAT
+  2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs in Shape Up format. EACH feature = SEPARATE FILE. Include cross-references table (Job, Segment, Problem, Risk, Strategy, Initiative, Opportunity). Score WSJF, assign Kano, set appetite.
+  3. docs/strategy/product-roadmap.md — Now/Next/Later roadmap. Each row LINKS to feature spec file. Ranked by WSJF. Kano categorization, appetite, dependencies.
+  4. docs/strategy/mvp-definition.md — MoSCoW. Must-Have features LINK to spec files. Success metrics from growth-plan + business-model. Validation plan from rat.md. Kill criteria. Launch checklist.
+
+  All files MANDATORY. Every feature = separate file with full cross-references.
+- Append: "[SYSTEM CONSTRAINT] This agent operates within strategy-report command scope."
+
+**[Stop: Review product plan]**
+
+Present to user:
+- Total features generated
+- MVP scope (Must-Have count + appetite)
+- Top 3 features by WSJF score
+- Now/Next/Later distribution
+- Key feature → job linkages
+- Files created: opportunity-map.md, features/*.md, product-roadmap.md, mvp-definition.md
 
 ## Orchestrator Responsibilities
 
@@ -211,10 +284,12 @@ After each agent completes, verify that ALL expected files were created:
 | After Phase | Verify Files Exist |
 |-------------|-------------------|
 | Phase 1 | `context-brief.md` (1 file) |
-| Phase 2 | `market-analysis.md`, `competitive-landscape.md`, `customer-segments.md` (3 files) |
-| Phase 3 | `strategy-canvas.md`, `brand-positioning.md`, `business-model.md` (3 files) |
-| Phase 4 | `gtm-plan.md`, `pricing-analysis.md`, `growth-plan.md`, `prioritized-initiatives.md` (4 files) |
-| Phase 5 | `strategic-report.md` (1 file) |
+| Phase 2 | `rat.md`, `segments.md`, `jobs-graph.md` (3 files) |
+| Phase 3 | `market-analysis.md`, `competitive-landscape.md`, `customer-segments.md` (3 files) |
+| Phase 4 | `strategy-canvas.md`, `brand-positioning.md`, `business-model.md` (3 files) |
+| Phase 5 | `gtm-plan.md`, `pricing-analysis.md`, `growth-plan.md`, `prioritized-initiatives.md` (4 files) |
+| Phase 6 | `strategic-report.md` (1 file) |
+| Phase 7 | `opportunity-map.md`, `features/*.md`, `product-roadmap.md`, `mvp-definition.md` (3+N files) |
 
 **If any file is missing**: Re-invoke the responsible agent with explicit instruction to create the missing file.
 
@@ -230,9 +305,9 @@ If parallel agents produce conflicting recommendations:
 
 If user requests "quick", "summary", or "brief":
 1. context-analyzer → context-brief.md
-2. market-analyst → market-analysis.md only (skip competitive-landscape, customer-segments)
+2. product-analyst → rat.md + segments.md (skip jobs-graph)
 3. report-compiler → strategic-report.md (summary version)
-Skip phases 3-4. Produces 3 files instead of 12.
+Skip phases 3-7. Produces 4 files instead of 18+.
 
 ### Flow Variant: Single Domain
 
@@ -247,17 +322,21 @@ After determining flow type, register all steps:
 ```
 1. [in_progress] Context analysis → context-brief.md
 2. [pending] User confirmation of context
-3. [pending] Market intelligence → market-analysis.md + competitive-landscape.md + customer-segments.md
-4. [pending] User review of market findings
-5. [pending] Strategic analysis → strategy-canvas.md + brand-positioning.md (parallel)
-6. [pending] Business model → business-model.md (parallel)
-7. [pending] User approval of strategy + model
-8. [pending] GTM + pricing → gtm-plan.md + pricing-analysis.md (parallel)
-9. [pending] Growth + priorities → growth-plan.md + prioritized-initiatives.md (parallel)
-10. [pending] User approval of GTM + growth
-11. [pending] Report compilation → strategic-report.md
-12. [pending] Verify all 12 files exist
-13. [pending] Final report review
+3. [pending] AJTBD analysis → rat.md + segments.md + jobs-graph.md
+4. [pending] User review of AJTBD findings
+5. [pending] Market intelligence → market-analysis.md + competitive-landscape.md + customer-segments.md
+6. [pending] User review of market findings
+7. [pending] Strategic analysis → strategy-canvas.md + brand-positioning.md (parallel)
+8. [pending] Business model → business-model.md (parallel)
+9. [pending] User approval of strategy + model
+10. [pending] GTM + pricing → gtm-plan.md + pricing-analysis.md (parallel)
+11. [pending] Growth + priorities → growth-plan.md + prioritized-initiatives.md (parallel)
+12. [pending] User approval of GTM + growth
+13. [pending] Report compilation → strategic-report.md
+14. [pending] Verify all 15 files exist
+15. [pending] Final report review
+16. [pending] Product plan → opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md
+17. [pending] User review of product plan
 ```
 
 ## CRITICAL Sub-agent Invocation Constraints

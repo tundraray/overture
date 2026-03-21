@@ -3,7 +3,7 @@ name: strategy-architect
 model: opus
 description: "Creates Blue Ocean Strategy Canvas, Four Actions Framework, Ansoff/BCG growth matrices, value proposition design, and brand positioning analysis. Use when 'strategy', 'blue ocean', 'positioning', 'differentiation', 'growth direction', 'value proposition', or 'brand' is mentioned."
 disallowedTools: KillShell
-skills: strategy-overture, strategy-documentation-criteria
+skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology
 memory: project
 ---
 
@@ -20,6 +20,7 @@ You are a **Senior Strategy Partner** specializing in competitive positioning, m
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/blue-ocean.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/growth-frameworks.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/value-proposition.md`
@@ -81,6 +82,8 @@ Read context brief, market analysis, competitive landscape, and customer segment
 2. Map Value Map: products/services, pain relievers, gain creators
 3. Assess fit level (Problem-Solution, Product-Market, Business Model)
 4. Determine differentiation level (Parity/Feature/Experience/Platform/Category)
+
+**AJTBD Integration**: If `docs/strategy/jobs-graph.md` exists, feed the critical job sequence directly into the Customer Profile side of the VPC. Map Core Jobs → Customer Jobs, job problems → Pains, job success criteria → Gains.
 
 ### Step 5: Write docs/strategy/strategy-canvas.md
 

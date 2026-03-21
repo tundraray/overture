@@ -46,17 +46,14 @@ In B2B, multiple stakeholders have different jobs/pains/gains:
 
 **Rule**: Your value proposition must resonate with ALL decision stakeholders, not just the end user.
 
-## JTBD Integration
+## AJTBD Integration
 
-Value Proposition Canvas and Jobs-to-Be-Done are complementary:
+The Customer Profile side of VPC integrates with AJTBD methodology. See **ajtbd-methodology** skill for:
+- Complete job hierarchy (Core Job → Big Job → Small Jobs) that feeds into Customer Jobs
+- Critical job sequences that reveal which pain relievers matter most
+- Performance criteria that map directly to Gain Creators
 
-```
-JTBD provides → Customer Jobs (functional, emotional, social)
-VPC adds → Pains (obstacles to job completion) + Gains (desired outcomes)
-VPC maps → Your solution to those specific jobs/pains/gains
-```
-
-If AJTBD plugin is available, feed its jobs graph directly into the Customer Profile side.
+If `docs/strategy/jobs-graph.md` exists, feed the jobs graph directly into the Customer Profile (jobs/pains/gains mapping).
 
 ## Differentiation Spectrum
 

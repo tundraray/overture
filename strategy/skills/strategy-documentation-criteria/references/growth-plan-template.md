@@ -22,13 +22,13 @@
 
 ## AARRR Funnel Audit
 
-| Stage | Current | Benchmark | Gap | Bottleneck Score (1-5) | Priority |
-|-------|---------|-----------|-----|----------------------|----------|
-| **Acquisition** | [metric] | [benchmark] | [gap] | [score] | [rank] |
-| **Activation** | [X]% | [X]% | [X]pp | [score] | [rank] |
-| **Retention** | [X]% D30 | [X]% | [X]pp | [score] | [rank] |
-| **Revenue** | $[X] ARPU | $[X] | [gap] | [score] | [rank] |
-| **Referral** | K=[X] | K=[X] | [gap] | [score] | [rank] |
+| Stage | Current | Benchmark | Gap | Bottleneck Score (1-5) | Priority | Job-Completion Lens |
+|-------|---------|-----------|-----|----------------------|----------|---------------------|
+| **Acquisition** | [metric] | [benchmark] | [gap] | [score] | [rank] | Does customer recognize their job and find us? |
+| **Activation** | [X]% | [X]% | [X]pp | [score] | [rank] | Does customer experience the aha-moment of job completion? |
+| **Retention** | [X]% D30 | [X]% | [X]pp | [score] | [rank] | Does product keep completing the job better than alternatives? |
+| **Revenue** | $[X] ARPU | $[X] | [gap] | [score] | [rank] | Is customer willing to pay for this level of job completion? |
+| **Referral** | K=[X] | K=[X] | [gap] | [score] | [rank] | Does job completion create advocacy? |
 
 **Biggest bottleneck**: [stage] — [why this is the priority]
 
@@ -59,6 +59,7 @@
 | Field | Value |
 |-------|-------|
 | **Hypothesis** | "If we [change], then [metric] will [improve by X%] because [reasoning]" |
+| **Target Job** | [job from jobs-graph, if available] |
 | **AARRR Stage** | [stage] |
 | **ICE Score** | Impact: [1-10] × Confidence: [1-10] × Ease: [1-10] = **[total]** |
 | **Target Metric** | [metric] — Current: [X], Target: [Y] |

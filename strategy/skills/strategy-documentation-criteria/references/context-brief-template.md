@@ -54,6 +54,23 @@
 |---|---------|---------------|----------------------|
 | 1 | [question] | [how answer changes analysis] | [default assumption] |
 
+## AJTBD Hypotheses (Initial)
+
+### Core Job Hypothesis
+- **When**: [context/situation]
+- **Want**: [expected result]
+- **So that**: [Big Job connection]
+
+### Big Job Hypothesis
+- [higher-level motivation]
+
+### Performance Criteria (Hypothetical)
+- [criterion 1]
+- [criterion 2]
+
+### B2B / B2C Indicator
+- [B2B / B2C / Both] — determines which segmentation to run in AJTBD phase
+
 ## Recommended Analysis Scope
 
 | Analysis Domain | Recommended | Rationale |

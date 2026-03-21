@@ -13,7 +13,11 @@
 |-------|-------|
 | **Size** | [X]% of addressable market |
 | **Profile** | [behavioral + psychographic description] |
-| **Primary Job (JTBD)** | "When [situation], I want to [action], so I can [outcome]" |
+| **Core Jobs** | 1. "When [context], want [result]" |
+|              | 2. "When [context], want [result]" |
+| **Big Job**  | "Want [result], so that [higher goal]" |
+| **Performance Criteria** | [quickly / cheaply / reliably / etc.] |
+| **Context & Trigger** | [life/business situation that activates the job] |
 | **Key Pain** | [biggest frustration with current solutions] |
 | **Key Gain** | [most desired outcome] |
 | **Willingness to Pay** | $[X]/month — Tier [1/2/3] |
