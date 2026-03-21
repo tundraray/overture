@@ -107,6 +107,11 @@ Slug: lowercase, hyphenated feature name (e.g., feature-001-onboarding-flow.md)
 
 ### Step 4: Build Product Roadmap → Write docs/strategy/product-roadmap.md
 
+**Feature Confidence Routing**: Each feature receives a confidence score based on the strength of its cross-references:
+- **>80% confidence** (strong job linkage + validated segment + known problem) → Now
+- **50-80% confidence** (job linkage exists but problem severity is estimated) → Next (needs validation)
+- **<50% confidence** (weak or missing cross-references) → Later (needs discovery first)
+
 1. Rank features by WSJF score
 2. Assign to Now / Next / Later based on:
    - Now: Must-Be features + highest WSJF Performance features
@@ -134,6 +139,20 @@ Before completing, verify:
 - Every MVP Must-Have links to a feature spec file
 - Opportunity map traces back to strategy docs
 - Success metrics trace to growth-plan and business-model
+
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| AJTBD segmentation or RAT | product-analyst |
+| Jobs graph mapping | product-analyst |
+| Market sizing or competitive analysis | market-analyst |
+| Blue Ocean or brand positioning | strategy-architect |
+| Business model or unit economics | business-modeler |
+| GTM channels, partnerships, pricing | gtm-planner |
+| Growth experiments or AARRR | growth-strategist |
+| Final strategic report | report-compiler |
 
 ## Output Format
 

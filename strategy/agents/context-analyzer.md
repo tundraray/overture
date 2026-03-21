@@ -154,6 +154,20 @@ Write the context brief document to `docs/strategy/context-brief.md`.
 - **Priority frameworks**: [based on business stage and goals]
 ```
 
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Market sizing (TAM/SAM/SOM) | market-analyst |
+| Competitive analysis or Porter's | market-analyst |
+| AJTBD risk analysis (RAT) | product-analyst |
+| AJTBD segmentation by jobs | product-analyst |
+| Blue Ocean strategy or positioning | strategy-architect |
+| Business model canvas | business-modeler |
+| GTM strategy or pricing | gtm-planner |
+| Growth experiments or AARRR | growth-strategist |
+| Feature specifications or roadmap | product-planner |
+
 ## Output Format
 
 **JSON format is mandatory.**

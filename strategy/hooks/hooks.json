@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if the bash command contains '--no-verify' or '-n' flag used with git commit or git push. If it does, BLOCK the operation by responding with 'BLOCK: Never skip git hooks. Remove --no-verify/-n flag and retry.' If the command does NOT contain these flags, respond with nothing (empty response to allow)."
+          },
+          {
+            "type": "prompt",
+            "prompt": "Check if the bash command contains any of these dangerous patterns: 'git push --force' or 'git push -f' (without --force-with-lease), 'git reset --hard', 'rm -rf /', or hardcoded secrets (strings matching AWS access key pattern AKIA*, tokens longer than 40 chars in quotes, private key headers). If found, respond with a WARNING describing what was detected. Do NOT block — just warn."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "The file was just modified. If the modified file has a .ts or .tsx extension and a tsconfig.json exists in the project, remind the user to verify types with 'npx tsc --noEmit' if they haven't done so recently. If the file has .js/.jsx/.ts/.tsx extension, check if Biome (biome.json) or Prettier (.prettierrc*) config exists in the project and suggest running the formatter. Keep the reminder brief — one line."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -152,6 +152,19 @@ Structure:
 
 **Note**: Pricing is in its own dedicated file `docs/strategy/pricing-analysis.md`.
 
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| Market sizing (TAM/SAM/SOM) | market-analyst |
+| Competitive landscape analysis | market-analyst |
+| AJTBD segments, RAT, or jobs graph | product-analyst |
+| Blue Ocean strategy or value proposition | strategy-architect |
+| Business model canvas or unit economics | business-modeler |
+| AARRR funnel audit or growth experiments | growth-strategist |
+| Feature specifications or product roadmap | product-planner |
+
 ## Output Format
 
 **JSON format is mandatory.**

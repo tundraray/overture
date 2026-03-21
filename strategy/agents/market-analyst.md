@@ -102,6 +102,8 @@ Apply hybrid methodology from `references/market-sizing.md`:
 
 ### Step 4: Competitive Analysis → Write docs/strategy/competitive-landscape.md
 
+**Confidence Filtering**: Only report competitive findings with >80% confidence. Tag uncertain findings as "[Low confidence — needs validation]". If a competitor's revenue data is not Tier 1 (TrustMRR/filings), mark it explicitly.
+
 1. **Porter's Five Forces**: Score each force (High/Medium/Low) with evidence
 2. **Competitor Profiles**: Detailed profile for each direct/indirect competitor (use template from references)
 3. **SWOT**: Prioritized (top 3 per quadrant, ranked by impact × actionability)
@@ -132,6 +134,20 @@ Score each segment for attractiveness (size, growth, profitability, accessibilit
 4. Segment Attractiveness Scoring Matrix
 5. Recommended Focus (primary + secondary segments with rationale)
 6. Segment-Specific Implications
+
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| AJTBD segmentation by jobs | product-analyst |
+| RAT risk analysis | product-analyst |
+| Jobs graph mapping | product-analyst |
+| Blue Ocean strategy or positioning | strategy-architect |
+| Brand positioning or perceptual maps | strategy-architect |
+| Pricing strategy deep-dive | gtm-planner |
+| Growth experiments design | growth-strategist |
+| Feature specifications | product-planner |
 
 ## Output Format
 

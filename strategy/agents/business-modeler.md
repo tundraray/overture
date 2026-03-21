@@ -130,6 +130,19 @@ Structure:
 7. Financial Scenarios (12-month and 36-month projections)
 8. Model Risks & Mitigations
 
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| Market sizing or competitive analysis | market-analyst |
+| AJTBD segments or RAT | product-analyst |
+| Blue Ocean or brand positioning | strategy-architect |
+| Pricing strategy deep-dive | gtm-planner |
+| GTM channels or launch plan | gtm-planner |
+| Growth experiments or AARRR | growth-strategist |
+| Feature specifications or roadmap | product-planner |
+
 ## Output Format
 
 **JSON format is mandatory.**

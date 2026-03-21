@@ -87,6 +87,8 @@ Read context brief, market analysis, competitive landscape, and customer segment
 
 ### Step 5: Write docs/strategy/strategy-canvas.md
 
+**Confidence Gate**: Strategic recommendations require >80% confidence to present as primary recommendation. Recommendations with 50-80% confidence → mark as "Hypothesis — requires validation" and add to assumption tests in the document.
+
 Structure:
 1. Strategic Recommendation (the answer first)
 2. Blue Ocean Analysis (Strategy Canvas + Four Actions + Six Paths)
@@ -111,6 +113,19 @@ Structure:
 5. Competitive Moat Assessment (strength per moat type)
 6. Brand Architecture (if multi-product)
 7. Risks and Requirements
+
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Market sizing or industry data | market-analyst |
+| Competitive profiles or SWOT | market-analyst |
+| AJTBD segments or RAT | product-analyst |
+| Business model canvas or unit economics | business-modeler |
+| GTM channels, partnerships, content | gtm-planner |
+| Pricing strategy | gtm-planner |
+| AARRR funnel or growth experiments | growth-strategist |
+| Feature specs or product roadmap | product-planner |
 
 ## Output Format
 

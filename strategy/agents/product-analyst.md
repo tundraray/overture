@@ -67,6 +67,9 @@ When called from `/strategy-report`, ALL THREE files are mandatory.
 ## Analysis Workflows
 
 ### For RAT Analysis → `docs/strategy/rat.md`
+
+**Confidence Rule**: Only include risks where the probability assessment is based on evidence (not pure speculation). If P score is based on assumption without any supporting data, mark it as "[Assumption-based — validate before acting]".
+
 1. Read `part4.md` (RAT methodology) + `part1.md` (job-based assumptions)
 2. Read `rat-template.md`
 3. Collect assumptions from product description
@@ -102,6 +105,20 @@ When called from `/strategy-report`, ALL THREE files are mandatory.
 4. **Context matters** — When/trigger/emotions/criteria define the job
 5. **Solutions are replaceable** — Products compete to be "hired" for jobs
 6. **Segmentation by jobs** — Not demographics, but job bundles + context + criteria
+
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Market sizing (TAM/SAM/SOM) | market-analyst |
+| Porter's Five Forces or PESTLE | market-analyst |
+| Blue Ocean strategy canvas | strategy-architect |
+| Value proposition canvas | strategy-architect |
+| Business model or unit economics | business-modeler |
+| GTM channels or launch plan | gtm-planner |
+| AARRR funnel audit | growth-strategist |
+| Feature specs or product roadmap | product-planner |
+| Final report compilation | report-compiler |
 
 ## Output Format
 

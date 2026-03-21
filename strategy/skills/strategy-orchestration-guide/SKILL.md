@@ -36,6 +36,22 @@ All research, analysis, and report generation flows through specialized strategy
 8. **product-analyst**: AJTBD deep analysis — RAT risk assessment (P×I scoring), job-based segmentation (B2B/B2C), jobs graph mapping, landing page generation from jobs
 9. **product-planner**: Strategy-to-execution bridge — opportunity maps (Teresa Torres OST), feature specifications (Shape Up pitch), Now/Next/Later roadmap (Kano + WSJF), MVP definition (MoSCoW)
 
+## Context Modes
+
+Each phase of the strategy flow operates in a specific context mode that shapes agent behavior:
+
+| Phase | Context Mode | File | Behavioral Focus |
+|-------|-------------|------|-----------------|
+| Phase 1: Context | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Research-first, data gathering, source verification |
+| Phase 2: AJTBD | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Deep job analysis, segment discovery |
+| Phase 3: Market | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Market data, competitive intelligence |
+| Phase 4: Strategy + Model | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Document creation, template compliance |
+| Phase 5: GTM + Growth | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Actionable plans, concrete numbers |
+| Phase 6: Report | Review | `${CLAUDE_PLUGIN_ROOT}/contexts/review.md` | Synthesis, contradiction detection, quality |
+| Phase 7: Product Plan | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Feature specs, roadmap, MVP definition |
+
+**Rule**: When invoking a sub-agent, the orchestrator should reference the appropriate context mode in the prompt to set behavioral expectations.
+
 ## Orchestration Principles
 
 ### Pyramid Principle (Mandatory for All Outputs)

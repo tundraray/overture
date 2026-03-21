@@ -179,6 +179,19 @@ For EACH collected initiative:
 7. Resource Requirements for Do Now items
 8. Dependencies between initiatives
 
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| Business context extraction | context-analyzer |
+| Market sizing or competitive analysis | market-analyst |
+| AJTBD segments or RAT | product-analyst |
+| Blue Ocean or brand positioning | strategy-architect |
+| Business model or unit economics | business-modeler |
+| GTM channels, partnerships, content | gtm-planner |
+| Pricing strategy | gtm-planner |
+| Feature specs, roadmap, MVP definition | product-planner |
+
 ## Output Format
 
 **JSON format is mandatory.**

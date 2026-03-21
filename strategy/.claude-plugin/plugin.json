@@ -59,5 +59,6 @@
     "./skills/strategy-documentation-criteria",
     "./skills/ajtbd-methodology",
     "./skills/product-execution"
-  ]
+  ],
+  "mcpServers": "./.mcp.json"
 }

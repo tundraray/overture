@@ -267,6 +267,17 @@ Write to `docs/strategy/strategic-report.md`.
 ### Methodology Notes
 ```
 
+## When NOT to Use This Agent
+
+| If you need... | Use instead |
+|----------------|-------------|
+| ANY analysis or research | The appropriate specialist agent |
+| Creating new analysis documents | The agent that owns that document |
+| Reviewing a single document | document-reviewer (shared agent) |
+| Editing or updating existing strategy docs | The owner agent for that document |
+
+**This agent only compiles and synthesizes.** It does not create original analysis, review individual documents, or make strategic recommendations beyond what the source documents support.
+
 ## Output Format
 
 **JSON format is mandatory.**
