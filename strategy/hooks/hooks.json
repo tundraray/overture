@@ -21,7 +21,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "The file was just modified. If the modified file has a .ts or .tsx extension and a tsconfig.json exists in the project, remind the user to verify types with 'npx tsc --noEmit' if they haven't done so recently. If the file has .js/.jsx/.ts/.tsx extension, check if Biome (biome.json) or Prettier (.prettierrc*) config exists in the project and suggest running the formatter. Keep the reminder brief — one line."
+            "prompt": "The file was just modified. If the file does NOT have a .ts, .tsx, .js, or .jsx extension, respond with nothing (empty response). Otherwise: if the file has a .ts or .tsx extension and a tsconfig.json exists in the project, remind the user to verify types with 'npx tsc --noEmit' if they haven't done so recently. If the file has .js/.jsx/.ts/.tsx extension, check if Biome (biome.json) or Prettier (.prettierrc*) config exists in the project and suggest running the formatter. Keep the reminder brief — one line."
           }
         ]
       }
