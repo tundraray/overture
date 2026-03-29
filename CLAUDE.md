@@ -194,7 +194,11 @@ Immediate escalation required:
 
 ### Version Updates
 
-Update version in `/.claude-plugin/marketplace.json`
+**MANDATORY**: Every pull request must include a version bump. Bump patch version in:
+- `/.claude-plugin/marketplace.json` (always)
+- The affected plugin's `.claude-plugin/plugin.json` (e.g., `strategy/.claude-plugin/plugin.json`)
+
+Only one bump per PR — if the version was already bumped in this branch, do not bump again.
 
 ## Command Reference
 
