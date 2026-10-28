@@ -13,7 +13,7 @@ Mechanics common to every phase — how to invoke subagents, response contracts,
 
 This phase is identical for every domain — a game feature and a service endpoint need the same fact gathering, the same design rigour, and the same consistency verification. Planning is where the domain difference appears, and planning belongs to `workflow-execution`.
 
-Layer selection between `technical-designer` and `technical-designer-frontend`, and between `codebase-analyzer` and `ui-analyzer`, follows the part being designed, not the domain — a part cut along the frontend layer takes the frontend pair, whatever the project is.
+Layer selection between `technical-designer` and `technical-designer-frontend`, and between `codebase-analyzer` and `ui-analyzer`, follows the part being designed, not the domain — a part whose `cutAlong` is `frontend` (or `ui`, `hud`, `menu` on the gamedev path) takes the frontend pair, whatever the project is.
 
 ## Entry Gate [BLOCKING]
 

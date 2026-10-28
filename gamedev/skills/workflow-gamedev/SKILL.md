@@ -63,7 +63,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 |------|-------------|-------------------|
 | **Full Development** | Standard scale-based flow | None |
 | **Design Only** | Run the product phase to completion, stop before technical design | Deliver the design package; no implementation |
-| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → simplified plan | Skip market analysis, art direction, and analytics |
+| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part) → simplified plan | Skip market analysis, art direction, and analytics; the lite spec still exists, so the execution entry gate and the parts list hold |
 
 ## Flow
 
@@ -88,7 +88,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 
 **Design Only mode stops here** — deliver the design package.
 
-→ hand off to `workflow-technical`
+→ hand off to `workflow-technical`, **once per feature spec**: each feature the GDD defines has its own spec, its own parts list, and its own run of the technical and execution phases. The exit gate and handoff below are evaluated per feature.
 
 ### Scenario B — Large Feature in an existing project
 

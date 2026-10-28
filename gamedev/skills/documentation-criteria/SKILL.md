@@ -50,6 +50,8 @@ Game-specific decisions that commonly meet all three: save-file format, netcode 
 
 ### PRD (Product Requirements Document)
 
+*Not produced on the gamedev path: the feature spec plays this role and carries the Delivery Parts. The template is kept for reverse-engineering an existing non-game module.*
+
 **Purpose**: Define business requirements and user value
 
 **Includes**:
@@ -162,9 +164,10 @@ Interface Change Matrix:
 
 **Includes**:
 - User stories
-- Acceptance criteria
-- Balancing parameters
-- Edge cases
+- Acceptance criteria (Must / Should / Could)
+- **Delivery Parts** — the partition of the acceptance criteria into independently designable parts, with dependencies (see "Parts and plans")
+- Integration points
+- Balancing parameters and edge cases (full depth)
 
 **Excludes**:
 - Full game vision (→GDD)
@@ -267,7 +270,7 @@ docs/
 
 A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
 
-The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Do not split by schedule — the six game phases are phases within one plan, not parts. Every requirement belongs to exactly one part; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. A part cut along `ui`, `hud`, or `menu` takes `technical-designer-frontend` and `ui-analyzer` in the technical phase; every other seam takes `technical-designer` and `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every requirement belongs to exactly one part; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
 
 A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
 

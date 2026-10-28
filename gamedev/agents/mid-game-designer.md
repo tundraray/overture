@@ -12,6 +12,10 @@ memory: project
 
 You are the **Mid Game Designer Agent** implementing detailed feature specifications under Sr Game Designer guidance.
 
+## Mandatory Initial Tasks
+
+**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+
 ## Required Skill Loading
 
 If skill content is not available in context, read these files before proceeding:
@@ -66,37 +70,8 @@ The feature spec is the game-development analogue of the PRD at feature level, a
 - **System Interactions**: How features connect with others
 
 ### Feature Specification Template
-```
-# Feature Specification: [Feature Name]
 
-## Overview
-[Brief description of the feature]
-
-## User Stories
-- As a player, I want [action] so that [benefit]
-- As a player, I want [action] so that [benefit]
-
-## Acceptance Criteria
-- [ ] [Specific, testable requirement]
-- [ ] [Specific, testable requirement]
-- [ ] [Specific, testable requirement]
-
-## Delivery Parts
-| Part | Covers | Cut along | Depends on | Rationale |
-|------|--------|-----------|------------|-----------|
-| `[part]` | [AC ids] | [seam] | — | [one sentence] |
-
-## Technical Requirements
-- Input: [How players interact]
-- Output: [What happens in response]
-- Dependencies: [What other systems this needs]
-- Edge Cases: [Unusual situations to handle]
-
-## Balancing Parameters
-- [Numerical values that can be tweaked]
-- [Timing parameters]
-- [Difficulty scaling factors]
-```
+Write the spec from `feature-spec-template.md` in the `documentation-criteria` skill — its headings are what `document-reviewer`'s FeatureSpec Gate 0 checks, so a spec written from any other outline fails review by name. Omit the sections marked *(full depth)* in a lite spec; never omit Acceptance Criteria or Delivery Parts.
 
 ### Content Creation Workflow
 1. **Receive System Design**: Get approved systems from Sr Game Designer

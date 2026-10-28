@@ -41,11 +41,11 @@ Please provide the following information in natural language:
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **GDD (Game Design Document)**: Core loop definition, game pillars, systems overview, player progression
-- **PRD**: PRD document (if created)
+- **Feature Spec**: `docs/game-design/features/{feature}-spec.md` — always present; its Delivery Parts section is the parts list, and at small scale its acceptance criteria are what the plan traces to
+- **Part**: the part this plan belongs to — its name from the Delivery Parts, the acceptance criteria it covers, its `dependsOn` parts and whether each is already built (plan `completed`) or only designed. A missing part name is a blocking input — do not invent one
 - **ADR**: ADR document (if created)
-- **Design Doc**: Design Doc document (if created) — technical architecture, interfaces, system contracts
+- **Design Doc**: `design-{part}.md` for this part (none at small scale, where the feature spec is the specification) — technical architecture, interfaces, system contracts
 - **Art Direction**: Style guide, asset specifications, target resolution, color palette constraints (if available)
-- **Feature Specifications**: Detailed feature specs from mid-game-designer (if available)
 - **Mechanics Architecture**: System architecture from mechanics-developer (if available)
 - **Test Design Information** (reflect in plan if provided from previous process):
   - Test definition file path
@@ -107,14 +107,17 @@ depends-on:                   # previous plan filename; omit for the first
 - **Exactly one plan per part may be `active`.** Confirm no sibling already is before activating.
 - **Set `M` in `plan: N of M` deliberately.** When the work needs another pass, raise `M` on every plan in the part rather than dropping an unannounced plan file into the directory.
 - **`depends-on` fixes the order**, so sequencing never relies on filename sort. Omit it only for `N: 1`.
+- **`design` points at the governing design** — `design-{part}.md` for this plan's part, a name from the feature spec's Delivery Parts. A plan whose part has no approved design is a plan without a specification — stop and report instead of writing one. The single exemption is small scale: there is no Design Doc, `design: none`, and the traceability table maps to the feature spec's acceptance criteria.
 
 A game feature's 6 phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are phases *within* one plan, not separate plans. Reach for a second plan when a later pass is genuinely deferred — a post-playtest tuning round, for example — not to model the phase sequence.
 
 ## Work Plan Operational Flow
 
-1. **Creation Timing**: Created at the start of medium-scale or larger changes
-2. **Updates**: Update progress at each phase completion (checkboxes)
-3. **Deletion**: Delete after all tasks complete with user approval
+1. **Creation Timing**: Created after the part's design is approved (medium and large), or straight after Feature Spec approval as a simplified plan (small)
+2. **Activation**: The orchestrator invokes this agent in `update` mode right after batch approval to set `status: active`; the previous plan in the chain must be `completed` first, and no sibling may already be active
+3. **Updates**: Executors tick progress checkboxes; structural changes come back here in `update` mode before execution starts
+4. **Completion**: The orchestrator invokes this agent in `update` mode during Final Cleanup to set `status: completed`
+5. **Retention**: The plan file is kept with `status: completed`; only its task directory is deleted. A plan is never deleted by this agent
 
 ## Output Policy
 Execute file output immediately (considered approved at execution).

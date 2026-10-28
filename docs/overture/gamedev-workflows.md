@@ -6,14 +6,14 @@ Detailed workflow diagrams for the gamedev-overture plugin. These extend the [sh
 
 ## Scenario Detection
 
-When you run `/implement`, the requirement-analyzer inspects your project to determine the right workflow path. Two factors drive routing: **scenario** (new vs existing project) and **scale** (number of files affected).
+When you run `/implement`, the requirement-analyzer inspects your project to determine the right workflow path. Two factors drive routing: **scenario** (new vs existing project) and **scale** — the highest of five axes (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides.
 
 **Detection logic**:
 - If no `project-config.json` and no GDD exist — **Scenario A: New Project**. Full pipeline including market analysis and GDD creation from scratch
 - If a GDD already exists — **Scenario B: Existing Project**. Skip market analysis, update the existing GDD for the new feature
 - If `project-config.json` exists but no GDD — **Pre-GDD Project**. Treated as Scenario B (the project exists but design hasn't started)
 
-After scenario detection, scale determines the depth of the design pipeline: Large (6+), Medium (3-5), or Small (1-2 files).
+After scenario detection, scale determines the depth of the design pipeline: Large (typically 6+ files), Medium (typically 3-5), or Small (typically 1-2) — or higher when another axis, such as a save-format change, raises it.
 
 ```mermaid
 graph TD
@@ -28,9 +28,9 @@ graph TD
     F --> SC{Scale?}
     H --> SC
     G --> SC
-    SC --> |Large 6+| L[Large Flow]
-    SC --> |Medium 3-5| M[Medium Flow]
-    SC --> |Small 1-2| S[Small Flow]
+    SC --> |Large| L[Large Flow]
+    SC --> |Medium| M[Medium Flow]
+    SC --> |Small| S[Small Flow]
 ```
 
 ---
@@ -154,8 +154,14 @@ graph TB
     DS --> TD
     TD --> DR2[document-reviewer]
     DR2 --> SYNC[design-sync]
-    SYNC --> |"Stop: Design Doc Approval, per part"| ATG[acceptance-test-generator]
-    ATG --> WP[gamedev-work-planner, per part]
+    SYNC --> |"Stop: Design Doc Approval, per part"| ADR{Decision passes the ADR test?}
+    ADR --> |Yes| TDA[technical-designer → ADR]
+    TDA --> DRA[document-reviewer]
+    DRA --> |"Stop: ADR Approval"| ATG[acceptance-test-generator]
+    ADR --> |No| ATG
+    ATG --> MORE{More parts to design?}
+    MORE --> |Yes| TD
+    MORE --> |No| WP[gamedev-work-planner, per part]
     WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
     AUTO --> DONE[Completion Report]
 ```
@@ -195,8 +201,14 @@ graph TB
     GFD --> TD
     TD --> DR[document-reviewer]
     DR --> SYNC[design-sync]
-    SYNC --> |"Stop: Design Doc Approval, per part"| ATG[acceptance-test-generator]
-    ATG --> WP[gamedev-work-planner, per part]
+    SYNC --> |"Stop: Design Doc Approval, per part"| ADR{Decision passes the ADR test?}
+    ADR --> |Yes| TDA[technical-designer → ADR]
+    TDA --> DRA[document-reviewer]
+    DRA --> |"Stop: ADR Approval"| ATG[acceptance-test-generator]
+    ADR --> |No| ATG
+    ATG --> MORE{More parts to design?}
+    MORE --> |Yes| TD
+    MORE --> |No| WP[gamedev-work-planner, per part]
     WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
     AUTO --> DONE[Completion Report]
 ```
@@ -205,7 +217,7 @@ graph TB
 
 ## Small Scale (1-2 Files)
 
-For quick changes — bug fixes, parameter tweaks, single-file additions. Same as the shared overture small scale flow. No design documents, no specialist agents.
+For quick changes — bug fixes, parameter tweaks, single-file additions. Same as the shared overture small scale flow: a one-page lite feature spec, a simplified plan, no Design Doc.
 
 **How it works**:
 

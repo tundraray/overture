@@ -45,7 +45,7 @@ Instruction Content: $ARGUMENTS
 ### 2. Progress Verification for Continuation
 
 When continuing existing flow, verify:
-- Latest artifacts (PRD/GDD/ADR/Design Doc/Work Plan/Tasks)
+- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan/Tasks), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a `completed` plan chain
 - Current phase position (Requirements/Market Analysis/Game Design/Technical Design/Planning/Implementation/QA)
 - Identify next step in workflow-gamedev skill corresponding flow
 
@@ -107,9 +107,12 @@ Sequential agent invocations after market analysis (or directly after requiremen
 
 1. **sr-game-designer** → GDD creation (core loop, pillars, systems overview)
 2. **document-reviewer** → GDD review **[Stop: GDD Approval]**
-3. **mid-game-designer** → Feature specifications from approved GDD
-4. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
-5. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
+3. **mid-game-designer** → feature specification from the approved GDD, with `depth` (`full` at large scale, `lite` at medium and small) and the `parts[]` proposal from requirement-analyzer, producing the spec's **Delivery Parts** section
+4. **document-reviewer** (`doc_type: FeatureSpec`, same `depth`) → feature spec review **[Stop: Feature Spec Approval — includes the parts split]**. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
+5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
+6. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
+
+**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a game design spec; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
 
 ### Art & Visual Phase
 
@@ -148,27 +151,27 @@ After requirement-analyzer returns, evaluate scope implications before proceedin
 
 For each identified requirement, assess:
 
+requirement-analyzer reports a top-level `confidence` (`confirmed` | `provisional`) and, when provisional, the questions whose answers would move the scale:
+
 ```yaml
+confidence: provisional
 scopeDependencies:
-  - question: "Does this require API contract changes?"
-    impact: "high"
-    confidence: 0.7
-  - question: "Are database schema changes needed?"
-    impact: "high"
-    confidence: 0.5
-  - question: "Does this affect existing user-facing behavior?"
-    impact: "medium"
-    confidence: 0.9
+  - question: "Does this change the save-file format?"
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a persisted-data migration routes as Large regardless of file count"
+  - question: "Does this touch the networked game-state contract?"
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a breaking contract change is a Large-scale axis"
 ```
 
 #### Decision Rules
 
 | Condition | Action |
 |---|---|
-| Any dependency with `impact: high` AND `confidence < 0.8` | **STOP** — Present the question to user with impact explanation. Do not proceed until confirmed. |
-| Any dependency with `impact: high` AND `confidence >= 0.8` | Proceed but flag in TodoWrite as high-impact item |
-| All dependencies `impact: medium/low` | Proceed normally |
-| `confidence < 0.5` on any item | **STOP** — Insufficient information. Ask user for clarification before proceeding. |
+| `confidence: provisional` and any `scopeDependencies[].impact.if_yes` is a higher scale than the reported `scale` | **STOP** — Present the question with its `reason` at the requirements stop; a "yes" re-runs requirement-analyzer with the answer |
+| `confidence: provisional` and no answer changes the scale | Proceed, carrying the questions into the feature spec's open items |
+| `confidence: confirmed` | Proceed normally |
+| `scaleRationale.decidingAxis` is not `files` | State it at the stop |
 
 #### Scope Change Report (presented to user at stop points)
 
@@ -308,9 +311,9 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
 Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state.
 
 - Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and the consolidated fix task file from the verification cycle if one was created
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and set its frontmatter `status` to `completed`
+- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **gamedev-work-planner** (`update` mode) set its frontmatter `status` to `completed` — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans
-- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
+- **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
 
 If deletion fails, report the failure but do not block the completion report.
 

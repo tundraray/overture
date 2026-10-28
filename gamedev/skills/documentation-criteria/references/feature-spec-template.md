@@ -108,7 +108,7 @@ graph LR
 ### Balancing Goals
 [What we're trying to achieve with these parameters]
 
-## Edge Cases & Error Handling
+## Edge Cases & Error Handling *(full depth)*
 ### Edge Cases
 - **[Scenario]**: [How the system should respond]
 - **[Scenario]**: [How the system should respond]
