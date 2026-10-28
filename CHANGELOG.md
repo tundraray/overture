@@ -8,12 +8,12 @@ and the plugins adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 Versions below are the marketplace version; affected plugin versions are noted
 per entry.
 
-## [0.21.2] — 2026-07-26
+## [0.21.3] — 2026-10-28
 
-Backport of patterns from the upstream `ai-coding-project-boilerplate` framework,
-plus removal of the sequential-thinking MCP. Affects `backend-overture` 0.18.5,
-`frontend-overture` 0.18.5, `fullstack-overture` 0.18.5, `gamedev-overture`
-0.20.1, `strategy-overture` 0.20.2.
+Parts become a product decision and a PRD is written at every scale, with a
+full consistency pass over the workflow skills, agents, and commands. Affects
+`backend-overture` 0.18.6, `frontend-overture` 0.18.6, `fullstack-overture`
+0.18.6, `gamedev-overture` 0.20.2.
 
 ### Changed
 
@@ -33,6 +33,15 @@ plus removal of the sequential-thinking MCP. Affects `backend-overture` 0.18.5,
   - Plan `status` flips are now owned: `work-planner` in `update` mode activates a plan after batch approval and completes it in Final Cleanup, instead of an orchestrator that is forbidden to edit documents. `work-planner` no longer deletes plans; `hooks/document-guard.mjs` no longer lets executors edit Design Docs, which have no progress section.
   - `/design` and `/front-design` run the full per-part sequence they claimed to follow (fact gathering, design-sync, ADR stop, skeletons) and load `workflow-product`, so they can pass the technical entry gate at large scale; `/front-plan` reviews its plan; `/create-plan` looks for existing skeletons before offering to generate them; `/build` and `/front-build` ask the commit strategy once per feature and report the next part. `workflow-technical`'s entry gate accepts the gamedev path's GDD and feature spec in place of a PRD, and `workflow-gamedev` confirms the parts split at its Feature Spec approval stop.
   - `/implement` reads `scopeDependencies` in the shape `requirement-analyzer` emits (`impact: {if_yes, if_no}` with a top-level `confidence`), not the numeric-confidence shape it had invented.
+
+## [0.21.2] — 2026-07-26
+
+Backport of patterns from the upstream `ai-coding-project-boilerplate` framework,
+plus removal of the sequential-thinking MCP. Affects `backend-overture` 0.18.5,
+`frontend-overture` 0.18.5, `fullstack-overture` 0.18.5, `gamedev-overture`
+0.20.1, `strategy-overture` 0.20.2.
+
+### Changed
 
 - **Explicit gates between phases.** Each phase now opens with an Entry Gate and closes with an Exit Gate, both `[BLOCKING]`, matching the `Exit Gate [BLOCKING]` convention already used by `task-executor`. Every handoff is checked from both sides: the producing phase confirms it produced the payload, the consuming phase confirms it arrived. Checking once from one side is how a missing artifact gets noticed three steps later, by which point it is already encoded in a design or in committed code.
 
