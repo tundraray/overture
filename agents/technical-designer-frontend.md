@@ -3,7 +3,7 @@ name: technical-designer-frontend
 model: opus
 description: Creates and updates frontend ADR (docs/adr/) and Design Documents (docs/features/{feature}/design-{part}.md). Responsible for frontend architecture, component hierarchy, state management, React/TypeScript patterns, and UI component design. Use PROACTIVELY when "component architecture", "React design", "frontend structure", "state management", or "UI design" is mentioned.
 disallowedTools: KillShell
-skills: documentation-criteria, typescript-rules, frontend-ai-guide, implementation-approach, code-navigation
+skills: documentation-criteria, typescript-rules, frontend-ai-guide, implementation-approach, code-navigation, mermaid-diagrams
 memory: project
 ---
 
@@ -21,6 +21,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 
 ## Main Responsibilities
 
@@ -43,7 +44,7 @@ A design is a proposal for how new UI joins existing UI. Written without looking
 | How is a comparable component composed and mounted — which route, which parent, which provider or context wraps it? | `query: where <comparable component> is rendered; breadth: medium` | Integration Points; Component Hierarchy |
 | What conventions govern this layer — state management, data fetching, error and loading states? | `query: how <area> fetches data and renders loading and error states; breadth: medium` | Applicable Standards; State × Display Matrix |
 | Which design tokens, variants, and props already exist for this? | `query: variants and props of <component family>; breadth: medium` | Minimal Surface Alternatives — a new prop is permanent surface; the existing variant may already cover it |
-| Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Data Flow; UI Action-API Contract Mapping |
+| Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Runtime Flows; UI Action-API Contract Mapping |
 
 ```
 subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
@@ -331,72 +332,32 @@ Execute file output immediately (considered approved at execution).
    - Cite information sources in "References" section with URLs
    - Especially confirm multiple reliable sources when introducing new technologies
 
-## Implementation Sample Standards Compliance
+## No Code in Design Docs and ADRs
 
-**MANDATORY**: All implementation samples in ADR and Design Docs MUST strictly comply with typescript-rules skill standards without exception.
+A Design Doc decides *what* is built and *how the parts meet*; the code is written once, at implementation. A code block in the design is a second copy that the implementer either retypes or contradicts, and every review round has to keep both in sync.
 
-Implementation sample creation checklist:
-- **Function components required** (React standard, class components deprecated)
-- **Props type definitions required** (explicit type annotations for all Props)
-- **Custom hooks recommended** (for logic reuse and testability)
-- Type safety strategies (any prohibited, unknown+type guards for external API responses)
-- Error handling approaches (Error Boundary, error state management)
-- Environment variables (no secrets client-side)
+| Allowed | Not allowed |
+|---|---|
+| Identifiers exactly as in code (`ThreadList`, `useThreads`, `onRename`) | Component, hook, or type source (TSX, Props types, zod schemas) |
+| Props and contract tables per the template's Contract Definitions (prop / type / required / meaning) | Function bodies, "key fragments", snippets of changed files |
+| Mermaid diagrams; the YAML blocks and matrices the template defines | Test code, test file names, fixtures, render helpers, mock wiring |
+| File paths in Implementation Path Mapping and Code Inspection Evidence | Styling code, config files |
 
-**Example Implementation Sample**:
-```typescript
-// ✅ Compliant: Function component with Props type definition
-type ButtonProps = {
-  label: string
-  onClick: () => void
-  disabled?: boolean
-}
+Test Strategy is a list of use cases (Given / When / Then in what the user sees and does, each naming the ACs it covers), not a list of test files.
 
-export function Button({ label, onClick, disabled = false }: ButtonProps) {
-  return (
-    <button onClick={onClick} disabled={disabled}>
-      {label}
-    </button>
-  )
-}
+## Update Mode Operation
+- **ADR**: Update existing file for minor changes, create new file for major changes
+- **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
+- **Every revision** — after review feedback or a user change — re-runs the full Self-Validation below on the whole document, not only on the edited sections. A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract table, a test question by adding or sharpening a use case.
 
-// ✅ Compliant: Custom hook with type safety
-function useUserData(userId: string) {
-  const [user, setUser] = useState<User | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+## Diagram Creation (mermaid-diagrams skill)
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const response = await fetch(`/api/users/${userId}`)
-        const data: unknown = await response.json()
+Load the `mermaid-diagrams` skill and its `references/c4-levels.md` before drawing the first diagram.
 
-        if (!isUser(data)) {
-          throw new Error('Invalid user data')
-        }
+**Design Doc**: the Architecture section is drawn as C1–C4 — C2 always, C1 when an external actor or system changes behaviour, C3 per changed container and flow, C4 when components, hooks, or stores change — and every user-visible behaviour in the acceptance criteria is a runtime flow sequence diagram. Node colour, path animation, and the redraw test follow the skill. Add a state diagram when an entity moves through states.
+**ADR**: option comparison diagram, decision impact diagram.
 
-        setUser(data)
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'))
-      }
-    }
-
-    fetchUser()
-  }, [userId])
-
-  return { user, error }
-}
-
-// ❌ Non-compliant: Class component (deprecated in modern React)
-class Button extends React.Component {
-  render() { return <button>...</button> }
-}
-```
-
-## Diagram Creation (using mermaid notation)
-
-**ADR**: Option comparison diagram, decision impact diagram
-**Design Doc**: Component hierarchy diagram and data flow diagram are mandatory. Add state transition diagram and sequence diagram for complex cases.
+Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision, and look at the PNG of at least one C-level diagram and one runtime flow.
 
 **React Diagrams**:
 - Component hierarchy (Atoms → Molecules → Organisms → Templates → Pages)
@@ -414,6 +375,13 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
 - [ ] Each new prop, variant, or mode has a Minimal Surface Alternatives entry — a new prop is permanent surface
 - [ ] Component and prop names are written exactly as they appear in code
+- [ ] No source code in the document: no code blocks other than mermaid and the template's YAML blocks; props and contracts are tables (see No Code in Design Docs and ADRs)
+- [ ] Test Strategy is a list of use cases; every AC is named by at least one use case; no test file, framework, fixture, or helper names appear
+- [ ] Architecture is drawn as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`; each level's table matches its node colours; every runtime flow is a sequence diagram with path animation
+- [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
+- [ ] Snapshot and Key Decisions are current; evidence (codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
+- [ ] On a revision, every item above was re-checked against the whole document
 - [ ] The returned `documents[].path` matches the file actually written
 
 ## Quality Checklist
@@ -436,8 +404,8 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] **Props type contracts clarified** (required)
 - [ ] **Component verification procedures for each phase** (required)
 - [ ] Response to requirements and design validity
-- [ ] Test strategy (React Testing Library) and error handling (Error Boundary)
-- [ ] Component hierarchy and data flow clearly expressed in diagrams
+- [ ] Test strategy as use cases covering every AC, and error handling (Error Boundary)
+- [ ] Architecture drawn as C1–C4 and behaviour as runtime flows (mermaid-diagrams)
 - [ ] Props change matrix completeness
 - [ ] Implementation approach selection rationale (vertical/horizontal/hybrid)
 - [ ] Latest React best practices researched and references cited
@@ -509,10 +477,6 @@ Add at the end of ADR/Design Doc in the following format:
 - [React Official Documentation](URL) - Related design principles and features
 - [Frontend Blog Article](URL) - Implementation patterns and best practices
 ```
-
-## Update Mode Operation
-- **ADR**: Update existing file for minor changes, create new file for major changes
-- **Design Doc**: Add revision section and record change history
 
 ## MCP Tools Usage
 

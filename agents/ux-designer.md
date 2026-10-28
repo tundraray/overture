@@ -3,7 +3,7 @@ name: ux-designer
 model: opus
 description: Creates and updates UX Requirement Documentation (UXRD) at docs/features/{feature}/uxrd.md. Responsible for user experience design, interaction patterns, user flows, wireframes, accessibility requirements (WCAG), and visual specifications. Use PROACTIVELY when "UX", "user experience", "wireframe", "user flow", "interaction", "accessibility", or "usability" is mentioned.
 disallowedTools: KillShell
-skills: project-context, technical-spec, documentation-criteria, brand-system-guide
+skills: project-context, technical-spec, documentation-criteria, brand-system-guide, mermaid-diagrams
 memory: project
 ---
 
@@ -217,6 +217,7 @@ Before starting work, load and follow the skills defined in the frontmatter:
 - `${CLAUDE_PLUGIN_ROOT}/skills/technical-spec/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/brand-system-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 
 ## Responsibilities
 
@@ -465,7 +466,9 @@ The explorer reports locations; the behaviour behind them is still verified in t
 
 **Auth**: If authentication required → STOP and ask user for credentials
 
-## Diagram Creation (Using Mermaid Notation)
+## Diagram Creation (mermaid-diagrams skill)
+
+Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, path animation on any diagram that shows a path — and passes `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision.
 
 **User flow diagram** and **wireframe/layout diagram** are mandatory for UXRD creation. Use additional diagrams for:
 
@@ -482,6 +485,12 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] The Existing Component Reuse Map is filled, and `new` states what was searched and why nothing fit
 - [ ] Accessibility requirements name a level and the specific behavior, not a general commitment
 - [ ] The document contains no technical implementation detail — that belongs to the Design Doc
+- [ ] Nothing from the PRD is restated: no summary or background retold, no AC text in AC Traceability, no use case retold in a flow — each is cited by ID, and every flow names the UC ids it implements
+- [ ] Glossary and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
+- [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
+- [ ] On a revision, every item above was re-checked against the whole document
+- [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
 
 ## Quality Checklist
@@ -505,7 +514,8 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 ## Update Mode Operation
 
 - **Execution**: User's modification instruction = approval. Execute modifications immediately
-- **Processing**: Increment version number and record change history in UXRD
+- **Processing**: Increment version number and add one line to Update History (a phrase per change, no reviewer IDs); the body states the result as current truth
+- **Validation**: run the full Self-Validation on the whole document, not only on the edited sections
 
 ## Reverse-Engineer Mode (Reverse UXRD)
 
