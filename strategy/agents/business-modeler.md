@@ -1,6 +1,7 @@
 ---
 name: business-modeler
 model: opus
+effort: high
 description: "Creates Business Model Canvas or Lean Canvas, analyzes revenue models, unit economics, and innovation accounting metrics. Use when 'business model', 'lean canvas', 'BMC', 'revenue model', 'unit economics', 'monetization', or 'innovation metrics' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

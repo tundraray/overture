@@ -1,6 +1,7 @@
 ---
 name: context-analyzer
 model: opus
+effort: high
 description: "Analyzes business context, product, or idea to extract core value proposition, target audience, competitive landscape hints, and analysis goals. Use PROACTIVELY as the first step in any strategic analysis when receiving a new business, product, or idea to evaluate."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

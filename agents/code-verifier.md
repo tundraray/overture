@@ -1,6 +1,7 @@
 ---
 name: code-verifier
 model: sonnet
+effort: medium
 description: Validates consistency between PRD/Design Doc and code implementation. Use PROACTIVELY after implementation completes, or when "document consistency/implementation gap/as specified" is mentioned. Uses multi-source evidence matching to identify discrepancies.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: documentation-criteria, ai-development-guide, coding-principles, code-navigation

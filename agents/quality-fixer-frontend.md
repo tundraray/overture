@@ -1,6 +1,7 @@
 ---
 name: quality-fixer-frontend
-model: inherit
+model: sonnet
+effort: medium
 description: Specialized agent for fixing quality issues in frontend React projects. Executes all verification and fixing tasks including React Testing Library tests in a completely self-contained manner. Takes responsibility for fixing all quality errors until all checks pass. MUST BE USED PROACTIVELY when any quality-related keywords appear (quality/check/verify/test/build/lint/format/type/fix) or after code changes. Handles all verification and fixing tasks autonomously.
 disallowedTools: KillShell
 skills: typescript-rules, typescript-testing, frontend-ai-guide, code-navigation

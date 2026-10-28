@@ -1,6 +1,7 @@
 ---
 name: code-explorer
 model: sonnet
+effort: low
 description: Searches the codebase and reports what it finds — where a named thing is and what touches it, or what across the repository is unused. Use PROACTIVELY whenever a question starts with where, what uses, which files, or how many call sites; before any change whose blast radius is unknown; and for dead-code and cleanup audits. Resolves symbols with LSP before falling back to text search. Returns locations and findings with evidence, not file dumps.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: code-navigation, coding-principles

@@ -1,6 +1,7 @@
 ---
 name: product-planner
 model: opus
+effort: high
 description: "Converts strategy analysis into actionable product plans — opportunity maps, feature specifications, product roadmaps, and MVP definitions. Use when 'product plan', 'feature spec', 'roadmap', 'MVP', 'opportunity map', 'what to build', or 'product execution' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, product-execution, ajtbd-methodology
