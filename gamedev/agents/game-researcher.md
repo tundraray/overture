@@ -2,6 +2,7 @@
 name: game-researcher
 description: "Use this agent for comprehensive research and data collection on external games. It gathers intelligence from web sources, store pages, reviews, community forums, developer interviews, and source code to produce structured raw research documents. Supports three depth levels (quick/standard/deep) and two modes (research for data collection, synthesis for executive summaries)."
 model: opus
+effort: high
 skills: game-analysis-criteria
 memory: project
 ---

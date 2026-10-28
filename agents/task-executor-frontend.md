@@ -1,6 +1,7 @@
 ---
 name: task-executor-frontend
-model: inherit
+model: opus
+effort: medium
 description: Executes frontend implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "frontend implementation/React implementation/component creation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
 skills: typescript-rules, typescript-testing, frontend-ai-guide, implementation-approach, code-navigation

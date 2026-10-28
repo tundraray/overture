@@ -1,6 +1,7 @@
 ---
 name: investigator
 model: opus
+effort: high
 description: Comprehensively collects problem-related information and creates evidence matrix. Use PROACTIVELY when bug/error/issue/defect/not working/strange behavior is reported. Reports only observations without proposing solutions.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: ai-development-guide, coding-principles, code-navigation

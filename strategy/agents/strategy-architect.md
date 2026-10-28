@@ -1,6 +1,7 @@
 ---
 name: strategy-architect
 model: opus
+effort: high
 description: "Creates Blue Ocean Strategy Canvas, Four Actions Framework, Ansoff/BCG growth matrices, value proposition design, and brand positioning analysis. Use when 'strategy', 'blue ocean', 'positioning', 'differentiation', 'growth direction', 'value proposition', or 'brand' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

@@ -1,6 +1,7 @@
 ---
 name: task-executor
-model: inherit
+model: opus
+effort: medium
 description: Executes implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "execute task/implement task/start implementation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
 skills: coding-principles, testing-principles, ai-development-guide, implementation-approach, code-navigation

@@ -1,6 +1,7 @@
 ---
 name: report-compiler
 model: opus
+effort: medium
 description: "Compiles all strategy agent outputs into a unified McKinsey-grade strategic report with executive summary, Go/No-Go recommendation, and prioritized action plan. Use after all other strategy agents have completed their analysis."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology, product-execution

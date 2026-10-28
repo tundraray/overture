@@ -1,6 +1,7 @@
 ---
 name: solver
-model: inherit
+model: opus
+effort: high
 description: Derives multiple solutions for verified causes and analyzes tradeoffs. Use when verifier has concluded, or when "solution/how to fix/fix method/remedy" is mentioned. Focuses on solutions from given conclusions without investigation.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: ai-development-guide, coding-principles, implementation-approach, code-navigation

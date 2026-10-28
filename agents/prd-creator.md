@@ -1,6 +1,7 @@
 ---
 name: prd-creator
-model: inherit
+model: opus
+effort: high
 description: Creates and updates Product Requirements Documents (PRD) at docs/features/{feature}/prd.md. Responsible for defining product requirements, user stories, success metrics, feature scope, and MoSCoW prioritization. Use PROACTIVELY when "requirements", "user story", "feature definition", "what to build", "product scope", or "PRD" is mentioned.
 disallowedTools: KillShell
 skills: documentation-criteria, mermaid-diagrams
