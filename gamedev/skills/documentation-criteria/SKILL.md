@@ -46,6 +46,24 @@ Fail any one → no ADR; record the reasoning in the Design Doc.
 
 Game-specific decisions that commonly meet all three: save-file format, netcode authority model, the engine or renderer target, and the analytics event schema other tools consume. Ordinary mechanics tuning, adding a state to an existing machine, or picking a tween library do not.
 
+## Writing for the Reader
+
+A document is read far more often than it is written, and most readers stop after the first screen. Every PRD, UXRD, Design Doc, ADR, and work plan follows these rules; the templates are laid out to match them.
+
+**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → **Appendix: Evidence** (Design Doc) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here.
+
+**Snapshot.** At most ten lines at the top: what changes, what does not, the biggest risk, how many questions are open. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD add a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows); the rest of the document cites `KD-n` instead of re-arguing the decision.
+
+**Current truth only.** The body states what is true now. Who decided, on which date, in which version, or in answer to which review finding belongs to Update History and to git — not to requirements, acceptance criteria, table cells, or design text. "(user decision 2026-10-28)", "v1.2:", "per review I003" in the body are defects. Update History has one line per version, a phrase per change, no reviewer IDs.
+
+**Delete, don't stub.** A section marked *when applicable* is deleted when it does not apply — no "N/A", no "does not exist", no placeholder sentence. Template guidance in `<!-- -->` comments is never copied into the document. A mandatory section that has nothing to say answers in one line with the reason.
+
+**Short units.** A paragraph has at most four sentences. A table cell holds one phrase; reasoning goes under the table or into Key Decisions. A list item is one statement.
+
+**Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
+
+**Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD lite 15 000, PRD full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
+
 ## Detailed Document Definitions
 
 ### PRD (Product Requirements Document)
@@ -122,6 +140,8 @@ Interface Change Matrix:
 ```
 
 **Excludes**:
+- Source code of any kind — schemas, interfaces, function bodies, snippets of changed files (→written at implementation; contracts are field tables)
+- Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
 - When to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
@@ -298,13 +318,13 @@ Check existing ADRs before design and implementation; the Design Doc lists them 
 
 ## Diagram Requirements
 
-Required diagrams for each document (using mermaid notation):
+Required diagrams for each document. Every diagram follows the `mermaid-diagrams` skill (palette, redraw test, path animation, render check):
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
 | PRD | User journey diagram, Scope boundary diagram | Clarify user experience and scope |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
-| Design Doc | Architecture diagram, Data flow diagram | Understand technical structure |
+| Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |
 
 ## Common ADR Relationships

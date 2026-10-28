@@ -1,13 +1,32 @@
 # PRD: [Feature Name]
 
-> **Depth**: `full` | `lite` — set by scale (see `documentation-criteria`, "PRD depth"). Sections marked *(full depth)* are omitted in a lite PRD; every other section is present at both depths.
+<!--
+Depth: `full` | `lite` — set by scale (documentation-criteria, "PRD depth"). Sections marked (full depth) are omitted in a lite PRD.
+The PRD says what the user achieves, not what the screen looks like. Screen states, microcopy, ARIA and focus behaviour, breakpoints,
+tokens, and animation belong to the UXRD; technical choices and decisions for the design belong to the Design Doc.
+Later documents cite this PRD by ID (UC-2, AC-01.3) instead of restating it.
+Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
+-->
+
+| Status | Date | Depth | UXRD | Designs |
+|---|---|---|---|---|
+| Draft / Approved | YYYY-MM-DD | full / lite | [uxrd.md](./uxrd.md) or — | [design-[part].md] or — |
 
 ## Overview
 
-### One-line Summary
-[Describe this feature in one line]
+### Snapshot
+
+<!-- At most ten lines: what the feature gives the user, for whom, the Must Have count, the delivery parts, the biggest risk. -->
+
+- **In one line**: [what the user can do after this ships that they cannot do now]
+- **For**: [primary users]
+- **Must Have**: [count] requirements · **Parts**: [part names]
+- **Biggest risk**: [one line]
 
 ### Background
+
+<!-- At most three short paragraphs: the problem and why now. Market context, when needed, goes to Appendix → References. -->
+
 [Why is this feature needed? What problem does it solve?]
 
 ## User Stories
@@ -23,9 +42,11 @@ So that [expected value/benefit]
 ```
 
 ### Use Cases
-1. [Specific usage scenario 1]
-2. [Specific usage scenario 2]
-3. [Specific usage scenario 3]
+
+<!-- Who, what they achieve, and the outcome — no interface elements (buttons, menus, keys); the UXRD draws the path through the screens and cites these IDs. -->
+
+- **UC-1**: [user] [achieves what] → [outcome]
+- **UC-2**: [user] [achieves what] → [outcome]
 
 ### User Journey Diagram *(full depth)*
 
@@ -40,11 +61,11 @@ journey
 
 ## Functional Requirements
 
-Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
+<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation. -->
 
 ### Must Have (MVP)
 - [ ] Requirement 1: [Detailed description]
-  - AC: [Acceptance criteria - Given/When/Then format or measurable standard]
+  - AC: [Acceptance criteria - Given/When/Then format or measurable standard. An observable outcome for the user ("the open thread is marked as current"), not its markup or styling ("`aria-current` is set", "a skeleton is shown")]
 - [ ] Requirement 2: [Detailed description]
   - AC: [Acceptance criteria]
 - [ ] Requirement 3: [Detailed description]
@@ -99,20 +120,23 @@ graph LR
 ### Scalability
 - [Considerations for future scaling]
 
+### Accessibility and Responsiveness *(when the feature has a UI)*
+- [Target level only — e.g. "WCAG 2.1 AA", "usable from 360 px width", "light and dark themes". How each target is met is the UXRD's]
+
 ## Delivery Parts
 
-Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here and confirmed by the user at PRD approval; criteria are in the `documentation-criteria` skill, "Parts".
+<!-- Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here and confirmed by the user at PRD approval; criteria are in the `documentation-criteria` skill, "Parts". -->
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
 | `[part-name]` | [Requirement 1, Requirement 3] | [backend / frontend / domain / release unit] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [Requirement 2] | [...] | `[part-name]` | [...] |
 
-**Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here:
+<!-- **Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here: -->
 
 - Deferred: [Requirement assigned to no part, with reason]
 
-**Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case.
+<!-- **Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case. -->
 
 ### Part Dependency Diagram
 
@@ -159,7 +183,7 @@ graph LR
 - [ ] [Question 1]: [Description of options or impacts]
 - [ ] [Question 2]: [Description of options or impacts]
 
-*Discuss with user until this section is empty, then delete after confirmation*
+<!-- *Discuss with user until this section is empty, then delete after confirmation* -->
 
 ## Appendix *(full depth)*
 
@@ -168,5 +192,12 @@ graph LR
 - [Related document 2]
 
 ### Glossary
-- **Term 1**: [Definition]
-- **Term 2**: [Definition]
+- **Term 1**: [Definition — product terms; later documents add only terms that are new to them]
+
+## Update History
+
+<!-- One line per version, newest last, a phrase per change. No reviewer IDs. -->
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | YYYY-MM-DD | Initial version |

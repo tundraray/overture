@@ -142,6 +142,7 @@ Skills contain structured guidance used by agents:
 - **workflow-execution**: Planning and execution — work plan, review, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
 - **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
 - **documentation-criteria**: PRD/ADR/Design Doc/Plan/Task templates and creation decision matrices
+- **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards
 - **testing-principles**: TDD practices, test patterns, coverage requirements
 - **ai-development-guide**: Anti-patterns, error handling principles, fail-fast design

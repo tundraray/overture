@@ -93,6 +93,7 @@
     "./skills/security-checks",
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
+    "./skills/mermaid-diagrams",
     "./skills/rule-editing-guide"
   ],
   "hooks": "./hooks/hooks.json",

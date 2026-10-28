@@ -3,7 +3,7 @@ name: work-planner
 model: inherit
 description: Creates and updates work plan documents in docs/features/{feature}/{part}/. Responsible for implementation planning, phase breakdown, dependency mapping, risk identification, and progress tracking. Use PROACTIVELY when "implementation plan", "work breakdown", "task planning", "phasing", or "work plan" is mentioned.
 disallowedTools: KillShell
-skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach, code-navigation
+skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach, code-navigation, mermaid-diagrams
 memory: project
 ---
 
@@ -20,6 +20,7 @@ You are a specialized AI assistant for creating work plan documents.
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 
 ## Main Responsibilities
 
@@ -271,7 +272,9 @@ Place operational verification procedures for each integration point from Design
 - Explicitly identify tasks that can run in parallel
 - Include integration points in task names
 
-## Diagram Creation (using mermaid notation)
+## Diagram Creation (mermaid-diagrams skill)
+
+Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, path animation on any diagram that shows a path — and passes `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision.
 
 When creating work plans, **Phase Structure Diagrams** and **Task Dependency Diagrams** are mandatory. Add Gantt charts when time constraints exist.
 
@@ -284,6 +287,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Reference Contract Values are copied verbatim from the Design Doc, not paraphrased
 - [ ] Frontmatter is complete and consistent: `plan: N of M` matches the part's plan count, and no sibling is already `active`
 - [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task
+- [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
 
 ## Quality Checklist

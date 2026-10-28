@@ -1,33 +1,45 @@
 # UXRD: [Feature Name]
 
-## Overview
+<!--
+The PRD owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
+Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
+-->
 
-### One-line Summary
+| Status | Date | PRD | Designs |
+|---|---|---|---|
+| Draft / Approved | YYYY-MM-DD | [prd.md](./prd.md) | [design-[part].md] or — |
 
-[Describe this UX feature in one line]
+## Snapshot
 
-### Background
+<!-- At most ten lines. -->
 
-[Why is this UX change needed? What user problem does it solve?]
+- **UX scope**: [which screens and surfaces this document specifies]
+- **Screens**: [list]
+- **Biggest UX risk**: [one line]
 
-### Related Documents
+### Key Decisions
 
-- **PRD**: [Link to related PRD]
-- **Design Doc**: [Link to related Design Doc - to be created after UXRD approval]
+<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. -->
+
+| ID | Decision | Why | Rejected alternative |
+|---|---|---|---|
+| KD-1 | [what was decided] | [one phrase] | [the option not taken] |
 
 ## AC Traceability
 
-Maps PRD acceptance criteria to the screens and states that satisfy them. Without this table a UXRD can look complete while leaving an acceptance criterion with no surface that delivers it.
+<!-- Maps PRD acceptance criteria to the screens and states that satisfy them. Without this table a UXRD can look complete while leaving an acceptance criterion with no surface that delivers it. -->
 
-| AC ID | AC Summary | Screen / State | Reference (element ID / prototype path) | Adoption Decision |
-|-------|-----------|----------------|----------------------------------------|-------------------|
-| AC-001 | [EARS AC summary] | [Screen / state name] | [element or file reference] | Adopted / Not adopted / On hold |
+| AC ID | Screen / State | Reference (element ID / prototype path) | Adoption Decision |
+|-------|----------------|----------------------------------------|-------------------|
+| AC-001 | [Screen / state name] | [element or file reference] | Adopted / Not adopted / On hold — [reason when not Adopted] |
 
-Every AC in the PRD that has a user-visible surface needs a row. An AC with no row is either out of UX scope — state that explicitly — or an omission.
+<!-- No AC summary column: the AC text lives in the PRD, and the ID is enough to find it. -->
+
+<!-- Every AC in the PRD that has a user-visible surface needs a row. An AC with no row is either out of UX scope — state that explicitly — or an omission. -->
 
 ## Existing Component Reuse Map
 
-Decide reuse before specifying appearance. Skipping this is how a fourth almost-identical button enters a design system.
+<!-- Decide reuse before specifying appearance. Skipping this is how a fourth almost-identical button enters a design system. -->
 
 | UI Element | Decision | Existing Component | Notes |
 |-----------|----------|-------------------|-------|
@@ -35,13 +47,15 @@ Decide reuse before specifying appearance. Skipping this is how a fourth almost-
 | [DataTable] | Extend | [components/ui/Table] | [Add sorting support] |
 | [FeatureCard] | New | — | [No similar component exists] |
 
-`New` requires a note stating what was searched and why nothing fit.
+<!-- `New` requires a note stating what was searched and why nothing fit. -->
 
 ## User Flows
 
 ### Primary User Flow
 
-[Describe the main user journey through this feature]
+**Implements:** [UC ids from the PRD]
+
+[The path through the screens — what the user sees and does at each step. The use case's goal and outcome are in the PRD and are not repeated here.]
 
 ```mermaid
 flowchart TD
@@ -55,7 +69,7 @@ flowchart TD
 
 ### Alternative Flows
 
-[Describe edge cases and alternative paths]
+[Edge cases and alternative paths, each naming the UC or AC it serves]
 
 ### Error Flows
 
@@ -236,10 +250,12 @@ flowchart TD
 
 ## Undetermined Items
 
+<!-- Only UX questions this document must settle. A product question goes back to the PRD; a technical one goes to the Design Doc. -->
+
 - [ ] [Question 1]: [Options or impacts to discuss]
 - [ ] [Question 2]: [Options or impacts to discuss]
 
-_Discuss with stakeholders until this section is empty, then delete after confirmation_
+<!-- _Discuss with stakeholders until this section is empty, then delete after confirmation_ -->
 
 ## Appendix
 
@@ -254,5 +270,12 @@ _Discuss with stakeholders until this section is empty, then delete after confir
 
 ### Glossary
 
-- **Term 1**: [Definition]
-- **Term 2**: [Definition]
+- **Term 1**: [Definition — only UX terms not already in the PRD glossary]
+
+## Update History
+
+<!-- One line per version, newest last, a phrase per change. No reviewer IDs. -->
+
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | YYYY-MM-DD | Initial version |

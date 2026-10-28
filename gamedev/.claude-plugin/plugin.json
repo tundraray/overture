@@ -94,6 +94,7 @@
     "./skills/security-checks",
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
+    "./skills/mermaid-diagrams",
     "./skills/rule-editing-guide",
     "./skills/workflow-execution",
     "./skills/workflow-orchestration",
