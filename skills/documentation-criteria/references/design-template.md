@@ -1,8 +1,15 @@
-# [Feature Name] Design Document
+# [Feature Name] Design Document — [part-name]
+
+## Part
+
+- **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
+- **Covers**: [requirement ids or titles this part owns — this design covers exactly these]
+- **Depends on**: [`design-[other-part].md` — the approved designs whose contracts this design consumes as written], or "none — first part"
+- **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
 ## Overview
 
-[Explain the purpose and overview of this feature in 2-3 sentences]
+[Explain the purpose and overview of this part in 2-3 sentences, and how it fits the feature]
 
 ## Design Summary (Meta)
 
@@ -29,6 +36,15 @@ unknowns:
 - [ADR File Name]: [Related decision items]
 - Reference common technical ADRs when applicable
 
+### Applicable Standards
+
+Standards this design must comply with, found before design work began. At least 3 explicit and 2 implicit; an implicit standard is confirmed with the user before the design relies on it.
+
+| Standard | Type | Source | Impact on Design |
+|----------|------|--------|-----------------|
+| [e.g. Biome strict mode] | explicit | [biome.json] | [All new code must pass strict linting] |
+| [e.g. Repository pattern] | implicit | [src/repos/*.ts] | [Data access must follow the repository pattern] |
+
 ### Agreement Checklist
 
 #### Scope
@@ -38,6 +54,7 @@ unknowns:
 #### Non-Scope (Explicitly not changing)
 - [ ] [Features/components not to change]
 - [ ] [Existing logic to preserve]
+- [ ] [Requirements owned by sibling parts]
 
 #### Constraints
 - [ ] Parallel operation: [Yes/No]
@@ -99,12 +116,53 @@ Keywords determine test type and reduce ambiguity.
 | Existing | src/[actual-path] | [Current implementation] |
 | New | src/[planned-path] | [Planned new creation] |
 
-### Integration Points (Include even for new implementations)
-- **Integration Target**: [What to connect with]
-- **Invocation Method**: [How it will be invoked]
+### Integration Point Map (Include even for new implementations)
+
+```yaml
+Integration Point 1:
+  Existing Component: [Component/module name, function/method name]
+  Integration Method: [Hook Addition / Call Addition / Data Reference / ...]
+  Impact Level: High (process flow change) / Medium (data usage) / Low (read-only)
+  Required Test Coverage: [Continuity verification of existing features]
+```
 
 ### Code Inspection Evidence
+
+#### What Was Examined
 - [path:function] — [relevance: similar functionality / integration point / pattern reference]
+
+#### Key Findings
+- [Finding, with the `code-explorer` coverage and `resolvedBy` that supports it]
+
+#### How Findings Influence Design
+- [Finding → design decision it drives]
+
+### Data Representation Decision
+
+One row per new data structure: reuse, extend, or new, with the rationale.
+
+| Data Structure | Decision | Rationale |
+|---|---|---|
+| [e.g. UserProfile] | **Reuse** existing [type] + extend | [Existing type covers 80% of fields; extension is cleaner than duplication] |
+| [e.g. AuditLog] | **New** dedicated type | [No existing type matches; forcing fit would compromise both] |
+
+### Field Propagation Map (multi-layer changes only)
+
+```yaml
+fields:
+  - name: "[fieldName]"
+    origin: "[API Request / Database / User Input]"
+    transformations:
+      - layer: "[API Layer]"
+        type: "[RequestDTO]"
+        validation: "[required, max 255 chars]"
+      - layer: "[Service Layer]"
+        type: "[DomainModel]"
+        transformation: "[trimmed, lowercased]"
+    destination: "[Database table.column / API Response / UI Component]"
+    loss_risk: "none | low | medium | high"
+    loss_risk_reason: "[required when risk > none]"
+```
 
 ### Fact Disposition Table
 
@@ -233,6 +291,26 @@ Output:
 Invariants:
   - [Conditions that remain unchanged before and after processing]
 ```
+
+### Frontend Design (frontend parts only)
+
+#### Existing Component Reuse Map
+
+| UI Element | Decision | Existing Component | Rationale |
+|---|---|---|---|
+| [element] | reuse / extend / new | [path or —] | [for `new`: what was searched and why nothing fit] |
+
+#### State × Display Matrix
+
+| Component | default | loading | empty | error | partial |
+|---|---|---|---|---|---|
+| [component] | [what renders] | [...] | [...] | [...] | [... or N/A with reason] |
+
+#### UI Action-API Contract Mapping
+
+| UI Action | API Contract (from `dependsOn` design) | Request | Response handled | Error handled |
+|---|---|---|---|---|
+| [action] | [endpoint or operation, as written in the upstream design] | [shape] | [shape → state] | [status → state] |
 
 ### State Transitions and Invariants (When Applicable)
 

@@ -79,6 +79,7 @@ The following subagents are available:
 10. **expert-analyst**: Parallel multi-perspective analysis from expert viewpoint (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact)
 11. **codebase-analyzer**: Read-only pre-design fact gathering — emits `fact_id`-anchored `focusAreas` the designer must address (backend/shared)
 12. **ui-analyzer**: Read-only pre-design UI fact gathering, including external design-resource fetch with per-resource `fetch_status` (frontend)
+13. **code-verifier**: Post-implementation consistency check of the code against the Design Doc (read-only)
 14. **cleanup-executor**: Safely removes confirmed dead code with git backup and build verification
 
 ## Orchestration Principles
@@ -124,7 +125,7 @@ Pass **what to accomplish** and **where to work**. Each specialist determines **
 | | Bad (prescribing how) | Good (passing what) |
 |---|---|---|
 | quality-fixer | "Run these checks: 1. lint 2. test" | "Execute all quality checks and fixes" |
-| task-executor | "Edit file X and add handler Y" | "Task file: docs/features/checkout/core/20260726-checkout/task-03.md" |
+| task-executor | "Edit file X and add handler Y" | "Task file: docs/features/checkout/core/20260726-feature-checkout/task-03.md" |
 
 ### Decision Precedence When Outputs Conflict
 
@@ -158,11 +159,13 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | File Pattern | Owner Agent |
 |--------------|-------------|
 | `docs/features/*/prd.md` | prd-creator |
-| `docs/features/*/uxrd.md` | ux-designer |
+| `docs/features/*/uxrd.md` | ux-designer (gamedev: ui-ux-agent) |
+| `docs/game-design/*.md` (GDD) | sr-game-designer (gamedev) |
+| `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
 | `docs/features/*/design-*.md` | technical-designer(-frontend) |
-| `docs/features/*/*/*.md` (work plans) | work-planner |
-| `docs/features/{feature}/{part}/{plan-name}/*.md` | task-decomposer |
+| `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes; `status` flips go through the planner in `update` mode |
+| `docs/features/{feature}/{part}/{plan-name}/*.md` | task-decomposer; executors may Edit progress |
 | `src/**/*`, `tests/**/*` (code) | task-executor(-frontend) |
 | Any file (quality fixes) | quality-fixer(-frontend) |
 
@@ -189,28 +192,28 @@ Hooks load at session start, so a change to the guard takes effect only after re
 Autonomous execution MUST stop and wait for user input at these points.
 **Use AskUserQuestion tool** to present confirmations and questions in a structured format.
 
-| Phase | Stop Point | User Action Required |
-|-------|------------|---------------------|
-| Product | After requirement-analyzer completes | Confirm requirements / answer questions |
-| Product | After document-reviewer completes PRD review | Approve PRD |
-| Product | After document-reviewer completes UXRD review (frontend/UI work) | Approve UXRD |
-| Technical | After design-sync completes consistency verification | Approve Design Doc |
-| Technical | After document-reviewer completes ADR review (only when an ADR was written) | Approve ADR |
-| Execution | After document-reviewer completes work plan review | Batch approval for the implementation phase |
+| Phase | Stop Point | Once per | User Action Required |
+|-------|------------|----------|---------------------|
+| Product | After requirement-analyzer completes | feature | Confirm requirements and scale / answer questions |
+| Product | After document-reviewer completes PRD review | feature | Approve PRD, including the Delivery Parts split — every scale |
+| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD |
+| Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
+| Technical | After document-reviewer completes ADR review (only when an ADR was written) | ADR | Approve ADR |
+| Execution | After document-reviewer completes work plan review | part | Batch approval for that part's implementation |
 
 The ADR stop follows the Design Doc stop: which decisions are architecture-binding is only visible once the design exists, and most features produce no ADR at all.
 
-**After batch approval**: Autonomous execution proceeds without stops until completion or escalation
+**After batch approval**: Autonomous execution proceeds without stops until the current part's completion report or an escalation. The next part begins with its own plan review and batch approval.
 
 ## Scale Determination and Document Requirements
 | Scale | Typical file count※5 | PRD | UXRD | ADR | Design Doc | Work Plan |
 |-------|------------|-----|------|-----|------------|-----------|
-| Small | 1-2 | Update※1 | Not needed | Not needed | Not needed | Simplified |
-| Medium | 3-5 | Update※1 | Conditional※4 | Conditional※2 | **Required** | **Required** |
-| Large | 6+ | **Required**※3 | Conditional※4 | Conditional※2 | **Required** | **Required** |
+| Small | 1-2 | **Required**, lite※1 | Not needed | Rare※2 | Not needed | Simplified, one part |
+| Medium | 3-5 | **Required**, lite※1 | Conditional※4 | Rare※2 | **Required**, per part | **Required**, per part |
+| Large | 6+ | **Required**, full※3 | Conditional※4 | Rare※2 | **Required**, per part | **Required**, per part |
 
-※1: Update if PRD exists for the relevant feature
-※2: When there are architecture changes, new technology introduction, or data flow changes
+※1: Lite depth — see `documentation-criteria`, "PRD depth"; an existing PRD is updated at its own depth
+※2: Only after the Design Doc, when a decision it made passes the three-part test in `documentation-criteria`; most features produce none
 ※3: New creation/update existing/reverse PRD (when no existing PRD)
 ※4: When frontend/UI work is involved - UX Requirement Documentation for interaction patterns, accessibility, visual specs
 ※5: File count is the typical range, not the rule. Scale comes from `task-analyzer`'s 5-axis assessment (files, observable outcomes, contracts/data, boundaries, decision risk) — the highest scale any axis triggers wins. A 2-file breaking contract change routes as Large.
@@ -236,11 +239,11 @@ Call subagents using the Task tool:
 ## Structured Response Specification
 
 Each subagent responds in JSON format. Key fields for orchestrator decisions:
-- **requirement-analyzer**: scale, confidence, fileCount, requiredDocuments (prd, uxrd, adr, designDoc, workPlan), scopeDependencies, questions
+- **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
 - **quality-fixer**: status, checksPerformed, fixesApplied, approved
-- **document-reviewer**: status, decision, revision_agent, issues, approvalReady
-- **design-sync**: sync_status, total_conflicts, conflicts (severity, type, source_file, target_file)
+- **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues
+- **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage
 - **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
@@ -275,7 +278,7 @@ Document generation agents (work-planner, technical-designer, technical-designer
 - **On requirement change**: Edit existing document and add history in update mode
 
 Criteria for timing when to call each agent:
-- **work-planner**: Request updates only before execution
+- **work-planner**: Request structural updates only before execution; the `status` flips (`active` after batch approval, `completed` in Final Cleanup) are requested in `update` mode at those two moments
 - **technical-designer(-frontend)**: Request updates according to design changes → Execute document-reviewer for consistency check
 - **prd-creator**: Request updates according to requirement changes → Execute document-reviewer for consistency check
 - **ux-designer**: Request updates according to UX/UI requirement changes → Execute document-reviewer for consistency check
@@ -308,8 +311,8 @@ workflow-product ──exit──▶──entry── workflow-technical ──e
 
 | Boundary | Producer confirms | Consumer confirms |
 |----------|-------------------|-------------------|
-| Product → Technical | Requirements confirmed; PRD and UXRD approved or explicitly not required; scale with `decidingAxis`; open questions written down | The same, plus: no open question blocks a decision this phase must make |
-| Technical → Execution | Design Doc approved; every `focusAreas` entry disposed of; ADR test applied and outcome recorded; test skeletons generated | The same, plus: the part's plan state is unambiguous |
+| Product → Technical | Requirements confirmed; PRD approved at the scale's depth; UXRD approved or no UI surface; parts list confirmed by the user, in dependency order; scale with `decidingAxis`; open questions written down | The same, plus: no open question blocks a decision this phase must make |
+| Technical → Execution | A Design Doc per part approved in dependency order; every `focusAreas` entry disposed of; ADR test applied and outcome recorded; test skeletons generated per part | The same, plus: every part's plan state is unambiguous |
 | Execution → done | All tasks committed; post-implementation verification passed; cleanup done; plan `status: completed` | — |
 
 **A gate failure is not a delay to work around.** Report the unmet item and the phase that produces it, then stop. Substituting a plausible assumption for a missing input is how a design encodes something nobody agreed to — and by the time it surfaces, it is in committed code.
@@ -384,9 +387,9 @@ N. [pending] Verify task essence: {taskEssence}
    - Verify integration test file path retrieval and existence
    - Verify E2E test file path retrieval and existence
 
-   **Pass to work-planner**:
-   - Integration test file: [path] (create and execute simultaneously with each phase implementation)
-   - E2E test file: [path] (execute only in final phase)
+   **Pass to work-planner** — per part, since the generator runs once per part and the planner plans one part:
+   - Integration test file: [path]/[feature]-[part].int.test.[ext] (create and execute simultaneously with each phase implementation)
+   - E2E test file: [path]/[feature]-[part].e2e.test.[ext] (execute only in final phase)
 
    **On error**: Escalate to user if files are not generated
 

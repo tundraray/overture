@@ -46,8 +46,8 @@ const RULES = [
     name: 'Design Doc',
     test: /^docs\/features\/[^/]+\/design-[^/]+\.md$/,
     authors: ['technical-designer', 'technical-designer-frontend'],
-    // executors tick progress checkboxes in the design's progress section
-    updaters: ['task-executor', 'task-executor-frontend'],
+    // a design has no progress section; progress lives in plans and task files
+    updaters: [],
   },
   {
     name: 'ADR',
@@ -56,9 +56,15 @@ const RULES = [
     updaters: [],
   },
   {
+    name: 'feature spec',
+    test: /^docs\/game-design\/features\/[^/]+\.md$/,
+    authors: ['mid-game-designer'],
+    updaters: [],
+  },
+  {
     name: 'GDD',
     test: /^docs\/game-design\/[^/]+\.md$/,
-    authors: ['sr-game-designer', 'mid-game-designer'],
+    authors: ['sr-game-designer'],
     updaters: [],
   },
   {

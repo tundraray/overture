@@ -71,8 +71,8 @@ Spawn only `code-explorer`; sequencing the workflow belongs to the orchestrator.
 Details of documentation creation criteria follow documentation-criteria skill.
 
 ### Overview
-- ADR: Component architecture changes, state management changes, React patterns changes, external library changes
-- Design Doc: Required for 3+ component/file changes
+- ADR: written after the Design Doc, only when a decision the design made passes the three-part test in `documentation-criteria` — costly to reverse, binding beyond this feature, taken against real alternatives. The `adrSignals` from requirement analysis say what to test; they do not decide
+- Design Doc: one per part at medium and large scale
 - Also required regardless of scale for:
   - Complex state management logic
     - Criteria: Managing 3+ state variables, or coordinating 5+ async operations (API calls)
@@ -102,7 +102,7 @@ Must be performed before Design Doc creation:
    - Look for components with same domain, responsibilities, or UI patterns
    - Decision and action:
      - Similar component found → Use that component (do not create new component)
-     - Similar component is technical debt → Create ADR improvement proposal before implementation
+     - Similar component is technical debt → Propose the improvement in the Design Doc's Minimal Surface Alternatives before building alongside it
      - No similar component → Proceed with new implementation
 
 4. **Include in Design Doc**
@@ -189,7 +189,7 @@ When conversion is required, clearly specify wrapper implementation or migration
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (component patterns, state management, error handling, accessibility, etc.)
-2. Search `docs/ADR/ADR-COMMON-*`, create if not found
+2. Search `docs/adr/ADR-COMMON-*`, create if not found
 3. Include in Design Doc's "Prerequisite ADRs"
 
 Common ADR needed when: Technical decisions common to multiple components
@@ -229,6 +229,7 @@ Confirm and document conflicts with existing components (naming conventions, Pro
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
+- **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each (typically the backend part whose contract this UI consumes). The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
 - **Documents to Create**: ADR, Design Doc, or both
 - **Existing Architecture Information**:
   - Current technology stack (React, build tool, Tailwind CSS, etc.)
@@ -276,12 +277,12 @@ Status: Proposed
 Option [X] selected. Reason: [2-3 sentences including trade-offs]
 ```
 
-See `docs/adr/template-en.md` for details.
+See the ADR template in the `documentation-criteria` skill for details.
 
 ### Normal Document Creation
 - **ADR**: `docs/adr/ADR-[4-digit number]-[title].md` (e.g., ADR-0001)
 - **Design Doc**: `docs/features/[feature-name]/design-[part].md`
-- Follow respective templates (`template-en.md`)
+- Follow respective templates (`adr-template.md`, `design-template.md` in `documentation-criteria`)
 - For ADR, check existing numbers and use max+1, initial status is "Proposed"
 
 ## ADR Responsibility Boundaries
@@ -302,6 +303,7 @@ The document goes to disk; this response carries its path. A document written wi
   "summary": "[what the document establishes, in one or two sentences]",
   "adrWritten": false,
   "adrRationale": "[which part of the three-part test failed, when no ADR was written]",
+  "factsDisposed": {"total": 0, "unaddressed": []},
   "componentsReused": {"reuse": 0, "extend": 0, "new": 0},
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
@@ -405,6 +407,7 @@ class Button extends React.Component {
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] Every `focusAreas` entry from UI fact gathering has a row in the Fact Disposition Table with a disposition and evidence
+- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is consumed as written in the upstream design, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
 - [ ] Each new prop, variant, or mode has a Minimal Surface Alternatives entry — a new prop is permanent surface
@@ -484,8 +487,8 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 **Required Research Timing**: New library introduction, performance optimization, accessibility design, React version upgrades
 
 **Specific Search Pattern Examples**:
-- `React new features best practices 2025` (new feature research)
-- `Zustand vs Redux Toolkit comparison 2025` (state management selection)
+- `React new features best practices {current_year}` (new feature research)
+- `Zustand vs Redux Toolkit comparison {current_year}` (state management selection)
 - `React Server Components patterns` (design patterns)
 - `React breaking changes migration guide` (version upgrade)
 - `Tailwind CSS accessibility best practices` (accessibility research)

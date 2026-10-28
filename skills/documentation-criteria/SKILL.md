@@ -18,12 +18,15 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 | Condition | Required Documents | Creation Order |
 |-----------|-------------------|----------------|
-| New Feature Addition | PRD → [UXRD] → Design Doc → [ADR] → Work Plan | After PRD approval |
-| Large scale | PRD → Design Doc → [ADR] → Work Plan | Start immediately |
-| Medium scale | Design Doc → [ADR] → Work Plan | Start immediately |
-| Small scale | None | Direct implementation |
+| Large scale | PRD (full) → [UXRD] → Design Doc per part → [ADR] → Work Plan per part | After PRD approval |
+| Medium scale | PRD (lite) → [UXRD] → Design Doc per part → [ADR] → Work Plan per part | After PRD approval |
+| Small scale | PRD (lite) → simplified Work Plan | After PRD approval |
 
 **The ADR follows the Design Doc**, and is written only when a decision the design made passes all three parts of the test below. Most features produce none. Documents in `[brackets]` are conditional.
+
+**A PRD is written at every scale.** Its depth varies — `full` at large scale, `lite` at medium and small (see "PRD depth" below) — but the document always exists, so the feature's requirements and its Delivery Parts have one home regardless of how the work was routed. Without it, medium-scale work had no record of *what* was agreed and the parts list lived only in conversation.
+
+**Design Docs and work plans are written per part.** The split into parts is proposed by `requirement-analyzer`, refined by `prd-creator` into the PRD's Delivery Parts section, and confirmed by the user at PRD approval — before any design begins. See "Parts" under Storage Locations.
 
 **File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a public contract or migrates persisted data is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s 5-axis assessment; where no analysis is available, evaluate the axes directly:
 
@@ -79,13 +82,24 @@ Deep nesting, a function used in several places, adding a state to an existing m
 - User stories and use cases
 - MoSCoW prioritization (Must/Should/Could/Won't)
 - MVP and Future phase separation
-- User journey diagram (required)
-- Scope boundary diagram (required)
+- **Delivery Parts** — the partition of the requirements into independently designable slices, each with the requirements it covers and the parts it depends on (see "Parts" below)
+- User journey diagram (full depth)
+- Scope boundary diagram (full depth)
+- Part dependency diagram (required when there is more than one part, at either depth)
+
+**PRD depth**:
+
+| Depth | When | Sections |
+|-------|------|----------|
+| `full` | Large scale | Every template section, market research, user journey and scope boundary diagrams |
+| `lite` | Medium and small scale | Overview (summary, background), User Stories and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria (at least one observable outcome), Undetermined Items. Technical Considerations, Appendix, market research, and the two feature-level diagrams are omitted |
+
+A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. `document-reviewer` receives the depth and applies Gate 0 accordingly. An existing PRD is updated rather than duplicated, at whatever depth it already has.
 
 **Excludes**:
 - Technical implementation details (→Design Doc)
 - Technical selection rationale (→ADR)
-- **Implementation phases** (→Work Plan)
+- **Implementation phases** (→Work Plan) — a part is a slice of *what* is built; a phase is a step in *when* it is built. Parts belong in the PRD, phases do not.
 - **Task breakdown** (→Work Plan)
 
 ### ADR (Architecture Decision Record)
@@ -226,12 +240,53 @@ docs/
 
 ### Parts
 
-A **part** is one independently designable slice of a feature — a short name such as `core`, `api`, `checkout-ui`, or `migration`. Every feature has at least one, even when it is the only one: a uniform depth lets every agent resolve paths with a single glob instead of two.
+A **part** is one independently designable slice of a feature — a short kebab-case name such as `core`, `api`, `checkout-ui`, or `migration`. Every feature has at least one, even when it is the only one: a uniform depth lets every agent resolve paths with a single glob instead of two.
 
 `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair — the design states what to build, the directory holds the plans that build it.
 
+#### Where parts are decided
+
+Splitting into parts is a **product-phase decision**: proposed by the model, confirmed by the user, and settled before any design begins. A split chosen later — by whoever happens to write the first Design Doc — is a split nobody agreed to, and the contract between the halves is then invented inside one of them.
+
+The decision follows one path at every scale, because a PRD exists at every scale:
+
+| Step | Agent | Record |
+|------|-------|--------|
+| Propose | `requirement-analyzer` | `parts[]` in its analysis — preliminary, shown at the requirement confirmation stop |
+| Refine | `prd-creator` | PRD, "Delivery Parts" section — the authoritative record |
+| Confirm | user | PRD approval stop |
+
+At small scale the proposal is one part and the refinement is a one-row table; the path is the same so that no agent has to ask which record is authoritative. At medium scale a split rarely exceeds two parts.
+
+The confirmed Delivery Parts section is the **parts list**. It is handed from phase to phase and is the only source of part names: a designer does not invent one, and a plan's `part:` frontmatter must name one from the list. (`workflow-gamedev` has no PRD; there the feature spec written by `mid-game-designer` plays the same role, and its Delivery Parts section is the list.)
+
+#### What a part record carries
+
+| Field | Meaning |
+|-------|---------|
+| `name` | Short kebab-case identifier; becomes `design-{name}.md` and `{name}/` |
+| `covers` | The requirements this part delivers — by id or title from the PRD or the requirement analysis |
+| `cutAlong` | The seam the slice is cut on: `backend`, `frontend`, a bounded context, a release unit |
+| `dependsOn` | Parts whose approved design this part consumes as a contract; empty for the first |
+| `rationale` | Why this is a separate part — or why the feature is one part — in one sentence |
+
+#### How to split
+
+Cut along a seam where the two sides carry different design concerns and meet at a contract:
+
+- **By layer** — a service contract and the screen consuming it (`api`, `web`)
+- **By domain** — two bounded contexts with their own data owners (`billing`, `notifications`)
+- **By release unit** — a data migration that must land before the feature it enables (`migration`, `core`)
+
+Keep **one part** when the requirements share one layer and one domain and a single Design Doc holds them coherently. One part is the common case. Do **not** split by schedule (foundation / core / integration are work-plan phases), by estimated size, or into a part that owns no Must Have requirement.
+
+#### Rules
+
 - **One design per part.** When a change needs materially different designs — a service contract and the screen consuming it — those are separate parts, not two documents in one.
-- PRD and UXRD sit at feature level: they describe the feature as a whole, and splitting into parts is an implementation decision rather than a product or UX one.
+- **Every Must Have requirement belongs to exactly one part.** Should Have and Could Have requirements belong to a part or are explicitly deferred. A requirement in no part is work that silently does not happen; one in two parts is designed twice.
+- **Dependencies are acyclic, and design order is dependency order.** A part is designed only after every part in its `dependsOn` has an approved design, so its designer reads a verified contract rather than a proposed one.
+- **PRD and UXRD sit at feature level.** They describe the feature as a whole; the parts list is a section of the PRD, not a reason to split the PRD. A UI part reads the feature's single `uxrd.md`.
+- **Changing the parts list is a PRD change.** It goes through `prd-creator` in `update` mode and back through PRD review and approval. Designs of parts the change does not touch stay approved, and a part whose plan is already `completed` is frozen — a change that would alter it is a new feature, not a revision.
 
 ### Plans within a part
 
@@ -246,7 +301,7 @@ part: core                      # required
 design: design-core.md          # required — back-reference to the governing design
 plan: 2 of 3                    # required — position and expected total
 status: active                  # draft | active | completed
-depends-on: 20260726-auth.md    # omitted for the first plan
+depends-on: 20260726-feature-auth.md  # omitted for the first plan
 ---
 ```
 
@@ -267,6 +322,7 @@ The frontmatter is the single source of truth for plan sequencing — there is n
 |---------|------|
 | Every PRD | `docs/features/*/prd.md` |
 | Every UXRD | `docs/features/*/uxrd.md` |
+| Parts list of a feature | `docs/features/{feature}/prd.md`, section "Delivery Parts" |
 | Every Design Doc | `docs/features/*/design-*.md` |
 | Design for one part | `docs/features/{feature}/design-{part}.md` |
 | Every work plan | `docs/features/*/*/*.md` |
@@ -278,13 +334,14 @@ The frontmatter is the single source of truth for plan sequencing — there is n
 
 *Note: work plans and task files are ephemeral working state and are excluded by `.gitignore`.*
 
+### Small scale
+
+Small scale produces a lite PRD and a simplified work plan, and no Design Doc. The plan's `design:` frontmatter is therefore `none` with the note `small scale — the PRD is the specification`; `work-planner`'s rule that a plan needs an approved design is exempted at this scale only, and the plan's traceability table maps to PRD requirements instead of Design Doc items.
+
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
 
-## AI Automation Rules
-- 5+ files: Suggest ADR creation
-- Contract/data flow change detected: ADR mandatory
-- Check existing ADRs before implementation
+Check existing ADRs before design and implementation; the Design Doc lists them as Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test above is applied to the finished design.
 
 ## Diagram Requirements
 
@@ -292,7 +349,7 @@ Required diagrams for each document (using mermaid notation):
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
-| PRD | User journey diagram, Scope boundary diagram | Clarify user experience and scope |
+| PRD | User journey diagram and Scope boundary diagram (full depth); Part dependency diagram (when more than one part, either depth) | Clarify user experience, scope, and the order parts are designed in |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
 | Design Doc | Architecture diagram, Data flow diagram | Understand technical structure |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |

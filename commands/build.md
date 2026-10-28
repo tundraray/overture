@@ -94,7 +94,7 @@ Every subsequent reference to "task files" in this command — the decision flow
 
 | State | Criteria | Next Action |
 |-------|----------|-------------|
-| Tasks exist | .md files in tasks/ directory | Proceed to autonomous execution |
+| Tasks exist | `task-*.md` files in the plan's directory `docs/features/{feature}/{part}/{plan-name}/` | Proceed to autonomous execution |
 | No tasks + plan exists | Plan exists but no task files | Confirm with user → run task-decomposer |
 | Neither exists | No plan or task files | Error: Prerequisites not met |
 
@@ -127,7 +127,7 @@ Invoke task-decomposer using Task tool:
 
 ## 🎯 Commit Strategy Selection (Before Autonomous Mode)
 
-**Ask user before starting execution**:
+**Ask user before starting execution**, unless a strategy was already chosen for this feature earlier in the session — the choice is made once per feature and holds across its parts:
 
 "Which commit strategy do you prefer?"
 - **per-task** (default) — Commit after each task. Atomic commits, easy rollback
@@ -176,9 +176,10 @@ The per-task quality cycle checks tasks in isolation and cannot detect Design Do
 Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
 
 - Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/` — its `task-*.md`, `_overview.md`, `phase*-completion.md`, and `analysis/` are all working state for this run
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain
+- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state
+- **Report the next part**: read the PRD's Delivery Parts; when a part that depends on this one has no `completed` plan yet, name it in the completion report as the next part to plan
 
 If deletion fails (filesystem error), report the failure but do not block the completion report.
 

@@ -32,13 +32,20 @@ Create frontend work plan with the following process:
 ! ls -la docs/features/*/design-*.md | head -10
 - Check for existence of design documents, notify user if none exist
 - Present options if multiple exist (can be specified with $ARGUMENTS)
+- The design's `Part` section names the parts it depends on (typically the backend part): when one has no `completed` plan yet, say so — the plan will be written against that part's design rather than its code, and the parts list's order says it should normally be built first
 
 ### 2. Work Plan Creation
 Invoke **work-planner** using Task tool:
 - `subagent_type: "work-planner"`
 - `description: "Work plan creation"`
-- `prompt: "Create work plan from Design Doc at [path]"`
-- Interact with user to complete plan and obtain approval for plan content
+- `prompt: "Create work plan from Design Doc at [path] for part [part]; test skeletons: [paths]"`
+
+### 3. Work Plan Review
+Submit the plan to **document-reviewer** before presenting it to the user — a plan that omits a Design Doc requirement looks complete, and only a traceability check finds the gap:
+- `subagent_type: "document-reviewer"`
+- `prompt: "doc_type: WorkPlan. Review the work plan at [path] against its Design Doc. Verify: 1) Design-to-Plan Traceability, 2) Verification Strategy with an early verification point, 3) Failure Mode Checklist — all nine categories marked, 4) Reference Contract Values verbatim, 5) ADR Bindings for every applicable ADR, 6) frontmatter valid — part is in the PRD's Delivery Parts, plan: N of M consistent with siblings. [SYSTEM CONSTRAINT] This agent operates within front-plan command scope."`
+- `needs_revision` → re-invoke work-planner with the issues, re-review; maximum 2 iterations
+- Then interact with user to obtain approval for plan content
 
 **Think deeply** Create a work plan from the selected design document, clarifying specific implementation steps and risks.
 

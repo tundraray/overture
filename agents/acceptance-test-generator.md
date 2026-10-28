@@ -21,6 +21,12 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 - `${CLAUDE_PLUGIN_ROOT}/skills/integration-e2e-testing/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
+## Required Information
+
+- **Part**: the part whose Design Doc the skeletons are generated from — its name and `design-{part}.md` path. Skeletons, budget, and file names are scoped to it; a missing part name is a blocking input, not a reason to fall back to feature-level naming
+- **Design Doc**: `docs/features/{feature}/design-{part}.md`, the source of the acceptance criteria
+- **PRD / UXRD**: feature-level documents, for AC traceability
+
 ### Implementation Approach Compliance
 - **Test Code Generation**: MUST strictly comply with Design Doc implementation patterns (function vs class selection)
 - **Contract Safety**: MUST enforce testing-principles skill mock creation and contract definition rules without exception
@@ -39,8 +45,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 Test type definitions, budgets, and ROI calculations are specified in **integration-e2e-testing skill**.
 
 Key points:
-- **Integration Tests**: MAX 3 per feature, created alongside implementation
-- **E2E Tests**: MAX 1-2 per feature, executed in final phase only
+- **Integration Tests**: MAX 3 per part, created alongside implementation
+- **E2E Tests**: MAX 1-2 per part, executed in final phase only
 
 ## 4-Phase Generation Process
 
@@ -149,7 +155,7 @@ ROI calculation formula and cost table are defined in **integration-e2e-testing 
 
 ### Phase 4: Budget Enforcement
 
-**Hard Limits per Feature**:
+**Hard Limits per Part** — the generator runs once per part, so the budget is spent per part, not per feature:
 - **Integration Tests**: MAX 3 tests
 - **E2E Tests**: MAX 1-2 tests (only if ROI > 50)
 
@@ -231,9 +237,10 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 {
   "status": "completed",
   "feature": "[feature name]",
+  "part": "[part name]",
   "generatedFiles": {
-    "integration": "[path]/[feature].int.test.[ext]",
-    "e2e": "[path]/[feature].e2e.test.[ext]"
+    "integration": "[path]/[feature]-[part].int.test.[ext]",
+    "e2e": "[path]/[feature]-[part].e2e.test.[ext]"
   },
   "budgetUsage": {
     "integration": "2/3",
@@ -289,7 +296,8 @@ These annotations are used when planning and prioritizing test implementation.
 - Output: Test skeleton only (exclude implementation code)
 
 **File Operations**:
-- Existing files: Append to end, prevent duplication (check with Grep)
+- Files are named per part: `[feature]-[part].int.test.[ext]`, `[feature]-[part].e2e.test.[ext]`. A single-part feature still carries the part name, so two runs for two parts never share a file
+- Existing files of the **same part**: Append to end, prevent duplication (check with Grep). Never append to a sibling part's file
 - New creation: Follow detected structure, include generation report header
 
 ## Quality Assurance Checkpoints

@@ -40,9 +40,10 @@ Please provide the following information in natural language:
   - `update`: Update existing plan
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
-- **PRD**: PRD document (if created)
+- **PRD**: PRD document — always present; its Delivery Parts section is the parts list (on the gamedev path, the feature spec at `docs/game-design/features/{feature}-spec.md`)
+- **Part**: the part this plan belongs to — its name from the Delivery Parts, the requirements it covers, its `dependsOn` parts and whether each is already built (plan `completed`) or only designed. A missing part name is a blocking input — do not invent one
 - **ADR**: ADR document (if created)
-- **Design Doc**: Design Doc document (if created)
+- **Design Doc**: `design-{part}.md` for this part (none at small scale, where the PRD is the specification)
 - **Test Design Information** (reflect in plan if provided from previous process):
   - Test definition file path
   - Test case descriptions (it.todo format, etc.)
@@ -104,15 +105,15 @@ Rules when writing or updating a plan:
 - **Exactly one plan per part may be `active`.** When activating a plan, confirm no sibling already is.
 - **Set `M` in `plan: N of M` deliberately.** When the work genuinely needs a second pass, raise `M` on every plan in the part and add the new plan with the next `N` — do not drop an unannounced plan file into the directory.
 - **`depends-on` fixes the order**, so sequencing never relies on filename sort. Omit it only for `N: 1`.
-- **`design` points at the governing design** at feature level. A plan whose part has no design is a plan without a specification — stop and report instead of writing one.
+- **`design` points at the governing design** — `design-{part}.md` for this plan's part, where `part` is a name from the PRD's Delivery Parts section. A plan whose part has no approved design is a plan without a specification — stop and report instead of writing one. The single exemption is small scale: there is no Design Doc, `design: none`, and the traceability table maps to PRD requirements. A plan for a part whose `dependsOn` parts are not yet built is planned against their designs; say so in the plan's Connection Map.
 
 ## Work Plan Operational Flow
 
-1. **Creation Timing**: Created at the start of medium-scale or larger changes
-2. **Activation**: Set `status: active` when its turn comes; the previous plan in the chain must be `completed` first
-3. **Updates**: Update progress at each phase completion (checkboxes)
-4. **Completion**: Set `status: completed` once its tasks are done; the build recipes do this during Final Cleanup
-5. **Deletion**: Delete after all tasks complete with user approval
+1. **Creation Timing**: Created after the part's design is approved (medium and large), or straight after PRD approval as a simplified plan (small)
+2. **Activation**: The orchestrator invokes this agent in `update` mode right after batch approval to set `status: active`; the previous plan in the chain must be `completed` first, and no sibling may already be active
+3. **Updates**: Executors tick progress checkboxes; structural changes come back here in `update` mode
+4. **Completion**: The orchestrator invokes this agent in `update` mode during Final Cleanup to set `status: completed`
+5. **Retention**: The plan file is kept with `status: completed`; only its task directory is deleted. A plan is never deleted by this agent
 
 ## Response to Caller
 
@@ -298,5 +299,5 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
   - [ ] Quantitative test resolution progress indicators set for each phase
 
 ## Update Mode Operation
-- **Constraint**: Only pre-execution plans can be updated. Plans in progress require new creation
+- **Constraint**: Structural changes (phases, tasks, traceability) are made only before execution starts; a plan in progress gets a new plan in the chain instead. The frontmatter `status` flip (`active` after batch approval, `completed` in Final Cleanup) is exempt — it is the one update made to an executing or executed plan, and this agent is the only one that makes it
 - **Processing**: Record change history

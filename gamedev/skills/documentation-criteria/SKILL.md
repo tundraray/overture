@@ -24,15 +24,15 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 | Condition | Required Documents | Creation Order |
 |-----------|-------------------|----------------|
-| New Feature Addition | PRD → [UXRD] → Design Doc → [ADR] → Work Plan | After PRD approval |
-| Large scale | PRD → Design Doc → [ADR] → Work Plan | Start immediately |
-| Medium scale | Design Doc → [ADR] → Work Plan | Start immediately |
-| Small scale | None | Direct implementation |
+| New Game Project | Market Analysis → GDD → Feature Spec (full) per feature → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| New Game Feature (large) | GDD update → Feature Spec (full) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| Medium scale | Feature Spec (lite) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| Art/Visual Change | Art Direction → Feature Spec (lite) → Design Doc per part | After Feature Spec approval |
+| Small scale | Feature Spec (lite) → simplified Work Plan | After Feature Spec approval |
 
 **The ADR follows the Design Doc**, and is written only when a decision the design made passes all three parts of the test below. Most features produce none. Documents in `[brackets]` are conditional.
-| New Game Project | GDD → Market Analysis → [ADR] → Design Doc → Work Plan | After GDD approval |
-| New Game Feature | Feature Spec → [GDD Update] → Design Doc → Work Plan | After Feature Spec approval |
-| Art/Visual Change | Art Direction → Design Doc | After Art Direction approval |
+
+**A feature spec is written at every scale.** It is the feature-level product document — the PRD's role in the shared workflow — and its depth follows the scale: `full` at large (every template section), `lite` at medium and small (Feature Overview, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, Integration Points). The GDD stays at project level. Design Docs and work plans are written per part; the parts list is the feature spec's Delivery Parts section (see "Parts and plans").
 
 ## ADR Creation Conditions
 
@@ -267,6 +267,8 @@ docs/
 
 A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
 
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Do not split by schedule — the six game phases are phases within one plan, not parts. Every requirement belongs to exactly one part; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
+
 A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
 
 ```yaml
@@ -289,10 +291,7 @@ The 6 game phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are phases
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
 
-## AI Automation Rules
-- 5+ files: Suggest ADR creation
-- Contract/data flow change detected: ADR mandatory
-- Check existing ADRs before implementation
+Check existing ADRs before design and implementation; the Design Doc lists them as Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test is applied to the finished design.
 
 ## Diagram Requirements
 

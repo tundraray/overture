@@ -15,11 +15,11 @@ Autonomy is delegated authority, not absence of limits. Every rule below exists 
 
 Run before planning begins.
 
-☐ Design Doc path received and approved (`workflow-technical` exit gate passed)
-☐ ADR paths received, or an explicit "none passed the test"
-☐ Test skeleton paths received
-☐ PRD and UXRD paths carried through, for plan traceability
-☐ The part's plan state is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
+☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
+☐ ADR paths received per part, or an explicit "none passed the test"
+☐ Test skeleton paths received per part
+☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `ui-ux-agent` output on the gamedev path); a small-scale plan's traceability table maps to the PRD's or feature spec's acceptance criteria
+☐ The plan state of every part is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
 
 **ENFORCEMENT**: when an item is unchecked, stop and name the missing input and the phase that produces it. An ambiguous plan state in particular must never be resolved by picking one — see "Planning" below.
 
@@ -36,9 +36,17 @@ Planning turns an approved design into a schedule the executor can follow, and e
 
 Substitute the domain's agent wherever this skill says **`{planner}`**. Nothing else varies by domain.
 
+### One part at a time
+
+Planning and execution run **per part**, in the dependency order of the parts list: plan the first part, take its batch approval, build it through its completion report, then plan the next. The whole feature was designed before this phase began, so every contract a part consumes is settled; building in order adds that the upstream part's *code* exists too, and the downstream plan can name real files where the upstream plan could only name designed ones.
+
+Commit strategy is asked once, before the first part's batch approval, and holds for the feature. Batch approval is taken per part: it approves one plan, and one plan covers one part.
+
 ### Flow
 
-1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying the frontmatter that positions it within its part (`plan: N of M`, `status`, `depends-on`) and incorporating the generated test skeleton paths
+Run for the current part, then repeat for the next part in the list:
+
+1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying the frontmatter that positions it within its part (`plan: N of M`, `status`, `depends-on`) and incorporating the part's test skeleton paths
 2. **document-reviewer** → work plan review, checking:
    - **Design-to-Plan Traceability** — every Design Doc item has a covering task or a justified gap
    - **Failure Mode Checklist** — all nine categories marked, applicable ones assigned a covering task
@@ -46,11 +54,13 @@ Substitute the domain's agent wherever this skill says **`{planner}`**. Nothing 
    - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
    - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
    `needs_revision` → re-invoke `{planner}` with the issues, then re-review; maximum 2 iterations
-3. **Commit strategy selection** — ask the user (see below)
+3. **Commit strategy selection** — ask the user, first part only (see below)
 
-   **[Stop: batch approval for the entire implementation phase]**
+   **[Stop: batch approval — part `{part}`]**
 
-4. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md` and any phase-completion files
+4. **`{planner}`** (`update` mode) → set the approved plan's frontmatter `status: active`. The orchestrator never edits the file itself; the planner owns it and checks no sibling is already active
+5. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md` and any phase-completion files
+6. The per-task cycle, post-implementation verification, and Final Cleanup below, for this part. Its completion report names the next part in the list, or closes the feature when it was the last
 
 Decomposition runs **after** batch approval: it produces working state, not a document under review, and re-decomposing is cheap while re-approving is not.
 
@@ -58,7 +68,7 @@ Decomposition runs **after** batch approval: it produces working state, not a do
 
 Everything before it is reviewed by a human; everything after runs autonomously until completion or escalation. Do not reach it with an unresolved question — after it, no one is asked again.
 
-Small scale skips the plan review: create a simplified plan, take batch approval, and proceed.
+Small scale skips the plan review: `{planner}` writes a simplified plan with `design: none` whose traceability table maps to the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
 
 ## Entry Conditions
 
@@ -168,8 +178,8 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 
 Before the completion report, delete the task directory this run consumed. Its work is committed; the directory is working state, not a durable artifact.
 
-- Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and any consolidated fix task file
-- Set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
+- Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and any consolidated fix task file (a Bash `rm` of working state, not a document edit)
+- Invoke `{planner}` in `update` mode to set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
 - **Preserve** sibling plans and their directories — a part may hold several, and only the executed one is finished
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
 
@@ -249,6 +259,7 @@ Run before the completion report.
 ☐ No `quality-fixer` result was accepted on `non_substantive` test evidence
 ☐ Final Cleanup ran: the task directory is deleted and the plan's `status` is `completed`
 ☐ When the part has a further plan in the chain, its `depends-on` is now satisfied and it is reported as the next step
+☐ When the parts list has a further part, it is reported as the next part to plan — its `dependsOn` parts are now built, not only designed
 ☐ The completion report states what was built, what was verified, and anything left escalated
 
 **ENFORCEMENT**: an unchecked item means the run is not finished. Reporting completion with an unverified item is worse than reporting the gap, because it removes the reader's reason to look.
@@ -257,12 +268,14 @@ Run before the completion report.
 
 ```mermaid
 graph TD
-    DESIGN[Approved Design Doc] --> PLAN[planner: work plan]
+    DESIGN[Approved Design Docs, one per part] --> PART[Next part in dependency order]
+    PART --> PLAN[planner: work plan for this part]
     PLAN --> PREVIEW[document-reviewer: plan review]
     PREVIEW -->|needs_revision| PLAN
-    PREVIEW -->|approved| STRATEGY[Ask commit strategy]
-    STRATEGY --> START[Batch approval]
-    START --> DECOMP[task-decomposer]
+    PREVIEW -->|approved| STRATEGY[Ask commit strategy, first part only]
+    STRATEGY --> START[Batch approval for this part]
+    START --> ACTIVATE[planner update: status active]
+    ACTIVATE --> DECOMP[task-decomposer]
     DECOMP --> ENV{Environment check}
     ENV -->|Missing critical component| ESC0[Escalate before entering]
     ENV -->|OK| AUTO[Start autonomous execution]
@@ -284,7 +297,9 @@ graph TD
     VERIFY -->|Fail, cycles left| FIXMODE
     VERIFY -->|Fail, no progress or cycle 2| USERESC
     VERIFY -->|Pass| CLEAN[Final Cleanup]
-    CLEAN --> REPORT[Completion report]
+    CLEAN --> MORE{Remaining parts?}
+    MORE -->|Yes| PART
+    MORE -->|No| REPORT[Completion report]
 
     LOOP --> INTERRUPT{User input?}
     INTERRUPT -->|None| TE

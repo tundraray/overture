@@ -1,7 +1,7 @@
 ---
 feature: [feature-name]           # directory under docs/features/
 part: [part-name]                 # directory holding this plan
-design: design-[part-name].md     # governing design, at feature level
+design: design-[part-name].md     # governing design, at feature level; `none` only at small scale (the PRD is the specification)
 plan: 1 of 1                      # position in the part, and expected total
 status: draft                     # draft | active | completed
 depends-on:                       # previous plan filename; omit for the first
@@ -18,10 +18,29 @@ Related Issue/PR: #XXX (if any)
 **Frontmatter is the source of truth for plan sequencing.** `plan: N of M` states how many plans this part is expected to need, `status` marks which one runs now, and `depends-on` fixes the order without relying on filename sort. Exactly one plan per part may be `active`. Raise `M` when the part turns out to need another pass, rather than adding an unannounced plan file.
 
 ## Related Documents
-- Design Doc: [docs/features/{feature}/design-{part}.md]
+- PRD: [docs/features/{feature}/prd.md]
+- Design Doc: [docs/features/{feature}/design-{part}.md] (none at small scale)
 - ADR: [docs/adr/ADR-XXXX.md] (if any)
-- PRD: [docs/features/{feature}/prd.md] (if any)
 - UXRD: [docs/features/{feature}/uxrd.md] (if any)
+
+## Phase Structure Diagram
+
+```mermaid
+graph LR
+    P1[Phase 1: Foundation] --> P2[Phase 2: Core]
+    P2 --> P3[Phase 3: Integration]
+    P3 --> QA[Final Phase: Quality Assurance]
+```
+
+## Task Dependency Diagram
+
+```mermaid
+graph TD
+    T1[Task 1] --> T2[Task 2]
+    T1 --> T3[Task 3]
+    T2 --> T4[Task 4]
+    T3 --> T4
+```
 
 ## Verification Strategy (from Design Doc)
 

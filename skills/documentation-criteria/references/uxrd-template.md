@@ -103,7 +103,9 @@ flowchart TD
 | Focus | [Description] | [Keyboard navigation behavior] |
 | Disabled | [Description] | [Why and when disabled] |
 | Loading | [Description] | [Loading indicator behavior] |
+| Empty | [Description] | [What renders with no data, and the action offered] |
 | Error | [Description] | [Error display and recovery] |
+| Partial | [Description] | [Rendering when only some data arrived, or N/A with reason] |
 
 **Interactions**:
 

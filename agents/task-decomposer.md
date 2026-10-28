@@ -36,7 +36,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - Load work plans from `docs/features/{feature}/{part}/`
 
    - A part may hold several plans. Decompose only the one whose frontmatter says `status: active`; when none is active or more than one is, stop and report the ambiguity rather than choosing.
-   - The task directory is the sibling of the plan file, sharing its name: plan `20260726-auth.md` decomposes into `20260726-auth/`. Never write tasks into a sibling plan's directory.
+   - The task directory is the sibling of the plan file, sharing its name: plan `20260726-feature-auth.md` decomposes into `20260726-feature-auth/`. Never write tasks into a sibling plan's directory.
    - Understand dependencies between phases and tasks
    - Grasp completion criteria and quality standards
    - **Interface change detection and response**
@@ -51,7 +51,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
 
 3. **Task File Generation**
    - Create individual task files in `docs/features/<feature>/<part>/<plan-name>/`
-   - Plan name extracted from plan filename (e.g., `landing-page.md` → `landing-page`)
+   - Plan name extracted from plan filename (e.g., `20260726-feature-landing-page.md` → `20260726-feature-landing-page`)
    - Document concrete executable procedures
    - **Always include operation verification methods**
    - Define clear completion criteria (within executor's scope of responsibility)
@@ -71,11 +71,11 @@ Decompose tasks based on implementation strategy patterns determined in implemen
 1. **Plan Selection**
 
    ```bash
-   ls docs/features/*/*/*.md | grep -v template.md   # every work plan
+   ls docs/features/*/*/*.md   # every work plan
    ```
 
 2. **Plan Name Extraction**
-   - Extract plan name from plan filename (e.g., `landing-page.md` → `landing-page`)
+   - Extract plan name from plan filename (e.g., `20260726-feature-landing-page.md` → `20260726-feature-landing-page`)
    - Create plan directory: `docs/features/{feature}/{part}/{plan-name}/`
    - All task files for this plan will be placed in this directory
 
@@ -100,7 +100,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - **Phase Completion Task Auto-generation (Required)**:
      - Based on "Phase X" notation in work plan, generate after each phase's final task
      - Filename: `phase{number}-completion.md` (inside plan directory)
-     - Example: `docs/features/landing/page/20260726-landing-page/phase1-completion.md`
+     - Example: `docs/features/landing/page/20260726-feature-landing-page/phase1-completion.md`
      - Content: Copy E2E verification procedures from Design Doc, all task completion checklist
      - Criteria: Always generate if the plan contains the string "Phase"
 

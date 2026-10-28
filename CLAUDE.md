@@ -25,30 +25,42 @@ Commands like `/implement` act as orchestrators:
 
 ### Scale-Based Workflow Routing
 
-Scale determined by file count in `requirement-analyzer`:
-- **Small (1-2 files)**: Direct implementation → quality-fixer → commit
-- **Medium (3-5 files)**: Design Doc → Work Plan → Tasks → Implementation → Review
-- **Large (6+ files)**: PRD → Design Doc → Work Plan → Tasks → Implementation → Review
+Scale is the highest level any of five axes triggers in `requirement-analyzer` (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides it. A PRD is written at every scale.
+- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Tasks → Implementation → quality-fixer → commit
+- **Medium (typically 3-5 files)**: PRD (lite) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
+- **Large (typically 6+ files)**: PRD (full) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
+
+All parts are designed before any is planned; then parts are planned and built one at a time, in dependency order.
+
+### Parts
+
+A **part** is an independently designable slice of a feature (`api`, `web`, `billing`, `migration`). The split is a product decision: proposed by `requirement-analyzer`, refined into the PRD's "Delivery Parts" section by `prd-creator`, and confirmed by the user at PRD approval before any design begins — at every scale, since the PRD always exists. Each part gets its own `design-{part}.md` and plan chain under `{part}/`.
+
+- All parts are designed first, in dependency order, each to its own approval stop
+- Then each part is planned and built in turn, each with its own batch approval
+- Every Must Have requirement belongs to exactly one part; `dependsOn` is acyclic; one part is the common case
+- Changing the parts list goes back to the product phase — never done by a designer or the orchestrator
 
 ### Document-Driven Development
 
 Progressive document creation based on complexity:
-- **PRD** (6+ files): Business requirements, user value, success metrics
-- **ADR** (conditional): Architecture/data flow/dependency changes
-- **Design Doc** (3+ files): Technical specifications, interfaces, acceptance criteria
-- **Work Plan** (3+ files): Phased task breakdown with dependencies
+- **PRD** (every scale; `full` at large, `lite` at medium and small): Business requirements, user value, success metrics, Delivery Parts
+- **ADR** (rare, after the Design Doc): Only when a decision the design made is costly to reverse, binds beyond the feature, and was taken against real alternatives
+- **Design Doc** (medium and large, one per part): Technical specifications, interfaces, acceptance criteria
+- **Work Plan** (every scale, per part; simplified at small): Phased task breakdown with dependencies
 - **Task Files** (at execution): Single-commit granularity work units
 
 ### Explicit Stop Points for User Approval
 
-Autonomous flow halts at:
-- After requirement-analyzer (confirm requirements/scope)
-- After document-reviewer completes PRD review
-- After document-reviewer completes ADR review (if created)
-- After design-sync verifies consistency
-- After work-planner creates plan (batch approval for implementation)
+Autonomous flow halts at (once per feature unless stated):
+- After requirement-analyzer (confirm requirements and scale)
+- After document-reviewer completes PRD review (including the Delivery Parts split; every scale)
+- After document-reviewer completes UXRD review (when the work has a UI surface)
+- After design-sync verifies a part's Design Doc (once per part)
+- After document-reviewer completes ADR review (only when an ADR was written, after that part's design)
+- After document-reviewer reviews a part's work plan (batch approval, once per part)
 
-After batch approval: Full autonomy until completion or escalation.
+After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
 
 ### Per-Task Quality Cycle
 
@@ -95,9 +107,11 @@ overture/
 ├── frontend/                        # frontend-overture plugin
 │   ├── .claude-plugin/plugin.json   # Agents, commands config
 │   └── ...                          # Symlinks (same structure)
-└── fullstack/                       # fullstack-overture plugin
-    ├── .claude-plugin/plugin.json   # Agents, commands config
-    └── ...                          # Symlinks (same structure)
+├── fullstack/                       # fullstack-overture plugin
+│   ├── .claude-plugin/plugin.json   # Agents, commands config
+│   └── ...                          # Symlinks (same structure)
+├── gamedev/                         # gamedev-overture plugin (own product phase, shared technical/execution)
+└── strategy/                        # strategy-overture plugin (own agents and skills)
 ```
 
 ### Symlink Architecture
@@ -152,6 +166,8 @@ This holds regardless of what the agent produces. What varies is what goes *in* 
   "nextSteps": [...]
 }
 ```
+
+Reviewers are the one exception to the `status` enum: `document-reviewer` returns its verdict as the top-level `status` (`approved | approved_with_conditions | needs_revision | rejected`) together with `revision_agent`, because the orchestrator's revision loop keys on exactly those two fields.
 
 **Agents that produce documents** — prd-creator, technical-designer, work-planner, ux-designer, task-decomposer:
 
@@ -238,6 +254,7 @@ Only one bump per PR — if the version was already bumped in this branch, do no
 - `/reverse-engineer` - Generate docs from code
 - `/add-integration-tests` - Add integration/E2E tests
 - `/audit` - Interactive dead code detection and cleanup
+- `/update-doc` - Update an existing PRD, UXRD, Design Doc, or ADR through its owning agent
 
 ### Frontend Commands (frontend-overture)
 - `/front-design` - Frontend Design Doc creation

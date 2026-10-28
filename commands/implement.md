@@ -16,7 +16,8 @@ argument-hint: <feature description>
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
-3. **Enter autonomous mode** only after "batch approval for entire implementation phase"
+3. **Enter autonomous mode** only after the batch approval of the current part's plan
+4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
 
 **CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-orchestration skill flows.
 
@@ -38,7 +39,7 @@ Instruction Content: $ARGUMENTS
 | Situation Pattern | Decision Criteria | Next Action |
 |------------------|------------------|-------------|
 | New Requirements | No existing work, new feature/fix request | Start with requirement-analyzer |
-| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in sub-agents.md flow |
+| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in the workflow skill flows |
 | Quality Errors | Error detection, test failures, build errors | Execute quality-fixer |
 | Ambiguous | Intent unclear, multiple interpretations possible | Confirm with user |
 
@@ -47,9 +48,10 @@ Instruction Content: $ARGUMENTS
 When continuing existing flow, verify:
 - Latest artifacts (PRD/ADR/Design Doc/Work Plan/Tasks)
 - Current phase position (Requirements/Design/Planning/Implementation/QA)
+- The parts list (the PRD's "Delivery Parts" section), which parts have an approved `design-{part}.md`, and which have a `completed` plan chain — the current part is the first one not finished in the current phase
 - Identify next step in workflow-orchestration skill corresponding flow
 
-### Scope Change Detection
+### 3. Scope Change Detection
 
 After requirement-analyzer returns, evaluate scope implications before proceeding:
 
@@ -57,38 +59,36 @@ After requirement-analyzer returns, evaluate scope implications before proceedin
 
 #### Scope Dependency Analysis
 
-For each identified requirement, assess:
+requirement-analyzer reports a top-level `confidence` (`confirmed` | `provisional`) and, when provisional, the questions whose answers would move the scale:
 
 ```yaml
+confidence: provisional
 scopeDependencies:
   - question: "Does this require API contract changes?"
-    impact: "high"
-    confidence: 0.7
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a breaking contract change routes as Large regardless of file count"
   - question: "Are database schema changes needed?"
-    impact: "high"
-    confidence: 0.5
-  - question: "Does this affect existing user-facing behavior?"
-    impact: "medium"
-    confidence: 0.9
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "persisted-data migration is a Large-scale axis"
 ```
 
 #### Decision Rules
 
 | Condition | Action |
 |---|---|
-| Any dependency with `impact: high` AND `confidence < 0.8` | **STOP** — Present the question to user with impact explanation. Do not proceed until confirmed. |
-| Any dependency with `impact: high` AND `confidence >= 0.8` | Proceed but flag in TodoWrite as high-impact item |
-| All dependencies `impact: medium/low` | Proceed normally |
-| `confidence < 0.5` on any item | **STOP** — Insufficient information. Ask user for clarification before proceeding. |
+| `confidence: provisional` and any `scopeDependencies[].impact.if_yes` is a higher scale than the reported `scale` | **STOP** — Present the question with its `reason` at the requirement confirmation stop. Do not proceed until answered; a "yes" re-runs requirement-analyzer with the answer |
+| `confidence: provisional` and no answer changes the scale | Proceed, carrying the questions into the PRD's Undetermined Items |
+| `confidence: confirmed` | Proceed normally |
+| `scaleRationale.decidingAxis` is not `files` | State it at the stop: "6 files but routed as Large because this is a breaking contract change" |
 
 #### Scope Change Report (presented to user at stop points)
 
 ```
 ## Scope Change Detection Report
 
-### High-Impact Dependencies Requiring Confirmation:
-1. [question] — Impact: [impact], Confidence: [confidence]
-   Explanation: [why this matters and what could go wrong]
+### Scale-Changing Questions Requiring an Answer:
+1. [question] — if yes: [scale], if no: [scale]
+   Reason: [why this matters and what could go wrong]
 
 ### Confirmed Scope Items:
 - [items with high confidence that will proceed]
@@ -143,9 +143,18 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 
 ## Mandatory Orchestrator Responsibilities
 
+### Parts Loop (MANDATORY)
+
+The parts list confirmed in the product phase — the PRD's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
+
+1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
+2. **Execution phase**: for each part, plan → review → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+
+Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`prd-creator` in `update` mode and PRD re-approval).
+
 ### Commit Strategy Selection (MANDATORY before implementation)
 
-**After requirement-analyzer and before batch approval**, ask user:
+**After PRD approval and before the first part's batch approval**, ask user:
 
 "Which commit strategy do you prefer?"
 - **per-task** (default) — Commit after each task. Atomic commits, easy rollback
@@ -218,7 +227,7 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
 Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
 
 - Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and the consolidated fix task file from the verification cycle if one was created
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain
+- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
 - When this run drove several parts, repeat the above per part rather than deleting the feature directory
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state

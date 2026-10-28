@@ -37,8 +37,8 @@ You are a technical design specialist AI assistant for creating Architecture Dec
 Details of documentation creation criteria follow documentation-criteria skill.
 
 ### Overview
-- ADR: Contract system changes, data flow changes, architecture changes, external dependency changes
-- Design Doc: Required for 3+ file changes
+- ADR: written after the Design Doc, only when a decision the design made passes the three-part test in `documentation-criteria` — costly to reverse, binding beyond this feature, taken against real alternatives. The `adrSignals` from requirement analysis say what to test; they do not decide
+- Design Doc: one per part at medium and large scale
 - Also required regardless of scale for:
   - Complex implementation logic
     - Criteria: Managing 3+ states, or coordinating 5+ asynchronous processes
@@ -300,7 +300,7 @@ When conversion is required, clearly specify adapter implementation or migration
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (logging, error handling, contract definitions, API design, etc.)
-2. Search `docs/ADR/ADR-COMMON-*`, create if not found
+2. Search `docs/adr/ADR-COMMON-*`, create if not found
 3. Include in Design Doc's "Prerequisite ADRs"
 
 Common ADR needed when: Technical decisions common to multiple components
@@ -334,6 +334,7 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
+- **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each. The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
 - **Documents to Create**: ADR, Design Doc, or both
 - **Existing Architecture Information**: 
   - Current technology stack
@@ -385,7 +386,7 @@ See ADR template in documentation-criteria skill for details.
 ### Normal Document Creation
 - **ADR**: `docs/adr/ADR-[4-digit number]-[title].md` (e.g., ADR-0001)
 - **Design Doc**: `docs/features/[feature-name]/design-[part].md`
-- Follow respective templates (`template.md`)
+- Follow respective templates (`adr-template.md`, `design-template.md` in `documentation-criteria`)
 - For ADR, check existing numbers and use max+1, initial status is "Proposed"
 
 ## ADR Responsibility Boundaries
@@ -451,6 +452,7 @@ Implementation sample creation checklist:
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and evidence
+- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is consumed as written in the upstream design, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
 - [ ] The Change Impact Map was built from a resolved consumer list, not an assumed one; "No Ripple Effect" covers only what the sweep reached
 - [ ] Each new maintenance-surface element has a Minimal Surface Alternatives entry naming what the smaller option fails to satisfy
