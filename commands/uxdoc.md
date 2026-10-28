@@ -8,21 +8,22 @@ argument-hint: <UX feature or interaction description>
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not a worker. I am an orchestrator." (see subagents-orchestration-guide skill)
+**Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-orchestration skill)
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER investigate/analyze yourself)
-2. **Follow subagents-orchestration-guide skill design flow exactly**:
+2. **Follow workflow-orchestration skill design flow exactly**:
    - Execute: requirement-analyzer → ux-designer → document-reviewer → design-sync (if Design Doc exists)
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Scope**: Complete when UXRD receives approval
 
-**CRITICAL**: NEVER skip document-reviewer, design-sync (when applicable), or stopping points defined in subagents-orchestration-guide skill flows.
+**CRITICAL**: NEVER skip document-reviewer, design-sync (when applicable), or stopping points defined in workflow-orchestration skill flows.
 
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-product/SKILL.md`
 
 ## Workflow Overview
 
@@ -80,7 +81,7 @@ prompt: "Requirements: [user requirements]. Execute requirement analysis with fo
 
 **Think deeply**: Based on confirmed requirements, determine ux-designer operation mode:
 - `create`: New UXRD for new features/interactions
-- `update`: Modify existing UXRD (check docs/uxrd/ for existing files)
+- `update`: Modify existing UXRD (glob `docs/features/*/uxrd.md`)
 - `reverse-engineer`: Create UXRD from existing UI implementation
 
 ```yaml
@@ -109,13 +110,13 @@ prompt: "Review the UXRD at [document path] for completeness and consistency. Ve
      prompt: "Update UXRD at [path] to address the following review issues: [issues from document-reviewer]. Operation mode: update. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Revise UXRD to address reviewer feedback."
      ```
   3. Re-run document-reviewer
-  4. Repeat until approved
+  4. Repeat once; a second `needs_revision` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
 **[STOP]**: Present approved UXRD to user for final approval.
 
 ### 4. Consistency Verification (Conditional)
 
-**Think deeply**: Check if a Design Doc exists in the project (docs/design/ directory). If one exists, cross-document consistency verification is mandatory.
+**Think deeply**: Check whether a Design Doc exists for the feature (glob `docs/features/*/design-*.md`). If one exists, cross-document consistency verification is mandatory.
 
 **IF Design Doc exists**:
 
@@ -150,7 +151,7 @@ prompt: "Verify consistency between the UXRD at [uxrd path] and Design Doc at [d
 
 UXRD phase completed.
 
-- UX Requirement Document: docs/uxrd/[document-name].md
+- UX Requirement Document: docs/features/[feature]/uxrd.md
 - Approval status: User approved
 - Consistency check: Passed (or N/A if no Design Doc)
 

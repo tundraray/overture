@@ -8,22 +8,26 @@ argument-hint: <feature description>
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not a worker. I am an orchestrator." (see subagents-orchestration-guide skill)
+**Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-orchestration skill)
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
-2. **Follow subagents-orchestration-guide skill flows exactly**:
+2. **Follow workflow-orchestration skill flows exactly**:
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
-3. **Enter autonomous mode** only after "batch approval for entire implementation phase"
+3. **Enter autonomous mode** only after the batch approval of the current part's plan
+4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
 
-**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in subagents-orchestration-guide skill flows.
+**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-orchestration skill flows.
 
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-product/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-technical/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md`
 
 ## Execution Decision Flow
 
@@ -35,7 +39,7 @@ Instruction Content: $ARGUMENTS
 | Situation Pattern | Decision Criteria | Next Action |
 |------------------|------------------|-------------|
 | New Requirements | No existing work, new feature/fix request | Start with requirement-analyzer |
-| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in sub-agents.md flow |
+| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in the workflow skill flows |
 | Quality Errors | Error detection, test failures, build errors | Execute quality-fixer |
 | Ambiguous | Intent unclear, multiple interpretations possible | Confirm with user |
 
@@ -44,9 +48,10 @@ Instruction Content: $ARGUMENTS
 When continuing existing flow, verify:
 - Latest artifacts (PRD/ADR/Design Doc/Work Plan/Tasks)
 - Current phase position (Requirements/Design/Planning/Implementation/QA)
-- Identify next step in subagents-orchestration-guide skill corresponding flow
+- The parts list (the PRD's "Delivery Parts" section), which parts have an approved `design-{part}.md`, and which have a `completed` plan chain — the current part is the first one not finished in the current phase
+- Identify next step in workflow-orchestration skill corresponding flow
 
-### Scope Change Detection
+### 3. Scope Change Detection
 
 After requirement-analyzer returns, evaluate scope implications before proceeding:
 
@@ -54,38 +59,36 @@ After requirement-analyzer returns, evaluate scope implications before proceedin
 
 #### Scope Dependency Analysis
 
-For each identified requirement, assess:
+requirement-analyzer reports a top-level `confidence` (`confirmed` | `provisional`) and, when provisional, the questions whose answers would move the scale:
 
 ```yaml
+confidence: provisional
 scopeDependencies:
   - question: "Does this require API contract changes?"
-    impact: "high"
-    confidence: 0.7
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a breaking contract change routes as Large regardless of file count"
   - question: "Are database schema changes needed?"
-    impact: "high"
-    confidence: 0.5
-  - question: "Does this affect existing user-facing behavior?"
-    impact: "medium"
-    confidence: 0.9
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "persisted-data migration is a Large-scale axis"
 ```
 
 #### Decision Rules
 
 | Condition | Action |
 |---|---|
-| Any dependency with `impact: high` AND `confidence < 0.8` | **STOP** — Present the question to user with impact explanation. Do not proceed until confirmed. |
-| Any dependency with `impact: high` AND `confidence >= 0.8` | Proceed but flag in TodoWrite as high-impact item |
-| All dependencies `impact: medium/low` | Proceed normally |
-| `confidence < 0.5` on any item | **STOP** — Insufficient information. Ask user for clarification before proceeding. |
+| `confidence: provisional` and any `scopeDependencies[].impact.if_yes` is a higher scale than the reported `scale` | **STOP** — Present the question with its `reason` at the requirement confirmation stop. Do not proceed until answered; a "yes" re-runs requirement-analyzer with the answer |
+| `confidence: provisional` and no answer changes the scale | Proceed, carrying the questions into the PRD's Undetermined Items |
+| `confidence: confirmed` | Proceed normally |
+| `scaleRationale.decidingAxis` is not `files` | State it at the stop: "6 files but routed as Large because this is a breaking contract change" |
 
 #### Scope Change Report (presented to user at stop points)
 
 ```
 ## Scope Change Detection Report
 
-### High-Impact Dependencies Requiring Confirmation:
-1. [question] — Impact: [impact], Confidence: [confidence]
-   Explanation: [why this matters and what could go wrong]
+### Scale-Changing Questions Requiring an Answer:
+1. [question] — if yes: [scale], if no: [scale]
+   Reason: [why this matters and what could go wrong]
 
 ### Confirmed Scope Items:
 - [items with high confidence that will proceed]
@@ -98,7 +101,7 @@ scopeDependencies:
 
 ### 4. Next Action Execution
 
-**MANDATORY subagents-orchestration-guide skill reference**:
+**MANDATORY workflow-orchestration skill reference**:
 - Verify scale-based flow (Large/Medium/Small scale)
 - Confirm autonomous execution mode conditions
 - Recognize mandatory stopping points
@@ -115,7 +118,7 @@ scopeDependencies:
 ## Subagents Orchestration Guide Compliance Execution
 
 **Pre-execution Checklist (MANDATORY)**:
-- [ ] Confirmed relevant subagents-orchestration-guide skill flow
+- [ ] Confirmed relevant workflow-orchestration skill flow
 - [ ] Identified current progress position
 - [ ] Clarified next step
 - [ ] Recognized stopping points
@@ -140,9 +143,18 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 
 ## Mandatory Orchestrator Responsibilities
 
+### Parts Loop (MANDATORY)
+
+The parts list confirmed in the product phase — the PRD's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
+
+1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
+2. **Execution phase**: for each part, plan → review → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+
+Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`prd-creator` in `update` mode and PRD re-approval).
+
 ### Commit Strategy Selection (MANDATORY before implementation)
 
-**After requirement-analyzer and before batch approval**, ask user:
+**After PRD approval and before the first part's batch approval**, ask user:
 
 "Which commit strategy do you prefer?"
 - **per-task** (default) — Commit after each task. Atomic commits, easy rollback
@@ -166,7 +178,12 @@ Store selected strategy for autonomous execution mode.
 1. Execute ONE task completely before starting next
 2. Check task-executor status before quality-fixer (escalation check)
 3. quality-fixer MUST run after each task-executor (no skipping)
-4. Commit execution depends on strategy (see subagents-orchestration-guide)
+4. Commit execution depends on strategy (see the `workflow-execution` skill)
+
+**Step 2 branch conditions**:
+- `status: escalation_needed` or `status: blocked` → escalate to user
+- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`; `approved` → proceed to quality-fixer.
+- `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`. Do not advance to quality-fixer: a stub can pass quality checks while implementing nothing.
 
 **Commit by strategy**:
 - **per-task**: Commit when quality-fixer returns `approved: true`
@@ -179,20 +196,43 @@ Store selected strategy for autonomous execution mode.
 - ✗ Skipping quality-fixer
 - ✗ Committing without asking strategy first
 
-### Security Review (Post-Implementation)
+### Post-Implementation Verification
 
-After all tasks complete and before generating the final completion report:
+The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
 
-1. Invoke security-reviewer using Task tool:
-   - `subagent_type`: "security-reviewer"
-   - `description`: "Security compliance review"
-   - `prompt`: "Review implementation for security compliance. Design Doc: [path]. Files modified: [all modified files from task execution]."
+1. **Invoke both verifiers in parallel** (single message, two Task tool calls):
 
-2. **Handle security-reviewer response**:
-   - `blocked` → **STOP immediately**. Report credentials/critical vulnerability to user. Do NOT commit.
-   - `needs_revision` → Create security fix task file, execute via task-executor → quality-fixer → re-run security-reviewer
-   - `approved_with_notes` → Include security notes in completion report. Proceed to commit.
-   - `approved` → Proceed to completion report.
+   | Agent | Prompt inputs |
+   |-------|---------------|
+   | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
+   | `security-reviewer` | Design Doc path, same modified-file list |
+
+   Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
+
+2. **Apply pass/fail criteria** from the `workflow-execution` skill, "Post-Implementation Verification" section:
+   - `code-verifier`: `consistent` / `mostly_consistent` = pass; `needs_review` / `inconsistent` = fail
+   - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
+
+3. **Fix cycle** (any verifier failed, max 2 cycles):
+   - Create a consolidated fix task file (`docs/features/{feature}/{part}/{plan-name}/post-impl-fixes-YYYYMMDD.md`) from the task template
+   - Populate its Target Files with the **union** of file paths from every verifier's `requiredFixes[].location` and `discrepancies[].codeLocation`. Without this union the executor's File Scope Constraint rejects the very files it was dispatched to fix, because they belong to different original tasks.
+   - Normalize both verifiers' output into a single `requiredFixes[]` per the skill's normalization rules
+   - `task-executor` in **Fix Mode** → `quality-fixer` → re-run **only** the failed verifiers
+   - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
+
+4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.
+
+### Final Cleanup
+
+Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
+
+- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and the consolidated fix task file from the verification cycle if one was created
+- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
+- **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
+- When this run drove several parts, repeat the above per part rather than deleting the feature directory
+- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state
+
+If deletion fails (filesystem error), report the failure but do not block the completion report.
 
 ### Test Information Communication
 After acceptance-test-generator execution, when calling work-planner, communicate:
@@ -203,4 +243,4 @@ After acceptance-test-generator execution, when calling work-planner, communicat
 ## Execution Method
 
 All work is executed through sub-agents.
-Sub-agent selection follows subagents-orchestration-guide skill.
+Sub-agent selection follows workflow-orchestration skill.

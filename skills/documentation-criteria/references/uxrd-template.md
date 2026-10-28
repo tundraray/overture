@@ -15,6 +15,28 @@
 - **PRD**: [Link to related PRD]
 - **Design Doc**: [Link to related Design Doc - to be created after UXRD approval]
 
+## AC Traceability
+
+Maps PRD acceptance criteria to the screens and states that satisfy them. Without this table a UXRD can look complete while leaving an acceptance criterion with no surface that delivers it.
+
+| AC ID | AC Summary | Screen / State | Reference (element ID / prototype path) | Adoption Decision |
+|-------|-----------|----------------|----------------------------------------|-------------------|
+| AC-001 | [EARS AC summary] | [Screen / state name] | [element or file reference] | Adopted / Not adopted / On hold |
+
+Every AC in the PRD that has a user-visible surface needs a row. An AC with no row is either out of UX scope — state that explicitly — or an omission.
+
+## Existing Component Reuse Map
+
+Decide reuse before specifying appearance. Skipping this is how a fourth almost-identical button enters a design system.
+
+| UI Element | Decision | Existing Component | Notes |
+|-----------|----------|-------------------|-------|
+| [Button] | Reuse | [components/ui/Button] | [No modifications needed] |
+| [DataTable] | Extend | [components/ui/Table] | [Add sorting support] |
+| [FeatureCard] | New | — | [No similar component exists] |
+
+`New` requires a note stating what was searched and why nothing fit.
+
 ## User Flows
 
 ### Primary User Flow
@@ -81,7 +103,9 @@ flowchart TD
 | Focus | [Description] | [Keyboard navigation behavior] |
 | Disabled | [Description] | [Why and when disabled] |
 | Loading | [Description] | [Loading indicator behavior] |
+| Empty | [Description] | [What renders with no data, and the action offered] |
 | Error | [Description] | [Error display and recovery] |
+| Partial | [Description] | [Rendering when only some data arrived, or N/A with reason] |
 
 **Interactions**:
 

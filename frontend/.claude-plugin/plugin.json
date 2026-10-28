@@ -1,7 +1,7 @@
 {
   "name": "frontend-overture",
-  "version": "0.18.4",
-  "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, sequential-thinking, playwright)",
+  "version": "0.18.6",
+  "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
     "url": "https://github.com/tundraray"
@@ -36,19 +36,20 @@
     "./commands/implement.md",
     "./commands/create-plan.md",
     "./commands/setup-context.md",
-    "./commands/refine-skill.md",
     "./commands/reverse-engineer.md",
     "./commands/review.md",
     "./commands/sync-skills.md",
     "./commands/task.md",
     "./commands/update-doc.md",
-    "./commands/uxdoc.md",
-    "./commands/create-skill.md"
+    "./commands/uxdoc.md"
+
   ],
   "agents": [
-    "./agents/codebase-scanner.md",
     "./agents/cleanup-executor.md",
     "./agents/code-reviewer.md",
+    "./agents/codebase-analyzer.md",
+    "./agents/code-explorer.md",
+    "./agents/ui-analyzer.md",
     "./agents/code-verifier.md",
     "./agents/design-sync.md",
     "./agents/document-reviewer.md",
@@ -66,19 +67,23 @@
     "./agents/ux-designer.md",
     "./agents/verifier.md",
     "./agents/work-planner.md",
-    "./agents/security-reviewer.md",
-    "./agents/ui-spec-designer.md"
+    "./agents/security-reviewer.md"
+
   ],
   "skills": [
     "./skills/ai-development-guide",
     "./skills/brand-system-guide",
     "./skills/coding-principles",
+    "./skills/code-navigation",
     "./skills/documentation-criteria",
     "./skills/expert-analysis-guide",
     "./skills/frontend-ai-guide",
     "./skills/implementation-approach",
     "./skills/project-context",
-    "./skills/subagents-orchestration-guide",
+    "./skills/workflow-orchestration",
+    "./skills/workflow-execution",
+    "./skills/workflow-product",
+    "./skills/workflow-technical",
     "./skills/task-analyzer",
     "./skills/technical-spec",
     "./skills/testing-principles",
@@ -86,7 +91,10 @@
     "./skills/typescript-rules",
     "./skills/typescript-testing",
     "./skills/security-checks",
-    "./skills/skill-optimization"
+    "./skills/skill-optimization",
+    "./skills/llm-friendly-context",
+    "./skills/rule-editing-guide"
   ],
+  "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"
 }

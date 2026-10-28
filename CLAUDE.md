@@ -19,36 +19,48 @@ The framework implements an **agentic orchestration pattern** where specialized 
 
 Commands like `/implement` act as orchestrators:
 - Delegate ALL work to specialized sub-agents
-- Follow deterministic flow rules in `subagents-orchestration-guide` skill
+- Follow deterministic flow rules in `workflow-orchestration` skill
 - Never perform work directly—only coordinate
 - Must include constraint suffix on sub-agent prompts: `[SYSTEM CONSTRAINT] This agent operates within [command] command scope...`
 
 ### Scale-Based Workflow Routing
 
-Scale determined by file count in `requirement-analyzer`:
-- **Small (1-2 files)**: Direct implementation → quality-fixer → commit
-- **Medium (3-5 files)**: Design Doc → Work Plan → Tasks → Implementation → Review
-- **Large (6+ files)**: PRD → Design Doc → Work Plan → Tasks → Implementation → Review
+Scale is the highest level any of five axes triggers in `requirement-analyzer` (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides it. A PRD is written at every scale.
+- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Tasks → Implementation → quality-fixer → commit
+- **Medium (typically 3-5 files)**: PRD (lite) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
+- **Large (typically 6+ files)**: PRD (full) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
+
+All parts are designed before any is planned; then parts are planned and built one at a time, in dependency order.
+
+### Parts
+
+A **part** is an independently designable slice of a feature (`api`, `web`, `billing`, `migration`). The split is a product decision: proposed by `requirement-analyzer`, refined into the PRD's "Delivery Parts" section by `prd-creator`, and confirmed by the user at PRD approval before any design begins — at every scale, since the PRD always exists. Each part gets its own `design-{part}.md` and plan chain under `{part}/`.
+
+- All parts are designed first, in dependency order, each to its own approval stop
+- Then each part is planned and built in turn, each with its own batch approval
+- Every Must Have requirement belongs to exactly one part; `dependsOn` is acyclic; one part is the common case
+- Changing the parts list goes back to the product phase — never done by a designer or the orchestrator
 
 ### Document-Driven Development
 
 Progressive document creation based on complexity:
-- **PRD** (6+ files): Business requirements, user value, success metrics
-- **ADR** (conditional): Architecture/data flow/dependency changes
-- **Design Doc** (3+ files): Technical specifications, interfaces, acceptance criteria
-- **Work Plan** (3+ files): Phased task breakdown with dependencies
+- **PRD** (every scale; `full` at large, `lite` at medium and small): Business requirements, user value, success metrics, Delivery Parts
+- **ADR** (rare, after the Design Doc): Only when a decision the design made is costly to reverse, binds beyond the feature, and was taken against real alternatives
+- **Design Doc** (medium and large, one per part): Technical specifications, interfaces, acceptance criteria
+- **Work Plan** (every scale, per part; simplified at small): Phased task breakdown with dependencies
 - **Task Files** (at execution): Single-commit granularity work units
 
 ### Explicit Stop Points for User Approval
 
-Autonomous flow halts at:
-- After requirement-analyzer (confirm requirements/scope)
-- After document-reviewer completes PRD review
-- After document-reviewer completes ADR review (if created)
-- After design-sync verifies consistency
-- After work-planner creates plan (batch approval for implementation)
+Autonomous flow halts at (once per feature unless stated):
+- After requirement-analyzer (confirm requirements and scale)
+- After document-reviewer completes PRD review (including the Delivery Parts split; every scale)
+- After document-reviewer completes UXRD review (when the work has a UI surface)
+- After design-sync verifies a part's Design Doc (once per part)
+- After document-reviewer completes ADR review (only when an ADR was written, after that part's design)
+- After document-reviewer reviews a part's work plan (batch approval, once per part)
 
-After batch approval: Full autonomy until completion or escalation.
+After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
 
 ### Per-Task Quality Cycle
 
@@ -75,7 +87,7 @@ When document-reviewer returns `needs_revision`:
 2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field)
 3. Revision agent edits the document
 4. Orchestrator re-runs document-reviewer
-5. Repeat until approved
+5. Repeat once; a second `needs_revision` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
 **CRITICAL**: Orchestrator NEVER edits documents directly — always delegate to agents.
 
@@ -95,9 +107,11 @@ overture/
 ├── frontend/                        # frontend-overture plugin
 │   ├── .claude-plugin/plugin.json   # Agents, commands config
 │   └── ...                          # Symlinks (same structure)
-└── fullstack/                       # fullstack-overture plugin
-    ├── .claude-plugin/plugin.json   # Agents, commands config
-    └── ...                          # Symlinks (same structure)
+├── fullstack/                       # fullstack-overture plugin
+│   ├── .claude-plugin/plugin.json   # Agents, commands config
+│   └── ...                          # Symlinks (same structure)
+├── gamedev/                         # gamedev-overture plugin (own product phase, shared technical/execution)
+└── strategy/                        # strategy-overture plugin (own agents and skills)
 ```
 
 ### Symlink Architecture
@@ -115,14 +129,18 @@ All three plugins symlink to shared agents/commands/skills:
 
 **Implementation**: task-executor, task-executor-frontend, quality-fixer, quality-fixer-frontend
 
-**Analysis & Review**: code-reviewer, document-reviewer, design-sync, integration-test-reviewer, code-verifier
+**Analysis & Review**: code-reviewer, document-reviewer, design-sync, integration-test-reviewer, code-verifier, code-explorer, codebase-analyzer
 
 **Specialized Workflows**: task-decomposer, investigator, verifier, solver, scope-discoverer, rule-advisor
 
 ### Skills (Knowledge Base)
 
 Skills contain structured guidance used by agents:
-- **subagents-orchestration-guide**: Orchestration rules, stop points, agent coordination, scale determination
+- **workflow-orchestration**: Shared mechanics — agent invocation, response contracts, delegation boundary, conflict precedence, file ownership, TodoWrite
+- **workflow-product**: Product phase — requirement analysis, PRD, UXRD, ending at UXRD approval
+- **workflow-technical**: Technical phase — codebase fact gathering, Design Doc, conditional ADR, test skeletons, ending at Design Doc approval
+- **workflow-execution**: Planning and execution — work plan, review, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
+- **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
 - **documentation-criteria**: PRD/ADR/Design Doc/Plan/Task templates and creation decision matrices
 - **coding-principles**: Language-agnostic code quality standards
 - **testing-principles**: TDD practices, test patterns, coverage requirements
@@ -132,17 +150,40 @@ Skills contain structured guidance used by agents:
 
 ## Critical Conventions
 
-### Mandatory JSON Output Format
+### Mandatory JSON Response
 
-All agents must output structured JSON:
+**Every agent returns a JSON object to its caller.** The caller is a program deciding what to do next — whether to advance, retry, or stop — and it cannot make that decision from prose.
+
+This holds regardless of what the agent produces. What varies is what goes *in* the response, not whether there is one:
+
+**Agents that return findings** — reviewers, verifiers, analyzers, searchers:
+
 ```json
 {
-  "status": "completed|blocked|escalated",
+  "status": "completed|blocked|escalation_needed",
   "summary": "...",
   "findings": {...},
   "nextSteps": [...]
 }
 ```
+
+Reviewers are the one exception to the `status` enum: `document-reviewer` returns its verdict as the top-level `status` (`approved | approved_with_conditions | needs_revision | rejected`) together with `revision_agent`, because the orchestrator's revision loop keys on exactly those two fields.
+
+**Agents that produce documents** — prd-creator, technical-designer, work-planner, ux-designer, task-decomposer:
+
+```json
+{
+  "status": "completed|blocked|escalation_needed",
+  "documents": [{"path": "docs/features/auth/prd.md", "action": "created|updated"}],
+  "summary": "...",
+  "openQuestions": [...],
+  "nextSteps": [...]
+}
+```
+
+The document goes to disk; the response carries its **path**, not its contents. A caller that receives the document inline pays for it twice — once when the agent wrote it, again in its own context — and still has no path to hand to the next agent.
+
+**A document written without a returned path is invisible to the flow.** The orchestrator's revision loops key on `status`, and its handoffs key on `documents[].path`; an agent that writes a file and returns prose breaks both.
 
 ### TodoWrite Integration
 
@@ -213,6 +254,7 @@ Only one bump per PR — if the version was already bumped in this branch, do no
 - `/reverse-engineer` - Generate docs from code
 - `/add-integration-tests` - Add integration/E2E tests
 - `/audit` - Interactive dead code detection and cleanup
+- `/update-doc` - Update an existing PRD, UXRD, Design Doc, or ADR through its owning agent
 
 ### Frontend Commands (frontend-overture)
 - `/front-design` - Frontend Design Doc creation

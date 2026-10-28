@@ -137,8 +137,8 @@ skills:
       - "Review Criteria"
       - "Quality Standards"
 
-  subagents-orchestration-guide:
-    skill: "subagents-orchestration-guide"
+  workflow-orchestration:
+    skill: "workflow-orchestration"
     tags: [orchestration, workflow, subagents, autonomous-execution, scale-determination, stop-points, commit-strategy]
     typical-use: "Orchestrating subagents through implementation workflows, scale determination, stop points, autonomous execution mode"
     size: large
@@ -341,3 +341,155 @@ skills:
       - "Component Examples"
       - "Accessibility Guidelines"
       - "White-Label Customization"
+
+  llm-friendly-context:
+    skill: "llm-friendly-context"
+    tags: [prompt-quality, handoff, delegation, ambiguity, output-shape, escalation, generated-artifacts, subagent-prompts]
+    typical-use: "Writing subagent prompts, agent handoffs, planning artifacts, reviews, reports, or generated instructions"
+    size: small
+    key-references:
+      - "Positive Instruction Framing"
+      - "Explicit Output Contracts"
+    sections:
+      - "Core Rules"
+      - "Rewrite Patterns"
+      - "Handoff Checklist"
+      - "Generated Artifact Checklist"
+
+  expert-analysis-guide:
+    skill: "expert-analysis-guide"
+    tags: [expert-analysis, multi-perspective, parallel-analysis, security, api-design, architecture, performance, data-modeling, testability, error-handling, ux-impact]
+    typical-use: "Pre-design expert evaluation, parallel expert spawning, aspect selection, synthesis of expert recommendations"
+    size: medium
+    key-references:
+      - "Fan-Out / Fan-In Parallelism"
+      - "Multi-Perspective Review"
+    sections:
+      - "Purpose"
+      - "Expert Persona Reference Table"
+      - "Fan-Out Pattern (Parallel Spawning)"
+      - "Fan-In Synthesis (Merging Results)"
+      - "Aspect Selection Heuristics"
+      - "Skip Conditions"
+
+  security-checks:
+    skill: "security-checks"
+    tags: [security, vulnerability, cve, xss, sql-injection, path-traversal, ssrf, credentials, jwt, dependency-audit, owasp]
+    typical-use: "Security review, vulnerability detection, security compliance validation, dependency auditing"
+    size: medium
+    key-references:
+      - "OWASP Top 10"
+      - "CWE - Common Weakness Enumeration"
+    sections:
+      - "Stable Detection Patterns"
+      - "Trend-Sensitive Patterns"
+      - "Severity Classification Guide"
+      - "Expert References (Reasoning Calibration)"
+
+  skill-optimization:
+    skill: "skill-optimization"
+    tags: [skill-quality, optimization, grading, bp-patterns, skill-assessment, prompt-engineering, skill-creation]
+    typical-use: "Creating new skills, evaluating skill quality, improving existing skills, skill review"
+    size: small
+    key-references:
+      - "Progressive Disclosure"
+      - "Context Window Optimization"
+    sections:
+      - "BP Patterns (Best Practice Patterns)"
+      - "Editing Principles"
+      - "Grading System"
+      - "Assessment Checklist"
+
+  type-safety-standards:
+    skill: "type-safety-standards"
+    tags: [type-safety, typescript, react, zod, runtime-validation, type-guards, branded-types, discriminated-unions, generics, props]
+    typical-use: "Ensuring type safety in React components, API boundaries, form handling, and state management"
+    size: medium
+    key-references:
+      - "Parse, Don't Validate - Alexis King"
+      - "Zod - Runtime Schema Validation"
+    sections:
+      - "Runtime Validation with Zod"
+      - "Discriminated Unions and Type Guards"
+      - "Branded Types"
+      - "Type Assertion Avoidance"
+      - "Generic Component Typing"
+      - "State Type Safety"
+      - "Result Type Pattern for Typed Error Handling"
+      - "Zod Performance Optimization"
+      - "Testing Type Safety"
+      - "Risks and Mitigations"
+
+  workflow-execution:
+    skill: "workflow-execution"
+    tags: [work-plan, task-decomposition, batch-approval, autonomous-execution, task-cycle, commit-strategy, auto-stop, post-implementation-verification, fix-mode, escalation]
+    typical-use: "Work plan creation and review, task decomposition, batch approval, running the implementation loop, whole-implementation verification, auto-stop enforcement"
+    size: medium
+    key-references:
+      - "Delegated Authority"
+      - "5 Whys - Toyota Production System"
+    sections:
+      - "Entry Gate"
+      - "Planning"
+      - "Entry Conditions"
+      - "Commit Strategy Selection"
+      - "The Per-Task Cycle"
+      - "Post-Implementation Verification"
+      - "Final Cleanup"
+      - "Stopping Autonomous Execution"
+      - "Error-Fixing Impulse Control Protocol"
+      - "Exit Gate"
+      - "Execution Flow"
+
+  workflow-product:
+    skill: "workflow-product"
+    tags: [requirements, prd, uxrd, product-scope, user-value, scale-determination, stop-points]
+    typical-use: "Requirement analysis, PRD creation and review, UXRD creation and review, product-phase stop points"
+    size: small
+    key-references:
+      - "Problem Before Solution"
+    sections:
+      - "Scope"
+      - "Entry Gate"
+      - "Flow"
+      - "Document Requirements by Scale"
+      - "Stop Points"
+      - "Requirement Changes"
+      - "Revision Loop"
+      - "Exit Gate"
+
+  workflow-technical:
+    skill: "workflow-technical"
+    tags: [technical-design, adr, design-doc, fact-gathering, design-sync, test-skeletons]
+    typical-use: "Codebase fact gathering, Design Doc creation, consistency verification, and a conditional ADR, up to Design Doc approval"
+    size: medium
+    key-references:
+      - "Fact Disposition"
+      - "Authority Boundary"
+    sections:
+      - "Domain Independence"
+      - "Entry Gate"
+      - "Flow"
+      - "Why the ADR Comes After the Design"
+      - "Why Fact Gathering Precedes Design"
+      - "Document Requirements by Scale"
+      - "Stop Points"
+      - "Revision Loop"
+      - "Cross-Layer Sequencing"
+      - "Exit Gate"
+
+  code-navigation:
+    skill: "code-navigation"
+    tags: [lsp, code-search, symbol-lookup, references, call-hierarchy, rename-impact, grep, navigation]
+    typical-use: "Finding where a symbol is defined, finding usages and call sites, assessing rename impact, choosing between semantic and textual lookup"
+    size: small
+    key-references:
+      - "Language Server Protocol"
+      - "Refactoring - Martin Fowler"
+    sections:
+      - "The Rule"
+      - "Tool by Question"
+      - "Legitimate Fallback"
+      - "Worked Examples"
+      - "Sequencing Rules"
+      - "Escalation"

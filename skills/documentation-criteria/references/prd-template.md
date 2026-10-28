@@ -1,5 +1,7 @@
 # PRD: [Feature Name]
 
+> **Depth**: `full` | `lite` — set by scale (see `documentation-criteria`, "PRD depth"). Sections marked *(full depth)* are omitted in a lite PRD; every other section is present at both depths.
+
 ## Overview
 
 ### One-line Summary
@@ -25,7 +27,20 @@ So that [expected value/benefit]
 2. [Specific usage scenario 2]
 3. [Specific usage scenario 3]
 
+### User Journey Diagram *(full depth)*
+
+```mermaid
+journey
+    title [Primary user journey]
+    section [Stage 1]
+      [Step]: 5: [User]
+    section [Stage 2]
+      [Step]: 3: [User]
+```
+
 ## Functional Requirements
+
+Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
 
 ### Must Have (MVP)
 - [ ] Requirement 1: [Detailed description]
@@ -35,15 +50,39 @@ So that [expected value/benefit]
 - [ ] Requirement 3: [Detailed description]
   - AC: [Acceptance criteria]
 
-### Nice to Have
-- [ ] Requirement 1: [Detailed description]
-- [ ] Requirement 2: [Detailed description]
+### Should Have
+- [ ] Requirement 4: [Detailed description]
+  - AC: [Acceptance criteria]
 
-### Out of Scope
+### Could Have
+- [ ] Requirement 5: [Detailed description]
+  - AC: [Acceptance criteria]
+
+### Won't Have (this release)
 - Item 1: [Description and reason]
 - Item 2: [Description and reason]
 
+### Out of Scope
+- Item 1: [Description and reason — work explicitly not part of this feature]
+- Item 2: [Description and reason]
+
+### Scope Boundary Diagram *(full depth)*
+
+```mermaid
+graph LR
+    subgraph InScope[In scope]
+        A[Requirement 1]
+        B[Requirement 2]
+    end
+    subgraph OutOfScope[Out of scope]
+        C[Excluded item]
+    end
+    A --> C
+```
+
 ## Non-Functional Requirements
+
+[Lite depth: list only the requirements this feature sets; write "none beyond project defaults" when that is the case.]
 
 ### Performance
 - Response Time: [Target value]
@@ -60,10 +99,34 @@ So that [expected value/benefit]
 ### Scalability
 - [Considerations for future scaling]
 
+## Delivery Parts
+
+Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here and confirmed by the user at PRD approval; criteria are in the `documentation-criteria` skill, "Parts".
+
+| Part | Covers | Cut along | Depends on | Rationale |
+|------|--------|-----------|------------|-----------|
+| `[part-name]` | [Requirement 1, Requirement 3] | [backend / frontend / domain / release unit] | — | [Why this is a separate slice, one sentence] |
+| `[part-name]` | [Requirement 2] | [...] | `[part-name]` | [...] |
+
+**Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here:
+
+- Deferred: [Requirement assigned to no part, with reason]
+
+**Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case.
+
+### Part Dependency Diagram
+
+[Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes.]
+
+```mermaid
+graph LR
+    api[api] --> web[web]
+```
+
 ## Success Criteria
 
 ### Quantitative Metrics
-1. [Measurable success metric 1]
+1. [Measurable success metric 1 — numeric target, measurement method, timeframe]
 2. [Measurable success metric 2]
 3. [Measurable success metric 3]
 
@@ -71,7 +134,7 @@ So that [expected value/benefit]
 1. [User experience metric 1]
 2. [User experience metric 2]
 
-## Technical Considerations
+## Technical Considerations *(full depth)*
 
 ### Dependencies
 - [Dependencies on existing systems]
@@ -98,7 +161,7 @@ So that [expected value/benefit]
 
 *Discuss with user until this section is empty, then delete after confirmation*
 
-## Appendix
+## Appendix *(full depth)*
 
 ### References
 - [Related document 1]

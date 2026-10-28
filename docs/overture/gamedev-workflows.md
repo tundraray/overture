@@ -6,14 +6,14 @@ Detailed workflow diagrams for the gamedev-overture plugin. These extend the [sh
 
 ## Scenario Detection
 
-When you run `/implement`, the requirement-analyzer inspects your project to determine the right workflow path. Two factors drive routing: **scenario** (new vs existing project) and **scale** (number of files affected).
+When you run `/implement`, the requirement-analyzer inspects your project to determine the right workflow path. Two factors drive routing: **scenario** (new vs existing project) and **scale** — the highest of five axes (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides.
 
 **Detection logic**:
 - If no `project-config.json` and no GDD exist — **Scenario A: New Project**. Full pipeline including market analysis and GDD creation from scratch
 - If a GDD already exists — **Scenario B: Existing Project**. Skip market analysis, update the existing GDD for the new feature
 - If `project-config.json` exists but no GDD — **Pre-GDD Project**. Treated as Scenario B (the project exists but design hasn't started)
 
-After scenario detection, scale determines the depth of the design pipeline: Large (6+), Medium (3-5), or Small (1-2 files).
+After scenario detection, scale determines the depth of the design pipeline: Large (typically 6+ files), Medium (typically 3-5), or Small (typically 1-2) — or higher when another axis, such as a save-format change, raises it.
 
 ```mermaid
 graph TD
@@ -28,9 +28,9 @@ graph TD
     F --> SC{Scale?}
     H --> SC
     G --> SC
-    SC --> |Large 6+| L[Large Flow]
-    SC --> |Medium 3-5| M[Medium Flow]
-    SC --> |Small 1-2| S[Small Flow]
+    SC --> |Large| L[Large Flow]
+    SC --> |Medium| M[Medium Flow]
+    SC --> |Small| S[Small Flow]
 ```
 
 ---
@@ -64,7 +64,7 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 - GDD is created from scratch by sr-game-designer, establishing vision, pillars, core loop, and progression
 - All 12 specialist agents contribute their domain (mechanics, game feel, art, UI, analytics)
 - Conditional ADR if architecture changes are needed (new frameworks, data flow redesigns)
-- 5 stop points for user approval throughout the pipeline
+- Stop points for user approval: requirements, Go/No-Go, GDD, each feature spec (with its parts split), each part's Design Doc, each part's plan
 
 **Agent sequence**:
 1. requirement-analyzer → scope, requirements, development mode selection
@@ -72,7 +72,7 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 3. producer-agent → project config, team selection, resource plan
 4. sr-game-designer → GDD (vision, pillars, core loop, progression)
 5. document-reviewer → GDD quality review
-6. mid-game-designer → feature specs with user stories, acceptance criteria, balancing
+6. mid-game-designer → one feature spec per feature with user stories, acceptance criteria, balancing, and **Delivery Parts** — the split into independently designable parts, approved by you per feature
 7. mechanics-developer → systems architecture (state machines, physics, events)
 8. game-feel-developer → feedback systems (screen shake, particles, audio, tweens)
 9. sr-game-artist + technical-artist → art direction, pipeline specs, atlas optimization
@@ -89,22 +89,26 @@ graph TB
     MA --> |"Stop: Go/No-Go"| PA[producer-agent]
     PA --> SGD[sr-game-designer → GDD]
     SGD --> DR1[document-reviewer]
-    DR1 --> |"Stop: GDD Approval"| MGD[mid-game-designer]
-    MGD --> MD[mechanics-developer]
+    DR1 --> |"Stop: GDD Approval"| MGD[mid-game-designer → feature spec with Delivery Parts]
+    MGD --> DRF[document-reviewer]
+    DRF --> |"Stop: Feature Spec Approval, per feature"| MD[mechanics-developer]
     MD --> GFD[game-feel-developer]
     GFD --> ART[sr-game-artist + technical-artist]
     ART --> UI[ui-ux-agent]
     UI --> DS[data-scientist]
-    DS --> ADR{Architecture changes?}
-    ADR --> |Yes| TD1[technical-designer → ADR]
-    TD1 --> DR2[document-reviewer]
-    DR2 --> |"Stop: ADR Approval"| TD2[technical-designer → Design Doc]
-    ADR --> |No| TD2
+    DS --> PART[Next part in dependency order]
+    PART --> TD2[technical-designer → Design Doc for the part]
     TD2 --> DR3[document-reviewer]
     DR3 --> SYNC[design-sync]
-    SYNC --> |"Stop: Design Doc Approval"| ATG[acceptance-test-generator]
-    ATG --> WP[gamedev-work-planner]
-    WP --> |"Stop: Batch Approval"| AUTO[Autonomous Execution]
+    SYNC --> |"Stop: Design Doc Approval, per part"| ADR{Decision passes the ADR test?}
+    ADR --> |Yes| TD1[technical-designer → ADR]
+    TD1 --> DR2[document-reviewer]
+    DR2 --> |"Stop: ADR Approval"| ATG[acceptance-test-generator]
+    ADR --> |No| ATG
+    ATG --> MORE{More parts to design?}
+    MORE --> |Yes| PART
+    MORE --> |No| WP[gamedev-work-planner, per part]
+    WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
 
     AUTO --> TDECOMP[task-decomposer]
     TDECOMP --> LOOP[task-executor → quality-fixer → commit]
@@ -135,7 +139,9 @@ graph TB
     A[User Request] --> B[requirement-analyzer]
     B --> |"Stop: Requirements"| SGD[sr-game-designer → GDD update]
     SGD --> DR1[document-reviewer]
-    DR1 --> |"Stop: GDD Approval"| MD[mechanics-developer]
+    DR1 --> |"Stop: GDD Approval"| MGD[mid-game-designer → feature spec with Delivery Parts]
+    MGD --> DRF[document-reviewer]
+    DRF --> |"Stop: Feature Spec Approval"| MD[mechanics-developer]
     MD --> COND{Feature type?}
     COND --> |Polish| GFD[game-feel-developer]
     COND --> |Art| ART[sr-game-artist]
@@ -148,9 +154,15 @@ graph TB
     DS --> TD
     TD --> DR2[document-reviewer]
     DR2 --> SYNC[design-sync]
-    SYNC --> |"Stop: Design Doc Approval"| ATG[acceptance-test-generator]
-    ATG --> WP[gamedev-work-planner]
-    WP --> |"Stop: Batch Approval"| AUTO[Autonomous Execution]
+    SYNC --> |"Stop: Design Doc Approval, per part"| ADR{Decision passes the ADR test?}
+    ADR --> |Yes| TDA[technical-designer → ADR]
+    TDA --> DRA[document-reviewer]
+    DRA --> |"Stop: ADR Approval"| ATG[acceptance-test-generator]
+    ADR --> |No| ATG
+    ATG --> MORE{More parts to design?}
+    MORE --> |Yes| TD
+    MORE --> |No| WP[gamedev-work-planner, per part]
+    WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
     AUTO --> DONE[Completion Report]
 ```
 
@@ -158,24 +170,29 @@ graph TB
 
 ## Medium Scale (3-5 Files)
 
-For mid-size features — enough complexity to need a design doc but not a full PRD or market analysis. Common for adding a new game system, a UI screen, or a set of related mechanics.
+For mid-size features — enough complexity to need a design doc but not a market analysis or a GDD update. Common for adding a new game system, a UI screen, or a set of related mechanics.
 
 **How it works**:
 
-1. requirement-analyzer determines scope
-2. **Mechanics check** — if the feature involves new game mechanics, sr-game-designer creates a game design spec and mechanics-developer architects the systems. If no new mechanics, mid-game-designer creates a feature specification
-3. **UI/Polish check** — if the feature involves UI changes, ui-ux-agent handles it. If polish/game feel, game-feel-developer handles it. If neither, skip to design doc
-4. technical-designer produces the Design Doc, reviewed and synced
-5. gamedev-work-planner creates a phased plan, then autonomous execution
+1. requirement-analyzer determines scope and proposes a part split
+2. **Mechanics check** — if the feature involves new game mechanics, sr-game-designer creates a game design spec first
+3. mid-game-designer writes a lite feature specification with Delivery Parts; you approve it, parts split included
+4. mechanics-developer architects the systems when new mechanics are involved
+5. **UI/Polish check** — if the feature involves UI changes, ui-ux-agent handles it. If polish/game feel, game-feel-developer handles it. If neither, skip to design doc
+6. technical-designer produces one Design Doc per part, reviewed and synced
+7. gamedev-work-planner plans each part in turn, then autonomous execution per part
 
 ```mermaid
 graph TB
     A[User Request] --> B[requirement-analyzer]
     B --> |"Stop: Requirements"| COND{Mechanics involved?}
     COND --> |Yes| SGD[sr-game-designer → game design spec]
-    COND --> |No| MGD[mid-game-designer → feature spec]
-    SGD --> MD[mechanics-developer]
-    MGD --> COND2{UI or Polish?}
+    COND --> |No| MGD
+    SGD --> MGD[mid-game-designer → lite feature spec with Delivery Parts]
+    MGD --> DRF[document-reviewer]
+    DRF --> |"Stop: Feature Spec Approval"| MECH{New systems?}
+    MECH --> |Yes| MD[mechanics-developer]
+    MECH --> |No| COND2{UI or Polish?}
     MD --> COND2
     COND2 --> |UI| UI[ui-ux-agent]
     COND2 --> |Polish| GFD[game-feel-developer]
@@ -184,9 +201,15 @@ graph TB
     GFD --> TD
     TD --> DR[document-reviewer]
     DR --> SYNC[design-sync]
-    SYNC --> |"Stop: Design Doc Approval"| ATG[acceptance-test-generator]
-    ATG --> WP[gamedev-work-planner]
-    WP --> |"Stop: Batch Approval"| AUTO[Autonomous Execution]
+    SYNC --> |"Stop: Design Doc Approval, per part"| ADR{Decision passes the ADR test?}
+    ADR --> |Yes| TDA[technical-designer → ADR]
+    TDA --> DRA[document-reviewer]
+    DRA --> |"Stop: ADR Approval"| ATG[acceptance-test-generator]
+    ADR --> |No| ATG
+    ATG --> MORE{More parts to design?}
+    MORE --> |Yes| TD
+    MORE --> |No| WP[gamedev-work-planner, per part]
+    WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
     AUTO --> DONE[Completion Report]
 ```
 
@@ -194,19 +217,22 @@ graph TB
 
 ## Small Scale (1-2 Files)
 
-For quick changes — bug fixes, parameter tweaks, single-file additions. Same as the shared overture small scale flow. No design documents, no specialist agents.
+For quick changes — bug fixes, parameter tweaks, single-file additions. Same as the shared overture small scale flow: a one-page lite feature spec, a simplified plan, no Design Doc.
 
 **How it works**:
 
-1. A simplified plan is generated directly from the request
-2. You approve the plan (single stop point)
-3. Direct implementation with quality-fixer validating tests, types, and lint
+1. requirement-analyzer determines scope
+2. mid-game-designer writes a one-page lite feature spec — the change, its acceptance criteria, one part — and you approve it
+3. A simplified plan is generated from the spec and you batch-approve it
+4. Direct implementation with quality-fixer validating tests, types, and lint
 
 **When to use**: Bug fixes, config changes, balancing tweaks, single scene modifications, adding a simple sound effect.
 
 ```mermaid
 graph LR
-    A[User Request] --> B[Simplified Plan]
+    A[User Request] --> RA[requirement-analyzer]
+    RA --> |"Stop: Requirements"| FS[mid-game-designer → lite feature spec]
+    FS --> |"Stop: Feature Spec Approval"| B[Simplified Plan]
     B --> |"Stop: Batch Approval"| C[Direct Implementation]
     C --> D[quality-fixer]
     D --> E[Ready to Commit]

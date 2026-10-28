@@ -24,44 +24,33 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 | Condition | Required Documents | Creation Order |
 |-----------|-------------------|----------------|
-| New Feature Addition | PRD → [ADR] → Design Doc → Work Plan | After PRD approval |
-| ADR Conditions Met (see below) | ADR → Design Doc → Work Plan | Start immediately |
-| 6+ Files | ADR → Design Doc → Work Plan (Required) | Start immediately |
-| 3-5 Files | Design Doc → Work Plan (Recommended) | Start immediately |
-| 1-2 Files | None | Direct implementation |
-| New Game Project | GDD → Market Analysis → [ADR] → Design Doc → Work Plan | After GDD approval |
-| New Game Feature | Feature Spec → [GDD Update] → Design Doc → Work Plan | After Feature Spec approval |
-| Art/Visual Change | Art Direction → Design Doc | After Art Direction approval |
+| New Game Project | Market Analysis → GDD → Feature Spec (full) per feature → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| New Game Feature (large) | GDD update → Feature Spec (full) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| Medium scale | Feature Spec (lite) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
+| Art/Visual Change | Art Direction → Feature Spec (lite) → Design Doc per part | After Feature Spec approval |
+| Small scale | Feature Spec (lite) → simplified Work Plan | After Feature Spec approval |
 
-## ADR Creation Conditions (Required if Any Apply)
+**The ADR follows the Design Doc**, and is written only when a decision the design made passes all three parts of the test below. Most features produce none. Documents in `[brackets]` are conditional.
 
-### 1. Contract System Changes
-- **Adding nested contracts with 3+ levels**: `Contract A { Contract B { Contract C { field: T } } }`
-  - Rationale: Deep nesting has high complexity and wide impact scope
-- **Changing/deleting contracts used in 3+ locations**
-  - Rationale: Multiple location impacts require careful consideration
-- **Contract responsibility changes** (e.g., DTO→Entity, Request→Domain)
-  - Rationale: Conceptual model changes affect design philosophy
+**A feature spec is written at every scale.** It is the feature-level product document — the PRD's role in the shared workflow — and its depth follows the scale: `full` at large (every template section), `lite` at medium and small (Feature Overview, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, Integration Points). The GDD stays at project level. Design Docs and work plans are written per part; the parts list is the feature spec's Delivery Parts section (see "Parts and plans").
 
-### 2. Data Flow Changes
-- **Storage location changes** (DB→File, Memory→Cache)
-- **Processing order changes with 3+ steps**
-  - Example: "Input→Validation→Save" to "Input→Save→Async Validation"
-- **Data passing method changes** (parameter passing→shared state, direct reference→event-based communication)
+## ADR Creation Conditions
 
-### 3. Architecture Changes
-- Layer addition, responsibility changes, component relocation
+**An ADR is written after the Design Doc, not before it**, and only when a decision the design made passes all three parts of the test:
 
-### 4. External Dependency Changes
-- Library/framework/external API introduction or replacement
+1. **Costly to reverse** — undoing it later means migrating data, breaking consumers, or coordinated changes across repositories
+2. **Binds beyond this feature** — future unrelated work must comply with it
+3. **Had real alternatives** — a genuine choice existed and one was taken
 
-### 5. Complex Implementation Logic (Regardless of Scale)
-- Managing 3+ states
-- Coordinating 5+ asynchronous processes
+Fail any one → no ADR; record the reasoning in the Design Doc.
+
+Game-specific decisions that commonly meet all three: save-file format, netcode authority model, the engine or renderer target, and the analytics event schema other tools consume. Ordinary mechanics tuning, adding a state to an existing machine, or picking a tween library do not.
 
 ## Detailed Document Definitions
 
 ### PRD (Product Requirements Document)
+
+*Not produced on the gamedev path: the feature spec plays this role and carries the Delivery Parts. The template is kept for reverse-engineering an existing non-game module.*
 
 **Purpose**: Define business requirements and user value
 
@@ -175,9 +164,10 @@ Interface Change Matrix:
 
 **Includes**:
 - User stories
-- Acceptance criteria
-- Balancing parameters
-- Edge cases
+- Acceptance criteria (Must / Should / Could)
+- **Delivery Parts** — the partition of the acceptance criteria into independently designable parts, with dependencies (see "Parts and plans")
+- Integration points
+- Balancing parameters and edge cases (full depth)
 
 **Excludes**:
 - Full game vision (→GDD)
@@ -209,23 +199,65 @@ Interface Change Matrix:
 2. **Quality Complete**: Tests, static checks, linting pass
 3. **Integration Complete**: Verified connection with other components
 
+## Scale Axes
+
+**File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a save-file format or a networked contract is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s assessment; where none is available, evaluate directly:
+
+| Axis | Small | Medium | Large |
+|------|-------|--------|-------|
+| Estimated files | 1-2 | 3-5 | 6+ |
+| Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
+| Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, save-format migration, or persisted-data migration |
+| Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
+| Decision risk | Existing pattern applies directly | One bounded technical decision | Architecture, security, compliance, or irreversible operational decision |
+
+Select the highest scale triggered by any observed axis.
+
 ## Creation Process
 
-1. **Problem Analysis**: Change scale assessment, ADR condition check
-2. **ADR Option Consideration** (ADR only): Compare 3+ options, specify trade-offs
-3. **Creation**: Use templates, include measurable conditions
-4. **Approval**: "Accepted" after review enables implementation
+Each step names the evidence that must exist before the next step starts. A step without its output evidence has not completed, regardless of elapsed effort.
+
+**1. Problem Analysis** — change scale assessment, ADR condition check
+- *Output evidence*: confirmed scale with its deciding axis named; a named source for each existing document consulted
+- *Transition*: proceed when the scale and every applicable ADR condition have an explicit yes/no
+
+**2. ADR Option Consideration** (ADR only) — compare 3+ options, specify trade-offs
+- *Output evidence*: at least 3 options with trade-offs stated as concrete costs, not generic caveats
+- *Transition*: proceed when the selected option names what the rejected options fail to satisfy
+
+**3. Creation** — use templates, include measurable conditions
+- *Output evidence*: every required template section either filled or explicitly marked N/A with rationale; every acceptance criterion measurable
+- *Transition*: proceed when no section is silently empty
+
+**4. Approval** — "Accepted" after review enables implementation
+- *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
+- *Transition*: implementation begins only on an approved verdict
 
 ## Storage Locations
 
+Documents are grouped **by feature**, not by document type. Game-wide documents (GDD, market analysis) stay global, as do ADRs — a decision usually outlives and spans features.
+
+```
+docs/
+├── adr/ADR-0007-save-format.md
+├── game-design/{project}-gdd.md
+└── features/{feature}/
+    ├── prd.md
+    ├── uxrd.md
+    ├── design-{part}.md
+    └── {part}/
+        ├── {plan-name}.md
+        └── {plan-name}/{_overview,task-01,phase1-completion}.md
+```
+
 | Document | Path | Naming Convention | Template |
 |----------|------|------------------|----------|
-| PRD | `docs/prd/` | `[feature-name]-prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
+| PRD | `docs/features/{feature}/` | `prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
-| Design Doc | `docs/design/` | `[feature-name]-design.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
-| Work Plan | `docs/plans/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
-| Task File | `docs/plans/tasks/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
-| UXRD | `docs/uxrd/` | `[feature-name]-uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
+| Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
+| Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
+| Task File | `docs/features/{feature}/{part}/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
+| UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 | GDD | `docs/game-design/` | `[project-name]-gdd.md` | [gdd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md) |
 | Market Analysis | `docs/market-research/` | `[project-name]-market-analysis.md` | [market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/market-analysis-template.md) |
 | Feature Spec | `docs/game-design/features/` | `[feature-name]-spec.md` | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/feature-spec-template.md) |
@@ -233,15 +265,36 @@ Interface Change Matrix:
 | Analytics Setup | `docs/analytics/` | `[project-name]-analytics.md` | [analytics-setup-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/analytics-setup-template.md) |
 | Handoff | `docs/handoffs/` | `[handoff-name]-handoff.md` | [handoff-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/handoff-template.md) |
 
+
+### Parts and plans
+
+A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
+
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. A part cut along `ui`, `hud`, or `menu` takes `technical-designer-frontend` and `ui-analyzer` in the technical phase; every other seam takes `technical-designer` and `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every requirement belongs to exactly one part; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
+
+A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
+
+```yaml
+---
+feature: combat-rework
+part: core
+design: design-core.md
+plan: 1 of 2
+status: active                # draft | active | completed
+depends-on:                   # previous plan filename; omit for the first
+---
+```
+
+Exactly one plan per part may be `active`. Escalate rather than guess when two claim it, when the file count disagrees with `M`, or when a `depends-on` names a missing file.
+
+The 6 game phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are phases *within* one plan, not separate plans. Reach for a second plan when a later pass is genuinely deferred — a post-playtest tuning round — not to model the phase sequence.
+
 *Note: Work plans are excluded by `.gitignore`
 
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
 
-## AI Automation Rules
-- 5+ files: Suggest ADR creation
-- Contract/data flow change detected: ADR mandatory
-- Check existing ADRs before implementation
+Check existing ADRs before design and implementation; the Design Doc lists them as Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test is applied to the finished design.
 
 ## Diagram Requirements
 

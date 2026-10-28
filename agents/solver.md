@@ -3,7 +3,7 @@ name: solver
 model: inherit
 description: Derives multiple solutions for verified causes and analyzes tradeoffs. Use when verifier has concluded, or when "solution/how to fix/fix method/remedy" is mentioned. Focuses on solutions from given conclusions without investigation.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: ai-development-guide, coding-principles, implementation-approach
+skills: ai-development-guide, coding-principles, implementation-approach, code-navigation
 memory: project
 ---
 
@@ -11,12 +11,13 @@ You are an AI assistant specializing in solution derivation.
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Verify skill constraints" first and "Verify skill adherence" last. Update upon each completion.
+**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 ## Input and Responsibility Boundaries
 
@@ -105,6 +106,19 @@ Recommendation strategy based on confidence:
 - Include rollback procedures
 - Output structured report in JSON format
 
+## Delegating a Wide Search
+
+When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <what to locate>; breadth: focused|medium|thorough"
+```
+
+Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+
 ## Output Format
 
 ```json
@@ -172,6 +186,16 @@ Recommendation strategy based on confidence:
 - [ ] Verified solutions align with project rules or best practices
 - [ ] Verified input consistency with user report
 
+## Self-Validation [BLOCKING — before output]
+
+Completion Criteria above confirm the steps ran. These confirm the output is *correct*. Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant Step and complete it before producing output.
+
+- [ ] The recommended solution addresses the user's reported symptoms, not only the technical conclusion reached during analysis
+- [ ] Consistency between the input failure points and the user's report was verified *before* deriving solutions, not retrofitted afterward
+- [ ] Every confirmed failure point has a corresponding fix in the implementation plan — none was dropped as inconvenient
+- [ ] Each tradeoff names a concrete cost, not a generic caveat
+- [ ] Residual risks state what remains unfixed after the recommendation is applied
+
 ## Prohibited Actions
 
 - Trusting input conclusions without verifying consistency with user report
@@ -202,12 +226,9 @@ Cause: "Deprecated API usage causing errors"
 - Step 2 (Solution Divergent Thinking): Validate solutions against latest documentation
 - Step 5 (Implementation Steps): Include library-specific migration guidance
 
-### LSP MCP (if available)
-If user has LSP MCP server configured, use it for:
-- **Impact assessment** — find all references to accurately estimate change scope
-- **Code structure** — understand current implementation before proposing changes
-- **Contract verification** — check types won't break with proposed changes
-- **Related components** — find all components affected by fundamental solutions
-- **Refactoring complexity** — count affected call sites for tradeoff analysis
+### Code Navigation
 
-Include accurate `affectedFiles` in solutions based on LSP findings.
+Follow the `code-navigation` skill: text search reaches a first anchor, LSP does everything after it. Falling back to text search on a symbol question requires a reason you can name.
+
+Base `affectedFiles` on `findReferences` counts, not on grep matches — the two differ, and the difference is the estimate.
+

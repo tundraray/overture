@@ -8,28 +8,28 @@ argument-hint: <design doc name or path>
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not a worker. I am an orchestrator." (see subagents-orchestration-guide skill)
+**Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-orchestration skill)
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER create plans yourself)
-2. **Follow subagents-orchestration-guide skill planning flow exactly**:
+2. **Follow workflow-orchestration skill planning flow exactly**:
    - Execute steps defined below
    - **Stop and obtain approval** for plan content before completion
 3. **Scope**: Complete when work plan receives approval
 
-**CRITICAL**: NEVER skip acceptance-test-generator when user requests test generation.
-
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md`
 
 ## Scope Boundaries
 
 **Included in this command**:
 - Design document selection
-- E2E test skeleton generation (optional, with user confirmation)
+- Test skeleton lookup for the part (generation only when none exist)
 - Work plan creation with work-planner
+- Work plan review with document-reviewer (traceability to Design Doc)
 - Plan approval obtainment
 
 **Responsibility Boundary**: This command completes with work plan approval.
@@ -39,18 +39,29 @@ Follow the planning process below:
 ## Execution Process
 
 1. **Design Document Selection**
-   ! ls -la docs/design/*.md | head -10
+   ! ls -la docs/features/*/design-*.md | head -10
    - Check for existence of design documents, notify user if none exist
    - Present options if multiple exist (can be specified with $ARGUMENTS)
+   - The design's `Part` section names the parts it depends on: when one of them has no `completed` plan yet, say so — the plan will be written against that part's design rather than its code, and the parts list's order says it should normally be built first
 
-2. **E2E Test Skeleton Generation Confirmation**
-   - Confirm with user whether to generate E2E test skeleton first
-   - If user wants generation: Generate test skeleton with acceptance-test-generator
-   - Pass generation results to next process according to subagents-orchestration-guide skill coordination specification
+2. **Test Skeleton Lookup**
+   - Skeletons are normally generated per part in the technical phase (`[feature]-[part].int.test.*`, `[feature]-[part].e2e.test.*`); locate them for this part and pass their paths to work-planner
+   - Only when none exist for the part: confirm with the user and generate them with acceptance-test-generator before planning
 
 3. **Work Plan Creation**
    - Create work plan with work-planner
-   - Utilize deliverables from previous process according to subagents-orchestration-guide skill coordination specification
+   - Utilize deliverables from previous process according to workflow-orchestration skill coordination specification
+
+4. **Work Plan Review**
+   - Submit the plan to `document-reviewer` before presenting it to the user. A plan that omits a Design Doc requirement looks complete — only a traceability check finds the gap.
+   ```yaml
+   subagent_type: document-reviewer
+   prompt: "doc_type: WorkPlan. Review the work plan at [path] against its Design Doc. Verify: 1) Design-to-Plan Traceability — every Design Doc item has a covering task or a justified gap, 2) Verification Strategy carried from the Design Doc with an early verification point, 3) Failure Mode Checklist — all nine categories marked, applicable ones assigned a covering task, 4) Reference Contract Values recorded verbatim where the Design Doc specifies a binding observable value, 5) ADR Bindings present for every ADR the design treats as prerequisite or produced, 6) frontmatter valid — part is in the PRD's Delivery Parts, plan: N of M consistent with siblings. [SYSTEM CONSTRAINT] This agent operates within create-plan command scope."
+   ```
+   - `needs_revision` → re-invoke `work-planner` with the reviewer's issues, then re-review (max 2 iterations)
+   - Still `needs_revision` after 2 iterations → **STOP** and present the issues to the user
+
+5. **Plan Approval**
    - Interact with user to complete plan and obtain approval for plan content
 
 **Think deeply** Create a work plan from the selected design document, clarifying specific implementation steps and risks.
@@ -61,7 +72,7 @@ Follow the planning process below:
 ✅ **REQUIRED**: End with the following standard response after plan content approval
 ```
 Planning phase completed.
-- Work plan: docs/plans/[plan-name].md
+- Work plan: docs/features/[feature]/[part]/[plan-name].md
 - Status: Approved
 
 Please provide separate instructions for implementation.

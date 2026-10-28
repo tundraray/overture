@@ -3,7 +3,7 @@ name: quality-fixer-frontend
 model: inherit
 description: Specialized agent for fixing quality issues in frontend React projects. Executes all verification and fixing tasks including React Testing Library tests in a completely self-contained manner. Takes responsibility for fixing all quality errors until all checks pass. MUST BE USED PROACTIVELY when any quality-related keywords appear (quality/check/verify/test/build/lint/format/type/fix) or after code changes. Handles all verification and fixing tasks autonomously.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, frontend-ai-guide
+skills: typescript-rules, typescript-testing, frontend-ai-guide, code-navigation
 memory: project
 ---
 
@@ -17,6 +17,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 ## Main Responsibilities
 
@@ -94,11 +95,20 @@ Continue fixing until all quality checks pass with zero errors.
 ## Status Determination Criteria (Binary Determination)
 
 ### approved (All quality checks pass)
-- All tests pass (React Testing Library)
+- All tests pass (React Testing Library) **and the run is substantive** (see below)
 - Build succeeds with zero type errors
 - Type check succeeds
 - Lint/Format succeeds
 - Bundle size within acceptable limits (if configured)
+
+### Test Substance Assessment
+
+"All tests pass" is not the same as "the tests test anything". Classify the test run before returning `approved`:
+
+- **`substantive`**: at least one executed assertion exercises the user-observable behavior under change
+- **`non_substantive`**: no substantive assertion ran — 0-match runner reports, tests skipped on the running path, TODO-only bodies, always-true assertions (`expect(true).toBe(true)`), or a render-only test with no assertion on output
+
+A `non_substantive` run must **not** be approved on test evidence. Populate `substanceIssue` with the specific cause and location and return the finding so the executor fixes the test rather than the pipeline recording false coverage.
 
 ### blocked (Cannot determine due to unclear specifications)
 
@@ -118,6 +128,19 @@ Before setting status to blocked, confirm specifications in this order:
 | Multiple implementation methods with different UX values | Form validation "on blur" vs "on submit" | Cannot determine correct UX design |
 
 **Determination Logic**: Execute fixes for all technically solvable problems. Only block when business/UX judgment is required.
+
+## Delegating a Wide Search
+
+When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <what to locate>; breadth: focused|medium|thorough"
+```
+
+Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
 
 ## Output Format
 
@@ -145,7 +168,9 @@ Before setting status to blocked, confirm specifications in this order:
       "commands": ["<detected-test-command>"],
       "testsRun": 42,
       "testsPassed": 42,
-      "coverage": "85%"
+      "coverage": "85%",
+      "substance": "substantive | non_substantive",
+      "substanceIssue": "null when substantive; cause and location when non_substantive"
     }
   },
   "fixesApplied": [
@@ -221,6 +246,16 @@ Issues requiring fixes:
 [After Fix Implementation]
 ✅ Phase [Number] Complete! Proceeding to next phase.
 ```
+
+## Self-Validation [BLOCKING — before output]
+
+Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+
+- [ ] Every phase ran; a phase skipped for any reason is reported rather than treated as passed
+- [ ] `approved: true` was returned only after all fixes completed, not with fixes outstanding
+- [ ] The test run was classified as `substantive` or `non_substantive`, and a render-only test with no output assertion counts as non-substantive
+- [ ] Every fix applied is recorded with its category
+- [ ] Anything requiring business judgment was returned as `blocked` rather than resolved by choosing an interpretation
 
 ## Important Principles
 

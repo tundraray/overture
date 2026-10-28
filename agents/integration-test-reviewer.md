@@ -3,7 +3,7 @@ name: integration-test-reviewer
 model: sonnet
 description: Verifies consistency between test skeleton comments and implementation code. Use PROACTIVELY after test implementation completes, or when "test review/skeleton verification" is mentioned. Returns quality reports with failing items and fix instructions.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: testing-principles, integration-e2e-testing
+skills: testing-principles, integration-e2e-testing, code-navigation
 memory: project
 ---
 
@@ -18,6 +18,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/integration-e2e-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 ## Responsibilities
 
@@ -62,6 +63,19 @@ Evaluate each test for:
 - Meaningful Assert (verification)
 - No shared state
 - No time-dependent logic
+
+## Delegating a Wide Search
+
+When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <what to locate>; breadth: focused|medium|thorough"
+```
+
+Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
 
 ## Output Format
 
@@ -116,6 +130,16 @@ Evaluate each test for:
 - Test file not found
 - Skeleton comments missing entirely
 - Cannot determine test intent
+
+## Self-Validation [BLOCKING — before output]
+
+Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+
+- [ ] Every skeleton annotation was checked against the implemented test, not only against the test's name
+- [ ] Each test's primary failure mode was verified: the test would fail if the behavior regressed, rather than passing regardless
+- [ ] Hollow implementations are flagged — assertions that cannot fail, 0-match runner reports, and tests skipped on the running path
+- [ ] Mock boundaries are checked against the Design Doc's Test Boundaries; a test that mocks the thing under test proves nothing
+- [ ] `requiredFixes[]` names a location for each finding, so the executor's Fix Mode can act on it
 
 ## Quality Checklist
 

@@ -8,49 +8,63 @@ The main workflow triggered by `/implement`. Analyzes your request, determines c
 
 **How it works**:
 
-1. **requirement-analyzer** parses your request and determines scale by estimating the number of files affected
-2. Based on scale, the workflow branches:
-   - **Large (6+ files)** — Full document pipeline: PRD for business requirements, then design doc, work plan, and phased implementation
-   - **Medium (3-5 files)** — Design doc and work plan, skipping the PRD phase
-   - **Small (1-2 files)** — Direct implementation without planning documents
-3. **Expert analysis** (optional) — For complex tasks, 3-5 expert-analyst agents evaluate the problem in parallel from different perspectives before design begins
-4. **technical-designer** produces the Design Doc with interfaces, contracts, and acceptance criteria
-5. **document-reviewer** and **design-sync** verify document quality and cross-document consistency
-6. **acceptance-test-generator** creates test skeletons from the acceptance criteria
-7. **work-planner** breaks the work into phased tasks with dependencies
-8. **task-decomposer** splits phases into single-commit tasks, then **task-executor** and **quality-fixer** handle each task autonomously
+1. **requirement-analyzer** parses your request and assesses scale on five axes — files, observable outcomes, contracts/data, boundaries, decision risk. The highest axis wins; file count alone never decides. It also proposes how the feature splits into **parts**
+2. **prd-creator** writes a PRD at every scale — `full` at large, `lite` at medium and small. Its Delivery Parts section is the parts list: which requirements each part covers and which parts it depends on. **document-reviewer** reviews it
+3. Based on scale, the workflow branches:
+   - **Large** — UXRD when there is a UI surface, then a Design Doc per part, then a work plan per part
+   - **Medium** — the same, with a lite PRD
+   - **Small** — a lite PRD and a simplified work plan, no Design Doc
+4. **Expert analysis** (optional, once per feature) — for complex tasks, 3-5 expert-analyst agents evaluate the problem in parallel from different perspectives before design begins
+5. **For each part, in dependency order**: **codebase-analyzer** (or **ui-analyzer**) gathers facts, **technical-designer** (or **technical-designer-frontend**) produces `design-{part}.md`, **document-reviewer** and **design-sync** verify it, **acceptance-test-generator** creates that part's test skeletons. Every part is designed before any is planned
+6. **For each part, in dependency order**: **work-planner** breaks the part into phased tasks, **document-reviewer** checks traceability, **task-decomposer** splits phases into single-commit tasks, then **task-executor** and **quality-fixer** handle each task autonomously until the part's completion report
 
 **Stop points** (workflow pauses for your approval):
-- After requirement-analyzer — confirm scope and requirements
-- After document-reviewer — approve PRD (large scale only)
-- After design-sync — approve Design Doc
-- After work-planner — batch-approve the implementation plan
+- After requirement-analyzer — confirm scope and scale (once)
+- After document-reviewer — approve the PRD, including the parts split (once, every scale)
+- After document-reviewer — approve the UXRD (once, when there is a UI surface)
+- After design-sync — approve a part's Design Doc (once per part)
+- After document-reviewer — approve an ADR (only when the design produced one)
+- After document-reviewer reviews a part's work plan — batch-approve that part's implementation (once per part)
 
-After batch approval, execution is fully autonomous until completion or escalation.
+After a part's batch approval, execution is autonomous until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
 
 ```mermaid
 graph TB
     A[User Request] --> B[requirement-analyzer]
+    B --> C[prd-creator: full or lite PRD with Delivery Parts]
+    C --> CR[document-reviewer]
+    CR --> SCALE{Scale}
 
-    B --> |"Large (6+ files)"| C[prd-creator]
-    B --> |"Medium (3-5 files)"| EX{Expert Analysis?}
-    B --> |"Small (1-2 files)"| E[Direct Implementation]
-
-    C --> EX
+    SCALE --> |Small| SP[work-planner: simplified plan]
+    SCALE --> |Medium or Large| UX{UI surface?}
+    UX --> |Yes| UXD[ux-designer → document-reviewer]
+    UX --> |No| EX{Expert Analysis?}
+    UXD --> EX
     EX --> |Optional| EA[expert-analyst x3-5 in parallel]
-    EX --> |Skip| D[technical-designer]
-    EA --> D
+    EX --> |Skip| PART[Next part in dependency order]
+    EA --> PART
+
+    PART --> AN[codebase-analyzer / ui-analyzer]
+    AN --> D[technical-designer / -frontend]
     D --> DR[document-reviewer]
     DR --> DS[design-sync]
     DS --> F[acceptance-test-generator]
-    F --> G[work-planner]
-    G --> H[task-decomposer]
+    F --> MORE{More parts to design?}
+    MORE --> |Yes| PART
+    MORE --> |No| BP[Next part to build]
+
+    BP --> G[work-planner]
+    G --> PR[document-reviewer: plan review]
+    PR --> H[task-decomposer]
+    SP --> H
 
     H --> I[task-executor]
-    E --> I
-
     I --> J[quality-fixer]
-    J --> K[Ready to Commit]
+    J --> K{More tasks?}
+    K --> |Yes| I
+    K --> |No| L{More parts to build?}
+    L --> |Yes| BP
+    L --> |No| M[Completion report]
 ```
 
 ---
@@ -95,7 +109,7 @@ Interactive dead code detection and cleanup. Scans the codebase for unused expor
 
 **How it works**:
 
-1. **codebase-scanner** performs static analysis to identify unused exports, unreachable code, orphaned files, and deprecated patterns
+1. **code-explorer** runs an undirected sweep to identify unused exports, unreachable code, orphaned files, and deprecated patterns
 2. You review each finding interactively and decide: **delete**, **keep** (with justification), or **deprecate** (mark for future removal)
 3. After confirmation, **cleanup-executor** applies the approved changes on a safety branch, runs the full build and test suite, and reports results
 
@@ -106,7 +120,7 @@ Interactive dead code detection and cleanup. Scans the codebase for unused expor
 
 ```mermaid
 graph LR
-    A[/audit] --> S[codebase-scanner]
+    A["/audit"] --> S[code-explorer sweep]
     S --> |Findings| R{Review each item}
     R --> |Delete / Keep / Deprecate| C[Confirm cleanup]
     C --> X[cleanup-executor]
@@ -144,7 +158,7 @@ The workflow runs in two phases with a gate between them:
 ```mermaid
 graph TB
     subgraph Phase1[Phase 1: PRD Generation]
-        CMD[/reverse-engineer] --> SD1[scope-discoverer]
+        CMD["/reverse-engineer"] --> SD1[scope-discoverer]
         SD1 --> PRD[prd-creator]
         PRD --> CV1[code-verifier]
         CV1 --> DR1[document-reviewer]

@@ -49,8 +49,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Early Termination Condition
 
-**When target Design Docs count is 0** (no files other than source_design in docs/design/):
-- Skip investigation and immediately terminate with NO_CONFLICTS status
+**When target Design Docs count is 0** (no files other than source_design in docs/features/{feature}/):
+- Skip investigation and immediately return `syncStatus: no_conflicts`
 - Reason: Consistency verification is unnecessary when there is no comparison target
 
 ## Workflow
@@ -69,8 +69,9 @@ Read the Design Doc specified in arguments and extract:
 
 ### 2. Survey All Design Docs
 
-- Search docs/design/*.md (excluding template)
+- Search docs/features/*/design-*.md
 - Read all files except source_design
+- Start with the sibling parts of the same feature, and among them the designs the source's `Part` section names under `Depends on`: the source consumes those as contracts, so a mismatch there is a contract the downstream part has silently redefined — the costliest conflict to find later
 - Detect conflict patterns
 
 ### 3. Conflict Classification and Severity Assessment
@@ -109,60 +110,35 @@ Severity Assessment:
 
 ## Output Format
 
-### Structured Markdown Format
+**JSON format is mandatory.** The caller gates the Design Doc approval stop on `syncStatus`, and routes each conflict by its `severity` — neither is extractable from prose.
 
-```markdown
-[METADATA]
-review_type: design-sync
-source_design: [source Design Doc path]
-analyzed_docs: [number of Design Docs verified]
-analysis_date: [execution datetime]
-[/METADATA]
-
-[SUMMARY]
-total_conflicts: [total number of conflicts detected]
-critical: [critical count]
-high: [high count]
-medium: [medium count]
-sync_status: [CONFLICTS_FOUND | NO_CONFLICTS]
-[/SUMMARY]
-
-[CONFLICTS]
-## Conflict-001
-severity: critical
-type: Type definition mismatch
-source_file: [source file]
-source_location: [section/line]
-source_value: |
-  [content in source file]
-target_file: [file with conflict]
-target_location: [section/line]
-target_value: |
-  [conflicting content]
-recommendation: |
-  [Recommend unifying to source file's value]
-
-## Conflict-002
-...
-[/CONFLICTS]
-
-[NO_CONFLICTS]
-## [filename]
-status: consistent
-note: [summary of verification]
-[/NO_CONFLICTS]
-
-[RECOMMENDATIONS]
-priority_order:
-  1. [Conflict to resolve first and why]
-  2. [Next conflict to resolve]
-affected_implementations: |
-  [Explanation of how this conflict affects implementation]
-suggested_action: |
-  If modifications are needed, update the following Design Docs:
-  - [list of files requiring updates]
-[/RECOMMENDATIONS]
+```json
+{
+  "status": "completed|blocked",
+  "syncStatus": "no_conflicts|conflicts_found",
+  "sourceDesign": "docs/features/{feature}/design-{part}.md",
+  "analyzedDocuments": ["every document compared, including those with no conflict"],
+  "counts": {"critical": 0, "high": 0, "medium": 0},
+  "conflicts": [
+    {
+      "id": "CONFLICT-001",
+      "severity": "critical|high|medium",
+      "type": "[type definition mismatch | contract divergence | terminology drift | acceptance criteria conflict]",
+      "source": {"file": "[path]", "location": "[section or line]", "value": "[content in the source]"},
+      "target": {"file": "[path]", "location": "[section or line]", "value": "[conflicting content]"},
+      "recommendation": "[which value to keep, and why]",
+      "revision_agent": "[agent owning the document that should change]"
+    }
+  ],
+  "summary": "[what is consistent and what is not, in one or two sentences]",
+  "nextSteps": ["[what the caller should do next]"]
+}
 ```
+
+**`analyzedDocuments` lists every document compared, not only those with conflicts.** A clean result over two documents and a clean result over nine are different assurances, and the caller cannot tell them apart otherwise.
+
+`revision_agent` names the owner of the document that should change, so the caller does not have to infer it — see File Ownership by Agent in `workflow-orchestration`.
+
 
 ## Detection Pattern Examples
 
@@ -204,22 +180,32 @@ Integration: UserService.login() → TokenService.generate()
 ## Quality Checklist
 
 - [ ] Correctly read source_design
-- [ ] Surveyed all Design Docs (excluding template)
+- [ ] Surveyed all Design Docs
 - [ ] Detected only explicit conflicts (avoided inference-based detection)
 - [ ] Correctly assigned severity to each conflict
-- [ ] Output in structured markdown format
+- [ ] Output is the JSON envelope above, nothing else
 
 ## Error Handling
 
 - **source_design not found**: Output error message and terminate
-- **No target Design Docs found**: Complete normally with NO_CONFLICTS status
+- **No target Design Docs found**: Complete normally with `syncStatus: no_conflicts`
 - **File read failure**: Skip the file and note it in the report
 
 ## Completion Criteria
 
 - All target files have been read
-- Structured markdown output completed
+- JSON output completed
 - All quality checklist items verified
+
+## Self-Validation [BLOCKING — before output]
+
+Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+
+- [ ] Every document named in the source's Related Documents was compared, and all of them appear in `analyzedDocuments`
+- [ ] Each conflict quotes both sides verbatim rather than paraphrasing either — a paraphrase can make two identical values look different, and two different ones look the same
+- [ ] Severity follows the impact of the divergence, not the size of the text difference
+- [ ] Each conflict names the `revision_agent` that owns the document that should change
+- [ ] `syncStatus` is `no_conflicts` only when every listed document was actually compared
 
 ## Important Notes
 

@@ -1,0 +1,186 @@
+# Changelog
+
+All notable changes to this marketplace are documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and the plugins adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+Versions below are the marketplace version; affected plugin versions are noted
+per entry.
+
+## [0.21.3] — 2026-10-28
+
+Parts become a product decision and a PRD is written at every scale, with a
+full consistency pass over the workflow skills, agents, and commands. Affects
+`backend-overture` 0.18.6, `frontend-overture` 0.18.6, `fullstack-overture`
+0.18.6, `gamedev-overture` 0.20.2.
+
+### Changed
+
+- **A PRD at every scale, and parts decided in it before any design.** The by-feature layout already had parts (`design-{part}.md`, `{part}/`), but nothing decided them: the split happened implicitly when a designer picked a filename, and the contract between the halves was then invented inside one of them. Medium-scale work also had no document saying *what* was agreed — the requirement analysis lived in conversation.
+
+  Both are fixed by the same move: `prd-creator` now writes a PRD for every change, at a **depth** set by scale — `full` at large, `lite` at medium and small (Overview, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Undetermined Items). The PRD's new **Delivery Parts** section is the parts list: `requirement-analyzer` proposes `parts[]`, `prd-creator` refines it, the user confirms it at PRD approval, and every later handoff carries `{name, covers, cutAlong, dependsOn}` per part. `cutAlong` is what routes a part to `technical-designer-frontend` and `ui-analyzer` or to the backend pair.
+
+  A part is a slice of *what* is built, cut along a real seam — a layer (`api`, `web`), a domain (`billing`, `notifications`), a release unit (`migration`, `core`) — never a schedule step: foundation / core / integration are work-plan phases, and the PRD's "no phases" rule now says exactly that. Every Must Have requirement belongs to exactly one part, `dependsOn` is acyclic, and one part is the common case. `document-reviewer` checks coverage, dependencies, and names on the PRD, and part scope on each Design Doc.
+
+  The phases loop over the list. `workflow-technical` designs **every part before any is planned**, in dependency order, one Design Doc approval stop per part, with `design-sync` checking the `dependsOn` designs first; a downstream design consumes an upstream contract as written and sends an insufficiency back through the upstream revision loop rather than redefining it. `workflow-execution` then plans and builds **one part at a time**: one plan, one batch approval, one build, one Final Cleanup per part, commit strategy asked once; `acceptance-test-generator` runs per part and names its files `[feature]-[part].*`. Small scale produces a lite PRD and a simplified plan with `design: none` whose traceability points at the PRD. A change to the parts list is a PRD change; a part whose plan is `completed` is frozen; the orchestrator never adds, merges, or renames a part. `/implement`, `/design`, `/front-design`, `/create-plan`, `/front-plan`, `/build` and `/front-build` carry the loop. On the gamedev path the **feature spec** written by `mid-game-designer` plays the PRD's role: it is written at every scale at the same two depths, carries the Delivery Parts section, and gets its own approval stop; the GDD stays at project level and does not carry parts.
+
+- **Consistency audit of the workflow skills, agents, and commands.** A fresh-context review of 28 files against each other found 49 contradictions, gaps, and drifts; all are resolved in this release. The ones that changed behavior:
+
+  - `requirement-analyzer` now actually produces what every phase gate reads: `scaleRationale.decidingAxis` from the five-axis `task-analyzer` assessment (the agent previously said "file count as highest priority criterion" while the skills said file count never decides), a top-level `status`, `summary` and `nextSteps`, and `adrSignals[]` in place of a pre-design `adr.required` verdict — an ADR is never decided before the design exists.
+  - `document-reviewer`'s Gate 0 now names the template headings it checks, so a template-compliant document passes by construction; the PRD template gained Should Have / Could Have / Won't Have, user journey and scope boundary diagram placeholders; the plan template gained its two diagrams; the design template gained the sections both designers already required (Applicable Standards, Integration Point Map, Code Inspection Evidence subsections, Data Representation Decision, Field Propagation Map, and a frontend block). The reviewer also covers `UXRD` and `WorkPlan` doc types, checks plan frontmatter, returns a top-level `status` and `revision_agent` in every mode, and uses one severity vocabulary.
+  - `design-sync` lost its legacy markdown output block, spells `revision_agent` like everyone else, and is called only for what it does — explicit conflicts between Design Docs; PRD and UXRD traceability is `document-reviewer`'s check.
+  - Plan `status` flips are now owned: `work-planner` in `update` mode activates a plan after batch approval and completes it in Final Cleanup, instead of an orchestrator that is forbidden to edit documents. `work-planner` no longer deletes plans; `hooks/document-guard.mjs` no longer lets executors edit Design Docs, which have no progress section.
+  - `/design` and `/front-design` run the full per-part sequence they claimed to follow (fact gathering, design-sync, ADR stop, skeletons) and load `workflow-product`, so they can pass the technical entry gate at large scale; `/front-plan` reviews its plan; `/create-plan` looks for existing skeletons before offering to generate them; `/build` and `/front-build` ask the commit strategy once per feature and report the next part. `workflow-technical`'s entry gate accepts the gamedev path's GDD and feature spec in place of a PRD, and `workflow-gamedev` confirms the parts split at its Feature Spec approval stop.
+  - `/implement` reads `scopeDependencies` in the shape `requirement-analyzer` emits (`impact: {if_yes, if_no}` with a top-level `confidence`), not the numeric-confidence shape it had invented.
+
+### Added
+
+- **The ownership hook now guards `Agent`/`Task` calls too.** `hooks/document-guard.mjs` denies a document owner spawning a *different* document owner. The Write/Edit guard only sees who is knocking right now, so an owner blocked from a file it does not own could spawn that file's owner and have it write on the caller's behalf — the write then passes as a legitimate owner match. A cross-owner handoff goes back to the orchestrator, which delegates explicitly. Self-spawn and spawning a non-owning helper (`code-explorer`) pass; the main conversation is untouched.
+
+- **Reviewers are cold readers, and a second `needs_revision` is the user's call.** `workflow-orchestration` now states what a reviewer call carries — the artifact's path, its `doc_type`/`mode`, and on a re-review the prior `issues` verbatim — and what it never carries: the author's summary, another reviewer's findings, the orchestrator's opinion, or a `SendMessage` resume. A reviewer told what changed and why reviews the explanation instead of the document. The revision loop is also defined once there: a second `needs_revision` on the same artifact stops the loop and goes to the user as *revise again / accept with the rationale recorded in the document / abort*; the orchestrator never accepts a finding on its own authority. `workflow-product`, `workflow-technical` and `workflow-execution` point at the shared rule instead of each carrying a "maximum 2 iterations" of their own.
+
+- **Every document author can delegate codebase research.** `prd-creator`, `ux-designer` and `requirement-analyzer` searched the code with Grep by hand while the designers and the planner already delegated to `code-explorer`; the agent that decides *scale* was tracing callers by text match. All three now carry a "Delegating a Wide Search" block with the questions they ask and what each answer feeds, and `resolvedBy` flows into the PRD's Confidence Gating (LSP-resolved → Verified, text match → Inferred). The designers, the planner and `prd-creator` also gain a **self-serve before escalating** rule: one `code-explorer` query and one broader retry before an unknown becomes an open question — a fact discoverable in the code is answered, not deferred.
+
+- **Nesting is named and bounded.** `workflow-orchestration` records how plugin agents are addressed (`<plugin>:<agent>`, with the bare name as the examples' shorthand and "not found" as a reason to retry namespaced, never a result) and that the chain orchestrator → owner → `code-explorer` → fan-out children sits exactly at the platform's default depth limit. `code-explorer` now treats a withheld `Agent` tool as a mode switch — it searches its directions serially and records `fanout: serial` — instead of failing at the limit. Every spawn example in `agents/` carries the namespaced alternative.
+
+## [0.21.2] — 2026-07-26
+
+Backport of patterns from the upstream `ai-coding-project-boilerplate` framework,
+plus removal of the sequential-thinking MCP. Affects `backend-overture` 0.18.5,
+`frontend-overture` 0.18.5, `fullstack-overture` 0.18.5, `gamedev-overture`
+0.20.1, `strategy-overture` 0.20.2.
+
+### Changed
+
+- **Explicit gates between phases.** Each phase now opens with an Entry Gate and closes with an Exit Gate, both `[BLOCKING]`, matching the `Exit Gate [BLOCKING]` convention already used by `task-executor`. Every handoff is checked from both sides: the producing phase confirms it produced the payload, the consuming phase confirms it arrived. Checking once from one side is how a missing artifact gets noticed three steps later, by which point it is already encoded in a design or in committed code.
+
+  Each exit gate carries a **handoff payload table** listing concrete paths rather than a summary — a PRD path or an explicit "not required at this scale", never silence. A gate failure stops the flow and names the unmet item and the phase that produces it; substituting a plausible assumption for a missing input is explicitly not allowed. Gates are distinct from stop points: a stop point asks the user to decide, a gate checks that work is complete, and a phase can pass every stop point while still failing its exit gate.
+
+- **The ADR now follows the Design Doc, and is rare.** Which decisions are genuinely architecture-binding is only visible once the design exists; writing the ADR first meant committing before understanding. The design now surfaces the decision and the ADR extracts it, so it outlives the feature that produced it.
+
+  The trigger conditions were also replaced. The old list — nested contracts three levels deep, a function used in three places, three states, five async calls, any library introduction — fired on almost every change, and a decision log written for every change stops being read. An ADR now requires all three of: costly to reverse, binding beyond this feature, and taken against real alternatives. Fail any one and the reasoning belongs in the Design Doc, whose Minimal Surface Alternatives section already records what was compared and why.
+
+- **Planning moved from the technical phase to execution.** `workflow-technical` now ends at Design Doc approval; `workflow-execution` owns work plan creation, plan review, commit-strategy selection, batch approval, and task decomposition before entering the loop. A plan is a schedule for doing the work rather than a statement of what the work is, and batch approval — the authority boundary — gates the plan, so both belong with execution. This also moves the one remaining domain difference (the planner agent) out of the technical phase, leaving it identical for every domain. Decomposition runs after batch approval: it produces working state rather than a document under review, and re-decomposing is cheap where re-approving is not.
+
+- **Workflow split into phases, and gamedev brought back onto the shared technical phase.** `workflow-orchestration` now holds only the mechanics every phase needs — agent invocation, response contracts, delegation boundary, conflict precedence, file ownership, TodoWrite. The flows moved into `workflow-product` (requirements → PRD → UXRD) and `workflow-technical` (fact gathering → Design Doc → conditional ADR → test skeletons), with `workflow-execution` continuing to own the autonomous loop.
+
+  Comparing gamedev against the shared guide showed its technical half had not diverged by design — it had fallen behind. It lacked `codebase-analyzer` and therefore had no `focusAreas` to fill the Fact Disposition Table it already contained, and it was missing the ADR review stop, the expert-analyst step, the work plan review, `code-verifier` in post-implementation verification, the 2-cycle fix cap, and Final Cleanup. Only three of seventeen sections matched the shared guide verbatim, and four more matched at 88-91%, which is drift rather than specialization. The one genuine difference was the planner agent.
+
+  `workflow-technical` is therefore parameterized by planner (`work-planner` or `gamedev-work-planner`) and used unchanged by both, and `workflow-gamedev` keeps only what is actually game-specific: scenario detection, development modes, the game agent roster, and the design disciplines preceding technical design. It shrank from 651 to 135 lines and now loads the shared mechanics it previously duplicated.
+
+- **Workflow skills renamed to one scheme.** `subagents-orchestration-guide` → `workflow-orchestration`, `subagents-gamedev-orchestration` → `workflow-gamedev`, and the new execution skill → `workflow-execution`. The old names disagreed on word order and on whether to carry a `-guide` suffix; the new ones share a prefix and follow the repository's existing base/variant convention (`typescript-rules` / `typescript-rules-backend`).
+
+- **Autonomous execution extracted into a new `workflow-execution` skill.** `workflow-orchestration` had grown to 616 lines covering two different concerns: which subagent runs when (coordination, up to the batch-approval gate) and how the loop behaves once no one is asked for permission (execution). The second half now lives in `workflow-execution` — entry conditions, commit strategies, the per-task cycle, post-implementation verification, final cleanup, auto-stop triggers, and the error-fixing protocol — leaving the guide at 418 lines. This also corrects a structural defect: commit strategy, the task cycle, and post-implementation verification were nested under "Metacognitive TodoWrite Integration", which has nothing to do with any of them. `gamedev`'s orchestration override carried a duplicate of the same content and now points at the shared skill too.
+
+- **Documents are now grouped by feature instead of by document type.** Everything a feature produces lives under one directory, so the whole record of a change is readable in one place. ADRs stay global — a decision usually outlives and spans features.
+
+  ```
+  docs/
+  ├── adr/ADR-0007-token-storage.md
+  └── features/{feature}/
+      ├── prd.md
+      ├── uxrd.md
+      ├── design-{part}.md
+      └── {part}/
+          ├── {plan-name}.md
+          └── {plan-name}/
+              ├── _overview.md
+              ├── task-01.md
+              └── analysis/
+  ```
+
+  A **part** is one independently designable slice of a feature, always present even when there is only one, so every agent resolves paths with a single glob. One design per part: when a change needs materially different designs, those are separate parts rather than two documents in one. PRD and UXRD stay at feature level; the split into parts is recorded in the PRD's Delivery Parts section (see the parts entry above).
+
+  A part may hold several plans (a first pass and a hardening pass, say). Each plan file pairs with a directory of the same name holding its decomposition, so two plans never contend for one task directory.
+
+- **Work plans now carry frontmatter** (`feature`, `part`, `design`, `plan: N of M`, `status`, `depends-on`) as the single source of truth for plan sequencing — how many plans a part expects, which one runs now, and in what order. There is no separate index file to drift out of sync with the directory. Ambiguous states (two active plans, a file count disagreeing with `M`, a dangling `depends-on`) are escalated rather than guessed, since each silently produces work against the wrong plan.
+
+- **Layer routing no longer reads a filename.** Design docs were `*-backend-design.md` / `*-frontend-design.md`; they are now the layer-neutral `design-{part}.md`. `/build`, `/front-build`, and `/update-doc` determine the layer from the design's content and the part name, and require a positive same-layer signal before proceeding rather than inferring from the absence of the other layer's markers.
+
+- **`validate-plugins.mjs` gained a feature-layout check** covering part/design pairing, plan frontmatter, `N of M` agreement with the file count, and `depends-on` and `design` resolution. It skips in repositories with no `docs/features/` — this marketplace has none, but consuming projects can run the same script.
+
+### Removed
+
+- `sequential-thinking` MCP server from all plugins: dropped from every `.mcp.json`, from plugin descriptions, and from the agent prompts that referenced it (`task-executor`, `task-executor-frontend`, `ux-designer`, and the four strategy agents). `strategy/.mcp.json` is removed entirely, having held no other server.
+- **`/create-skill` and `/refine-skill` no longer ship in the plugins.** Skill authoring is meta-work on this marketplace, not a capability a consuming project needs, and it is already covered by the separate `plugin-dev` plugin. Both commands moved to this repository's `.claude/commands/`. `/sync-skills` is unaffected and still ships. If you relied on these commands from an Overture plugin, install `plugin-dev` or copy them into your own project's `.claude/commands/`.
+- **`codebase-scanner` merged into `code-explorer`.** Both were read-only searchers running the same underlying operation — *does anything reference this?* — one asked for a named target, the other repeatedly across everything it enumerated. `code-explorer` now infers which it was asked for: a query naming a target is directed, a query asking what exists is a sweep. There is no mode parameter, because the question already says.
+
+  The sweep keeps all seven categories and gains what the scanner lacked: verdicts rest on resolved references rather than name matches, and each names what was ruled out (alias imports, re-export barrels, reflection, framework auto-registration, cross-package consumption) versus what could not be (dynamic `import()`, which resolves neither way and is therefore recorded as unknown rather than as absence). Only `high` confidence is a removal recommendation; `medium` and `low` are questions for a human, and `cleanup-executor` now states that explicitly.
+
+  Model is `sonnet` for the merged agent: the sweep's heuristic categories need the judgment, and directed lookups pay for it. `/audit` now invokes `code-explorer` as a sweep.
+
+- **`ui-spec-designer` agent removed** from `frontend-overture`, `fullstack-overture`, and `gamedev-overture`. It was invoked by no command and no orchestration flow, wrote to a document type (`docs/ui-spec/`) with no template in this repository, and was absent from the agent documentation. Its role is covered by `ux-designer` (authors the UXRD) plus the new `ui-analyzer` (gathers the UI facts). References to "UI Spec" in the build layer-detection markers and `task-executor-frontend` are normalized to UXRD.
+- **`skills/skills-index.yaml` deleted.** It was an orphan — registered in no `plugin.json`, symlinked into no plugin, and therefore never delivered to any consumer, while having drifted to a different schema than the copy that does ship. Its four missing entries (`expert-analysis-guide`, `security-checks`, `skill-optimization`, `type-safety-standards`) were merged into the shipped index at `skills/task-analyzer/references/skills-index.yaml`, which now matches the skills on disk exactly. `setup-context` pointed at the dead file and now points at the project-local path `/sync-skills` generates.
+
+### Fixed
+
+- **`codebase-scanner` determined "unused" by grepping for a name.** Its Unused Exports, Orphan Files, and Dead Routes categories, and its import-graph step, all matched text — which misses `import { X as Y }` and every use through the alias, so a live export is reported dead. This agent feeds `cleanup-executor`, making a false positive a deletion rather than a wrong number. The categories now resolve references, delegating repository-wide sweeps to `code-explorer`, and a text-resolved finding is marked low confidence and named a candidate.
+
+  The agent had also become self-contradictory: it received the `code-navigation` skill and a delegation block while its own method section still said to use Grep. Fixed rather than layered.
+
+- `typescript-testing`: removed citations of ADR-0002, which does not exist in this repository
+- `typescript-testing`: migrated MSW v1 syntax (`rest` / `res(ctx.json)`) to v2 (`http` / `HttpResponse.json`); the v1 API was removed upstream, so agents following the skill generated code against a deleted API
+- `typescript-testing`: replaced `fireEvent` with `userEvent` and `findBy*` async queries
+- `typescript-testing`, `typescript-testing-backend`: coverage thresholds were stated as mandates (70%/80%/60%), which is wrong for projects whose CI differs and contradicted the coverage-as-signal principle stated in the same files
+- `update-doc`: frontend Design Docs and ADRs were always routed to `technical-designer`; now layer-detected and routed to `technical-designer-frontend`
+- `build`, `front-build`: work-plan auto-resolution had no layer check, so a frontend build could silently consume a backend plan
+- `skills/rule-editing-guide` was registered in no `plugin.json` despite being referenced by `create-skill` and `refine-skill`, so it could never load
+- `backend/skills/typescript-rules-backend`, `backend/skills/typescript-testing-backend`, and `create-plan.md` in three plugins were file copies rather than symlinks, silently blocking propagation of shared-file edits
+
+### Added
+
+- **Document ownership is now enforced by a hook, not only documented.** `hooks/document-guard.mjs` runs on every `Write`/`Edit`/`MultiEdit` and reads `agent_type` from the PreToolUse input, so the File Ownership table becomes a gate rather than guidance. A Design Doc rewritten by an executor mid-task is, after the fact, indistinguishable from one the designer wrote.
+
+  Access has two levels rather than one, because a single owner-only rule would break the flow: `task-executor` legitimately updates progress checkboxes in the work plan and Design Doc it does not own. Owners may `Write` and `Edit`; progress updaters may `Edit` only. The distinction is load-bearing — a `Write` replaces the file, which is authorship, while an `Edit` is the surgical change a checkbox needs.
+
+  A call with no `agent_type` — the main conversation — is answered with `ask`, not `deny`. The orchestrator is not supposed to write documents directly, but a person editing their own repository is not a policy violation; `ask` makes the rule visible without blocking manual work. The guard fails open on unparseable input: one that can wedge a session is worse than none.
+
+  **Name matching is the guard's single point of failure**, so it is deliberately forgiving in one direction. Transcript evidence shows a plugin agent (`claude-code-guide`) reported by bare name with no plugin prefix, while the documentation allows a plugin-scoped `my-plugin:agent` form — the guard compares on the bare, lowercased name and accepts both. More importantly, an `agent_type` the table has never heard of returns `ask` rather than `deny`: an unrecognised name is far more likely a labelling shape the table does not list than an actual violation, and denying there would block the legitimate owner. A name that *is* in the table but owns a different document is denied confidently. The observed value is quoted in the reason, so a mismatch is diagnosable rather than mysterious.
+
+  Two behaviours needed for this are undocumented — whether explicitly listing components in `plugin.json` disables hook auto-discovery, and how `${CLAUDE_PLUGIN_ROOT}` resolves when `hooks/` is a symlink. Rather than rely on inference, the manifests declare `"hooks": "./hooks/hooks.json"` explicitly and the command uses exec form (`node` plus `args`), which invokes no shell. **Hooks load at session start, so the guard is inactive until Claude Code is restarted.**
+
+- **Every agent now returns a JSON response, and every agent has a blocking self-check.** An audit of all 42 agents against the conventions CLAUDE.md states found both rules widely unmet.
+
+  The JSON rule was itself wrong for document-producing agents, and they had quietly opted out: `prd-creator`, `technical-designer`, `work-planner` and others wrote a file and returned nothing structured at all. That breaks the orchestrator in two places — its revision loops key on `status`, its handoffs key on a document path. CLAUDE.md now defines two response shapes rather than one, both mandatory: findings-returning agents carry `findings`, document-producing agents carry `documents[].path`. The document goes to disk; the response carries its path, never its contents.
+
+  Self-Validation `[BLOCKING]` went from 13 agents to all 29 shared ones (`task-executor` and `task-executor-frontend` satisfy it through their Exit Gate). Each checklist is written against that agent's own output contract — a copied generic list asserts nothing. They encode the failure specific to each role: a scanner calling an export dead without considering reflection or cross-package use, a cleanup agent removing on balance of probability, a test generator emitting skeletons that pass on day one, a design-sync reporting "no conflicts" over documents it never compared.
+
+- **Corrected: subagents can spawn subagents.** `workflow-orchestration` stated "Subagents cannot directly call other subagents", which is wrong. Claude Code supports nesting up to three layers below the main conversation by default, configurable via `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`. A second fact had gone unnoticed: agents here declare only `disallowedTools:`, so they **inherit** `Agent` unless it is explicitly denied — every agent already had the capability, unaudited.
+
+  The orchestration skill now states only what is orchestration: that nesting exists, that which agents use it is declared per agent, and that siblings still cannot coordinate — a result reaches a peer only by returning to whoever spawned them, so sequencing stays the orchestrator's regardless. Who spawns what lives in each agent's own definition.
+
+- **`code-explorer` fans out.** It may spawn copies of itself to search 2-4 disjoint directions in parallel, at `medium` or `thorough` breadth. Children run `focused` with `fanout: false`, so the platform depth cap is never what ends a search — by the time a cap fires, invocations have already gone into a decomposition nobody chose. Results merge by de-duplicating on `path` + `line` before summing counts, since summing raw child counts double-counts shared hits and yields a usage count larger than the number of usages. Runs on `haiku`.
+
+- **Targeted delegation instructions** in `code-verifier`, `technical-designer(-frontend)`, `work-planner`, and `gamedev-work-planner`, tied to what each actually produces: existence and absence claims for the verifier (an absence claim needs the widest sweep, since one missed usage falsifies it), and Target Files per task for the planners — a path missing there blocks the executor mid-task under its File Scope Constraint. The other 14 code-touching agents carry the generic form.
+
+  For the designers the search is about **fit before impact**. A design is a proposal for how new work joins existing work; written without looking it describes a system that does not exist — correct in isolation, wrong at every seam. The required Existing Code Investigation step now leads with integration questions (where comparable functionality lives and how it is wired in, what must know about a new unit for it to run, what conventions the layer follows, whether an abstraction exists to extend) before the impact questions. "No existing abstraction fits" is treated as a claim whose evidence is the sweep's `coverage.searched`; without it a second way of doing the same thing enters the codebase by default rather than by decision.
+
+  This replaced rather than supplemented the step's previous Glob-then-Grep instructions, which would otherwise have contradicted the new guidance in the same agent.
+
+- **Every code-touching agent now navigates LSP-first.** All 18 agents that read or write code load `code-navigation` — the 6 that previously carried ad-hoc LSP bullet lists plus 12 that had no guidance at all (`technical-designer`, `code-verifier`, `verifier`, `quality-fixer`, `codebase-analyzer`, `ui-analyzer`, and the rest).
+
+  Subagents cannot invoke subagents, so an agent cannot call `code-explorer` itself. Where an agent needs a sweep wider than its own scope, the orchestration guide documents the framework-native alternative: the orchestrator pre-runs `code-explorer` and passes its JSON in as an `exploration` input — the JSON rather than a summary, since rewriting it drops the `resolvedBy` and `confidence` fields and a receiving agent that cannot tell an LSP-resolved reference from a grep match treats both as facts.
+
+- **`code-explorer` agent**: a read-only search agent that answers where code is and what touches it. Modelled on a broad fan-out explorer: it takes a `breadth` parameter (`focused` / `medium` / `thorough`) and returns locations, counts, and minimum excerpts rather than file contents — loading the searched files into the caller's context is the cost the delegation exists to avoid.
+
+  It applies `code-navigation`: anchor with text search, then resolve with LSP. Its output separates `lsp` from `text` resolution in the counts, because seven resolved references and seven grep matches are different claims. Every text-resolved hit on a symbol question must carry a recorded reason why LSP could not resolve it, and `coverage.notSearched` is required at anything below `thorough` breadth — an unsearched area reported as "nothing found" is a false negative.
+
+  Registered as a proactive delegation target: the orchestration guide now routes *where is X*, *what uses X*, and any change whose blast radius is not established to it. A boundary table separates it from `codebase-analyzer` (pre-design facts), `scope-discoverer` (unit boundaries), and `codebase-scanner` (dead code).
+
+- **`code-navigation` skill**: chooses between semantic and textual lookup. Text search reaches a first anchor — every LSP operation needs a `file:line:character` position, so a lookup starting from a bare name has to get one — and LSP does everything after it. Falling back to text search on a symbol question requires a reason that can be named and recorded; "grep is faster" is explicitly not one. Grep matching a class name returns comments, log strings, and same-named symbols from other modules while missing every use through an import alias, which is why it is wrong for rename-impact and call-site questions specifically.
+
+  This also removes duplication: six agents (`task-executor`, `code-reviewer`, `investigator`, `scope-discoverer`, `security-reviewer`, `solver`) each carried their own "LSP MCP (if available)" bullet list with no shared source. Each now references the skill and keeps only its agent-specific instruction — where the finding goes in that agent's output contract.
+
+- **Post-implementation verification**: `code-verifier` and `security-reviewer` now run in parallel after all tasks complete, with unified `requiredFixes[]` normalization and a 2-cycle fix cap. Quality was previously checked per-task only, so Design Doc drift and whole-changeset security posture were never verified.
+- **Consumed Task Set and Final Cleanup**: runs are scoped to the task files they own and delete them after commit; `docs/plans/tasks/` previously accumulated stale files
+- **`task-executor` hardening**: File Scope Constraint, Fix Mode, Core Mechanism Preservation Check, Adjacent Case Sweep, Binding Decision and Reference Contract checks with a blocking Exit Gate, Reference Representativeness file-count rule, and an escalation contract table covering 9 types
+- **`Self-Validation [BLOCKING]`** sections in `code-reviewer`, `code-verifier`, `document-reviewer`, `verifier`, `investigator`, `scope-discoverer`, `solver`, `rule-advisor`
+- **Test-substance assessment** in `code-reviewer`, `quality-fixer`, `quality-fixer-frontend`, and the task executors: a green run with no substantive assertion is no longer creditable as coverage
+- **Document templates**: Fact Disposition Table, Minimal Surface Alternatives, Verification Strategy, and Test Boundaries in the design template; Design-to-Plan Traceability, Reference Contract Values, Failure Mode Checklist, ADR Bindings, and Connection Map in the plan template; Binding Decisions, Change Category, Proof Obligations, and Investigation Targets in the task template; AC Traceability and Existing Component Reuse Map in the UXRD template
+- **Risk-based scale routing**: `task-analyzer` evaluates five axes (files, observable outcomes, contracts/data, boundaries, decision risk) and reports `scaleRationale.decidingAxis`; scale no longer keys off file count alone
+- **`llm-friendly-context` skill**: clarity rules for LLM-facing prompts, handoffs, and generated artifacts
+- **`codebase-analyzer` and `ui-analyzer` agents**: read-only pre-design fact gathering producing `fact_id`-anchored focus areas; `ui-analyzer` records per-resource `fetch_status` so assumed facts stay distinguishable from fetched ones
+- **Work-plan review**: `create-plan` runs `document-reviewer` on the plan with a revision loop before user approval
+- **Orchestration guide**: delegation boundary (what vs how), decision precedence for conflicting subagent outputs, and an explicit orchestrator tool allowlist
+- **`scripts/validate-plugins.mjs` and CI**: deterministic checks for registration, symlink resolution, frontmatter validity, and paired version bumps; a check that inspects zero items fails rather than reporting green

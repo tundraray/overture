@@ -8,22 +8,25 @@ argument-hint: <game feature or project description>
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not a worker. I am an orchestrator." (see subagents-gamedev-orchestration skill)
+**Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-gamedev skill)
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
-2. **Follow subagents-gamedev-orchestration skill flows exactly**:
+2. **Follow workflow-gamedev skill flows exactly**:
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Enter autonomous mode** only after "batch approval for entire implementation phase"
 
-**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in subagents-gamedev-orchestration skill flows.
+**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-gamedev skill flows.
 
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-gamedev-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-gamedev/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-technical/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md`
 
 ## Execution Decision Flow
 
@@ -35,16 +38,16 @@ Instruction Content: $ARGUMENTS
 | Situation Pattern | Decision Criteria | Next Action |
 |------------------|------------------|-------------|
 | New Requirements | No existing work, new game feature/project request | Start with requirement-analyzer |
-| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in subagents-gamedev-orchestration flow |
+| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in workflow-gamedev flow |
 | Quality Errors | Error detection, test failures, build errors | Execute quality-fixer |
 | Ambiguous | Intent unclear, multiple interpretations possible | Confirm with user |
 
 ### 2. Progress Verification for Continuation
 
 When continuing existing flow, verify:
-- Latest artifacts (PRD/GDD/ADR/Design Doc/Work Plan/Tasks)
+- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan/Tasks), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a `completed` plan chain
 - Current phase position (Requirements/Market Analysis/Game Design/Technical Design/Planning/Implementation/QA)
-- Identify next step in subagents-gamedev-orchestration skill corresponding flow
+- Identify next step in workflow-gamedev skill corresponding flow
 
 ### Development Mode Detection
 
@@ -104,9 +107,12 @@ Sequential agent invocations after market analysis (or directly after requiremen
 
 1. **sr-game-designer** → GDD creation (core loop, pillars, systems overview)
 2. **document-reviewer** → GDD review **[Stop: GDD Approval]**
-3. **mid-game-designer** → Feature specifications from approved GDD
-4. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
-5. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
+3. **mid-game-designer** → feature specification from the approved GDD, with `depth` (`full` at large scale, `lite` at medium and small) and the `parts[]` proposal from requirement-analyzer, producing the spec's **Delivery Parts** section
+4. **document-reviewer** (`doc_type: FeatureSpec`, same `depth`) → feature spec review **[Stop: Feature Spec Approval — includes the parts split]**. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
+5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
+6. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
+
+**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a game design spec; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
 
 ### Art & Visual Phase
 
@@ -145,27 +151,27 @@ After requirement-analyzer returns, evaluate scope implications before proceedin
 
 For each identified requirement, assess:
 
+requirement-analyzer reports a top-level `confidence` (`confirmed` | `provisional`) and, when provisional, the questions whose answers would move the scale:
+
 ```yaml
+confidence: provisional
 scopeDependencies:
-  - question: "Does this require API contract changes?"
-    impact: "high"
-    confidence: 0.7
-  - question: "Are database schema changes needed?"
-    impact: "high"
-    confidence: 0.5
-  - question: "Does this affect existing user-facing behavior?"
-    impact: "medium"
-    confidence: 0.9
+  - question: "Does this change the save-file format?"
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a persisted-data migration routes as Large regardless of file count"
+  - question: "Does this touch the networked game-state contract?"
+    impact: { if_yes: "large", if_no: "medium" }
+    reason: "a breaking contract change is a Large-scale axis"
 ```
 
 #### Decision Rules
 
 | Condition | Action |
 |---|---|
-| Any dependency with `impact: high` AND `confidence < 0.8` | **STOP** — Present the question to user with impact explanation. Do not proceed until confirmed. |
-| Any dependency with `impact: high` AND `confidence >= 0.8` | Proceed but flag in TodoWrite as high-impact item |
-| All dependencies `impact: medium/low` | Proceed normally |
-| `confidence < 0.5` on any item | **STOP** — Insufficient information. Ask user for clarification before proceeding. |
+| `confidence: provisional` and any `scopeDependencies[].impact.if_yes` is a higher scale than the reported `scale` | **STOP** — Present the question with its `reason` at the requirements stop; a "yes" re-runs requirement-analyzer with the answer |
+| `confidence: provisional` and no answer changes the scale | Proceed, carrying the questions into the feature spec's open items |
+| `confidence: confirmed` | Proceed normally |
+| `scaleRationale.decidingAxis` is not `files` | State it at the stop |
 
 #### Scope Change Report (presented to user at stop points)
 
@@ -187,7 +193,7 @@ scopeDependencies:
 
 ### 4. Next Action Execution
 
-**MANDATORY subagents-gamedev-orchestration skill reference**:
+**MANDATORY workflow-gamedev skill reference**:
 - Verify scale-based flow (Large/Medium/Small scale)
 - Confirm autonomous execution mode conditions
 - Recognize mandatory stopping points
@@ -204,7 +210,7 @@ scopeDependencies:
 ## Subagents Orchestration Guide Compliance Execution
 
 **Pre-execution Checklist (MANDATORY)**:
-- [ ] Confirmed relevant subagents-gamedev-orchestration skill flow
+- [ ] Confirmed relevant workflow-gamedev skill flow
 - [ ] Identified current progress position
 - [ ] Clarified next step
 - [ ] Recognized stopping points
@@ -257,7 +263,12 @@ Store selected strategy for autonomous execution mode.
 1. Execute ONE task completely before starting next
 2. Check task-executor status before quality-fixer (escalation check)
 3. quality-fixer MUST run after each task-executor (no skipping)
-4. Commit execution depends on strategy (see subagents-gamedev-orchestration)
+4. Commit execution depends on strategy (see workflow-gamedev)
+
+**Step 2 branch conditions**:
+- `status: escalation_needed` or `status: blocked` → escalate to user
+- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`; `approved` → proceed to quality-fixer.
+- `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`. Do not advance to quality-fixer: a stub can pass quality checks while implementing nothing.
 
 **Commit by strategy**:
 - **per-task**: Commit when quality-fixer returns `approved: true`
@@ -270,20 +281,41 @@ Store selected strategy for autonomous execution mode.
 - Skipping quality-fixer
 - Committing without asking strategy first
 
-### Security Review (Post-Implementation)
+### Post-Implementation Verification
 
-After all tasks complete and before generating the final completion report:
+The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
 
-1. Invoke security-reviewer using Task tool:
-   - `subagent_type`: "security-reviewer"
-   - `description`: "Security compliance review"
-   - `prompt`: "Review implementation for security compliance. Design Doc: [path]. Files modified: [all modified files from task execution]."
+1. **Invoke both verifiers in parallel** (single message, two Task tool calls):
 
-2. **Handle security-reviewer response**:
-   - `blocked` → **STOP immediately**. Report credentials/critical vulnerability to user. Do NOT commit.
-   - `needs_revision` → Create security fix task file, execute via task-executor → quality-fixer → re-run security-reviewer
-   - `approved_with_notes` → Include security notes in completion report. Proceed to commit.
-   - `approved` → Proceed to completion report.
+   | Agent | Prompt inputs |
+   |-------|---------------|
+   | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
+   | `security-reviewer` | Design Doc path, same modified-file list |
+
+   Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
+
+2. **Apply pass/fail criteria**:
+   - `code-verifier`: `consistent` / `mostly_consistent` = pass; `needs_review` / `inconsistent` = fail
+   - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
+
+3. **Fix cycle** (any verifier failed, max 2 cycles):
+   - Create a consolidated fix task file (`docs/features/{feature}/{part}/{plan-name}/post-impl-fixes-YYYYMMDD.md`) from the task template
+   - Populate its Target Files with the **union** of file paths from every verifier's `requiredFixes[].location` and `discrepancies[].codeLocation`. Without this union the executor's File Scope Constraint rejects the very files it was dispatched to fix.
+   - `task-executor` in **Fix Mode** → `quality-fixer` → re-run **only** the failed verifiers
+   - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
+
+4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.
+
+### Final Cleanup
+
+Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state.
+
+- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and the consolidated fix task file from the verification cycle if one was created
+- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **gamedev-work-planner** (`update` mode) set its frontmatter `status` to `completed` — the orchestrator does not edit the plan itself
+- **Preserve** every sibling plan and its directory — a part may hold several plans
+- **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
+
+If deletion fails, report the failure but do not block the completion report.
 
 ### Test Information Communication
 After acceptance-test-generator execution, when calling work-planner, communicate:
@@ -294,4 +326,4 @@ After acceptance-test-generator execution, when calling work-planner, communicat
 ## Execution Method
 
 All work is executed through sub-agents.
-Sub-agent selection follows subagents-gamedev-orchestration skill.
+Sub-agent selection follows workflow-gamedev skill.

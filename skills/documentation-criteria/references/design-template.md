@@ -1,8 +1,15 @@
-# [Feature Name] Design Document
+# [Feature Name] Design Document — [part-name]
+
+## Part
+
+- **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
+- **Covers**: [requirement ids or titles this part owns — this design covers exactly these]
+- **Depends on**: [`design-[other-part].md` — the approved designs whose contracts this design consumes as written], or "none — first part"
+- **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
 ## Overview
 
-[Explain the purpose and overview of this feature in 2-3 sentences]
+[Explain the purpose and overview of this part in 2-3 sentences, and how it fits the feature]
 
 ## Design Summary (Meta)
 
@@ -29,6 +36,15 @@ unknowns:
 - [ADR File Name]: [Related decision items]
 - Reference common technical ADRs when applicable
 
+### Applicable Standards
+
+Standards this design must comply with, found before design work began. At least 3 explicit and 2 implicit; an implicit standard is confirmed with the user before the design relies on it.
+
+| Standard | Type | Source | Impact on Design |
+|----------|------|--------|-----------------|
+| [e.g. Biome strict mode] | explicit | [biome.json] | [All new code must pass strict linting] |
+| [e.g. Repository pattern] | implicit | [src/repos/*.ts] | [Data access must follow the repository pattern] |
+
 ### Agreement Checklist
 
 #### Scope
@@ -38,6 +54,7 @@ unknowns:
 #### Non-Scope (Explicitly not changing)
 - [ ] [Features/components not to change]
 - [ ] [Existing logic to preserve]
+- [ ] [Requirements owned by sibling parts]
 
 #### Constraints
 - [ ] Parallel operation: [Yes/No]
@@ -99,9 +116,69 @@ Keywords determine test type and reduce ambiguity.
 | Existing | src/[actual-path] | [Current implementation] |
 | New | src/[planned-path] | [Planned new creation] |
 
-### Integration Points (Include even for new implementations)
-- **Integration Target**: [What to connect with]
-- **Invocation Method**: [How it will be invoked]
+### Integration Point Map (Include even for new implementations)
+
+```yaml
+Integration Point 1:
+  Existing Component: [Component/module name, function/method name]
+  Integration Method: [Hook Addition / Call Addition / Data Reference / ...]
+  Impact Level: High (process flow change) / Medium (data usage) / Low (read-only)
+  Required Test Coverage: [Continuity verification of existing features]
+```
+
+### Code Inspection Evidence
+
+#### What Was Examined
+- [path:function] — [relevance: similar functionality / integration point / pattern reference]
+
+#### Key Findings
+- [Finding, with the `code-explorer` coverage and `resolvedBy` that supports it]
+
+#### How Findings Influence Design
+- [Finding → design decision it drives]
+
+### Data Representation Decision
+
+One row per new data structure: reuse, extend, or new, with the rationale.
+
+| Data Structure | Decision | Rationale |
+|---|---|---|
+| [e.g. UserProfile] | **Reuse** existing [type] + extend | [Existing type covers 80% of fields; extension is cleaner than duplication] |
+| [e.g. AuditLog] | **New** dedicated type | [No existing type matches; forcing fit would compromise both] |
+
+### Field Propagation Map (multi-layer changes only)
+
+```yaml
+fields:
+  - name: "[fieldName]"
+    origin: "[API Request / Database / User Input]"
+    transformations:
+      - layer: "[API Layer]"
+        type: "[RequestDTO]"
+        validation: "[required, max 255 chars]"
+      - layer: "[Service Layer]"
+        type: "[DomainModel]"
+        transformation: "[trimmed, lowercased]"
+    destination: "[Database table.column / API Response / UI Component]"
+    loss_risk: "none | low | medium | high"
+    loss_risk_reason: "[required when risk > none]"
+```
+
+### Fact Disposition Table
+
+One row per `focusAreas` entry from codebase analysis. This table binds structural existing-behavior facts to the design; other sections referencing existing behavior cite the row by `fact_id` rather than restating it.
+
+Prose about "the current implementation" is unauditable — a reviewer cannot tell whether an omission was deliberate. A row per fact with an explicit disposition makes deliberate removal distinguishable from oversight.
+
+| Fact ID | Focus Area | Disposition | Rationale | Evidence | Related Files |
+|---------|------------|-------------|-----------|----------|---------------|
+| [fact_id from focusAreas] | [area name] | preserve / transform / remove / out-of-scope | [preserve: confirmation only ("retained without modification"); transform: the new observable outcome ("now returns 404 instead of 410"); remove: reason plus PRD/UXRD citation when policy-driven; out-of-scope: cite the scope-defining section] | [evidence value carried verbatim from focusAreas] | [comma-separated paths from focusAreas.relatedFiles] |
+
+### Cross-Layer Assumptions (cross-layer flow only)
+
+When this Design Doc depends on unverified claims from a prior-layer Design Doc, list each with justification and downstream verification target:
+
+- [claim]: [justification]; verify at [step or artifact]
 
 ## Design
 
@@ -118,6 +195,46 @@ Indirect Impact:
 No Ripple Effect:
   - [Explicitly specify unaffected features]
 ```
+
+### Minimal Surface Alternatives (When Introducing Maintenance-Surface Elements)
+
+One entry per new in-scope element: persistent state, a public-contract element or cross-boundary field/prop, a behavioral mode/flag/variant, or a reusable abstraction / component split. Every such element is permanent maintenance surface, so the design must show the smaller option was considered and say why it was insufficient.
+
+#### Element 1: [name of the new element]
+
+**Step 1 — Fixed Requirements**
+- [AC reference — AC ID, EARS clause, or constraint ID]: [requirement text]
+- [AC reference]: [requirement text]
+
+References may point to this Design Doc, the referenced PRD, or the referenced UXRD.
+
+**Steps 2–3 — Alternatives Compared**
+
+Adapt the column names to context: backend docs use "Crosses module/service boundary" and "New concept / mode / flag"; frontend docs use "Crosses component boundary" and "New props / modes / variants".
+
+| Alternative | Requirements covered (AC ref) | New persistent state (count) | New concept / mode / flag / prop (count) | Crosses boundary (yes/no) | Breaking change or migration (yes/no) | Subjective cost notes |
+|---|---|---|---|---|---|---|
+| [The added element as proposed] | | | | | | |
+| [Subtractive alternative — derive, compute on demand, keep at caller, reuse existing, introduce no new state] | | | | | | |
+| [Optional third alternative] | | | | | | |
+
+**Resolution priority for selecting "smallest"** (later rows break ties when earlier are equal):
+1. New persistent state introduced (lower = smaller)
+2. Crosses module/service or component boundary (no = smaller)
+3. New concept / mode / flag / prop / variant (lower = smaller)
+4. Breaking change or migration required (no = smaller)
+5. Subjective cost notes
+
+**Step 4 — Selected Alternative and Rationale**
+- **Selected**: [alternative name]
+- **Rationale**:
+  - When the selected option *is* the smallest considered: state "smallest alternative considered; no further reduction available"
+  - When it is larger: name the Step 1 requirement(s) the smaller alternatives fail to satisfy
+
+**Step 5 — Rejected Alternatives Log**
+- [Alternative name]: [1-2 lines on what it was and why rejected]
+
+Repeat the Element block for each additional in-scope element. Mark the whole section N/A with brief rationale when the design introduces none.
 
 ### Architecture Overview
 
@@ -174,6 +291,26 @@ Output:
 Invariants:
   - [Conditions that remain unchanged before and after processing]
 ```
+
+### Frontend Design (frontend parts only)
+
+#### Existing Component Reuse Map
+
+| UI Element | Decision | Existing Component | Rationale |
+|---|---|---|---|
+| [element] | reuse / extend / new | [path or —] | [for `new`: what was searched and why nothing fit] |
+
+#### State × Display Matrix
+
+| Component | default | loading | empty | error | partial |
+|---|---|---|---|---|---|
+| [component] | [what renders] | [...] | [...] | [...] | [... or N/A with reason] |
+
+#### UI Action-API Contract Mapping
+
+| UI Action | API Contract (from `dependsOn` design) | Request | Response handled | Error handled |
+|---|---|---|---|---|
+| [action] | [endpoint or operation, as written in the upstream design] | [shape] | [shape → state] | [status → state] |
 
 ### State Transitions and Invariants (When Applicable)
 
@@ -261,11 +398,65 @@ Automatically derive test cases from acceptance criteria:
 
 ## Security Considerations
 
-[Security concerns and countermeasures]
+Evaluate each of the following against this feature's trust boundaries and data flow. Mark an item N/A with a brief rationale when the feature has no relevant trust boundary — an unanswered question is not the same as an inapplicable one.
+
+- **Authentication & Authorization**: What authentication is required for new entry points? What authorization checks protect resource access?
+- **Input Validation**: Where does external input enter the system? How is it validated before processing?
+- **Sensitive Data Handling**: What data requires protection (encryption, masking, access control)? What data is safe to include in logs and error responses?
+
+## Test Boundaries
+
+### Mock Boundary Decisions
+
+| Component/Dependency | Mock? | Rationale |
+|---------------------|-------|-----------|
+| [External API / DB / file system / etc.] | [Yes/No] | [Why this boundary was chosen] |
+
+### Data Layer Testing Strategy
+
+- **Schema dependencies**: [tables/models this feature reads or writes, with paths to their definitions]
+- **Test data approach**: [fixtures, factories, seed scripts, or real database]
+- **Mock limitations acknowledged**: [what cannot be reliably tested with mocks alone for this feature]
+
+Mark N/A with brief rationale when the feature has no data layer dependencies.
+
+### Integration Verification Points
+
+- [Critical integration points requiring testing beyond unit-level mocks]
+
+## Verification Strategy
+
+Defines what correctness *means* for this change and how it will be proven, at design time. This is distinct from the L1/L2/L3 tiers, which describe completion-verification granularity at task execution time.
+
+### Correctness Proof Method
+
+- **Correctness definition**: [what "correct" means here — e.g. "output matches existing behavior", "all ACs pass in a production-equivalent environment"]
+- **Verification method**: [specific technique — e.g. "compare new implementation output against the existing one", "run against staging DB", "contract test against the real API"]
+- **Verification timing**: [when — e.g. "after the first vertical slice", "per repository", "at integration phase"]
+
+### Early Verification Point
+
+What is verified first, to confirm the approach holds before scaling it?
+
+- **First verification target**: [smallest unit proving the approach works — e.g. "first repository migration", "single API endpoint"]
+- **Success criteria**: [observable outcome — e.g. "CSV download output is identical to legacy", "API returns 200 with the expected schema"]
+- **Failure response**: [what to do if it fails — e.g. "reassess approach before proceeding", "escalate to user"]
+
+### Output Comparison (When Replacing or Modifying Existing Behavior)
+
+- **Comparison input**: [identical input used for both implementations — e.g. "same DB snapshot", "same request payload"]
+- **Expected output fields**: [specific fields/columns compared]
+- **Diff method**: [file-level diff, JSON field-by-field comparison, row count plus spot check]
+- **Transformation pipeline coverage**: [each step from codebase analysis `dataTransformationPipelines` and what the comparison covers]
+
+Mark N/A with brief rationale when the design introduces entirely new behavior with no existing equivalent.
 
 ## Future Extensibility
 
-[Considerations for future feature additions or changes]
+Capability-level items considered and excluded, not bound to a single element. (Element-level rejected alternatives belong in Minimal Surface Alternatives → Step 5.)
+
+- **Deferred possibilities**: [capabilities considered and explicitly excluded from the current surface; each names the requirement it would have served]
+- **Intentional limitations**: [what was deliberately kept small, and why]
 
 ## Alternative Solutions
 

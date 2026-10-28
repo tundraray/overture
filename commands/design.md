@@ -1,49 +1,65 @@
 ---
 name: design
-description: Execute from requirement analysis to design document creation
+description: Execute from requirement analysis through PRD to design document approval for every part
 argument-hint: <feature description>
 ---
 
-**Command Context**: This command is dedicated to the design phase.
+**Command Context**: This command is dedicated to the product and design phases. It ends when every part's Design Doc is approved.
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not a worker. I am an orchestrator." (see subagents-orchestration-guide skill)
+**Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-orchestration skill)
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER investigate/analyze yourself)
-2. **Follow subagents-orchestration-guide skill design flow exactly**:
-   - Execute: requirement-analyzer → technical-designer → document-reviewer → design-sync
+2. **Follow the `workflow-product` and `workflow-technical` flows exactly**, in that order
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
-3. **Scope**: Complete when design documents receive approval
+3. **Scope**: Complete when every part in the PRD's Delivery Parts has an approved `design-{part}.md`
 
-**CRITICAL**: NEVER skip document-reviewer, design-sync, or stopping points defined in subagents-orchestration-guide skill flows.
+**CRITICAL**: NEVER skip prd-creator, document-reviewer, design-sync, acceptance-test-generator, or a stopping point defined in the skill flows.
 
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/subagents-orchestration-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-product/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/workflow-technical/SKILL.md`
 
 ## Workflow Overview
 
 ```
-Requirements → requirement-analyzer → [Stop: Scale determination]
-                                           ↓
-                                   technical-designer → document-reviewer
-                                           ↓
-                                      design-sync → [Stop: Design approval]
+Requirements → requirement-analyzer → [Stop: requirement confirmation]
+                     ↓
+             prd-creator (depth by scale) → document-reviewer → [Stop: PRD approval — includes the parts split]
+                     ↓
+             ux-designer → document-reviewer → [Stop: UXRD approval]        (only when the work has a UI surface)
+                     ↓
+   for each part in the PRD's Delivery Parts, in dependency order:
+             codebase-analyzer (and ui-analyzer for a UI part)
+                     ↓
+             technical-designer(-frontend) → document-reviewer → design-sync → [Stop: Design Doc approval — part X]
+                     ↓
+             technical-designer(-frontend) → ADR → document-reviewer → [Stop: ADR approval]   (only when the three-part test passes)
+                     ↓
+             acceptance-test-generator → test skeletons for the part
 ```
+
+A PRD is written at every scale (`full` at large, `lite` at medium and small) — it is where the Delivery Parts live, and the parts list is the only source of part names. `cutAlong: frontend` routes a part to `technical-designer-frontend` and `ui-analyzer`; anything else to `technical-designer` and `codebase-analyzer`. Small scale ends after PRD approval: there is no Design Doc, and `/create-plan` or `/implement` continue from the lite PRD.
 
 ## Scope Boundaries
 
 **Included in this command**:
 - Requirement analysis with requirement-analyzer
-- ADR creation (if architecture changes, new technology, or data flow changes)
-- Design Doc creation with technical-designer
+- PRD creation or update with prd-creator, reviewed by document-reviewer
+- UXRD creation with ux-designer when the work has a UI surface
+- Fact gathering with codebase-analyzer / ui-analyzer, per part
+- Design Doc creation with technical-designer(-frontend), per part
 - Document review with document-reviewer
-- Design Doc consistency verification with design-sync
+- Design Doc consistency verification with design-sync, per part
+- ADR creation only when a decision the design made passes the three-part test in `documentation-criteria`
+- Test skeleton generation with acceptance-test-generator, per part
 
-**Responsibility Boundary**: This command completes with design document approval.
+**Responsibility Boundary**: This command completes with design document approval for every part.
 
 Requirements: $ARGUMENTS
 
@@ -52,44 +68,46 @@ Requirements: $ARGUMENTS
 - Expected outcomes and success criteria
 - Relationship with existing systems
 
-Once requirements are moderately clarified, analyze with requirement-analyzer and create appropriate design documents according to scale.
+Once requirements are moderately clarified, analyze with requirement-analyzer, write the PRD at the scale's depth, and design each part in dependency order.
 
 Clearly present design alternatives and trade-offs.
 
-**Scope**: Up to design document (ADR/Design Doc) approval. Work planning and beyond are outside the scope of this command.
+**Scope**: Up to design document approval for every part. Work planning and beyond are outside the scope of this command.
 
 ### Consistency Verification via design-sync
 
-After document-reviewer approves the Design Doc, verify cross-document consistency:
+After document-reviewer approves a part's Design Doc, run design-sync against the already-approved designs of sibling parts:
 
 ```yaml
 subagent_type: design-sync
-prompt: "Verify consistency between all documents in docs/ directory. Check for conflicts between PRD, ADR, and Design Doc."
+prompt: "source_design: docs/features/[feature]/design-[part].md. Compare against the other design-*.md files of this feature, starting with the designs named under Depends on."
 ```
 
-**Conflict Resolution Flow**:
+design-sync detects explicit conflicts between Design Docs only; traceability to the PRD and UXRD is document-reviewer's check.
+
+**Conflict Resolution Flow** (the revision loop of `workflow-technical`, maximum 2 iterations):
 - **IF conflicts found**:
-  1. Present conflict report to user with specific inconsistencies
-  2. **STOP** — Wait for user decision on resolution approach
-  3. Call technical-designer to update the Design Doc resolving identified conflicts:
-     ```yaml
-     subagent_type: technical-designer
-     prompt: "Update Design Doc at [path] to resolve the following conflicts: [conflict details from design-sync]. Preserve existing approved content where possible."
-     ```
-  4. Re-run design-sync to verify resolution
-- **IF no conflicts**: Present clean verification result and proceed
+  1. Call the `revision_agent` named on each conflict — normally technical-designer(-frontend) in `update` mode — with the conflict details. A conflict with a `dependsOn` design is a revision of the upstream design, not of this one
+  2. Re-run document-reviewer on the revised document
+  3. Re-run design-sync to verify resolution
+  4. After 2 iterations with conflicts remaining → stop and present them to the user
+- **IF no conflicts**: Present the clean verification result and proceed to the Design Doc approval stop
 
 ## Completion Criteria
 
-- [ ] Executed requirement-analyzer and determined scale
-- [ ] Created appropriate design document (ADR or Design Doc) with technical-designer
-- [ ] Executed document-reviewer and addressed feedback
-- [ ] Executed design-sync for consistency verification
-- [ ] Obtained user approval for design document
+- [ ] Executed requirement-analyzer and determined scale with its deciding axis
+- [ ] PRD written at the scale's depth, reviewed, and approved with its Delivery Parts
+- [ ] UXRD written, reviewed, and approved when the work has a UI surface
+- [ ] For every part, in dependency order: fact gathering, Design Doc, document-reviewer, design-sync, user approval
+- [ ] ADR written and approved for any decision that passed the three-part test, or "none passed" recorded
+- [ ] Test skeletons generated per part
 
 ## Output Example
 Design phase completed.
-- Design document: docs/design/[document-name].md or docs/adr/[document-name].md
-- Approval status: User approved
+- PRD: docs/features/[feature]/prd.md (lite)
+- Parts: api → web
+- Design documents: docs/features/[feature]/design-api.md, docs/features/[feature]/design-web.md; ADR: docs/adr/ADR-[number]-[title].md or "none passed the test"
+- Test skeletons: tests/[feature]-api.int.test.ts, tests/[feature]-web.int.test.ts
+- Approval status: User approved, all parts
 
 **Important**: This command ends with design approval. Does not propose transition to next phase.
