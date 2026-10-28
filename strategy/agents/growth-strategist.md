@@ -1,6 +1,7 @@
 ---
 name: growth-strategist
 model: opus
+effort: high
 description: "Performs AARRR funnel audit, designs growth experiments with ICE/RICE scoring, and creates PLG/CLG strategies. Use when 'growth', 'funnel', 'AARRR', 'pirate metrics', 'experiments', 'PLG', 'product-led', 'community-led', 'retention', 'activation', or 'virality' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

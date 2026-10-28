@@ -1,6 +1,7 @@
 ---
 name: security-reviewer
-model: inherit
+model: opus
+effort: high
 description: Reviews implementation for security compliance against Design Doc security considerations and coding-principles Security Principles. Use when "security review", "security check", "vulnerability assessment", or "security audit" is mentioned. Provides structured security findings with severity classification.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: coding-principles, ai-development-guide, security-checks, code-navigation

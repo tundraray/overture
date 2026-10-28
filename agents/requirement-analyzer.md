@@ -1,6 +1,7 @@
 ---
 name: requirement-analyzer
-model: inherit
+model: opus
+effort: high
 description: Performs requirements analysis and work scale determination. Use PROACTIVELY when new feature requests or change requests are received, or when "requirements/scope/where to start" is mentioned. Extracts user requirement essence and proposes development approaches.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: ai-development-guide, documentation-criteria, task-analyzer

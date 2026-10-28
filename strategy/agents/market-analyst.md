@@ -1,6 +1,7 @@
 ---
 name: market-analyst
 model: opus
+effort: high
 description: "Performs market sizing (TAM/SAM/SOM), competitive analysis (Porter's Five Forces, SWOT, PESTLE), and industry trend research. Use when 'market size', 'competition', 'competitors', 'industry analysis', 'Porter', 'SWOT', or 'market research' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

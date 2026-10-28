@@ -1,6 +1,7 @@
 ---
 name: codebase-analyzer
-model: inherit
+model: sonnet
+effort: high
 description: Analyzes an existing codebase objectively for facts about implementation, behavior, and architecture. Use before Design Doc creation when existing code must be understood without hypothesis bias. Produces fact_id-anchored focus areas the technical designer must explicitly address.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: coding-principles, project-context, technical-spec, llm-friendly-context, code-navigation

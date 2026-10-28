@@ -1,6 +1,7 @@
 ---
 name: cleanup-executor
-model: inherit
+model: sonnet
+effort: medium
 description: Safely removes confirmed dead code with git backup, build verification, and dependency-order deletion. Use after code-explorer sweep findings are reviewed and approved for removal.
 disallowedTools: KillShell
 skills: coding-principles

@@ -1,6 +1,7 @@
 ---
 name: task-decomposer
 model: sonnet
+effort: medium
 description: Reads work plan documents from docs/features/<feature>/<part>/ and decomposes them into independent, single-commit granularity tasks placed in docs/features/<feature>/<part>/<plan-name>/. PROACTIVELY proposes task decomposition when work plans are created.
 disallowedTools: KillShell
 skills: ai-development-guide, documentation-criteria, testing-principles, coding-principles, implementation-approach

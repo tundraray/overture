@@ -1,6 +1,7 @@
 ---
 name: gamedev-work-planner
-model: inherit
+model: opus
+effort: high
 description: Creates and updates game development work plan documents in docs/features/{feature}/{part}/. Responsible for 6-phase game development planning (Core Mechanics, Game Feel, Art Integration, UI, Analytics, QA), dependency mapping, risk identification, and progress tracking. Use PROACTIVELY when "implementation plan", "work breakdown", "task planning", "phasing", or "work plan" is mentioned.
 disallowedTools: KillShell
 skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach, code-navigation

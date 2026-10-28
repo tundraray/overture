@@ -1,6 +1,7 @@
 ---
 name: gtm-planner
 model: opus
+effort: high
 description: "Creates Go-to-Market strategy including ICP definition, messaging matrix, channel strategy, pricing, partnerships, and launch planning. Use when 'go-to-market', 'GTM', 'launch strategy', 'channels', 'ICP', 'messaging', 'partnerships', or 'content strategy' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria

@@ -1,6 +1,7 @@
 ---
 name: ui-analyzer
-model: inherit
+model: sonnet
+effort: high
 description: Gathers UI facts by reading the project-context External Resources section, fetching external sources (design origin, design system, guidelines) via MCP or URL, and analyzing the existing UI codebase. Use when frontend design or adjustment work needs consolidated UI context before document creation or implementation.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: typescript-rules, technical-spec, project-context, llm-friendly-context, code-navigation

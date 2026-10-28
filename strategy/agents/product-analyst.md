@@ -1,6 +1,7 @@
 ---
 name: product-analyst
 model: opus
+effort: high
 description: "Deep AJTBD product analysis expert — risk analysis (RAT), job-based segmentation (B2B/B2C), jobs graph mapping, landing page generation, and full product audits. Use when 'jobs to be done', 'JTBD', 'AJTBD', 'risky assumptions', 'RAT', 'jobs graph', 'segment by jobs', or 'product audit' is mentioned."
 disallowedTools: KillShell
 skills: strategy-overture, strategy-documentation-criteria, ajtbd-methodology

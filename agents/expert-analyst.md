@@ -1,6 +1,7 @@
 ---
 name: expert-analyst
-model: inherit
+model: opus
+effort: high
 description: Parallel multi-perspective analysis from expert viewpoint. Use when orchestrator needs pre-design expert evaluation of a specific aspect (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact).
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: coding-principles, ai-development-guide, expert-analysis-guide
