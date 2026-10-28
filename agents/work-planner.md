@@ -72,11 +72,13 @@ Spawn `code-explorer` while planning, not after:
 | Do these two tasks touch the same files? | Compare the `locations` of each — an overlap is a sequencing dependency, not two independent tasks |
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: every writer and reader of the checkout session cookie; breadth: medium"
 ```
 
 Use the result to populate **Target Files** per task, the **Connection Map** owners, and the phase ordering. Two tasks whose location sets overlap cannot run in either order — record the dependency.
+
+**Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
 Spawn only `code-explorer`. Sequencing the workflow belongs to the orchestrator.
 

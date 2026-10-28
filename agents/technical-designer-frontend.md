@@ -46,7 +46,7 @@ A design is a proposal for how new UI joins existing UI. Written without looking
 | Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Data Flow; UI Action-API Contract Mapping |
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: components that render a paginated result list; breadth: thorough"
 ```
 
@@ -63,6 +63,8 @@ prompt: "query: components that render a paginated result list; breadth: thoroug
 ### Sequencing
 
 When `ui-analyzer` supplied `focusAreas` and a `candidateWriteSet`, start there. Spawn `code-explorer` for what they do not cover — integration questions often reach outside the analyzed scope.
+
+**Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
 Spawn only `code-explorer`; sequencing the workflow belongs to the orchestrator.
 

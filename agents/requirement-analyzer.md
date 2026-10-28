@@ -56,13 +56,20 @@ Report every axis and name the one that set the scale as `decidingAxis`. An axis
 
 ### File Count Estimation (MANDATORY)
 
-Before determining scale, investigate existing code:
+Before determining scale, establish which files the change touches:
 1. Identify entry point files using Grep/Glob
-2. Trace imports and callers
-3. Include related test files
-4. List affected file paths explicitly in output
+2. Trace imports and callers through `code-explorer` — a caller list is an LSP `references` answer, not a text match, and the two routinely differ by enough to move the scale:
 
-**Scale determination must cite specific file paths as evidence**
+   ```
+   subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+   prompt: "query: every consumer of <entry point symbol>; breadth: medium"
+   ```
+
+   Within a handful of files already open, follow the imports directly; spawn when the trace leaves them.
+3. Include related test files
+4. List affected file paths explicitly in output, with `resolvedBy` where they came from the explorer
+
+**Scale determination must cite specific file paths as evidence.** Spawn only `code-explorer`; every other agent belongs to the orchestrator.
 
 ### Important: Clear Determination Expressions
 ✅ **Recommended**: Use the following expressions to show clear determinations:

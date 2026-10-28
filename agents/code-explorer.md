@@ -146,13 +146,14 @@ Fan out when **all** of these hold:
 - `fanout` is not `false`
 - The question decomposes into **2-4 directions that do not overlap** — different layers, different naming conventions, different packages, definition-side versus usage-side, or, on a sweep, distinct categories
 - Each direction is worth a separate sweep: running them in one pass would mean either missing some or loading far more than needed
+- The `Agent` tool is in this run's tool list. At the platform's nesting depth limit it is withheld; the directions are then searched **serially in this run**, each still recorded in `coverage.searched`, and `fanout` records `serial` with the reason. A missing tool is a mode switch, not a failure
 
 Search directly, without fanning out, when the question has one target, when `breadth` is `focused`, or when the directions would re-search the same files. Spawning to split a search that one pass answers spends invocations to save nothing.
 
 ### How to fan out
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: <one narrow direction>; breadth: focused; fanout: false; scope_hint: <its area>"
 ```
 

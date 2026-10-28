@@ -106,7 +106,7 @@ Classify each finding into exactly one category:
 When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: <what to locate>; breadth: focused|medium|thorough"
 ```
 

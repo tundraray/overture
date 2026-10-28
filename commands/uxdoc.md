@@ -110,7 +110,7 @@ prompt: "Review the UXRD at [document path] for completeness and consistency. Ve
      prompt: "Update UXRD at [path] to address the following review issues: [issues from document-reviewer]. Operation mode: update. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Revise UXRD to address reviewer feedback."
      ```
   3. Re-run document-reviewer
-  4. Repeat until approved
+  4. Repeat once; a second `needs_revision` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
 **[STOP]**: Present approved UXRD to user for final approval.
 

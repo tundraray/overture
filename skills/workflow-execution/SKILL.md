@@ -53,7 +53,7 @@ Run for the current part, then repeat for the next part in the list:
    - **Verification Strategy** carried across from the Design Doc, with an early verification point
    - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
    - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
-   `needs_revision` → re-invoke `{planner}` with the issues, then re-review; maximum 2 iterations
+   `needs_revision` → re-invoke `{planner}` with the issues, then re-review as a cold read (plan path, `doc_type: WorkPlan`, prior issues verbatim); a second `needs_revision` goes to the user — see `workflow-orchestration`, "Revision Loop"
 3. **Commit strategy selection** — ask the user, first part only (see below)
 
    **[Stop: batch approval — part `{part}`]**

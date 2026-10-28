@@ -19,6 +19,14 @@
  * wholesale, which is authorship; an Edit is surgical, which is what an
  * executor ticking a checkbox in someone else's plan is doing.
  *
+ * The same hook also watches Agent/Task calls for one shape: a document owner
+ * spawning a *different* document owner. The Write/Edit guard only sees who is
+ * knocking right now, so an owner blocked from writing a file it does not own
+ * can route around it by spawning the file's owner and having that agent do
+ * the write. A cross-owner handoff belongs to the orchestrator, which
+ * delegates to the owner explicitly; an owner spawning itself (fan-out) or a
+ * non-owning helper (code-explorer) is untouched.
+ *
  * Dependency-free (node: builtins only). Unmatched paths are allowed — this
  * guards documents, not the repository.
  */
@@ -83,6 +91,7 @@ const RULES = [
 
 const WRITE_TOOLS = new Set(['Write', 'NotebookEdit']);
 const EDIT_TOOLS = new Set(['Edit', 'MultiEdit']);
+const SPAWN_TOOLS = new Set(['Agent', 'Task']);
 
 /**
  * `agent_type` arrives bare (`prd-creator`) or plugin-scoped
@@ -95,6 +104,32 @@ const normalise = (a) => String(a).trim().split(':').pop().toLowerCase();
 const KNOWN_AGENTS = new Set(
   RULES.flatMap((r) => [...r.authors, ...r.updaters]).map(normalise),
 );
+
+/** Agents that author a governed document — the only ones the spawn guard cares about. */
+const DOCUMENT_OWNERS = new Set(RULES.flatMap((r) => r.authors).map(normalise));
+
+/**
+ * Spawn guard: a document owner may not spawn a different document owner.
+ *
+ * Only the owner-to-other-owner pair is judged. The main conversation (no
+ * agent_type), a non-owning caller, a self-spawn, and a spawn of a non-owning
+ * helper all pass. The target name is compared bare, so `prd-creator` and
+ * `backend-overture:prd-creator` are the same agent here.
+ */
+function decideSpawn(agentType, subagentType) {
+  if (!agentType || !subagentType) return null;
+  const caller = normalise(agentType);
+  const target = normalise(subagentType);
+  if (!DOCUMENT_OWNERS.has(caller) || !DOCUMENT_OWNERS.has(target)) return null;
+  if (caller === target) return null;
+  return {
+    decision: 'deny',
+    reason: `${caller} owns a document and may not spawn ${target}, which owns another. `
+      + `Spawning the owner to perform a write the caller is not permitted to make routes around `
+      + `the ownership guard. Return the needed change to the orchestrator, which delegates to `
+      + `${target} explicitly (see File Ownership by Agent in workflow-orchestration).`,
+  };
+}
 
 function decide(kind, toolName, agentType) {
   const rule = RULES.find((r) => r.test.test(kind));
@@ -166,17 +201,23 @@ function main() {
   }
 
   const toolName = input.tool_name || '';
-  const filePath = input.tool_input?.file_path || input.tool_input?.notebook_path || '';
   const agentType = input.agent_type || '';
-  if (!filePath) process.exit(0);
 
-  // Normalise to a repo-relative, forward-slashed path.
-  const cwd = (input.cwd || '').replace(/\\/g, '/').replace(/\/$/, '');
-  let rel = filePath.replace(/\\/g, '/');
-  if (cwd && rel.startsWith(cwd + '/')) rel = rel.slice(cwd.length + 1);
-  rel = rel.replace(/^\.\//, '');
+  let verdict = null;
+  if (SPAWN_TOOLS.has(toolName)) {
+    verdict = decideSpawn(agentType, input.tool_input?.subagent_type || '');
+  } else {
+    const filePath = input.tool_input?.file_path || input.tool_input?.notebook_path || '';
+    if (!filePath) process.exit(0);
 
-  const verdict = decide(rel, toolName, agentType);
+    // Normalise to a repo-relative, forward-slashed path.
+    const cwd = (input.cwd || '').replace(/\\/g, '/').replace(/\/$/, '');
+    let rel = filePath.replace(/\\/g, '/');
+    if (cwd && rel.startsWith(cwd + '/')) rel = rel.slice(cwd.length + 1);
+    rel = rel.replace(/^\.\//, '');
+
+    verdict = decide(rel, toolName, agentType);
+  }
   if (!verdict || verdict.decision === 'allow') process.exit(0);
 
   process.stdout.write(JSON.stringify({

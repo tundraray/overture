@@ -105,6 +105,10 @@ Assign work based on each subagent's responsibilities:
 
 A subagent can spawn subagents, up to three layers below the main conversation by default (`CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`). Which agents use that, and what they may spawn, is declared in each agent's own definition.
 
+**Naming.** Plugin agents are registered as `<plugin>:<agent>`. Whether the bare name also resolves is not documented, and a failed spawn returns "Agent type not found" — an error an autonomous caller tends to absorb and move past without the result it needed. The examples in this repository write the bare name because the same agent file ships in several plugins; use the name as the `Agent` tool's available-agents list shows it, and treat "not found" as a reason to retry in the namespaced form, never as an answer.
+
+**Depth.** The chain orchestrator → document owner → `code-explorer` → its fan-out children reaches the default limit exactly. At the limit the platform withholds `Agent`, and `code-explorer` searches its directions serially instead; a command run as a subagent rather than from the main conversation loses that fan-out one level earlier.
+
 What stays true regardless: subagents cannot coordinate with each other. There is no channel between siblings, and a result reaches a peer only by returning to whoever spawned them — so **sequencing remains the orchestrator's**, whatever an agent does internally to answer its own question.
 
 ### Delegation Boundary: What vs How
@@ -180,6 +184,8 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 
 The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan.
 
+The same hook watches `Agent`/`Task` calls for one shape: **a document owner spawning a different document owner** is denied. The Write/Edit guard only sees who is knocking right now, so an owner blocked from a file it does not own could otherwise spawn that file's owner and have it write on the caller's behalf. A cross-owner handoff goes back to the orchestrator, which delegates to the owner explicitly. An owner spawning itself (fan-out) or a non-owning helper (`code-explorer`) passes.
+
 Hooks load at session start, so a change to the guard takes effect only after restarting Claude Code — `/reload-plugins` does not pick it up.
 
 **Rules**:
@@ -235,6 +241,37 @@ Call subagents using the Task tool:
 - subagent_type: "task-executor"
 - description: "Task execution"
 - prompt: "Task file: docs/features/[feature]/[part]/[plan-name]/task-01.md Please complete the implementation"
+
+### Reviewers Are Cold Readers
+
+A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review the previous verdict's `issues` list verbatim so resolution can be checked.
+
+Never passed to a reviewer:
+- the author agent's `summary` or rationale for what it wrote
+- another reviewer's findings (each reviewer forms its own verdict; the orchestrator merges afterwards)
+- the orchestrator's own opinion of the document, or what it expects the verdict to be
+- a `SendMessage` resume of an earlier reviewer run — every review is a fresh `Agent` call
+
+A reviewer that is told what changed and why reviews the explanation instead of the document. The document on disk is the only thing under review.
+
+### Call Example (document-reviewer, re-review)
+- subagent_type: "document-reviewer"
+- description: "Design Doc re-review"
+- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. Prior issues (verbatim from the previous verdict): [issues JSON]"
+
+### Revision Loop
+
+Shared by every phase. When a reviewer returns `needs_revision`:
+
+1. Extract `issues` from the reviewer output
+2. Call the owning agent named in `revision_agent` with `mode: update` and the issues
+3. Re-run the reviewer as a cold read with the prior issues attached
+4. A **second** `needs_revision` on the same artifact stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
+   - **Revise again** — one more owner pass with the user's instruction passed verbatim
+   - **Accept as is** — the owner records the accepted finding and the user's rationale in the document (`mode: update`), and the gate advances
+   - **Abort** — hold at the current document
+
+The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. Only the user's explicit accept advances a gate past an open finding.
 
 ## Structured Response Specification
 

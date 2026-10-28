@@ -87,7 +87,7 @@ When document-reviewer returns `needs_revision`:
 2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field)
 3. Revision agent edits the document
 4. Orchestrator re-runs document-reviewer
-5. Repeat until approved
+5. Repeat once; a second `needs_revision` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
 **CRITICAL**: Orchestrator NEVER edits documents directly — always delegate to agents.
 

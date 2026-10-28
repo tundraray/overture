@@ -132,7 +132,7 @@ Verification claims are existence and count claims, and both are wrong when answ
 | Identifier referential integrity across a document | `query: <each literal identifier>; breadth: focused` — batch related ones into one fan-out |
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: every reference to OrderService.charge; breadth: thorough"
 ```
 

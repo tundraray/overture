@@ -103,10 +103,10 @@ When `document-reviewer` returns `needs_revision`:
 
 1. Extract the issues from the reviewer output
 2. Call the agent named in `revision_agent` with `mode: update` — `technical-designer(-frontend)` for an ADR or Design Doc
-3. Re-run `document-reviewer`
-4. Repeat, maximum 2 iterations; still failing → stop and present the issues to the user
+3. Re-run `document-reviewer` as a cold read — path, `doc_type`, and the prior issues verbatim; never the designer's summary
+4. A second `needs_revision` goes to the user: revise again / accept with the rationale recorded / abort — see `workflow-orchestration`, "Revision Loop"
 
-The orchestrator never edits a document itself.
+The same applies to `design-sync`: it reads the Design Docs on disk, not an account of how the part was designed. The orchestrator never edits a document itself.
 
 ## Part Sequencing
 

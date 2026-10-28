@@ -127,8 +127,8 @@ When `document-reviewer` returns `needs_revision`:
 
 1. Extract the issues from the reviewer output
 2. Call the owning agent named in `revision_agent` (`prd-creator` for a PRD, `ux-designer` for a UXRD) with `mode: update`
-3. Re-run `document-reviewer`
-4. Repeat, maximum 2 iterations; still failing → stop and present the issues to the user
+3. Re-run `document-reviewer` as a cold read — path, `doc_type`, and the prior issues verbatim; never the author's summary
+4. A second `needs_revision` goes to the user: revise again / accept with the rationale recorded / abort — see `workflow-orchestration`, "Revision Loop"
 
 The orchestrator never edits a document itself — see `workflow-orchestration`, "File Ownership by Agent".
 

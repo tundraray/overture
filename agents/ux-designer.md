@@ -415,6 +415,27 @@ Reason step by step before writing the UXRD when:
 
 **Do not use** for simple UI changes with obvious interaction patterns
 
+## Delegating a Wide Search
+
+A UXRD rests on what the UI does today: which screens exist, which components they share, which states a flow already handles. Spawn `code-explorer` for that sweep rather than grepping the frontend tree — it resolves component and hook references with LSP, so "this component is used on these screens" is a resolved list, not a name match.
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <the screen, component, or flow the UXRD describes>; breadth: medium|thorough"
+```
+
+| UXRD question | Ask code-explorer | Feeds |
+|---------------|-------------------|-------|
+| Which screens and components implement this flow today? | `query: components and routes implementing <flow>; breadth: thorough` | Current state; Reverse UXRD investigation |
+| Where is this design-system component already used, and with which variants? | `query: every usage of <component>; breadth: thorough` | Consistency with Design System |
+| Which states does the existing UI already handle for this surface? | `query: loading, error, and empty states in <area>; breadth: medium` | UI states; conflict check in Deep Analysis step 4 |
+
+The explorer reports locations; the behaviour behind them is still verified in the browser (Playwright MCP) or by reading the files it names. Within files already in hand, read directly.
+
+**Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an open question entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator.
+
 ## MCP Tools for UX Research and Design
 
 ### Context7 MCP
@@ -514,7 +535,7 @@ Mode for extracting UX specifications from existing UI implementation to create 
 
 1. **Thorough UI Investigation Phase**
 
-   - Analyze all UI components and their behaviors
+   - Map the UI components, routes, and shared design-system usage with `code-explorer` (see "Delegating a Wide Search"), then analyze the behaviors of what it returns
    - Test all interactive states (hover, active, focus, disabled, error, loading)
    - Understand user flows from current implementation
    - Check accessibility features (keyboard nav, ARIA, screen reader support)

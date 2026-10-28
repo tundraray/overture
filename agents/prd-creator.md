@@ -154,6 +154,27 @@ The PRD's Delivery Parts section is where the feature is split into parts. The s
 
 **Update mode**: a change to the parts list is a PRD revision like any other — increment the version, record it in the change history, and name which existing `design-{part}.md` files the change invalidates.
 
+## Delegating a Wide Search
+
+"Verify consistency with existing systems" and the Reverse PRD investigation both ask what the code does today. Spawn `code-explorer` for that rather than sweeping the repository with Grep: it resolves symbols with LSP before falling back to text search, so "this feature touches these files" is what the compiler resolves rather than what a string matched.
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <the capability, entry point, or behavior the PRD describes>; breadth: medium|thorough"
+```
+
+| PRD question | Ask code-explorer | Feeds |
+|--------------|-------------------|-------|
+| Does this capability already exist in some form? | `query: existing implementations of <capability>; breadth: thorough` | Scope; Consistency with Existing PRDs |
+| Which entry points and data does the feature touch today? (Reverse PRD) | `query: entry points and data flow of <feature>; breadth: thorough` | Functional Requirements; Confidence Gating evidence |
+| Where does the seam between two candidate parts fall? | `query: boundary between <area A> and <area B>; breadth: medium` | Delivery Parts |
+
+Carry `resolvedBy` into Confidence Gating: an LSP-resolved location is **Verified**, a text match is **Inferred**. Within files already in hand, read directly — spawning to answer a question one `Read` resolves spends an invocation to save nothing.
+
+**Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an Undetermined Items entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points.
+
 ## PRD Creation Best Practices
 
 ### 1. User-Centric Description
@@ -259,7 +280,7 @@ Before documenting any claim, assess confidence level:
 
 ### Reverse PRD Process
 1. **Investigation Phase** (skip if External Scope Provided)
-   - Analyze all files of target feature
+   - Map the target feature's files, entry points, and callers with `code-explorer` (see "Delegating a Wide Search"), then read what it returns
    - Understand expected behavior from test cases
    - Collect related documentation and comments
    - Fully grasp data flow and processing logic

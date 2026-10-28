@@ -107,7 +107,7 @@ Must be performed before Design Doc creation. A design is a proposal for how new
 **Delegate the sweep.** Spawn `code-explorer` rather than sweeping the repository here: it resolves symbols with LSP before falling back to text search, so a call-site list is what the compiler resolves rather than what a string matched. Within files already in hand, navigate directly per `code-navigation`.
 
 ```
-subagent_type: code-explorer
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
 prompt: "query: how outbound webhooks are registered and dispatched today; breadth: thorough"
 ```
 
@@ -141,6 +141,8 @@ Run the search before deciding, and act on what it returns:
 - Record the results in `## Existing Codebase Analysis`
 - State the similar-functionality outcome explicitly — the implementation found, or "none, having searched <coverage>"
 - Carry `code-explorer` counts with their `resolvedBy`: an LSP-resolved consumer list is evidence, a text-matched one is a candidate list, and the Design Doc should not present them as the same thing
+
+**Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
 ### Integration Point Analysis【Important】
 Clarify integration points with existing systems when adding new features or modifying existing ones:
