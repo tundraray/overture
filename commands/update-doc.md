@@ -1,6 +1,6 @@
 ---
 name: update-doc
-description: Update existing design documents (Design Doc, PRD, ADR) with review workflow
+description: Update existing design documents (Design Doc, PRD, UXRD, ADR) with review workflow
 argument-hint: <document-path-or-type>
 ---
 
@@ -38,6 +38,7 @@ If `$ARGUMENTS` is a type name → search for matching documents:
 # Search patterns by type
 Design Doc: docs/features/*/design-*.md
 PRD: docs/features/*/prd.md
+UXRD: docs/features/*/uxrd.md
 ADR: docs/adr/*.md
 ```
 
@@ -52,6 +53,7 @@ Determine the document type from path or content, then determine the layer to se
 |---|---|---|---|
 | `docs/features/*/design-*.md` | Design Doc | technical-designer or technical-designer-frontend | document-reviewer + design-sync |
 | `docs/features/*/prd.md` | PRD | prd-creator | document-reviewer |
+| `docs/features/*/uxrd.md` | UXRD | ux-designer | document-reviewer |
 | `docs/adr/*.md` | ADR | technical-designer or technical-designer-frontend | document-reviewer |
 
 **Layer detection** (Design Doc and ADR only):
@@ -70,6 +72,7 @@ Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 - Are there new requirements driving this change?
 
 Record the user's response for the update agent.
+Before Step 4, copy the document outside the repository — the review in Step 5 diffs against that copy.
 
 ### Step 4: Document Update
 
@@ -84,7 +87,13 @@ prompt: "Update the Design Doc at [path]. Required changes: [user's changes from
 **For PRD:**
 ```yaml
 subagent_type: prd-creator
-prompt: "Update the PRD at [path]. Required changes: [user's changes from Step 3]. Preserve existing structure and approved sections. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "Operation Mode: update. Depth: [the PRD's current depth]. Update the PRD at [path]. Required changes: [user's changes from Step 3]. Preserve existing structure and approved sections. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+```
+
+**For UXRD:**
+```yaml
+subagent_type: ux-designer
+prompt: "Operation Mode: update. Update the UXRD at [path]. Required changes: [user's changes from Step 3]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 **For ADR:**
@@ -123,7 +132,7 @@ Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` b
 
 ```yaml
 subagent_type: document-reviewer
-prompt: "Review the updated document at [path]. review_scope: changes. diff_base: [git ref before this update, or HEAD when the update is uncommitted]. This is an UPDATE review — focus on: 1) Changes are consistent with existing approved content, 2) No regressions in quality, 3) New content meets documentation criteria. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. review_scope: changes. diff_base: [copy of the document taken before Step 4]. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 `approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, the same `diff_base`, and the prior issues verbatim.
@@ -135,7 +144,7 @@ For Design Doc updates only:
 
 ```yaml
 subagent_type: design-sync
-prompt: "Verify consistency between the updated Design Doc at [path] and all related documents (PRD, ADR). Check for conflicts introduced by the update."
+prompt: "source_design: [path]"
 ```
 
 **IF conflicts found** → Present to user and **STOP**
@@ -155,7 +164,7 @@ prompt: "Verify consistency between the updated Design Doc at [path] and all rel
 **REQUIRED** completion response:
 ```
 Updated: [document path]
-Type: [Design Doc / PRD / ADR]
+Type: [Design Doc / PRD / UXRD / ADR]
 Changes: [summary of changes made]
 Review: [approved / approved with notes]
 Consistency: [verified / N/A]

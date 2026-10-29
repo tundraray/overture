@@ -72,7 +72,7 @@ A lite PRD is short, not vague: each requirement still carries an acceptance cri
 ## PRD Output Format
 
 ### For Interactive Mode
-Output in the following structured format:
+Return the standard JSON response with `status: "escalation_needed"` and this content in `openQuestions`:
 
 1. **Current Understanding**
    - Summarize the essential purpose of requirements in 1-2 sentences
@@ -214,7 +214,7 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] The document's depth matches the one requested, and every section the depth requires is present — a lite PRD omits the full-depth sections, never the core ones
-- [ ] Every success metric states a numeric target, a measurement method, and a timeframe
+- [ ] At full depth, every quantitative success metric states a numeric target, a measurement method, and a timeframe; at lite depth, each success criterion is an observable outcome
 - [ ] Acceptance criteria describe observable outcomes, not implementation
 - [ ] MoSCoW priorities are assigned to every requirement, with Won't recorded explicitly rather than omitted
 - [ ] The document contains no technical selection or implementation phasing — both belong downstream; parts are scope slices, not phases

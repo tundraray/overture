@@ -316,7 +316,7 @@ The confirmed Delivery Parts section is the **parts list**. It is handed from ph
 |-------|---------|
 | `name` | Short kebab-case identifier; becomes `design-{name}.md` and `{name}/` |
 | `covers` | The requirements this part delivers — by id or title from the PRD or the requirement analysis |
-| `cutAlong` | The seam the slice is cut on: `backend`, `frontend`, a bounded context, a release unit |
+| `cutAlong` | The seam the slice is cut on: `backend`, `frontend`, `domain` (a bounded context), `release-unit` |
 | `dependsOn` | Parts whose approved design this part consumes as a contract; empty for the first |
 | `rationale` | Why this is a separate part — or why the feature is one part — in one sentence |
 

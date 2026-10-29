@@ -86,6 +86,7 @@ prompt: |
   Create reverse-engineered PRD for the following feature.
 
   Operation Mode: reverse-engineer
+  Depth: full
   External Scope Provided: true
 
   Feature: $UNIT_NAME (from $STEP_1_OUTPUT)
@@ -130,6 +131,7 @@ prompt: |
   Review the following PRD considering code verification findings.
 
   doc_type: PRD
+  depth: full
   target: $STEP_2_OUTPUT
   mode: composite
 
@@ -158,6 +160,7 @@ prompt: |
   Update PRD based on review feedback.
 
   Operation Mode: update
+  Depth: full
   Existing PRD: $STEP_2_OUTPUT
 
   ## Review Feedback

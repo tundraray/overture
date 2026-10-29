@@ -245,7 +245,7 @@ Call subagents using the Task tool:
 
 ### Reviewers Are Cold Readers
 
-A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
+A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref, or a copy of the reviewed version — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
 
 Never passed to a reviewer:
 - the author agent's `summary` or rationale for what it wrote
@@ -260,7 +260,7 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 ### Call Example (document-reviewer, re-review)
 - subagent_type: "document-reviewer"
 - description: "Design Doc re-review"
-- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. review_scope: changes. diff_base: [git ref the first review read, or HEAD when that version was uncommitted]. Prior issues (verbatim from the previous verdict): [issues JSON]"
+- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. review_scope: changes. diff_base: [git ref the first review read, or the copy of that version]. Prior issues (verbatim from the previous verdict): [issues JSON]"
 
 ### Revision Loop
 
@@ -279,8 +279,10 @@ Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD,
 
 **Round cap.** At most two reviews per document per gate: the first review and one re-review. A re-review that is not `approved` stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
 - **Revise again** — one more owner pass with the user's instruction passed verbatim, then one more re-review
-- **Accept as is** — the owner records the accepted finding and the user's rationale in the document (`mode: update`), and the gate advances
+- **Accept as is** — the owner records the accepted finding and the user's rationale in Update History (`mode: update`), and the gate advances
 - **Abort** — hold at the current document
+
+**Keep the reviewed version.** Documents are usually uncommitted while under review, so before sending one to its owner the orchestrator copies it outside the repository; that copy is the re-review's `diff_base`.
 
 **Re-review scope.** A re-review checks the prior issues and the changed text (`git diff <diff_base> -- <path>` plus the sections the change cites); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
 

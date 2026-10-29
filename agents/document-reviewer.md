@@ -32,15 +32,13 @@ You are an AI assistant specialized in technical document review.
 
 ## Input Parameters
 
-- **mode**: Review perspective (optional)
-  - `composite`: Composite perspective review (recommended) - Verifies structure, implementation, and completeness in one execution
-  - When unspecified: Comprehensive review
+- **mode**: `composite` (optional, the only mode) — verifies structure, implementation, and completeness in one execution
 
 - **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
 - **target**: Document path to review
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
-- **diff_base** (with `review_scope: changes`): the git ref to diff the target against; `HEAD` when the change is uncommitted
+- **diff_base** (with `review_scope: changes`): a git ref, or the path of a copy of the reviewed version (documents are usually uncommitted, and then `HEAD` shows nothing)
 
 ## Review Modes
 
@@ -64,7 +62,6 @@ You are an AI assistant specialized in technical document review.
 4. Proceed to Step 1
 
 ### Step 1: Parameter Analysis
-- Confirm mode is `composite` or unspecified
 - Specialized verification based on doc_type
 
 ### Step 2: Target Document Collection
@@ -81,7 +78,7 @@ You are an AI assistant specialized in technical document review.
 ### Step 2b: Change Scope (`review_scope: changes`)
 
 A re-review that reads the whole document cold again finds a new batch of issues every round, and the revision loop never ends. With `review_scope: changes`:
-- Read `git diff <diff_base> -- <target>` and review the changed text plus the sections it cites or that cite it
+- Read `git diff <diff_base> -- <target>` (for a copy: `git diff --no-index <diff_base> <target>`) and review the changed text plus the sections it cites or that cite it
 - Check every prior issue (Step 4) — that is the main job of this review
 - Gate 0 still runs on the whole document; Gate 1 runs on the changed text
 - A finding in text the change did not touch goes to `deferred`, not `issues`, unless it is `critical`. This includes a template rule the unchanged text predates
@@ -259,7 +256,7 @@ Checklist:
 Complete all items before proceeding to output.
 
 ### Step 6: Review Result Report
-- Output results in JSON format according to perspective
+- Output results in JSON format per Output Format
 - Clearly classify problem importance
 - Include `prior_context_check` object if prior_context_count > 0
 
@@ -280,16 +277,16 @@ Complete all items before proceeding to output.
 | gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | status | Top-level: `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — mirrors `verdict.decision`, so the orchestrator's revision loop keys on one field in every mode |
 | deferred | With `review_scope: changes`: non-critical findings in text the change did not touch. They do not affect the verdict and are shown to the user, not sent to the owner |
-| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`. Present top-level whenever `status` is not `approved` |
+| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `ui-ux-agent`, `technical-designer`, `technical-designer-frontend`, `work-planner`, `gamedev-work-planner`. Present top-level whenever `status` is not `approved` |
 
 **revision_agent mapping**:
 - PRD → `prd-creator`
 - GDD → `sr-game-designer`
 - Feature Spec → `mid-game-designer`
-- UXRD → `ux-designer`
+- UXRD → `ux-designer` (gamedev: `ui-ux-agent`)
 - ADR → `technical-designer` or `technical-designer-frontend`
 - Design Doc → `technical-designer` or `technical-designer-frontend`
-- Work Plan → `work-planner`
+- Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)
 
 ### Comprehensive Review Mode
 
@@ -298,7 +295,7 @@ Complete all items before proceeding to output.
   "status": "approved_with_conditions",
   "revision_agent": "technical-designer",
   "metadata": {
-    "review_mode": "comprehensive",
+    "review_mode": "composite",
     "doc_type": "DesignDoc",
     "target_path": "/path/to/document.md"
   },
@@ -350,7 +347,7 @@ Complete all items before proceeding to output.
   "status": "needs_revision",
   "revision_agent": "prd-creator",
   "metadata": {
-    "review_mode": "comprehensive",
+    "review_mode": "composite",
     "doc_type": "PRD",
     "target_path": "/path/to/document.md"
   },
@@ -388,28 +385,6 @@ Complete all items before proceeding to output.
   "recommendations": [
     "Add all missing mandatory sections before resubmitting for review"
   ]
-}
-```
-
-### Perspective-specific Mode
-
-```json
-{
-  "metadata": {
-    "review_mode": "perspective",
-    "focus": "implementation",
-    "doc_type": "DesignDoc",
-    "target_path": "/path/to/document.md"
-  },
-  "analysis": {
-    "summary": "Analysis results description",
-    "scores": {}
-  },
-  "issues": [],
-  "checklist": [
-    {"item": "Check item description", "status": "pass|fail|na"}
-  ],
-  "recommendations": []
 }
 ```
 
@@ -547,7 +522,7 @@ Template storage locations follow documentation-criteria skill.
 **JSON format is mandatory**
 
 **Required Elements**:
-- `metadata`, `verdict`/`analysis`, `issues` objects
+- `status`, `metadata`, `verdict`, `issues` objects
 - `id`, `severity`, `category` for each issue
 - Valid JSON syntax (parseable)
 - `suggestion` must be specific and actionable

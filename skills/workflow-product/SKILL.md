@@ -134,7 +134,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ The user has confirmed the requirements at the requirement stop
 ☐ Scale is recorded with its `decidingAxis`, and a non-`files` deciding axis was stated to the user
 ☐ PRD exists at the depth the scale requires and is approved
-☐ UXRD exists and is approved, **or** the work has no UI surface and that is recorded
+☐ UXRD exists and is approved, **or** the work has no UI surface and that is recorded, **or** the scale is small
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
 ☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
