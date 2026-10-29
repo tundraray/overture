@@ -26,6 +26,18 @@ Related Issue/PR: #XXX (if any)
 ## Phase Structure Diagram
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+  flowchart:
+    curve: step
+---
 graph LR
     P1[Phase 1: Foundation] --> P2[Phase 2: Core]
     P2 --> P3[Phase 3: Integration]
@@ -35,6 +47,18 @@ graph LR
 ## Task Dependency Diagram
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+  flowchart:
+    curve: step
+---
 graph TD
     T1[Task 1] --> T2[Task 2]
     T1 --> T3[Task 3]
@@ -74,7 +98,7 @@ Maps each Design Doc technical requirement to its covering task(s). One row per 
 | Design Doc | DD Section | DD Item | Category | Covered By Task(s) | Gap Status | Notes |
 |---|---|---|---|---|---|---|
 | [docs/features/{feature}/design-{part}.md] | [Section name] | [Specific item] | impl-target / connection-switching / contract-change / verification / prerequisite | [Phase X Task Y] | covered | |
-| docs/features/{feature}/design-{part}.md | Security Considerations | Input validation for API | prerequisite | — | gap | Deferred to Phase 2 per user decision |
+| docs/features/{feature}/design-{part}.md | Security Considerations | Input validation for API | prerequisite | — | gap | Deferred to Phase 2 |
 
 **Category values**: `impl-target` (implementation target), `connection-switching` (connection/switching/registration), `contract-change` (contract change and propagation), `verification` (verification requirement), `prerequisite` (prerequisite work)
 

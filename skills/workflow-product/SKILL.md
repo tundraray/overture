@@ -137,7 +137,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ UXRD exists and is approved, **or** the work has no UI surface and that is recorded
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
-☐ No `document-reviewer` verdict is left at `needs_revision`
+☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
 
 **Handoff payload** — concrete paths, not a summary:
 

@@ -16,11 +16,11 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 ### Snapshot
 
-<!-- At most ten lines: what the feature gives the user, for whom, the Must Have count, the delivery parts, the biggest risk. -->
+<!-- At most ten lines: what the feature gives the user, for whom, the Must Have capabilities, the delivery parts, the biggest risk. -->
 
 - **In one line**: [what the user can do after this ships that they cannot do now]
 - **For**: [primary users]
-- **Must Have**: [count] requirements · **Parts**: [part names]
+- **Must Have**: [the core capabilities, in words] · **Parts**: [part names]
 - **Biggest risk**: [one line]
 
 ### Background
@@ -51,6 +51,16 @@ So that [expected value/benefit]
 ### User Journey Diagram *(full depth)*
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+---
 journey
     title [Primary user journey]
     section [Stage 1]
@@ -90,6 +100,18 @@ journey
 ### Scope Boundary Diagram *(full depth)*
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+  flowchart:
+    curve: step
+---
 graph LR
     subgraph InScope[In scope]
         A[Requirement 1]
@@ -143,6 +165,18 @@ graph LR
 [Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes.]
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+  flowchart:
+    curve: step
+---
 graph LR
     api[api] --> web[web]
 ```

@@ -48,7 +48,7 @@ You are an AI assistant specialized in technical document review.
 **Purpose**: Multi-angle verification in one execution
 **Parallel verification items**:
 1. **Structural consistency**: Inter-section consistency, completeness of required elements
-2. **Implementation consistency**: Code examples MUST strictly comply with coding-principles skill standards, interface definition alignment
+2. **Implementation consistency**: interface definitions align with the contracts; a Design Doc or ADR carries no code examples (Responsibilities item 7)
 3. **Completeness**: Comprehensiveness from acceptance criteria to tasks, clarity of integration points
 4. **Common ADR compliance**: Coverage of common technical areas, appropriateness of references
 5. **Failure scenario review**: Coverage of scenarios where the design could fail
@@ -109,7 +109,11 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Update History is last, one line per version, without reviewer IDs; N/A stubs and copied template comments are absent — `recommended` per finding
 - [ ] Paragraphs over four sentences, table cells holding reasoning, prose made of bare IDs — `recommended`, citing the worst instances
 - [ ] A citation of a neighbouring document carries a version ("UXRD v1.6") — `recommended`, suggestion: cite by path and section or ID. A version mismatch between two documents is never an issue on its own
-- [ ] Body size against the soft target (excluding Appendix: Evidence and Update History) — over target is `recommended`, naming what to move to the appendix, replace with a citation, or cut
+- [ ] A value (number, UI string, threshold) restated next to the ID of the document that owns it — `recommended`, suggestion: keep the citation, drop the value. When the two copies already disagree — `important`
+- [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Library internals that do not show at a contract boundary — `recommended`, suggestion: remove
+- [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
+- [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
+- [ ] Body size against the soft target (excluding Appendix: Evidence and Update History) — over target is `recommended`, past twice the target `important`, naming what to move to the appendix, replace with a citation, or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
@@ -315,8 +319,8 @@ Complete all items before proceeding to output.
   "issues": [
     {
       "id": "I001",
-      "severity": "critical",
-      "category": "implementation",
+      "severity": "important",
+      "category": "consistency",
       "location": "Section 3.2",
       "description": "FileUtil method mismatch",
       "suggestion": "Update document to reflect actual FileUtil usage"
@@ -325,9 +329,6 @@ Complete all items before proceeding to output.
   "recommendations": [
     "Priority fixes before approval",
     "Documentation alignment with implementation"
-  ],
-  "deferred": [
-    {"location": "Section 5.1", "description": "[finding in text this change did not touch]", "severity": "important"}
   ],
   "prior_context_check": {
     "items_received": 0,
@@ -408,6 +409,18 @@ Complete all items before proceeding to output.
 }
 ```
 
+### Change-scope Additions
+
+With `review_scope: changes`, the output also carries `deferred` (Step 2b):
+
+```json
+{
+  "deferred": [
+    {"location": "Section 5.1", "description": "[finding in text this change did not touch]", "severity": "important"}
+  ]
+}
+```
+
 ### Prior Context Check
 
 Include in output when `prior_context_count > 0`:
@@ -453,31 +466,25 @@ Include in output when `prior_context_count > 0`:
 
 ## Review Criteria (for Comprehensive Mode)
 
+The verdict follows from the issues; scores are reported for orientation and never decide it on their own. A score below 80 is explained by the `critical` or `important` issues that cause it — a low score with no such issue is a scoring error to fix before output.
+
 ### Approved
 - Gate 0: All structural existence checks pass
 - Gate 1: Quality assessment completed
-- Consistency score > 90
-- Completeness score > 85
 - No `critical` or `important` issues — `recommended` issues alone never lower the verdict
-- No blocking issues
 - Prior context items (if any): all `critical` and `important` resolved
 
 ### Approved with Conditions
 - Gate 0: All structural existence checks pass
 - Gate 1: Quality assessment completed
-- Consistency score > 80
-- Completeness score > 75
-- Only `important` or `recommended` issues
-- Only easily fixable issues
+- No `critical` issues; at least one `important` issue, each fixable by the owner in one pass (an edit, not a redesign)
 - Prior context items (if any): at most 1 `important` unresolved
 
 ### Needs Revision
 - Gate 0: Any structural existence check fails (immediate, skip Gate 1) OR
-- Consistency score < 80 OR
-- Completeness score < 75 OR
-- Any `critical` issue
-- Blocking issues present
-- Prior context items (if any): 2+ `important` unresolved OR any `critical` unresolved
+- Any `critical` issue OR
+- An `important` issue that needs rework rather than an edit OR
+- Prior context items (if any): 2+ `important` unresolved OR any `critical` unresolved OR
 - complexity_level is medium/high but complexity_rationale lacks (1) requirements/ACs or (2) constraints/risks
 
 **IMPORTANT**: When `status` is not `approved`, output MUST include the top-level `revision_agent` field specifying which agent should fix the issues

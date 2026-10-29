@@ -33,7 +33,7 @@ Read coverage reports as a map of where to look first, in roughly this order of 
 1. **Unit Tests (React Testing Library)**
    - Verify behavior of individual components or functions
    - Mock all external dependencies
-   - Most numerous, implemented with fine granularity
+   - One table-driven test per unit with branching logic, cases as rows (`testing-principles`, Test Selection)
    - Focus on user-observable behavior
 
 2. **Integration Tests (React Testing Library + MSW)**
@@ -43,15 +43,14 @@ Read coverage reports as a map of where to look first, in roughly this order of 
    - Verify major functional flows
 
 3. **Cross-functional Verification in E2E Tests**
-   - Mandatory verification of impact on existing features when adding new features
-   - Cover integration points with "High" and "Medium" impact levels from Design Doc's "Integration Point Map"
+   - Verify impact on existing features within the part's E2E limit (`integration-e2e-testing`): one journey that crosses the "High" impact integration points, not one test per point
    - Verification pattern: Existing feature operation → Enable new feature → Verify continuity of existing features
-   - Success criteria: No change in displayed content, rendering time within 5 seconds
+   - Success criteria: No change in displayed content. Rendering-time checks run in a separate on-demand script, not in this suite
    - Designed for automatic execution in CI/CD pipelines
 
 ## Red-Green-Refactor Process (Test-First Development)
 
-**Recommended Principle**: Always start code changes with tests
+**Recommended Principle**: Start each change that adds behaviour with a failing test — behaviour that passes `testing-principles`, Test Selection; a constant, type, or wiring step gets no test of its own
 
 **Background**:
 - Ensure behavior before changes, prevent regression

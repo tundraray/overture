@@ -53,7 +53,7 @@ Run for the current part, then repeat for the next part in the list:
    - **Verification Strategy** carried across from the Design Doc, with an early verification point
    - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
    - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
-   Any verdict but `approved` → `{planner}` addresses the `critical` and `important` issues, then one re-review with `review_scope: changes`; a re-review that is not `approved` goes to the user — see `workflow-orchestration`, "Revision Loop"
+   `approved_with_conditions` or `needs_revision` → `{planner}` addresses the `critical` and `important` issues, then one re-review with `review_scope: changes`; a re-review that is not `approved`, or `rejected`, goes to the user — see `workflow-orchestration`, "Revision Loop"
 3. **Commit strategy selection** — ask the user, first part only (see below)
 
    **[Stop: batch approval — part `{part}`]**
@@ -276,7 +276,8 @@ graph TD
     DESIGN[Approved Design Docs, one per part] --> PART[Next part in dependency order]
     PART --> PLAN[planner: work plan for this part]
     PLAN --> PREVIEW[document-reviewer: plan review]
-    PREVIEW -->|needs_revision| PLAN
+    PREVIEW -->|conditions or needs_revision, first review| PLAN
+    PREVIEW -->|re-review not approved, or rejected| USERPLAN[User: revise / accept / abort]
     PREVIEW -->|approved| STRATEGY[Ask commit strategy, first part only]
     STRATEGY --> START[Batch approval for this part]
     START --> ACTIVATE[planner update: status active]

@@ -159,9 +159,10 @@ VERIFY approval status before proceeding. Once confirmed, INITIATE autonomous ex
 
 The per-task quality cycle checks tasks in isolation and cannot detect Design Doc drift or assess the security posture of the change set as a whole. After all task cycles finish, run verification **before** the completion report.
 
-1. **Invoke both verifiers in parallel** (single message, two Agent calls):
+1. **Invoke the verifiers in parallel** (single message, three Agent calls):
    - `code-verifier` → `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD`
    - `security-reviewer` → Design Doc path, same implementation file list
+   - `test-auditor` → `testPaths`: the test files in the same diff; Design Doc path. **Advisory, never a gate**: its findings go to the completion report for the user and are never turned into `requiredFixes` (`workflow-execution`, Post-Implementation Verification)
 
    Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within build command scope.`
 
@@ -187,7 +188,7 @@ If deletion fails (filesystem error), report the failure but do not block the co
 
 ### IN SCOPE
 - Reading and executing tasks from existing work plan
-- Running post-implementation verification (code-verifier + security-reviewer)
+- Running post-implementation verification (code-verifier + security-reviewer, test-auditor advisory)
 - Calling task-executor / task-executor-frontend for each task
 - Running quality-fixer / quality-fixer-frontend after each task
 - Executing commits according to selected commit strategy

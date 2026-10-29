@@ -215,11 +215,11 @@ Tasks in this phase cover:
 **Focus**: Test plans, performance validation, playtesting protocols, frame budget, memory profiling
 
 Tasks in this phase cover:
-- Comprehensive test plan execution
+- Execution of the part's planned tests
 - Performance profiling and optimization (frame budget enforcement)
 - Memory leak detection and profiling
 - Platform compatibility testing
-- Regression testing across all systems
+- Regression run of the existing suite
 - Playtesting protocol execution and feedback collection
 - Final integration verification (all systems working together)
 - Build pipeline validation
@@ -316,6 +316,12 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 
 #### Step 3: Classify and Place Tests
 
+**Test budget (per part)** — apply `testing-principles` Test Selection before placing anything:
+- Map every AC to exactly one proving test at the lowest sufficient level; several ACs on one rule share one table-driven test
+- Integration and E2E counts stay within the per-part limits in `integration-e2e-testing`; the plan states for each extra test the defect only it catches
+- No task carries a test that another task's test already proves — the task cites it instead
+- Frame-budget, latency, and memory checks are profiling scripts run on demand on the target platform, not tests in the regular suite
+
 **Test Classification**:
 - Setup items (Mock preparation, measurement tools, Helpers, etc.) → Prioritize in Phase 1
 - Unit tests (individual functions) → Start from Phase 0 with Red-Green-Refactor
@@ -325,16 +331,15 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 - Risk levels ("high risk", "required", etc.) → Move to earlier phases
 
 **Task Generation Principles**:
-- Always decompose 5+ test cases into subtasks (setup/high risk/normal/low risk)
-- Specify "X test implementations" in each task (quantify progress)
-- Specify traceability: Show correspondence with acceptance criteria in "AC1 support (3 items)" format
+- A task names the tests it adds by title and the AC or risk each proves; ACs on one rule share one table-driven test
+- Specify traceability per AC: the one test that proves it (`AC-1 → <test title>`), never several
 
 **Measurement Tool Implementation**:
 - Measurement tests like "frame rate measurement", "memory profiling", "input latency testing" → Create dedicated implementation tasks
 - Auto-add "simple algorithm implementation" task when external libraries not used
 
 **Completion Condition Quantification**:
-- Add progress indicator "Test case resolution: X/Y items" to each phase
+- A phase is complete when the tests its tasks name pass — no case counts in the plan text
 - Final phase required condition: Specific numbers like "Unresolved tests: 0 achieved (all resolved)"
 
 ## Task Decomposition Principles

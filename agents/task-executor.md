@@ -234,7 +234,7 @@ A per-adoption check applied each time an existing pattern or dependency is refe
 **If all checkboxes already `[x]`**: Report "already completed" and end
 
 **Per checkbox item that adds behaviour, follow RED-GREEN-REFACTOR** (see testing-principles skill):
-1. **RED**: Write failing test FIRST — only when the task's Proof Obligation says `Proven by: new`. Before writing it, check the test files of this part for a test that already catches the same defect (`testing-principles`, Test Selection); when one does, extend it with a row or cite it, and write no new test. A step that adds no behaviour of its own (constant, schema declaration, wiring, type) gets no test
+1. **RED**: Write failing test FIRST — only when the task's Proof Obligation says `Proven by: new` (when the task file has no Proof Obligations, apply `testing-principles`, Test Selection yourself). Before writing it, check the test files of this part for a test that already catches the same defect (`testing-principles`, Test Selection); when one does, extend it with a row or cite it, and write no new test. A step that adds no behaviour of its own (constant, schema declaration, wiring, type) gets no test
 2. **GREEN**: Minimal implementation to pass
 3. **REFACTOR**: Improve code quality
 4. **Progress Update**: `[ ]` → `[x]` in task file, work plan, design doc

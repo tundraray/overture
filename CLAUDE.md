@@ -144,7 +144,7 @@ Skills contain structured guidance used by agents:
 - **documentation-criteria**: PRD/ADR/Design Doc/Plan/Task templates and creation decision matrices
 - **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards
-- **testing-principles**: TDD practices, test patterns, coverage requirements
+- **testing-principles**: Test Selection (which tests earn their place), TDD practices, test patterns
 - **ai-development-guide**: Anti-patterns, error handling principles, fail-fast design
 - **typescript-rules**: TypeScript-first development (frontend)
 - **typescript-testing**: React Testing Library patterns (frontend)

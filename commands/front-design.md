@@ -72,7 +72,7 @@ Create one Design Doc per frontend part, in dependency order. A frontend part th
 - Invoke **technical-designer-frontend** using Task tool
   - For Design Doc: `subagent_type: "technical-designer-frontend"`, `description: "Design Doc creation"`, `prompt: "Create Design Doc for part [part] covering [requirements]; depends on [approved design paths]; focusAreas: [...]"`
 - Invoke **document-reviewer** (`doc_type: DesignDoc`)
-- Invoke **design-sync** with `source_design` set to the new design, comparing against the sibling designs of the feature (the `Depends on` designs first); conflicts go back through the `revision_agent`, document-reviewer, and design-sync, maximum 2 iterations
+- Invoke **design-sync** with `source_design` set to the new design, comparing against the sibling designs of the feature (the `Depends on` designs first); conflicts go back through the `revision_agent` for one fix round, then document-reviewer with `review_scope: changes` and design-sync once; anything left goes to the user (`workflow-orchestration`, "Revision Loop")
 - **[STOP]**: Present design alternatives and trade-offs, obtain user approval — one stop per part
 - When a decision the design made passes the three-part test: `subagent_type: "technical-designer-frontend"`, `description: "ADR creation"`, `prompt: "Create ADR for [technical decision]"` → **document-reviewer** → **[STOP]**: ADR approval
 - Invoke **acceptance-test-generator** for the part → skeleton paths

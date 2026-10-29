@@ -38,7 +38,7 @@ Cover public branches, error states, and boundary contracts on units whose regre
 1. **Unit Tests**
    - Verify behavior of individual services, functions, or classes
    - Mock all external dependencies (DB, APIs, message queues)
-   - Most numerous, implemented with fine granularity
+   - One table-driven test per unit with branching logic, cases as rows (`testing-principles`, Test Selection)
    - Focus on business logic correctness
 
 2. **Integration Tests**
@@ -54,7 +54,7 @@ Cover public branches, error states, and boundary contracts on units whose regre
 
 ## Red-Green-Refactor Process (Test-First Development)
 
-**Recommended Principle**: Always start code changes with tests
+**Recommended Principle**: Start each change that adds behaviour with a failing test — behaviour that passes `testing-principles`, Test Selection; a constant, type, or wiring step gets no test of its own
 
 **Development Steps**:
 1. **Red**: Write test for expected behavior (it fails)

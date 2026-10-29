@@ -191,8 +191,8 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 ### Integration Test File
 
 ```
-// [Feature Name] Integration Test - Design Doc: [filename]
-// Generated: [date] | Budget Used: 2/3 integration, 0/2 E2E
+// [Feature Name] Integration Test - Design Doc: [path]
+// Generated: [date]
 
 [Import statement using detected test framework]
 
@@ -205,20 +205,20 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   // @complexity: high
   [Test: 'AC1: Successful payment creates persisted order with correct status']
 
-  // AC1-error: "Payment failure shows user-friendly error message"
+  // AC2: "Payment failure shows user-friendly error message"
   // ROI: 72 | Business Value: 8 (prevents support tickets) | Frequency: 2 (rare)
   // Behavior: Payment fails → User sees actionable error + Order not created
   // @category: core-functionality
   // @dependency: PaymentService, ErrorHandler
   // @complexity: medium
-  [Test: 'AC1: Failed payment displays error without creating order']
+  [Test: 'AC2: Failed payment displays error without creating order']
 ```
 
 ### E2E Test File
 
 ```
-// [Feature Name] E2E Test - Design Doc: [filename]
-// Generated: [date] | Budget Used: 1/2 E2E
+// [Feature Name] E2E Test - Design Doc: [path]
+// Generated: [date]
 // Test Type: End-to-End Test
 // Implementation Timing: After all feature implementations complete
 

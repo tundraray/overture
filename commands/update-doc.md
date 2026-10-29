@@ -117,17 +117,17 @@ prompt: |
   [SYSTEM CONSTRAINT] This agent operates within update-doc command scope.
 ```
 
-Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` below.
+Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` below as evidence about the code (the one exception to cold reading — `workflow-orchestration`, "Reviewers Are Cold Readers").
 
 **STOP** — Submit updated document for review:
 
 ```yaml
 subagent_type: document-reviewer
-prompt: "Review the updated document at [path]. review_scope: changes. diff_base: [git ref before this update, or HEAD when the update is uncommitted]. This is an UPDATE review — focus on: 1) Changes are consistent with existing approved content, 2) No regressions in quality, 3) New content meets documentation criteria. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "Review the updated document at [path]. review_scope: changes. diff_base: [git ref before this update, or HEAD when the update is uncommitted]. This is an UPDATE review — focus on: 1) Changes are consistent with existing approved content, 2) No regressions in quality, 3) New content meets documentation criteria. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
-Any verdict but `approved` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`.
-A re-review that is not `approved` → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
+`approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, the same `diff_base`, and the prior issues verbatim.
+A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
 
 ### Step 6: Consistency Verification (Design Doc only)
 

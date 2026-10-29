@@ -165,6 +165,6 @@ Detect and flag these patterns:
 | Pattern | Warning | Mitigation |
 |---------|---------|------------|
 | Large change at once | High risk | Split into phases |
-| Implementation without tests | Quality risk | Follow TDD |
+| Behaviour without a test | Quality risk | Follow TDD for behaviour that passes Test Selection |
 | Immediate fix on error | Root cause missed | Pause, analyze |
 | Coding without plan | Scope creep | Plan first |

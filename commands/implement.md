@@ -200,12 +200,13 @@ Store selected strategy for autonomous execution mode.
 
 The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
 
-1. **Invoke both verifiers in parallel** (single message, two Task tool calls):
+1. **Invoke the verifiers in parallel** (single message, three Task tool calls):
 
    | Agent | Prompt inputs |
    |-------|---------------|
    | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
    | `security-reviewer` | Design Doc path, same modified-file list |
+   | `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path — advisory, never a gate: findings go to the completion report, never into `requiredFixes` |
 
    Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
 

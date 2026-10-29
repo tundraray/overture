@@ -47,7 +47,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - **Prioritize verifiability** (follow priority defined in implementation-approach skill)
    - Ensure each task is independently executable (minimize interdependencies)
    - Clarify order when dependencies exist
-   - Design implementation tasks in TDD format: Practice Red-Green-Refactor cycle in each task
+   - Design implementation tasks in TDD format: Red-Green-Refactor for each behaviour that passes `testing-principles`, Test Selection; a task that adds no behaviour of its own has no Red step
    - Scope of responsibility: Up to "Failing test creation + Minimal implementation + Refactoring + Added tests passing" (overall quality is separate process)
 
 3. **Task File Generation**
@@ -262,7 +262,7 @@ Every task file created appears in `documents`. A task written but not reported 
 
 **Required**:
 - Research tasks generate deliverables
-- Implementation tasks follow TDD (Red→Green→Refactor)
+- Implementation tasks that add behaviour follow TDD (Red→Green→Refactor); the test is the one named in `Proven by`
 - Dependency deliverables explicitly referenced
 - Task size 1-5 files (split if 6+)
 

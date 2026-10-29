@@ -121,7 +121,7 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 ☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `ui-ux-agent` output on the gamedev path) is traceable to a section of exactly one part's Design Doc, or explicitly recorded as out of scope
 ☐ The ADR test was applied to each design and its outcome recorded — either an approved ADR, or a note that no decision passed all three parts
 ☐ Test skeletons are generated per part and their paths recorded
-☐ No `document-reviewer` verdict is left at `needs_revision`
+☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
 
 **Handoff payload** — concrete paths, not a summary:
 

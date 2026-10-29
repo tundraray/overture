@@ -152,7 +152,7 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 ☐ Conditional disciplines are either produced or explicitly marked not applicable — game feel, art direction, UI/UX, analytics
 ☐ The parts list is confirmed — the approved feature spec's Delivery Parts section. Every part has a name, what it covers, a `cutAlong` seam, and `dependsOn` entries naming other parts in the list, with no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it
-☐ No `document-reviewer` verdict is left at `needs_revision`
+☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
 
 **Handoff payload**:
 

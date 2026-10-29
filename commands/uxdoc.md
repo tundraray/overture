@@ -101,7 +101,7 @@ prompt: "Review the UXRD at [document path] for completeness and consistency. Ve
 ```
 
 **Document Revision Flow**:
-- **IF document-reviewer returns anything but `approved`**:
+- **IF document-reviewer returns `approved_with_conditions` or `needs_revision`** (`rejected` goes straight to the user):
   1. Extract the `critical` and `important` issues from reviewer output; `recommended` ones are listed at the approval stop for the user to pick
   2. Call ux-designer to revise the UXRD:
      ```yaml
@@ -136,14 +136,14 @@ prompt: "Verify consistency between the UXRD at [uxrd path] and Design Doc at [d
      description: "UXRD conflict resolution"
      prompt: "Update UXRD at [path] to resolve the following conflicts with Design Doc: [conflict details from design-sync]. Preserve existing approved UX patterns where possible. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Resolve conflicts between UXRD and Design Doc."
      ```
-  4. Re-run design-sync to verify resolution
+  4. Re-run document-reviewer on the UXRD with `review_scope: changes` and design-sync once to verify resolution; anything left goes to the user (`workflow-orchestration`, "Revision Loop")
 - **IF no conflicts**: Present clean verification result and proceed
 
 ## Completion Criteria
 
 - [ ] Executed requirement-analyzer and confirmed UX scope
 - [ ] Created UXRD with ux-designer (appropriate operation mode)
-- [ ] Executed document-reviewer and addressed all feedback
+- [ ] Executed document-reviewer; `critical` and `important` issues resolved or accepted by the user, `recommended` ones shown to the user
 - [ ] Executed design-sync for consistency verification (if Design Doc exists)
 - [ ] Obtained user approval for UXRD
 

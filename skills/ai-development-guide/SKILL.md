@@ -137,7 +137,7 @@ validateEmail(email, context) { /* ... */ }
 ### Pattern 3: Implementation Without Sufficient Testing
 **Symptom**: Many bugs after implementation
 **Cause**: Ignoring Red-Green-Refactor process
-**Avoidance**: Always start with failing tests
+**Avoidance**: Start each behaviour change with a failing test (`testing-principles`, Test Selection)
 
 ### Pattern 4: Ignoring Technical Uncertainty
 **Symptom**: Frequent unexpected errors when introducing new technology

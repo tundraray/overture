@@ -254,6 +254,8 @@ Never passed to a reviewer:
 
 A reviewer that is told what changed and why reviews the explanation instead of the document. The document on disk is the only thing under review.
 
+One exception: when a document is reviewed against existing code (`reverse-engineer`, `front-reverse-design`, `update-doc`), `code-verifier`'s discrepancy list is passed to `document-reviewer` as evidence. It reports facts about the code, not a verdict on the document, and the reviewer still forms its own verdict.
+
 ### Call Example (document-reviewer, re-review)
 - subagent_type: "document-reviewer"
 - description: "Design Doc re-review"
@@ -261,7 +263,7 @@ A reviewer that is told what changed and why reviews the explanation instead of 
 
 ### Revision Loop
 
-Shared by every phase and every reviewed document (PRD, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase and every reviewed document (PRD, Feature Spec, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
 **What each verdict sends to the owner** (`revision_agent`, `mode: update`):
 
