@@ -97,5 +97,6 @@ Quality checks are mandatory upon implementation completion:
 
 ### Coverage Requirements
 
-- **MANDATORY**: Unit test coverage MUST be 70% or higher
+- Coverage is read as a map of untested logic, not a target (`testing-principles`, Coverage Standards)
+- A threshold the project's own CI enforces is met; this skill sets none of its own
 - **Metrics**: Statements, Branches, Functions, Lines

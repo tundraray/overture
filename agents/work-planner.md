@@ -206,6 +206,12 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 
 #### Step 3: Classify and Place Tests
 
+**Test budget (per part)** — apply `testing-principles` Test Selection before placing anything:
+- Map every AC to exactly one proving test at the lowest sufficient level; several ACs on one rule share one table-driven test
+- Integration and E2E counts stay within the per-part limits in `integration-e2e-testing` (the skeletons from `acceptance-test-generator` already respect them); a skeleton set over budget is merged before it is placed, and the plan states for each extra test the defect only it catches
+- No task carries a test that another task's test already proves — the task cites it instead
+- Timing-sensitive checks (latency, throughput) go to a separate on-demand script task, not into the regular suite
+
 **Test Classification**:
 - Setup items (Mock preparation, measurement tools, Helpers, etc.) → Prioritize in Phase 1
 - Unit tests (individual functions) → Start from Phase 0 with Red-Green-Refactor

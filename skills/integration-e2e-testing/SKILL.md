@@ -7,9 +7,9 @@ description: This skill provides integration and E2E test design principles, ROI
 
 ## Test Type Definition and Limits
 
-| Test Type | Purpose | Scope | Limit per Feature | Implementation Timing |
+| Test Type | Purpose | Scope | Limit per Part | Implementation Timing |
 |-----------|---------|-------|-------------------|----------------------|
-| Integration | Verify component interactions | Partial system integration | MAX 3 | Created alongside implementation |
+| Integration | Verify component interactions | Partial system integration | MAX 3; up to 5 only when each extra test names the defect no other test catches | Created alongside implementation |
 | E2E | Verify critical user journeys | Full system | MAX 1-2 | Executed in final phase only |
 
 ## Behavior-First Principle

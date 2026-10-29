@@ -92,7 +92,7 @@ Related Issue/PR: #XXX (if any)
 - [ ] Verify all Design Doc acceptance criteria achieved
 - [ ] Quality checks (types, lint, format)
 - [ ] Execute all tests
-- [ ] Coverage 70%+
+- [ ] Test set within the part budget (`testing-principles`, Test Selection); no two tests catch the same defect
 - [ ] Document updates
 
 #### Operational Verification Procedures

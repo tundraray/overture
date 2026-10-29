@@ -12,7 +12,26 @@ description: This skill provides language-agnostic testing principles including 
 3. **Reliability**: Tests should be deterministic and reproducible
 4. **Independence**: Each test should run in isolation
 
+## Test Selection
+
+A test is code that has to be read, run, and kept in step with every change. It earns that cost only when it catches a defect nothing else catches. More tests on the same behaviour do not add safety; they add places to update and noise when one change breaks five tests at once.
+
+**A test is written only when all four hold:**
+
+1. **Unique defect.** It names the concrete bug it catches ("a whitespace-only title is saved"), and no other test — at any level — catches that bug. When two tests catch the same bug, keep the one at the lower level and delete the other.
+2. **Lowest sufficient level.** A rule is proven once, at the lowest level that can prove it. A pure rule (validation, mapping, calculation) is one table-driven unit test with all its cases as rows. An integration test proves only what a unit test cannot see: the real database, authorization and ownership, persistence, wiring across components. One integration case is enough to prove that a unit-tested rule is wired in; it does not repeat the rule's variants.
+3. **Behaviour, not restatement.** No test asserts a constant's value, an enum's member list, a type's shape, or a mock's call count as the outcome. These pass by construction and fail only when the code is edited on purpose.
+4. **Our code, not the library's.** Do not test that zod trims, that the ORM saves a row, that the framework returns its default error body. Test the project's rule built on top of them — once.
+
+**Traceability.** Every test links to an acceptance criterion or a named risk (in its title or a one-line comment). A test that links to neither and names no unique defect is deleted.
+
+**Budget per part.** Integration and E2E tests: the per-part limits in `integration-e2e-testing` (Test Type Definition and Limits), table-driven cases encouraged; E2E only for the journeys whose failure the user would notice first. Unit tests: one per unit with branching logic, cases as rows. A plan that needs more states which defect each extra test catches that the budget's tests do not.
+
+**Timing-sensitive checks** (latency, throughput) do not run in the regular suite: they live in a separate script run on demand, so a slow machine does not turn the suite red.
+
 ## Test-Driven Development (TDD)
+
+TDD applies to behaviour that passes Test Selection. A task step that adds no behaviour of its own — a constant, a schema declaration, module wiring, a type — gets no test of its own; the behaviour that uses it is tested where it is observable.
 
 ### The RED-GREEN-REFACTOR Cycle
 
@@ -42,7 +61,7 @@ description: This skill provides language-agnostic testing principles including 
 ### TDD Benefits
 
 - Better design through testability requirements
-- Comprehensive test coverage by default
+- Every behaviour that matters has a test written before it
 - Living documentation of expected behavior
 - Confidence to refactor
 
@@ -50,10 +69,9 @@ description: This skill provides language-agnostic testing principles including 
 
 ### Coverage Standards
 
-- **Minimum 80% code coverage** for production code
-- Prioritize critical paths and business logic
-- Don't sacrifice quality for coverage percentage
-- Use coverage as a guide, not a goal
+- Coverage is a map, not a target: read the report for untested branches in logic that matters, and add a test only when Test Selection passes for it
+- This skill sets no percentage: a percentage is reached most cheaply with tautological tests. A threshold the project's own CI enforces is met, never with tests that fail Test Selection
+- Critical paths and business rules are covered; boilerplate, wiring, and declarations are not chased
 
 ### Test Characteristics
 
@@ -357,7 +375,7 @@ Each test must:
 - ✓ All tests pass
 - ✓ No tests skipped or commented
 - ✓ No debug code left in tests
-- ✓ Test coverage meets standards
+- ✓ Every test passes Test Selection: a unique defect, the lowest sufficient level, no tautology, no library behaviour
 - ✓ Tests run in reasonable time
 
 ### Zero Tolerance Policy
@@ -445,8 +463,7 @@ Eliminate tests that fail intermittently:
 
 ### Prevent Regressions
 
-- Add test for every bug fix
-- Maintain comprehensive test suite
+- Every bug fix gets a test that reproduces it — a new row in an existing test when one already exercises that path
 - Run full suite regularly
 - Don't delete tests without good reason
 
@@ -454,7 +471,7 @@ Eliminate tests that fail intermittently:
 
 - Add characterization tests before refactoring
 - Test existing behavior first
-- Gradually improve coverage
+- Add tests where a refactor needs a safety net, not to raise a percentage
 - Refactor with confidence
 
 ## Testing Best Practices by Language Paradigm
@@ -467,7 +484,7 @@ Eliminate tests that fail intermittently:
 - Use language's type system to prevent invalid states
 
 **For languages with dynamic typing:**
-- Add comprehensive runtime validation tests
+- Test runtime validation of the project's own contracts once per rule, as a table
 - Explicitly test data contract validation
 - Consider property-based testing for broader coverage
 
@@ -483,7 +500,7 @@ Eliminate tests that fail intermittently:
 - Mock dependencies via abstraction layers
 - Test polymorphic behavior carefully
 
-**Common principle:** Adapt testing strategy to leverage language strengths while ensuring comprehensive coverage
+**Common principle:** Adapt testing strategy to leverage language strengths while each test still passes Test Selection
 
 ## Documentation and Communication
 
@@ -514,7 +531,7 @@ Eliminate tests that fail intermittently:
 
 - Analyze test failures thoroughly
 - Add tests for discovered edge cases
-- Improve test coverage where gaps found
+- Close the gap a failure revealed with one test at the lowest level that catches it
 - Share learnings with team
 
 ## Expert References (Reasoning Calibration)

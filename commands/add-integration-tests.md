@@ -81,7 +81,7 @@ Implement test cases defined in skeleton files.
 
 - [ ] Implement each test case in skeleton
 - [ ] Verify all tests pass
-- [ ] Ensure coverage meets requirements
+- [ ] No implemented test catches a defect an existing test already catches (`testing-principles`, Test Selection)
 
 ## Acceptance Criteria
 

@@ -160,6 +160,8 @@ ROI calculation formula and cost table are defined in **integration-e2e-testing 
 - **Integration Tests**: MAX 3 tests
 - **E2E Tests**: MAX 1-2 tests (only if ROI > 50)
 
+The budget counts tests, not ACs. Candidates that exercise the same route family, the same rule, or the same boundary (for example "a foreign resource answers 404" on every route) merge into one table-driven skeleton before selection. An AC that is a pure rule is proven by a unit test and does not enter the integration budget; record it as `provenAt: unit` for the plan.
+
 **Selection Algorithm**:
 
 ```
@@ -246,9 +248,16 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   "budgetUsage": {
     "integration": "2/3",
     "e2e": "1/2"
-  }
+  },
+  "acProof": [
+    {"ac": "AC-1.1", "provenAt": "integration", "test": "[skeleton title]"},
+    {"ac": "AC-1.2", "provenAt": "unit", "rule": "[the rule a single table-driven unit test proves]"},
+    {"ac": "AC-1.3", "provenAt": "not automated", "reason": "[why]"}
+  ]
 }
 ```
+
+`acProof` gives the planner the one proof per AC, so no task writes a second test for an AC already proven elsewhere.
 
 ## Test Meta Information Assignment
 
@@ -321,7 +330,9 @@ These annotations are used when planning and prioritizing test implementation.
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every acceptance criterion in the Design Doc has at least one generated skeleton, or is explicitly recorded as not testable at this level
+- [ ] Every acceptance criterion in the Design Doc is mapped to exactly one proof: a skeleton here (one skeleton may cover several ACs as table rows), a unit-level test named for the plan (`provenAt: unit`), or `not automated: <reason>` — an AC is never a reason for a skeleton of its own
+- [ ] The skeleton count is within the Phase 4 limits; ACs on one rule or one route family share a table-driven skeleton
+- [ ] No skeleton re-checks the input variants of a rule that a unit test proves — one case proves the wiring
 - [ ] Each skeleton names its primary failure mode — the regression it turns red on — rather than only what it asserts
 - [ ] Skeletons are `it.todo`/pending rather than passing stubs; a generated test that passes on day one proves nothing and hides the gap
 - [ ] Integration and E2E skeletons are distinguished, since they run at different points in the cycle

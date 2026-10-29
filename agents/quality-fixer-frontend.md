@@ -75,10 +75,7 @@ Continue fixing until all quality checks pass with zero errors.
 - **Props-Driven Design**: Components are configurable through Props
 
 ### Testing Quality (React Testing Library)
-- **Test Coverage**: Minimum 60% coverage for frontend code
-  - Atoms: 70% target
-  - Molecules: 65% target
-  - Organisms: 60% target
+- **Test Coverage**: meet the threshold the project's CI enforces, if any; otherwise read coverage as a map, not a target (`typescript-testing`, Coverage). Never add tests that only raise the percentage
 - **User-Observable Behavior**: Test what users see and interact with
 - **MSW for API Mocking**: Use Mock Service Worker for API mocking
 - **Avoid Implementation Details**: Test behavior, not internal state

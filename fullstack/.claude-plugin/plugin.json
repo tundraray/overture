@@ -1,6 +1,6 @@
 {
   "name": "fullstack-overture",
-  "version": "0.18.8",
+  "version": "0.18.9",
   "description": "Full-stack development with backend + frontend orchestrated agents, comprehensive skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -67,6 +67,7 @@
     "./agents/scope-discoverer.md",
     "./agents/solver.md",
     "./agents/task-decomposer.md",
+    "./agents/test-auditor.md",
     "./agents/task-executor.md",
     "./agents/task-executor-frontend.md",
     "./agents/technical-designer.md",

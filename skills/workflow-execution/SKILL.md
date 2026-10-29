@@ -145,12 +145,15 @@ The strategy affects when `git commit` runs, how quality-fixer cycles are groupe
 
 The per-task cycle checks each task in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After **all** task cycles finish — before the completion report — run a whole-implementation pass.
 
-**Invoke both verifiers in parallel** (single message, two Agent calls):
+**Invoke the verifiers in parallel** (single message, three Agent calls):
 
 | Verifier | Inputs |
 |----------|--------|
 | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
 | `security-reviewer` | Design Doc path, same implementation file list |
+| `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path |
+
+**`test-auditor` is advisory, never a gate.** Its findings are not converted into `requiredFixes[]` and never dispatched to `task-executor`: deleting or merging an existing test is the user's decision. A `bloated` verdict goes into the completion report as a table of `merge` / `drop` / `move` rows with their reasons, plus the `gaps` list, and the user decides which to apply.
 
 **Pass/fail criteria**:
 
@@ -293,7 +296,7 @@ graph TD
     COMMIT --> CHECK{Remaining tasks?}
     CHECK -->|Yes| LOOP
     CHECK -->|No| PIV[Post-Implementation Verification]
-    PIV --> VERIFY{code-verifier and security-reviewer}
+    PIV --> VERIFY{code-verifier and security-reviewer; test-auditor advisory}
     VERIFY -->|Fail, cycles left| FIXMODE
     VERIFY -->|Fail, no progress or cycle 2| USERESC
     VERIFY -->|Pass| CLEAN[Final Cleanup]
