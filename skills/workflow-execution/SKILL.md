@@ -59,7 +59,7 @@ Run for the current part, then repeat for the next part in the list:
    **[Stop: batch approval — part `{part}`]**
 
 4. **`{planner}`** (`update` mode) → set the approved plan's frontmatter `status: active`. The orchestrator never edits the file itself; the planner owns it and checks no sibling is already active
-5. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md` and any phase-completion files
+5. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md`
 6. The per-task cycle, post-implementation verification, and Final Cleanup below, for this part. Its completion report names the next part in the list, or closes the feature when it was the last
 
 Decomposition runs **after** batch approval: it produces working state, not a document under review, and re-decomposing is cheap while re-approving is not.
@@ -114,21 +114,21 @@ The strategy affects when `git commit` runs, how quality-fixer cycles are groupe
 
 ## The Per-Task Cycle
 
-```
-1. task-executor        → Implementation
-2. Escalation judgment  → Inspect the executor's status before proceeding
-3. quality-fixer        → Quality check and fixes
-4. [Conditional] commit → Per the selected strategy
+```mermaid
+flowchart TD
+    TE[task-executor] -->|escalation_needed / blocked| U[Escalate to user]
+    TE -->|int/e2e tests added| ITR[integration-test-reviewer]
+    TE -->|completed| QF[quality-fixer]
+    ITR -->|needs_revision: requiredFixes| FIX[task-executor Fix Mode]
+    ITR -->|blocked| U
+    ITR -->|approved| QF
+    QF -->|stub_detected: incompleteImplementations| FIX
+    QF -->|blocked| U
+    QF -->|approved| C[Commit per strategy]
+    FIX --> QF
 ```
 
-### Step 2 branch conditions
-
-| Executor reports | Action |
-|------------------|--------|
-| `status: escalation_needed` or `blocked` | Escalate to user; do not continue the loop |
-| `stub_detected` | Return to task-executor in **Fix Mode** with `incompleteImplementations[]`. Do **not** advance to quality-fixer — a stub passes quality checks while implementing nothing. |
-| `requiresTestReview: true`, or `testsAdded` contains `*.int.test.ts` / `*.e2e.test.ts` | Run **integration-test-reviewer** before quality-fixer. `needs_revision` → back to task-executor in Fix Mode with `requiredFixes`; `approved` → proceed. |
-| No issues | Proceed to quality-fixer |
+Never commit on `stub_detected`: a stub passes quality checks while implementing nothing.
 
 ### Commit execution by strategy
 
@@ -164,16 +164,15 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 
 **Normalizing output into one `requiredFixes[]`** — the verifiers emit different shapes and must be reconciled before invoking task-executor:
 
-- `security-reviewer.requiredFixes[]` is already `{location, issue, fix}` → pass through unchanged
-- `code-verifier.discrepancies[]` → convert each actionable entry (`drift`, `gap`, `conflict`) to `{location: discrepancy.codeLocation, issue: discrepancy.claim, fix: "<correction restoring Design Doc consistency, derived from classification and evidence>"}`
+- `security-reviewer.findings[]` → each `confirmed_risk` or `defense_gap` becomes `{location, issue: description, fix: remediation}`
+- `code-verifier.discrepancies[]` → each `gap` or `conflict` becomes `{location: discrepancy.codeLocation, issue: discrepancy.claim, fix: "<correction restoring Design Doc consistency, derived from classification and evidence>"}`
 - When `discrepancy.codeLocation` is `null` (the claim is unimplemented), set `location` to the planned target file. If no target file can be determined, escalate rather than dispatching Fix Mode with an unresolvable location.
+- `drift` means the code moved past the document (code-verifier: "document update needed") — it goes to the completion report, not to the executor.
 
 **Fix cycle** (any verifier failed — maximum 2 cycles):
 
-1. Create a consolidated fix task file (`docs/features/{feature}/{part}/{plan-name}/post-impl-fixes-YYYYMMDD.md`) from the task template
-2. Populate its Target Files with the **union** of file paths from every verifier's `requiredFixes[].location` and `discrepancies[].codeLocation` (parse `file[:line]`, keep the file part). Without this union the executor's File Scope Constraint rejects the very files it was dispatched to fix, because they belong to different original tasks.
-3. Invoke `task-executor` in **Fix Mode** with the consolidated path and the normalized array
-4. Run `quality-fixer`, then re-run **only the failed verifiers**, retaining recorded evidence from those that passed
+1. `task-executor` in **Fix Mode** with the normalized array — no task file; Fix Mode takes its file scope from the fix locations
+2. `quality-fixer` → commit per strategy → re-run **only the failed verifiers**, retaining recorded evidence from those that passed
 
 **Re-run rule**: a cycle makes progress only when a previously failing verifier reaches a pass status, or its count of named remaining findings decreases. Escalate immediately when a cycle makes no progress or needs external input. After cycle 2, escalate every remaining failure with its findings.
 
@@ -181,7 +180,7 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 
 Before the completion report, delete the task directory this run consumed. Its work is committed; the directory is working state, not a durable artifact.
 
-- Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and any consolidated fix task file (a Bash `rm` of working state, not a document edit)
+- Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `analysis/` (a Bash `rm` of working state, not a document edit)
 - Invoke `{planner}` in `update` mode to set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
 - **Preserve** sibling plans and their directories — a part may hold several, and only the executed one is finished
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
@@ -205,17 +204,14 @@ These numeric thresholds MUST trigger immediate orchestrator action. They are no
 
 | Trigger Condition | Required Action |
 |---|---|
-| **5+ files changed** in a single task | STOP. Create an impact report listing all changed files and affected modules. Present to the user before continuing. |
+| **6+ files changed** in a single task (task-decomposer allows up to 5) | STOP. Create an impact report listing all changed files and affected modules. Present to the user before continuing. |
 | **Same error occurs 3 times** | STOP. Mandatory root cause analysis via 5 Whys. Do NOT attempt another fix without completing it. |
-| **3 files edited** without a TodoWrite update | Force a TodoWrite status update. No further edits until it reflects current progress. |
 | **2nd consecutive error fix attempt** | Re-execute rule-advisor. The previous approach has failed — reassess task essence and strategy. |
-| **5 cumulative Edit tool uses** | Force an impact report: files changed, modules affected, tests impacted. |
-| **3 edits to the same file** | STOP. Consider refactoring instead of incremental patches; present the proposal to the user. |
 
 **Enforcement rules**:
 
 1. Counters reset at the start of each new task
-2. The orchestrator tracks edit counts per-file and cumulative
+2. The orchestrator counts from the subagents' returned JSON (`filesModified`, statuses) — it does not see their individual edits
 3. Auto-stop triggers take priority over autonomous execution
 4. After any auto-stop, present a status report before resuming
 5. A user may override with "continue" — but the stop MUST occur first
@@ -244,15 +240,13 @@ When an error appears during implementation, follow this protocol **instead of**
 
 ### Applies to
 
-- Any error during task-executor execution
-- Build failures after code changes
-- Unexpected test failures
-- quality-fixer reporting persistent issues
+- An error that reaches the orchestrator as a subagent's `escalation_needed` or `blocked`
+- The "Same error occurs 3 times" trigger above
 
 ### Does NOT apply to
 
 - Expected test failures during Red-Green-Refactor (the TDD red phase)
-- Linting warnings quality-fixer can auto-fix
+- Errors quality-fixer fixes inside its own loop — that is its delegated authority
 - Known, documented environment issues
 
 ## Exit Gate [BLOCKING]
@@ -286,21 +280,14 @@ graph TD
     ENV -->|Missing critical component| ESC0[Escalate before entering]
     ENV -->|OK| AUTO[Start autonomous execution]
     AUTO --> LOOP[Task execution loop]
-    LOOP --> TE[task-executor]
-    TE --> JUDGE{Escalation judgment}
-    JUDGE -->|escalation_needed / blocked| USERESC[Escalate to user]
-    JUDGE -->|stub_detected| FIXMODE[task-executor Fix Mode]
-    FIXMODE --> TE
-    JUDGE -->|int/e2e tests added| ITR[integration-test-reviewer]
-    JUDGE -->|No issues| QF
-    ITR -->|needs_revision| FIXMODE
-    ITR -->|approved| QF
-    QF[quality-fixer] --> COMMIT[Commit per strategy]
-    COMMIT --> CHECK{Remaining tasks?}
+    LOOP --> CYCLE[Per-task cycle, see The Per-Task Cycle]
+    CYCLE -->|escalation| USERESC[Escalate to user]
+    CYCLE -->|committed| CHECK{Remaining tasks?}
     CHECK -->|Yes| LOOP
     CHECK -->|No| PIV[Post-Implementation Verification]
     PIV --> VERIFY{code-verifier and security-reviewer; test-auditor advisory}
-    VERIFY -->|Fail, cycles left| FIXMODE
+    VERIFY -->|Fail, cycles left| FIXMODE[task-executor Fix Mode → quality-fixer → commit]
+    FIXMODE --> VERIFY
     VERIFY -->|Fail, no progress or cycle 2| USERESC
     VERIFY -->|Pass| CLEAN[Final Cleanup]
     CLEAN --> MORE{Remaining parts?}

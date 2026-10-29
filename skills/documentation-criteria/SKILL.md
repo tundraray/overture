@@ -274,7 +274,6 @@ docs/
             └── {plan-name}/            # same name as its plan file
                 ├── _overview.md
                 ├── task-01.md
-                ├── phase1-completion.md
                 └── analysis/
                     └── {topic}.md
 ```

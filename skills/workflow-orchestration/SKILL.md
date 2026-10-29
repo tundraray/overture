@@ -170,6 +170,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | `docs/features/*/design-*.md` | technical-designer(-frontend) |
 | `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes; `status` flips go through the planner in `update` mode |
 | `docs/features/{feature}/{part}/{plan-name}/*.md` | task-decomposer; executors may Edit progress |
+| `docs/features/{feature}/{part}/{plan-name}/analysis/*.md` | task-executor(-frontend) — research deliverables |
 | `src/**/*`, `tests/**/*` (code) | task-executor(-frontend) |
 | Any file (quality fixes) | quality-fixer(-frontend) |
 
@@ -387,7 +388,7 @@ When rule-advisor returns its analysis, the orchestrator MUST formalize the meta
 | `metaCognitiveGuidance.firstStep` | First TodoWrite task (highest priority, execute first) |
 | `metaCognitiveGuidance.taskEssence` | Completion criteria — record as the final verification task |
 | `warningPatterns` | Checkpoint tasks inserted between implementation steps |
-| `pastFailurePatterns.countermeasures` | Guard tasks — verify these are not violated during execution |
+| `metaCognitiveGuidance.pastFailures` | Guard tasks — verify these are not repeated during execution |
 
 ### TodoWrite Structure After Rule-Advisor
 
@@ -398,14 +399,14 @@ When rule-advisor returns its analysis, the orchestrator MUST formalize the meta
 4. [pending] Checkpoint: Verify {warningPattern[1]} not triggered
 5. [pending] Implementation step 2
 ...
-N-1. [pending] Guard: Confirm {pastFailurePattern} countermeasures applied
+N-1. [pending] Guard: Confirm {pastFailures[i]} not repeated
 N. [pending] Verify task essence: {taskEssence}
 ```
 
 ### Rules
 
 1. Checkpoints are inserted between every 2-3 implementation steps
-2. Guard tasks reference specific `pastFailurePatterns` with their countermeasures
+2. Guard tasks reference specific `pastFailures` entries
 3. The final task ALWAYS verifies `taskEssence` from rule-advisor
 4. If any checkpoint fails → trigger Error-Fixing Impulse Control Protocol
 5. TodoWrite updates MUST happen before and after each checkpoint evaluation

@@ -76,6 +76,13 @@ const RULES = [
     updaters: [],
   },
   {
+    // research task deliverables (task metadata `Provides:`)
+    name: 'research deliverable',
+    test: /^docs\/features\/[^/]+\/[^/]+\/[^/]+\/analysis\/.+\.md$/,
+    authors: ['task-executor', 'task-executor-frontend'],
+    updaters: [],
+  },
+  {
     name: 'task file',
     test: /^docs\/features\/[^/]+\/[^/]+\/[^/]+\/.+\.md$/,
     authors: ['task-decomposer'],

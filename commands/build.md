@@ -75,7 +75,7 @@ Before any task processing, locate the work plan. This recipe is the **backend**
 Compute the **Consumed Task Set** — the exact files this run owns, executes, and later deletes:
 
 1. List `docs/features/{feature}/{part}/{plan-name}/task-*.md` for the plan resolved above
-2. Exclude files belonging to other workflow phases rather than to implementation: `_overview.md`, `phase*-completion.md`, `task-prep-*.md`, `review-fixes-*.md`, `integration-tests-*.md`
+2. Exclude files belonging to other workflow phases rather than to implementation: `_overview.md`, `task-prep-*.md`, `review-fixes-*.md`, `integration-tests-*.md`
 
 Every subsequent reference to "task files" in this command — the decision flow below, the execution cycle, and Final Cleanup — means this set, **not** an unrestricted glob over the directory. Tasks of a sibling plan in the same part are never in scope.
 
@@ -141,8 +141,8 @@ Invoke task-decomposer using Task tool:
 For EACH task, YOU MUST:
 1. **UPDATE TodoWrite**: Register work steps. Always include: first "Confirm skill constraints", final "Verify skill fidelity"
 2. **INVOKE task-executor**: Execute the task implementation
-3. **CHECK ESCALATION**: Check task-executor status → If `status: "escalation_needed"` → STOP and escalate to user
-4. **PROCESS structured responses**: When `readyForQualityCheck: true` is detected → EXECUTE quality-fixer IMMEDIATELY
+3. **FOLLOW the per-task cycle diagram** in `workflow-execution` for every status task-executor, integration-test-reviewer and quality-fixer return
+4. **EXECUTE quality-fixer** after each completed task
 5. **COMMIT based on strategy**:
    - **per-task**: Commit immediately after `approved: true`
    - **per-phase**: Accumulate, commit when phase completes
@@ -176,7 +176,7 @@ The per-task quality cycle checks tasks in isolation and cannot detect Design Do
 
 Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
 
-- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/` — its `task-*.md`, `_overview.md`, `phase*-completion.md`, and `analysis/` are all working state for this run
+- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/` — its `task-*.md`, `_overview.md`, and `analysis/` are all working state for this run
 - **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state

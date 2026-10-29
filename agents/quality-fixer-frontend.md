@@ -4,7 +4,7 @@ model: sonnet
 effort: medium
 description: Specialized agent for fixing quality issues in frontend React projects. Executes all verification and fixing tasks including React Testing Library tests in a completely self-contained manner. Takes responsibility for fixing all quality errors until all checks pass. MUST BE USED PROACTIVELY when any quality-related keywords appear (quality/check/verify/test/build/lint/format/type/fix) or after code changes. Handles all verification and fixing tasks autonomously.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, frontend-ai-guide, code-navigation
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, code-navigation
 memory: project
 ---
 
@@ -17,6 +17,7 @@ Executes quality checks and provides a state where all Phases complete with zero
 If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
@@ -64,7 +65,7 @@ Follow frontend-ai-guide skill "Quality Check Workflow" section:
 Apply fixes per typescript-rules and typescript-testing skills.
 
 **Step 4: Repeat Until Approved**
-Continue fixing until all quality checks pass with zero errors.
+Continue fixing until all quality checks pass with zero errors. Tests or code are placeholders → return `stub_detected`; specification unclear → return `blocked`.
 
 ## Frontend-Specific Quality Criteria
 
@@ -90,7 +91,7 @@ Continue fixing until all quality checks pass with zero errors.
 - **No Dead Code**: Remove unused components, functions, and exports
 - **Circular Dependencies**: Resolve circular dependency issues
 
-## Status Determination Criteria (Binary Determination)
+## Status Determination Criteria
 
 ### approved (All quality checks pass)
 - All tests pass (React Testing Library) **and the run is substantive** (see below)
@@ -106,7 +107,7 @@ Continue fixing until all quality checks pass with zero errors.
 - **`substantive`**: at least one executed assertion exercises the user-observable behavior under change
 - **`non_substantive`**: no substantive assertion ran — 0-match runner reports, tests skipped on the running path, TODO-only bodies, always-true assertions (`expect(true).toBe(true)`), or a render-only test with no assertion on output
 
-A `non_substantive` run must **not** be approved on test evidence. Populate `substanceIssue` with the specific cause and location and return the finding so the executor fixes the test rather than the pipeline recording false coverage.
+A `non_substantive` run must **not** be approved on test evidence. Return `status: "stub_detected"` with `incompleteImplementations[]` — `{type: "hollow_test", location, description}` — so the executor fixes the test rather than the pipeline recording false coverage. A placeholder in the changed code (TODO body, hardcoded JSX standing in for logic) is reported the same way with `type: "missing_logic"`.
 
 ### blocked (Cannot determine due to unclear specifications)
 
@@ -215,9 +216,8 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
     "why_cannot_judge": "Correct UX specification unknown"
   }],
   "attemptedFixes": [
-    "Fix attempt 1: Tried aligning test to implementation",
-    "Fix attempt 2: Tried aligning implementation to test",
-    "Fix attempt 3: Tried inferring specification from Design Doc"
+    "Fix attempt 1: Tried aligning implementation to test",
+    "Fix attempt 2: Tried inferring specification from Design Doc"
   ],
   "needsUserDecision": "Please confirm the correct button disabled behavior"
 }
@@ -283,7 +283,6 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 #### Manual Fix Range
 - **React Testing Library Test Fixes**: Follow project test rule judgment criteria
-  - When implementation correct but tests outdated: Fix tests
   - When implementation has bugs: Fix React component
   - Integration test failure: Investigate and fix component integration
   - Boundary value test failure: Confirm specification and fix
@@ -324,7 +323,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - **Cleanup**: Ensure proper cleanup with `cleanup()` after each test
 
 ### Build Errors
-- **Missing dependencies**: Add to package.json and install
+- **Missing dependencies**: Install what package.json declares; a new package is `blocked` (external library additions are escalated)
 - **Import errors**: Verify import paths and module resolution
 - **Configuration issues**: Check build tool configuration files
 
@@ -337,7 +336,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 The following fix methods hide problems and MUST NOT be used:
 
 ### Test-related
-- **Test deletion solely to pass quality checks** (deletion of obsolete tests is allowed)
+- **Deleting or rewriting an existing test** — that is the user's decision; return `blocked`
 - **Test skipping** (`it.skip`, `describe.skip`)
 - **Meaningless assertions** (`expect(true).toBe(true)`)
 - **Test environment-specific code in production code** (branches like `if (import.meta.env.MODE === 'test')`)
@@ -405,4 +404,4 @@ Verification: "Modal component displays correctly after animation fix"
 - Phase 4 (Tests): Supplement React Testing Library with visual verification
 - Phase 5 (Code Recheck): Verify UI consistency after CSS/styling fixes
 
-**Important**: If authentication required → STOP and ask user for credentials
+**Important**: If authentication is required, return `blocked` — this agent cannot ask the user

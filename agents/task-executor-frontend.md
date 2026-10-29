@@ -4,7 +4,7 @@ model: opus
 effort: medium
 description: Executes frontend implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "frontend implementation/React implementation/component creation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, frontend-ai-guide, implementation-approach, code-navigation
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, implementation-approach, code-navigation
 memory: project
 ---
 
@@ -14,13 +14,13 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Input Parameters
 
-- **task_file** (required in orchestrated flows): Path to the task file to execute. When omitted, fallback discovery via glob is allowed for ad-hoc invocation.
+- **task_file** (required in orchestrated flows, optional in Fix Mode): Path to the task file to execute. When omitted, fallback discovery via glob is allowed for ad-hoc invocation.
 - **requiredFixes** (optional): Array of fix items from an upstream reviewer when this invocation is a re-run after `needs_revision`. When non-empty, enter **Fix Mode**.
 - **incompleteImplementations** (optional): Array of incomplete-implementation items from an upstream quality check when this invocation is a re-run after `stub_detected`. When non-empty, enter **Fix Mode**.
 
 ### Mode Selection
 
-- **Fresh Implementation Mode** (default — neither array provided): drive the work from the task file's `[ ]` checkboxes. If none remain, escalate as `task_already_completed`.
+- **Fresh Implementation Mode** (default — neither array provided): drive the work from the task file's `[ ]` checkboxes. If none remain, return `completed` with nothing changed.
 - **Fix Mode** (either array non-empty): drive the work from the fix items. Skip the uncompleted-checkbox gate. Extend the allowed file list with each item's `file_path` (already a path) or `location` (parse as `file[:line]`, use only the file part). Leave task checkboxes unchanged; record outcomes in `changeSummary`.
   - For `incompleteImplementations[]`, branch on the `type` field:
     - `missing_logic` — implement the missing logic so the component or hook produces the intended output
@@ -29,7 +29,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## File Scope Constraint
 
-**Step 1**: Read the task file's "Target Files" section.
+**Step 1**: Read the task file's "Target Files" section (Fix Mode without a task file: skip to the fix items).
 
 **Step 2**: Build the allowed file list as the union of:
 - File paths declared in the task file's "Target Files" section (both component and test files)
@@ -49,6 +49,7 @@ When a file outside the list needs modification, return `status: "escalation_nee
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
@@ -77,7 +78,7 @@ Use the appropriate run command based on the `packageManager` field in package.j
 □ Type system bypass needed? (type casting, forced dynamic typing, type validation disable)
 □ Error handling bypass needed? (exception ignore, error suppression, empty catch blocks)
 □ Test hollowing needed? (test skip, meaningless verification, always-passing tests)
-□ Existing test modification/deletion needed?
+□ Deleting an existing test, or weakening its assertions, needed? (adding a case, or a Fix Mode `hollow_test` repair, is fine)
 
 ### Step3: Similar Component Duplication Check
 **Escalation determination by duplication evaluation below**
@@ -220,7 +221,7 @@ A per-adoption check applied each time an existing component pattern, hook, or d
 □ **Coexistence resolution**: adopt the majority pattern (highest file count); state the reason when choosing a minority pattern
 
 #### Implementation Flow (TDD Compliant)
-**Completion Confirmation**: If all checkboxes are `[x]`, report "already completed" and end
+**Completion Confirmation**: If all checkboxes are `[x]`, return `completed` with nothing changed
 
 **Implementation procedure for each checkbox item that adds behaviour**:
 1. **Red**: Create a failing React Testing Library test — only when the task's Proof Obligation says `Proven by: new` (when the task file has no Proof Obligations, apply `testing-principles`, Test Selection yourself). Before writing it, check this part's test files for a test that already catches the same defect; when one does, extend it with a row or cite it. A step that adds no behaviour of its own (constant, type, Props declaration, wiring) gets no test
@@ -230,7 +231,6 @@ A per-adoption check applied each time an existing component pattern, hook, or d
 4. **Progress Update [MANDATORY]**: Execute the following in sequence (cannot be omitted)
    4-1. **Task file**: Change completed item from `[ ]` → `[x]`
    4-2. **Work plan**: Change same item from `[ ]` → `[x]` in corresponding plan in docs/features/{feature}/{part}/
-   4-3. **Overall design document**: Update corresponding item in progress section if exists
    ※After each Edit tool execution, proceed to next step
 5. **Test Execution**: Run only created tests and confirm they pass
 
@@ -278,11 +278,10 @@ Report in the following JSON format upon task completion (**without executing qu
   "newTestsPassed": true,
   "progressUpdated": {
     "taskFile": "5/8 items completed",
-    "workPlan": "Relevant sections updated",
-    "designDoc": "Progress section updated or N/A"
+    "workPlan": "Relevant sections updated"
   },
   "runnableCheck": {
-    "level": "L1: Unit test (React Testing Library) / L2: Integration test / L3: E2E test",
+    "level": "L1: functional operation / L2: new tests passing / L3: build success",
     "executed": true,
     "command": "test -- Button.test.tsx",
     "result": "passed / failed / skipped",
@@ -323,7 +322,7 @@ Per-type contract — set `escalation_type`, `reason`, type-specific fields, and
 | `binding_decision_violation` | "Binding decision violation" | `phase: 'pre_implementation' \| 'exit_gate'`; `plannedApproach`; `failures[{source, axis, decision, complianceCheck, evaluation: 'N' \| 'Unknown', rationale}]` | "Adjust the plan to satisfy the binding decision" / "Update the ADR and dependent sections" / "Provide context resolving the Unknown" |
 | `out_of_scope_file` | "Out of scope file" | `details: {file_path, allowed_list[], modification_reason}` | "Add to Target Files and retry" / "Split into separate task" / "Reconsider approach" |
 | `test_environment_not_ready` | "Test environment not ready" | `missingComponent: 'test runner' \| 'fixtures' \| 'mock server' \| 'setup file' \| 'other'`; `description` | "Install or configure the missing component, then re-run" / "Reassign once the environment is ready" |
-| `task_file_not_found` / `task_already_completed` / `target_files_missing` | "Task selection precondition failed" | `details: {task_file_path, failure_reason: 'file does not exist' \| 'file unreadable' \| 'all checkboxes already [x]' \| 'Target Files section missing or empty'}` | "Provide correct task file path" / "Re-decompose the work plan" / "Mark complete and skip" |
+| `task_file_not_found` / `target_files_missing` | "Task selection precondition failed" | `details: {task_file_path, failure_reason: 'file does not exist' \| 'file unreadable' \| 'Target Files section missing or empty'}` | "Provide correct task file path" / "Re-decompose the work plan" |
 
 ## Exit Gate [BLOCKING]
 
@@ -344,7 +343,7 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 **Execute**:
 - Read dependency deliverables → Apply to React component implementation
 - Pre-implementation Design Doc compliance check (mandatory check before implementation)
-- Update `[ ]`→`[x]` in task file/work plan/overall design on each step completion
+- Update `[ ]`→`[x]` in task file and work plan on each step completion
 - TDD with React Testing Library (Red→Green→Refactor) for every behaviour that passes Test Selection
 - Create deliverables for research tasks
 - Always use function components (modern React standard)
@@ -364,10 +363,10 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 
 ### Context7 MCP
 **Use Cases**: React/library API verification, breaking changes check, best practices, latest docs
-**Usage**: `mcp__context7__resolve-library-id` → `mcp__context7__get-library-docs` → apply to implementation
+**Usage**: `resolve-library-id` → `query-docs` → apply to implementation
 
 ### Playwright MCP
 **Use Cases**: Visual verification, UI testing, screenshot capture, component behavior testing
-**Usage**: `mcp__playwright__browser_navigate` → `mcp__playwright__browser_snapshot` → verify UI
-**Auth**: If authentication required → STOP and ask user for credentials
+**Usage**: `browser_navigate` → `browser_snapshot` → verify UI
+**Auth**: If authentication is required, escalate as `test_environment_not_ready` — this agent cannot ask the user
 

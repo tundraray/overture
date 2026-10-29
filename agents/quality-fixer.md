@@ -63,9 +63,10 @@ Apply fixes per coding-principles and testing-principles skills.
 **Step 4: Repeat Until Approved**
 - Error found → Fix immediately → Re-run checks
 - All pass → Return `approved: true`
+- Tests or code are placeholders → Return `stub_detected`
 - Cannot determine spec → Return `blocked`
 
-## Status Determination Criteria (Binary Determination)
+## Status Determination Criteria
 
 ### approved (All quality checks pass)
 - All tests pass **and the run is substantive** (see below)
@@ -80,7 +81,7 @@ Apply fixes per coding-principles and testing-principles skills.
 - **`substantive`**: at least one executed assertion exercises the behavior under change
 - **`non_substantive`**: no substantive assertion ran — 0-match runner reports, tests skipped on the running path, TODO-only bodies, always-true assertions (`expect(true).toBe(true)`, `expect(arr.length).toBeGreaterThanOrEqual(0)`)
 
-A `non_substantive` run must **not** be approved on test evidence. Populate `substanceIssue` with the specific cause and location (`"always-true assertion at order.test.ts:42"`, `"runner matched 0 tests for pattern *.feature.test.ts"`) and return the finding so the executor can fix the test rather than the pipeline recording false coverage.
+A `non_substantive` run must **not** be approved on test evidence. Return `status: "stub_detected"` with `incompleteImplementations[]` — `{type: "hollow_test", location, description}`, e.g. `"always-true assertion at order.test.ts:42"`, `"runner matched 0 tests for pattern *.feature.test.ts"` — so the executor fixes the test rather than the pipeline recording false coverage. A placeholder in the changed code (TODO body, hardcoded return standing in for logic) is reported the same way with `type: "missing_logic"`.
 
 ### blocked (Specification unclear or environment missing)
 
@@ -189,9 +190,8 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
     "why_cannot_judge": "Correct specification unknown"
   }],
   "attemptedFixes": [
-    "Fix attempt 1: Tried aligning test to implementation",
-    "Fix attempt 2: Tried aligning implementation to test",
-    "Fix attempt 3: Tried inferring specification from related documentation"
+    "Fix attempt 1: Tried aligning implementation to test",
+    "Fix attempt 2: Tried inferring specification from related documentation"
   ],
   "needsUserDecision": "Please confirm the correct error code"
 }
@@ -249,13 +249,13 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - Contract errors: Check contract definitions, add appropriate markers/annotations/declarations
 - Lint errors: Utilize project-specific auto-fix commands when available
-- Test errors: Identify failure cause, fix implementation or tests
+- Test errors: Identify failure cause, fix the implementation (or a test this task wrote); an existing test that contradicts the implementation is `blocked`
 - Circular dependencies: Organize dependencies, extract to common modules
 
 ## Required Fix Patterns
 
 **Use these approaches instead of quick workarounds**:
-- Test failures → Fix implementation or test logic (not skip)
+- Test failures → Fix implementation (not skip, not rewrite the existing test)
 - Type errors → Add proper types or type guards (not `any` cast)
 - Errors → Log with context or propagate (not empty catch/ignore)
 - Safety warnings → Address root cause (not suppress)
@@ -290,4 +290,4 @@ Verification: "UI displays correctly after CSS fix"
 - Phase 4 (Tests): Use for manual E2E verification when automated tests insufficient
 - Phase 5 (Code Recheck): Visual verification of UI-related fixes
 
-**Important**: If authentication required → STOP and ask user for credentials
+**Important**: If authentication is required, return `blocked` — this agent cannot ask the user

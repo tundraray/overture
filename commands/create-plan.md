@@ -63,6 +63,7 @@ Follow the planning process below:
 
 5. **Plan Approval**
    - Interact with user to complete plan and obtain approval for plan content
+   - After approval, invoke `work-planner` in `update` mode to set the plan's `status: active` — `/build` runs only the active plan
 
 **Think deeply** Create a work plan from the selected design document, clarifying specific implementation steps and risks.
 

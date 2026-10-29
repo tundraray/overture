@@ -277,7 +277,7 @@ docs/
     ├── design-{part}.md
     └── {part}/
         ├── {plan-name}.md
-        └── {plan-name}/{_overview,task-01,phase1-completion}.md
+        └── {plan-name}/{_overview,task-01}.md
 ```
 
 | Document | Path | Naming Convention | Template |
