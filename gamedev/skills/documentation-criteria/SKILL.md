@@ -62,6 +62,8 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
 
+**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` TH-08 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
+
 **Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD lite 15 000, PRD full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
 
 ## Detailed Document Definitions

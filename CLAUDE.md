@@ -82,12 +82,12 @@ Ask user before implementation phase:
 
 ### Document Revision Flow
 
-When document-reviewer returns `needs_revision`:
-1. Orchestrator extracts issues from reviewer output
+When document-reviewer returns `needs_revision` or `approved_with_conditions`:
+1. Orchestrator extracts the `critical` and `important` issues; `recommended` ones and `deferred` findings go to the user at the stop point, never back to the owner on their own
 2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field)
 3. Revision agent edits the document
-4. Orchestrator re-runs document-reviewer
-5. Repeat once; a second `needs_revision` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
+4. Orchestrator re-runs document-reviewer once with `review_scope: changes` — prior issues plus the diff, not a fresh full read
+5. A re-review that is not `approved` goes to the user (revise again / accept with rationale recorded / abort) — at most two reviews per document per gate; a change touching several documents gets one review round over the set — see `workflow-orchestration`, "Revision Loop"
 
 **CRITICAL**: Orchestrator NEVER edits documents directly — always delegate to agents.
 

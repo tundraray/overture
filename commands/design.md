@@ -85,12 +85,12 @@ prompt: "source_design: docs/features/[feature]/design-[part].md. Compare agains
 
 design-sync detects explicit conflicts between Design Docs only; traceability to the PRD and UXRD is document-reviewer's check.
 
-**Conflict Resolution Flow** (the revision loop of `workflow-technical`, maximum 2 iterations):
+**Conflict Resolution Flow** (`workflow-orchestration`, "Revision Loop" — one fix round, then the user):
 - **IF conflicts found**:
   1. Call the `revision_agent` named on each conflict — normally technical-designer(-frontend) in `update` mode — with the conflict details. A conflict with a `dependsOn` design is a revision of the upstream design, not of this one
-  2. Re-run document-reviewer on the revised document
-  3. Re-run design-sync to verify resolution
-  4. After 2 iterations with conflicts remaining → stop and present them to the user
+  2. Re-run document-reviewer on each revised document with `review_scope: changes`
+  3. Re-run design-sync once to verify resolution
+  4. Conflicts or a re-review not `approved` remaining → stop and present them to the user
 - **IF no conflicts**: Present the clean verification result and proceed to the Design Doc approval stop
 
 ## Completion Criteria

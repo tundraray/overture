@@ -123,12 +123,7 @@ Restart from `requirement-analyzer` with the integrated requirements rather than
 
 ## Revision Loop
 
-When `document-reviewer` returns `needs_revision`:
-
-1. Extract the issues from the reviewer output
-2. Call the owning agent named in `revision_agent` (`prd-creator` for a PRD, `ux-designer` for a UXRD) with `mode: update`
-3. Re-run `document-reviewer` as a cold read — path, `doc_type`, and the prior issues verbatim; never the author's summary
-4. A second `needs_revision` goes to the user: revise again / accept with the rationale recorded / abort — see `workflow-orchestration`, "Revision Loop"
+Verdict handling, the two-review cap, re-review scope, and the one-round rule for a change that touches several documents are defined once in `workflow-orchestration`, "Revision Loop". The owners in this phase are `prd-creator` for a PRD, `ux-designer` for a UXRD. A re-review is a cold read of the coordinates only — path, `doc_type`, `review_scope: changes`, `diff_base`, and the prior issues verbatim; never the author's summary.
 
 The orchestrator never edits a document itself — see `workflow-orchestration`, "File Ownership by Agent".
 

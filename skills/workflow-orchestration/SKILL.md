@@ -191,7 +191,7 @@ Hooks load at session start, so a change to the guard takes effect only after re
 **Rules**:
 - Create/edit files only through the owner agent
 - For revisions after review: call owner agent with `mode: update`
-- When document-reviewer returns `needs_revision`: use `revision_agent` field to identify owner
+- When document-reviewer returns anything but `approved`: use `revision_agent` field to identify owner; what goes to the owner is set by "Revision Loop"
 
 ## Explicit Stop Points
 
@@ -244,7 +244,7 @@ Call subagents using the Task tool:
 
 ### Reviewers Are Cold Readers
 
-A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review the previous verdict's `issues` list verbatim so resolution can be checked.
+A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
 
 Never passed to a reviewer:
 - the author agent's `summary` or rationale for what it wrote
@@ -257,19 +257,31 @@ A reviewer that is told what changed and why reviews the explanation instead of 
 ### Call Example (document-reviewer, re-review)
 - subagent_type: "document-reviewer"
 - description: "Design Doc re-review"
-- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. Prior issues (verbatim from the previous verdict): [issues JSON]"
+- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. review_scope: changes. diff_base: [git ref the first review read, or HEAD when that version was uncommitted]. Prior issues (verbatim from the previous verdict): [issues JSON]"
 
 ### Revision Loop
 
-Shared by every phase. When a reviewer returns `needs_revision`:
+Shared by every phase and every reviewed document (PRD, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
-1. Extract `issues` from the reviewer output
-2. Call the owning agent named in `revision_agent` with `mode: update` and the issues
-3. Re-run the reviewer as a cold read with the prior issues attached
-4. A **second** `needs_revision` on the same artifact stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
-   - **Revise again** — one more owner pass with the user's instruction passed verbatim
-   - **Accept as is** — the owner records the accepted finding and the user's rationale in the document (`mode: update`), and the gate advances
-   - **Abort** — hold at the current document
+**What each verdict sends to the owner** (`revision_agent`, `mode: update`):
+
+| Verdict | Owner pass | Re-review |
+|---|---|---|
+| `approved` | none | none |
+| `approved_with_conditions` | the `critical` and `important` issues only | yes, `review_scope: changes` |
+| `needs_revision` | the `critical` and `important` issues only | yes, `review_scope: changes` |
+| `rejected` | none — straight to the user | — |
+
+`recommended` issues and the reviewer's `deferred` list never go to the owner on the orchestrator's initiative. They are shown at the gate's stop point as one short list, and the user picks which to apply: one owner pass, no re-review unless the user asks for one.
+
+**Round cap.** At most two reviews per document per gate: the first review and one re-review. A re-review that is not `approved` stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
+- **Revise again** — one more owner pass with the user's instruction passed verbatim, then one more re-review
+- **Accept as is** — the owner records the accepted finding and the user's rationale in the document (`mode: update`), and the gate advances
+- **Abort** — hold at the current document
+
+**Re-review scope.** A re-review checks the prior issues and the changed text (`git diff <diff_base> -- <path>` plus the sections the change cites); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
+
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
 The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. Only the user's explicit accept advances a gate past an open finding.
 
@@ -279,7 +291,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
 - **quality-fixer**: status, checksPerformed, fixesApplied, approved
-- **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues
+- **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues, deferred (with `review_scope: changes`)
 - **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage

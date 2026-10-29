@@ -39,6 +39,8 @@ You are an AI assistant specialized in technical document review.
 - **doc_type**: Document type (`PRD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
 - **target**: Document path to review
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
+- **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
+- **diff_base** (with `review_scope: changes`): the git ref to diff the target against; `HEAD` when the change is uncommitted
 
 ## Review Modes
 
@@ -76,6 +78,15 @@ You are an AI assistant specialized in technical document review.
 - Look at the PNGs and judge each diagram against the skill: the redraw test (node count, label length, crossings), node colour matching the level's table, a continuous path, one journey shape across runtime flows, no invented steps. Each finding names the diagram, the node or edge, and the change
 - When the script cannot run, say so in the summary and review the source against the skill by reading it
 
+### Step 2b: Change Scope (`review_scope: changes`)
+
+A re-review that reads the whole document cold again finds a new batch of issues every round, and the revision loop never ends. With `review_scope: changes`:
+- Read `git diff <diff_base> -- <target>` and review the changed text plus the sections it cites or that cite it
+- Check every prior issue (Step 4) — that is the main job of this review
+- Gate 0 still runs on the whole document; Gate 1 runs on the changed text
+- A finding in text the change did not touch goes to `deferred`, not `issues`, unless it is `critical`. This includes a template rule the unchanged text predates
+- A finding the change itself introduced is an ordinary issue at its severity
+
 ### Step 3: Perspective-based Review Implementation
 
 #### Gate 0: Structural Existence Check (must pass before Gate 1)
@@ -97,6 +108,7 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Provenance in the body (a date or "user decision", a version tag, a reviewer ID inside requirements, ACs, cells, or design text) — `important`, suggestion: move it to Update History and state the current truth
 - [ ] Update History is last, one line per version, without reviewer IDs; N/A stubs and copied template comments are absent — `recommended` per finding
 - [ ] Paragraphs over four sentences, table cells holding reasoning, prose made of bare IDs — `recommended`, citing the worst instances
+- [ ] A citation of a neighbouring document carries a version ("UXRD v1.6") — `recommended`, suggestion: cite by path and section or ID. A version mismatch between two documents is never an issue on its own
 - [ ] Body size against the soft target (excluding Appendix: Evidence and Update History) — over target is `recommended`, naming what to move to the appendix, replace with a citation, or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
@@ -260,6 +272,7 @@ Complete all items before proceeding to output.
 | gate0_missing | List of missing mandatory sections (empty array if gate0 passed) |
 | gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | status | Top-level: `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — mirrors `verdict.decision`, so the orchestrator's revision loop keys on one field in every mode |
+| deferred | With `review_scope: changes`: non-critical findings in text the change did not touch. They do not affect the verdict and are shown to the user, not sent to the owner |
 | revision_agent | Agent to fix issues: `prd-creator`, `mid-game-designer`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`. Present top-level whenever `status` is not `approved` |
 
 **revision_agent mapping**:
@@ -312,6 +325,9 @@ Complete all items before proceeding to output.
   "recommendations": [
     "Priority fixes before approval",
     "Documentation alignment with implementation"
+  ],
+  "deferred": [
+    {"location": "Section 5.1", "description": "[finding in text this change did not touch]", "severity": "important"}
   ],
   "prior_context_check": {
     "items_received": 0,
@@ -442,7 +458,7 @@ Include in output when `prior_context_count > 0`:
 - Gate 1: Quality assessment completed
 - Consistency score > 90
 - Completeness score > 85
-- No `critical` issues
+- No `critical` or `important` issues — `recommended` issues alone never lower the verdict
 - No blocking issues
 - Prior context items (if any): all `critical` and `important` resolved
 
@@ -536,3 +552,4 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Claims about technical facts in the document were verified against the codebase or an authoritative source, per Technical Information Verification Guidelines — unverified claims are marked as such
 - [ ] `verdict` follows from the issue set: any unresolved issue at blocking severity cannot yield an approved verdict
 - [ ] `revision_agent` names the agent that owns the document type under review, so the orchestrator does not have to infer it
+- [ ] With `review_scope: changes`: every non-critical finding outside the changed text is in `deferred`, not `issues`

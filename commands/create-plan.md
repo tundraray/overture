@@ -58,8 +58,8 @@ Follow the planning process below:
    subagent_type: document-reviewer
    prompt: "doc_type: WorkPlan. Review the work plan at [path] against its Design Doc. Verify: 1) Design-to-Plan Traceability — every Design Doc item has a covering task or a justified gap, 2) Verification Strategy carried from the Design Doc with an early verification point, 3) Failure Mode Checklist — all nine categories marked, applicable ones assigned a covering task, 4) Reference Contract Values recorded verbatim where the Design Doc specifies a binding observable value, 5) ADR Bindings present for every ADR the design treats as prerequisite or produced, 6) frontmatter valid — part is in the PRD's Delivery Parts, plan: N of M consistent with siblings. [SYSTEM CONSTRAINT] This agent operates within create-plan command scope."
    ```
-   - `needs_revision` → re-invoke `work-planner` with the reviewer's issues, then re-review (max 2 iterations)
-   - Still `needs_revision` after 2 iterations → **STOP** and present the issues to the user
+   - Any verdict but `approved` → re-invoke `work-planner` with the `critical` and `important` issues, then one re-review with `review_scope: changes`
+   - A re-review that is not `approved` → **STOP** and present the issues to the user; `recommended` issues are listed at plan approval for the user to pick (`workflow-orchestration`, "Revision Loop")
 
 5. **Plan Approval**
    - Interact with user to complete plan and obtain approval for plan content
