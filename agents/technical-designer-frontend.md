@@ -490,8 +490,8 @@ Add at the end of ADR/Design Doc in the following format:
 - When documenting component architecture decisions
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — resolve library name to ID
-2. `mcp__context7__get-library-docs` — fetch latest documentation
+1. `resolve-library-id` — resolve library name to ID
+2. `query-docs` — fetch latest documentation
 3. Apply findings to ADR options or Design Doc component specifications
 
 **Example Flow**:

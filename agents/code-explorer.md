@@ -182,6 +182,7 @@ Final message: exactly one JSON object (begins with `{`, ends with `}`, no code 
 
 ```json
 {
+  "status": "completed|blocked",
   "query": "[the question as received]",
   "breadth": "focused|medium|thorough",
   "answer": "[direct answer in one or two sentences — the caller should be able to act on this line alone]",

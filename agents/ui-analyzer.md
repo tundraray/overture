@@ -140,6 +140,7 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 
 ```json
 {
+  "status": "completed|blocked",
   "analysisScope": {"filesAnalyzed": ["path/to/component.tsx"], "stylesAnalyzed": ["path/to/styles.module.css"], "uiConventions": {"componentExtension": ".tsx", "styleStrategy": "css-modules|vanilla-css|css-in-js|utility-classes", "storybook": true, "testRunner": "vitest|jest|other"}},
   "externalResources": {
     "status": "fetched|partial|not_recorded",

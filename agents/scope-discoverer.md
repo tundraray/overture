@@ -171,6 +171,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 
 ```json
 {
+  "status": "completed|blocked",
   "discoveryType": "prd|design-doc",
   "targetPath": "/path/to/project",
   "referenceArchitecture": "layered|mvc|clean|hexagonal|none",
@@ -262,5 +263,5 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 
 Follow the `code-navigation` skill: text search reaches a first anchor, LSP does everything after it. Falling back to text search on a symbol question requires a reason you can name.
 
-Add LSP findings to `discoveredUnits` with source "lsp" for stronger triangulation.
+Count LSP findings as a discovery source in `sourceCount` for stronger triangulation.
 

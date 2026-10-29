@@ -124,6 +124,7 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 
 ```json
 {
+  "status": "completed|blocked",
   "analysisScope": {"filesAnalyzed": ["path/to/file1"], "tracedDependencies": ["path/to/dep1"], "categoriesDetected": ["data_layer", "external_integration", "validation", "auth"]},
   "existingElements": [
     {"category": "interface|type|function|method|class|constant|configuration", "name": "ElementName", "filePath": "path/to/file:lineNumber", "visibility": "public|private|internal", "signature": "brief signature or definition", "usedBy": ["path/to/consumer1"]}

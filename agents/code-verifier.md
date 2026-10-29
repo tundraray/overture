@@ -149,6 +149,7 @@ Spawn only `code-explorer`. Within the files handed to this agent, navigate dire
 
 ```json
 {
+  "status": "completed|blocked",
   "summary": {
     "docType": "prd|design-doc",
     "documentPath": "/path/to/document.md",
@@ -180,7 +181,6 @@ Spawn only `code-explorer`. Within the files handed to this agent, navigate dire
 Includes additional fields:
 - `claimVerifications[]`: Full list of all claims with evidence details
 - `evidenceMatrix`: Source-by-source evidence for each claim
-- `recommendations`: Prioritized list of actions
 
 ## Consistency Score Calculation
 
@@ -212,7 +212,7 @@ consistencyScore = (matchCount / verifiableClaimCount) * 100
 
 Completion Criteria above confirm the steps ran. These confirm the output is *correct*. Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant Step and complete it before producing output.
 
-- [ ] All existence claims (file exists, test exists, function exists) are backed by Glob/Grep tool results, not inference from naming
+- [ ] All existence claims (file exists, test exists, function exists) are backed by tool results (Glob for files, code-explorer or LSP for symbols), not inference from naming
 - [ ] All behavioral claims are backed by a Read of the actual implementation, not by the function's name or its call sites
 - [ ] Identifier comparisons use exact strings from code — no spelling corrections, no normalization of case or separators
 - [ ] Literal identifiers in the document (paths, endpoints, config keys, type names) are verified against their codebase definitions

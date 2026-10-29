@@ -603,8 +603,8 @@ Add at the end of ADR/Design Doc in the following format:
 - When documenting technology decisions with current documentation
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — resolve library name to ID (e.g., "react" → library ID)
-2. `mcp__context7__get-library-docs` — fetch latest documentation for the library
+1. `resolve-library-id` — resolve library name to ID (e.g., "react" → library ID)
+2. `query-docs` — fetch latest documentation for the library
 3. Apply findings to ADR options comparison or Design Doc technical decisions
 
 **Example Flow**:

@@ -384,11 +384,11 @@ Return blocked status only in these cases:
 - When validating responsive design and cross-browser behavior
 
 **How to Use**:
-1. `mcp__playwright__browser_navigate` — open the React application URL
-2. `mcp__playwright__browser_snapshot` — capture current component state
-3. `mcp__playwright__browser_click` — interact with UI elements
-4. `mcp__playwright__browser_take_screenshot` — save visual evidence
-5. `mcp__playwright__browser_close` — cleanup browser session
+1. `browser_navigate` — open the React application URL
+2. `browser_snapshot` — capture current component state
+3. `browser_click` — interact with UI elements
+4. `browser_take_screenshot` — save visual evidence
+5. `browser_close` — cleanup browser session
 
 **Example Flow**:
 ```

@@ -447,8 +447,8 @@ The explorer reports locations; the behaviour behind them is still verified in t
 - When checking latest documentation for design system decisions
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — resolve library name to ID
-2. `mcp__context7__get-library-docs` — fetch latest documentation
+1. `resolve-library-id` — resolve library name to ID
+2. `query-docs` — fetch latest documentation
 3. Incorporate findings into UXRD component specifications
 
 ### Playwright MCP (Browser)
@@ -459,11 +459,11 @@ The explorer reports locations; the behaviour behind them is still verified in t
 - When validating user flows in existing implementations (reverse UXRD)
 
 **How to Use**:
-1. `mcp__playwright__browser_navigate` — open target URL
-2. `mcp__playwright__browser_snapshot` — capture page structure
-3. `mcp__playwright__browser_click/hover/type` — test interactions
-4. `mcp__playwright__browser_screenshot` — capture visual evidence
-5. `mcp__playwright__browser_close` — cleanup session
+1. `browser_navigate` — open target URL
+2. `browser_snapshot` — capture page structure
+3. `browser_click/hover/type` — test interactions
+4. `browser_take_screenshot` — capture visual evidence
+5. `browser_close` — cleanup session
 
 **Auth**: If authentication required → STOP and ask user for credentials
 

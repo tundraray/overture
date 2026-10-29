@@ -298,7 +298,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage
-- **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
+- **expert-analyst**: status, aspect, expertName, codeInvestigation, concerns, options, recommendation (with risks and confidence), interactionPoints
 - **code-explorer**: status, answer, locations (directed) or findings (sweep: id, category, files, confidence, signals, ruledOut, notRuledOut), counts, coverage
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 - **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps

@@ -111,6 +111,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 
 ```json
 {
+  "status": "completed|blocked",
   "problemSummary": {
     "phenomenon": "Objective description of observed phenomenon",
     "context": "Occurrence conditions, environment, timing",
@@ -118,7 +119,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   },
   "investigationSources": [
     {
-      "type": "code|history|dependency|config|document|external",
+      "type": "code|lsp|history|dependency|config|document|external",
       "location": "Location investigated",
       "findings": "Facts discovered (without interpretation)"
     }
@@ -201,8 +202,8 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 - When verifying correct API usage patterns
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — identify the library causing issues
-2. `mcp__context7__get-library-docs` — fetch documentation to verify expected behavior
+1. `resolve-library-id` — identify the library causing issues
+2. `query-docs` — fetch documentation to verify expected behavior
 3. Compare documented behavior with observed behavior in `comparisonAnalysis`
 
 **Example Flow**:

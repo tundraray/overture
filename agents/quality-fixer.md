@@ -272,10 +272,10 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - When validating E2E test scenarios manually
 
 **How to Use**:
-1. `mcp__playwright__browser_navigate` — open the application URL
-2. `mcp__playwright__browser_snapshot` — capture current page state
-3. `mcp__playwright__browser_take_screenshot` — save visual evidence
-4. `mcp__playwright__browser_close` — cleanup browser session
+1. `browser_navigate` — open the application URL
+2. `browser_snapshot` — capture current page state
+3. `browser_take_screenshot` — save visual evidence
+4. `browser_close` — cleanup browser session
 
 **Example Flow**:
 ```

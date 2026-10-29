@@ -62,7 +62,7 @@ A test that passes all rules is `keep`, and its row carries the unique defect. W
 
 ```json
 {
-  "status": "completed",
+  "status": "completed|blocked",
   "verdict": "lean | bloated | blocked",
   "summary": "[counts before → after per level, one sentence on the main source of redundancy]",
   "findings": [
