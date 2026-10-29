@@ -220,7 +220,7 @@ Universal quality assurance phases applicable to all languages:
 ### Phase 3: Testing
 1. **Unit Tests**: Run all unit tests
 2. **Integration Tests**: Run integration tests
-3. **Test Coverage**: Measure and verify coverage meets standards
+3. **Test Coverage**: Measure coverage; check it against the project's CI threshold when one is configured
 4. **E2E Tests**: Run end-to-end tests
 
 ### Phase 4: Final Quality Gate
@@ -228,7 +228,7 @@ All checks must pass before proceeding:
 - Zero static analysis errors
 - Build succeeds
 - All tests pass
-- Coverage meets threshold
+- Coverage meets the project's CI threshold, when one is configured
 
 ### Quality Check Pattern (Language-Agnostic)
 ```

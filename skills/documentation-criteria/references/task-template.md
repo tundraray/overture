@@ -70,7 +70,7 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 - [ ] (When Change Category is set) Sweep adjacent cases sharing the same path/contract/state/boundary for the same class of defect; fold any found within Target Files scope into the failing tests
 - [ ] Review dependency deliverables (if any)
 - [ ] Verify/create contract definitions
-- [ ] Write failing tests
+- [ ] Write failing tests — only for obligations whose **Proven by** is `new`; a step that adds no behaviour of its own (constant, schema declaration, wiring) gets no test
 - [ ] Run tests and confirm failure
 
 ### 2. Green Phase
@@ -93,7 +93,8 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 - **Verification level**: [L1: functional operation as end-user feature / L2: new tests added and passing / L3: code builds without errors]
 
 ## Proof Obligations
-(One entry per AC, claim, or applicable Failure Mode Checklist category this task covers. A passing test proves nothing unless it would fail for a named reason — that reason is the primary failure mode. Repeat the block once per claim; the heading carries the AC ID, claim ID, or `Failure Mode: <category>` so downstream review can resolve coverage per claim.)
+(One entry per AC, claim, or applicable Failure Mode Checklist category this task covers. A passing test proves nothing unless it would fail for a named reason — that reason is the primary failure mode. Repeat the block once per claim; the heading carries the AC ID, claim ID, or `Failure Mode: <category>` so downstream review can resolve coverage per claim.
+An obligation is not a test. It is discharged by the one lowest-level test that proves it (`testing-principles`, Test Selection); when an existing or planned test already proves it, cite that test and write none. Several obligations that exercise one rule share one table-driven test.)
 
 ### Obligation: [AC ID, claim ID, or Failure Mode category — e.g. `Failure Mode: missing-sort-key ordering`]
 - **Claim**: [the AC behavior, claim, or failure-mode condition this task must prove]
@@ -101,6 +102,7 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 - **Boundary to exercise**: [public/integration boundary the test traverses, or "in-process unit"]
 - **State assertion**: [observable state before → action → after for state-changing claims; "N/A" otherwise]
 - **Mock boundary rationale**: [which boundaries may be mocked and why; "none" when all real]
+- **Proven by**: [`new: <file> — <test title>` or `existing: <file> — <test title>`; for `new`, the defect it catches that no other test catches]
 - **Residual**: [what this proof leaves unestablished, if any]
 
 ## Completion Criteria

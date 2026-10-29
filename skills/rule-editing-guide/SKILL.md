@@ -46,8 +46,8 @@ Group related rules together. One skill should cover one coherent domain.
 ### Principle 5: Measurable Criteria
 Rules must be objectively verifiable. Avoid subjective language.
 
-**DO**: "Test coverage MUST be ≥80%. Functions MUST have ≤20 lines."
-**DON'T**: "Code should have good test coverage. Functions should be reasonably short."
+**DO**: "Integration tests MUST be ≤3 per part. Functions MUST have ≤20 lines."
+**DON'T**: "Code should have a reasonable number of tests. Functions should be reasonably short."
 
 ### Principle 6: NG Patterns as Recommendations
 Show both wrong and right patterns. NG patterns are more memorable than abstract rules.

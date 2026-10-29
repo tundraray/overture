@@ -17,7 +17,7 @@ Metadata:
 ### 1. Red Phase
 - [ ] Review dependency deliverables (if any)
 - [ ] Verify/create contract definitions
-- [ ] Write failing tests
+- [ ] Write failing tests — only for behaviour no existing test already proves (`testing-principles`, Test Selection); a step that adds no behaviour of its own (constant, declaration, wiring) gets no test
 - [ ] Run tests and confirm failure
 
 ### 2. Green Phase
