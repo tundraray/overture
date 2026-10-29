@@ -480,6 +480,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Architecture is drawn as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`; each level's table matches its node colours; every runtime flow is a sequence diagram with path animation
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
 - [ ] Snapshot and Key Decisions are current; evidence (codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
 - [ ] On a revision, every item above was re-checked against the whole document
 - [ ] The returned `documents[].path` matches the file actually written

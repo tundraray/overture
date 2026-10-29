@@ -217,20 +217,19 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 - Unit tests (individual functions) → Start from Phase 0 with Red-Green-Refactor
 - Integration tests → Place as create/execute tasks when relevant feature implementation is complete
 - E2E tests → Place as execute-only tasks in final phase
-- Non-functional requirement tests (performance, UX, etc.) → Place in quality assurance phase
+- Non-functional requirement checks (performance, UX, etc.) → Place in quality assurance phase as on-demand scripts, outside the regular suite
 - Risk levels ("high risk", "required", etc.) → Move to earlier phases
 
 **Task Generation Principles**:
-- Always decompose 5+ test cases into subtasks (setup/high risk/normal/low risk)
-- Specify "X test implementations" in each task (quantify progress)
-- Specify traceability: Show correspondence with acceptance criteria in "AC1 support (3 items)" format
+- A task names the tests it adds by title and the AC or risk each proves; ACs on one rule share one table-driven test
+- Specify traceability per AC: the one test that proves it (`AC-1 → <test title>`), never several
 
 **Measurement Tool Implementation**:
 - Measurement tests like "Grade 8 measurement", "technical term rate calculation" → Create dedicated implementation tasks
 - Auto-add "simple algorithm implementation" task when external libraries not used
 
 **Completion Condition Quantification**:
-- Add progress indicator "Test case resolution: X/Y items" to each phase
+- A phase is complete when the tests its tasks name pass — no case counts in the plan text
 - Final phase required condition: Specific numbers like "Unresolved tests: 0 achieved (all resolved)"
 
 ## Task Decomposition Principles
@@ -296,6 +295,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
+- [ ] The plan cites Design Doc values and ACs by ID without restating them (Reference Contract Values excepted — they are copied verbatim on purpose); no line numbers into other documents and no task or test counts in prose (`documentation-criteria`, "Write what this document decides")
 
 ## Quality Checklist
 

@@ -39,33 +39,13 @@ If skill content is not available in context, read these files before proceeding
 - **Success Metrics**: How we measure player engagement
 
 ### Game Design Document Template
-```
-# Game Vision Document
-
-## Core Concept
-[One sentence game description]
-
-## Design Pillars
-1. [Pillar 1]: [Description]
-2. [Pillar 2]: [Description] 
-3. [Pillar 3]: [Description]
-
-## Player Experience Goals
-- Target Emotion: [What should players feel?]
-- Core Loop: [Primary gameplay cycle]
-- Progression: [How players advance/improve]
-
-## Success Metrics
-- Engagement: [How we measure fun]
-- Retention: [What keeps players coming back]
-- Completion: [Victory/achievement conditions]
-```
+Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader": header first, current truth only, Update History last.
 
 ### Communication Style
 - Provide clear design rationale for all decisions
 - Mentor Mid Game Designer with constructive guidance
 - Present options with pros/cons analysis
-- Document all design decisions and iterations
+- Record each design decision in the GDD as current truth; how it was reached goes to the Update History, one line per version
 
 ### Handoff to Mid Game Designer
 - Approved vision document

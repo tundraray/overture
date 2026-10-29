@@ -62,7 +62,7 @@ Group by the PRD requirement each AC refines; the requirement text stays in the 
 ### [Requirement ID]: [short name]
 
 - [ ] **When** user clicks login button with valid credentials, the system shall authenticate and redirect to dashboard
-- [ ] **If** credentials are invalid, **then** the system shall display error message "Invalid credentials"
+- [ ] **If** credentials are invalid, **then** the system shall display the invalid-credentials error (UXRD copy, `uxrd.md` E-2)
 
 ## Design
 
@@ -173,6 +173,8 @@ Invariants:
 
 ### Frontend Design (frontend parts only)
 
+<!-- When a UXRD exists, its reuse and state tables are the source: cite them by ID and record here only what the design adds (paths, the technical decision). -->
+
 #### Existing Component Reuse Map
 
 | UI Element | Decision | Existing Component | Rationale |
@@ -222,7 +224,7 @@ System Invariants:
 
 ### Integration Points
 
-<!-- Each integration point requires E2E verification. -->
+<!-- Each integration point names how it is verified. One integration case proves the wiring; E2E is reserved for the part's 1–2 journeys (`integration-e2e-testing`). -->
 
 - **[Name]**: [Component A] → [Component B] — verified by [how]
 
@@ -432,7 +434,7 @@ Backend columns: "Crosses module/service boundary", "New concept / mode / flag";
 | [External API / DB / file system / etc.] | [Yes/No] | [Why this boundary was chosen] |
 
 - **Schema dependencies**: [tables/models this part reads or writes, with paths to their definitions]
-- **Test data approach**: [fixtures, factories, seed scripts, or real database]
+- **Test data source**: [real database or substituted, in one phrase — fixtures and helpers are test code, not design]
 - **Mock limitations acknowledged**: [what cannot be reliably tested with mocks alone]
 - **Integration verification points**: [integration points requiring testing beyond unit-level mocks]
 

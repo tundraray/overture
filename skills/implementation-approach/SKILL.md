@@ -110,7 +110,7 @@ Select optimal solution from basic implementation approaches (creative combinati
 Priority for completion verification of each task:
 
 - **L1: Functional Operation Verification** - Operates as end-user feature (e.g., search executable)
-- **L2: Test Operation Verification** - New tests added and passing
+- **L2: Test Operation Verification** - The tests that prove the task's obligations pass, new or existing
 - **L3: Build Success Verification** - Code builds/runs without errors
 
 **Priority**: L1 > L2 > L3 in order of verifiability importance

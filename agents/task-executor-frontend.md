@@ -59,7 +59,7 @@ Use the appropriate run command based on the `packageManager` field in package.j
 ### Applying to Implementation
 - Determine component hierarchy and data flow with architecture rules
 - Implement type definitions (React Props, State) and error handling with TypeScript rules
-- Practice TDD and create test structure with testing rules (React Testing Library)
+- Practice TDD for behaviour that passes Test Selection and create test structure with testing rules (React Testing Library)
 - Select tools and libraries with technical specifications (React, build tool, MSW)
 - Verify requirement compliance with project context
 - **MUST strictly adhere to function components (modern React standard)**
@@ -222,8 +222,8 @@ A per-adoption check applied each time an existing component pattern, hook, or d
 #### Implementation Flow (TDD Compliant)
 **Completion Confirmation**: If all checkboxes are `[x]`, report "already completed" and end
 
-**Implementation procedure for each checkbox item**:
-1. **Red**: Create React Testing Library test for that checkbox item (failing state)
+**Implementation procedure for each checkbox item that adds behaviour**:
+1. **Red**: Create a failing React Testing Library test — only when the task's Proof Obligation says `Proven by: new` (when the task file has no Proof Obligations, apply `testing-principles`, Test Selection yourself). Before writing it, check this part's test files for a test that already catches the same defect; when one does, extend it with a row or cite it. A step that adds no behaviour of its own (constant, type, Props declaration, wiring) gets no test
    ※For integration tests (multiple components), create and execute simultaneously with implementation; E2E tests are executed in final phase only
 2. **Green**: Implement minimum code to pass test (React function component)
 3. **Refactor**: Improve code quality (readability, maintainability, React best practices)
@@ -345,7 +345,7 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 - Read dependency deliverables → Apply to React component implementation
 - Pre-implementation Design Doc compliance check (mandatory check before implementation)
 - Update `[ ]`→`[x]` in task file/work plan/overall design on each step completion
-- Strict TDD adherence with React Testing Library (Red→Green→Refactor)
+- TDD with React Testing Library (Red→Green→Refactor) for every behaviour that passes Test Selection
 - Create deliverables for research tasks
 - Always use function components (modern React standard)
 - Co-locate tests with components (same directory)

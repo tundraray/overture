@@ -363,11 +363,11 @@ prompt: |
   If the report fails quality criteria, specify which sections need improvement.
 ```
 
-**Revision logic**: If document-reviewer returns `needs_revision`:
+**Revision logic** (`workflow-orchestration`, "Revision Loop"): If document-reviewer returns `approved_with_conditions` or `needs_revision`:
 1. Identify the owning agent from the Phase 3 table
-2. Re-invoke that agent with revision instructions
-3. Maximum 2 revision cycles per report
-4. After 2 cycles, accept as-is with quality caveats noted
+2. Re-invoke that agent with the `critical` and `important` issues; `recommended` ones go into the report's caveats
+3. Re-review once with `review_scope: changes`, the `diff_base`, and the prior issues verbatim
+4. A re-review that is not `approved`, or a `rejected` verdict: accept as-is with the open issues noted as quality caveats
 
 ### Step 4.2: Executive Summary Synthesis
 

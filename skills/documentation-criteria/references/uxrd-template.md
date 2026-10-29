@@ -58,6 +58,18 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 [The path through the screens — what the user sees and does at each step. The use case's goal and outcome are in the PRD and are not repeated here.]
 
 ```mermaid
+---
+config:
+  theme: base
+  look: classic
+  themeVariables:
+    primaryColor: "#eef1f5"
+    primaryBorderColor: "#4b5563"
+    primaryTextColor: "#1a1a1a"
+    lineColor: "#6b7280"
+  flowchart:
+    curve: step
+---
 flowchart TD
     A[Start] --> B[Step 1]
     B --> C{Decision Point}
@@ -119,7 +131,7 @@ flowchart TD
 | Loading | [Description] | [Loading indicator behavior] |
 | Empty | [Description] | [What renders with no data, and the action offered] |
 | Error | [Description] | [Error display and recovery] |
-| Partial | [Description] | [Rendering when only some data arrived, or N/A with reason] |
+| Partial | [Description] | [Rendering when only some data arrived; delete the row when the state cannot occur] |
 
 **Interactions**:
 

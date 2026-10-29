@@ -117,17 +117,17 @@ prompt: |
   [SYSTEM CONSTRAINT] This agent operates within update-doc command scope.
 ```
 
-Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` below.
+Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` below as evidence about the code (the one exception to cold reading — `workflow-orchestration`, "Reviewers Are Cold Readers").
 
 **STOP** — Submit updated document for review:
 
 ```yaml
 subagent_type: document-reviewer
-prompt: "Review the updated document at [path]. This is an UPDATE review — focus on: 1) Changes are consistent with existing approved content, 2) No regressions in quality, 3) New content meets documentation criteria. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "Review the updated document at [path]. review_scope: changes. diff_base: [git ref before this update, or HEAD when the update is uncommitted]. This is an UPDATE review — focus on: 1) Changes are consistent with existing approved content, 2) No regressions in quality, 3) New content meets documentation criteria. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
-If `needs_revision` → call the update agent again with reviewer feedback (max 2 iterations).
-If still `needs_revision` after 2 iterations → **STOP** and present issues to user.
+`approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, the same `diff_base`, and the prior issues verbatim.
+A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
 
 ### Step 6: Consistency Verification (Design Doc only)
 
@@ -148,7 +148,7 @@ prompt: "Verify consistency between the updated Design Doc at [path] and all rel
 | Document not found | Report and exit |
 | Document type unrecognized | Ask user to specify type |
 | Agent reports blocked status | Present blocker to user |
-| Review fails after 2 iterations | Present unresolved issues to user |
+| Re-review not `approved` | Present unresolved issues to user |
 
 ## Completion Criteria
 

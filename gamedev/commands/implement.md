@@ -106,7 +106,7 @@ prompt_includes:
 Sequential agent invocations after market analysis (or directly after requirements for Scenario B):
 
 1. **sr-game-designer** → GDD creation (core loop, pillars, systems overview)
-2. **document-reviewer** → GDD review **[Stop: GDD Approval]**
+2. **document-reviewer** (`doc_type: GDD`) → GDD review **[Stop: GDD Approval]**
 3. **mid-game-designer** → feature specification from the approved GDD, with `depth` (`full` at large scale, `lite` at medium and small) and the `parts[]` proposal from requirement-analyzer, producing the spec's **Delivery Parts** section
 4. **document-reviewer** (`doc_type: FeatureSpec`, same `depth`) → feature spec review **[Stop: Feature Spec Approval — includes the parts split]**. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
 5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
@@ -285,12 +285,13 @@ Store selected strategy for autonomous execution mode.
 
 The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
 
-1. **Invoke both verifiers in parallel** (single message, two Task tool calls):
+1. **Invoke the verifiers in parallel** (single message, three Task tool calls):
 
    | Agent | Prompt inputs |
    |-------|---------------|
    | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
    | `security-reviewer` | Design Doc path, same modified-file list |
+   | `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path — advisory, never a gate: findings go to the completion report, never into `requiredFixes` |
 
    Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
 

@@ -135,7 +135,7 @@ prompt: |
 ### Step 5: Revision (conditional)
 
 **Trigger Conditions** (any one of the following):
-- Review status is "Needs Revision" or "Rejected"
+- Review status is `approved_with_conditions` or `needs_revision` (`rejected` is flagged for human review, not revised)
 - Critical discrepancies exist in `$STEP_3_OUTPUT`
 - consistencyScore < 70
 
@@ -149,7 +149,7 @@ prompt: |
   Existing Design Doc: $STEP_2_OUTPUT
 
   ## Review Feedback
-  $STEP_4_OUTPUT
+  (The `critical` and `important` issues from $STEP_4_OUTPUT; `recommended` ones go to the summary for the user)
 
   ## Discrepancies to Address
   (Extract critical and major discrepancies from $STEP_3_OUTPUT)
@@ -157,7 +157,7 @@ prompt: |
   Apply corrections and improvements.
 ```
 
-**Loop Control**: Maximum 2 revision cycles. After 2 cycles, flag for human review regardless of status.
+**Loop Control**: One revision round, then one re-review with `review_scope: changes`, the `diff_base`, and the prior issues verbatim. A re-review that is not `approved` is flagged for human review (`workflow-orchestration`, "Revision Loop").
 
 ### Component Completion
 
@@ -181,4 +181,4 @@ Output summary including:
 | Discovery finds nothing | Ask user for project structure hints |
 | Generation fails | Log failure, continue with other components, report in summary |
 | consistencyScore < 50 | Flag for mandatory human review, do not auto-approve |
-| Review rejects after 2 revisions | Stop loop, flag for human intervention |
+| Re-review not `approved`, or `rejected` | Stop loop, flag for human intervention |

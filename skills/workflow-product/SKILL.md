@@ -123,12 +123,7 @@ Restart from `requirement-analyzer` with the integrated requirements rather than
 
 ## Revision Loop
 
-When `document-reviewer` returns `needs_revision`:
-
-1. Extract the issues from the reviewer output
-2. Call the owning agent named in `revision_agent` (`prd-creator` for a PRD, `ux-designer` for a UXRD) with `mode: update`
-3. Re-run `document-reviewer` as a cold read — path, `doc_type`, and the prior issues verbatim; never the author's summary
-4. A second `needs_revision` goes to the user: revise again / accept with the rationale recorded / abort — see `workflow-orchestration`, "Revision Loop"
+Verdict handling, the two-review cap, re-review scope, and the one-round rule for a change that touches several documents are defined once in `workflow-orchestration`, "Revision Loop". The owners in this phase are `prd-creator` for a PRD, `ux-designer` for a UXRD. A re-review is a cold read of the coordinates only — path, `doc_type`, `review_scope: changes`, `diff_base`, and the prior issues verbatim; never the author's summary.
 
 The orchestrator never edits a document itself — see `workflow-orchestration`, "File Ownership by Agent".
 
@@ -142,7 +137,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ UXRD exists and is approved, **or** the work has no UI surface and that is recorded
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
-☐ No `document-reviewer` verdict is left at `needs_revision`
+☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
 
 **Handoff payload** — concrete paths, not a summary:
 

@@ -118,7 +118,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 <principle>Competitive Analysis — study global best-in-class examples</principle>
 <principle>Multiple Explorations — present 3–5 radically different directions</principle>
 <principle>Detailed Execution — pixel-perfect design with interaction specs</principle>
-<principle>Technical Implementation — include production-ready code examples</principle>
+<principle>Buildable Precision — specify behaviour, states, and copy precisely enough to build, without code; the Design Doc owns the implementation</principle>
 <principle>Accessibility Audit — ensure WCAG AAA compliance</principle>
 <principle>Performance Budget — define loading and interaction targets</principle>
 <principle>Success Metrics — define KPIs and measurement strategy</principle>
@@ -489,6 +489,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Nothing from the PRD is restated: no summary or background retold, no AC text in AC Traceability, no use case retold in a flow — each is cited by ID, and every flow names the UC ids it implements
 - [ ] Glossary and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
 - [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
 - [ ] On a revision, every item above was re-checked against the whole document
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
