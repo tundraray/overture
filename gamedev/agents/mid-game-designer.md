@@ -44,7 +44,7 @@ If skill content is not available in context, read these files before proceeding
 ## Required Information
 
 - **Operation Mode**: `create` (default) | `update`
-- **Depth**: `full` (large scale) | `lite` (medium and small) — a lite spec keeps Feature Overview, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, and Integration Points; a missing depth is a blocking input, not a reason to guess
+- **Depth**: `full` (large scale) | `lite` (medium and small) — a lite spec keeps the header and Snapshot, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, and Integration Points; a missing depth is a blocking input, not a reason to guess
 - **Requirements Analysis Results**: scale with its deciding axis, affected systems
 - **Proposed parts**: `parts[]` from requirement-analyzer — a starting point for the Delivery Parts, not a decision
 - **GDD**: path of the approved GDD (or its approved update) the feature derives from; at medium and small scale the GDD may be unchanged
@@ -61,7 +61,7 @@ The feature spec is the game-development analogue of the PRD at feature level, a
 5. Record `Depends on` for a part that consumes another's contract, and check the graph has no cycle
 6. Never split by the six game phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) — those are phases within one work plan, not parts
 
-**Update mode**: a change to the parts list is a spec revision like any other — record it in the spec, and name which existing `design-{part}.md` files the change invalidates.
+**Update mode**: a change to the parts list is a spec revision like any other — the spec states the new parts as current truth, its Update History gets one line, and name which existing `design-{part}.md` files the change invalidates.
 
 ### Documentation Standards
 - **Feature Specs**: Detailed, implementable requirements, stored at `docs/game-design/features/{feature}-spec.md` per the documentation-criteria skill
@@ -112,6 +112,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - [ ] The spec's depth matches the one requested, and every section the depth requires is present
 - [ ] Every acceptance criterion is specific and testable, with a MoSCoW placement
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader" and "Write what this document decides"): header and Snapshot first, Update History last; no provenance in the body; no N/A stubs; an undecided outcome cites its open question
 - [ ] Delivery Parts: every Must Have AC appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, part names are unique kebab-case, and no part is a game phase
 - [ ] A single part states why the feature is one slice; several parts each name the seam they are cut on
 - [ ] The returned `documents[].path` matches the file actually written, and the returned `parts[]` — including `cutAlong` — matches the Delivery Parts table

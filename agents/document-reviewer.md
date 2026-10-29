@@ -36,7 +36,7 @@ You are an AI assistant specialized in technical document review.
   - `composite`: Composite perspective review (recommended) - Verifies structure, implementation, and completeness in one execution
   - When unspecified: Comprehensive review
 
-- **doc_type**: Document type (`PRD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
+- **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
 - **target**: Document path to review
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
@@ -127,7 +127,7 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Technical Considerations (dependencies, constraints, assumptions, risks)
 
 **For Feature Spec** (gamedev; both depths):
-- [ ] Feature Overview and Problem Statement, non-empty
+- [ ] Header, Snapshot, and Problem Statement, non-empty
 - [ ] User Stories exist
 - [ ] Acceptance Criteria with Must Have, Should Have, Could Have, each item testable
 - [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there is more than one
@@ -137,7 +137,10 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Market Justification
 - [ ] Functional Requirements (input, output, state management)
 - [ ] Technical Requirements with performance constraints
-- [ ] Balancing Parameters, Edge Cases & Error Handling, Testing Plan
+- [ ] Balancing Parameters, Edge Cases & Error Handling, Player Verification
+
+**For GDD** (gamedev):
+- [ ] Core Concept, Design Pillars, Player Experience Goals, Gameplay Overview, and Success Metrics, non-empty
 
 **For UXRD:**
 - [ ] Snapshot with Key Decisions
@@ -277,10 +280,11 @@ Complete all items before proceeding to output.
 | gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | status | Top-level: `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — mirrors `verdict.decision`, so the orchestrator's revision loop keys on one field in every mode |
 | deferred | With `review_scope: changes`: non-critical findings in text the change did not touch. They do not affect the verdict and are shown to the user, not sent to the owner |
-| revision_agent | Agent to fix issues: `prd-creator`, `mid-game-designer`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`. Present top-level whenever `status` is not `approved` |
+| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`. Present top-level whenever `status` is not `approved` |
 
 **revision_agent mapping**:
 - PRD → `prd-creator`
+- GDD → `sr-game-designer`
 - Feature Spec → `mid-game-designer`
 - UXRD → `ux-designer`
 - ADR → `technical-designer` or `technical-designer-frontend`

@@ -75,7 +75,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
    **[Stop: Go/No-Go]**
 3. **producer-agent** → project config, team selection, resource plan
 4. **sr-game-designer** → GDD (vision, pillars, core loop, progression)
-5. **document-reviewer** → GDD review
+5. **document-reviewer** (`doc_type: GDD`) → GDD review
    **[Stop: GDD approval]**
 6. **mid-game-designer** (`depth: full`) → one feature spec per feature the GDD defines, each with its **Delivery Parts** section refining the part proposal → **document-reviewer** (`doc_type: FeatureSpec`)
    **[Stop: Feature Spec approval — includes the parts split]** — once per feature
@@ -95,7 +95,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 1. **requirement-analyzer** → requirements analysis + preliminary part proposal
    **[Stop: requirements confirmation]**
 2. **sr-game-designer** → GDD update for the new feature
-3. **document-reviewer** → GDD review
+3. **document-reviewer** (`doc_type: GDD`) → GDD review
    **[Stop: GDD approval]**
 4. **mid-game-designer** (`depth: full`) → feature spec with Delivery Parts → **document-reviewer** (`doc_type: FeatureSpec`)
    **[Stop: Feature Spec approval — includes the parts split]**

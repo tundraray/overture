@@ -263,7 +263,7 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 
 ### Revision Loop
 
-Shared by every phase and every reviewed document (PRD, Feature Spec, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
 **What each verdict sends to the owner** (`revision_agent`, `mode: update`):
 

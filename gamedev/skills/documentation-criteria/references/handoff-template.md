@@ -1,5 +1,4 @@
 # Agent Handoff Template
-*Game Studio Sub-Agents v1.0 Coordination Protocol*
 
 ## Handoff Information
 **From Agent**: [Sending Agent Name]  

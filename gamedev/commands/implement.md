@@ -106,7 +106,7 @@ prompt_includes:
 Sequential agent invocations after market analysis (or directly after requirements for Scenario B):
 
 1. **sr-game-designer** → GDD creation (core loop, pillars, systems overview)
-2. **document-reviewer** → GDD review **[Stop: GDD Approval]**
+2. **document-reviewer** (`doc_type: GDD`) → GDD review **[Stop: GDD Approval]**
 3. **mid-game-designer** → feature specification from the approved GDD, with `depth` (`full` at large scale, `lite` at medium and small) and the `parts[]` proposal from requirement-analyzer, producing the spec's **Delivery Parts** section
 4. **document-reviewer** (`doc_type: FeatureSpec`, same `depth`) → feature spec review **[Stop: Feature Spec Approval — includes the parts split]**. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
 5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)

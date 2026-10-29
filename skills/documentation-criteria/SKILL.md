@@ -72,7 +72,7 @@ Deep nesting, a function used in several places, adding a state to an existing m
 
 ## Writing for the Reader
 
-A document is read far more often than it is written, and most readers stop after the first screen. Every PRD, UXRD, Design Doc, ADR, and work plan follows these rules; the templates are laid out to match them.
+A document is read far more often than it is written, and most readers stop after the first screen. Every PRD, UXRD, Design Doc, ADR, and work plan — and in gamedev every GDD and Feature Spec — follows these rules; the templates are laid out to match them.
 
 **Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → **Appendix: Evidence** (Design Doc) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
@@ -94,7 +94,7 @@ A document is read far more often than it is written, and most readers stop afte
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD lite 15 000, PRD full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
+**Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
 
 ## Detailed Document Definitions
 
