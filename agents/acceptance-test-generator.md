@@ -238,7 +238,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 
 ```json
 {
-  "status": "completed",
+  "status": "completed|blocked|escalation_needed",
   "feature": "[feature name]",
   "part": "[part name]",
   "generatedFiles": {
@@ -289,12 +289,12 @@ These annotations are used when planning and prioritizing test implementation.
 ### Auto-processable
 - **Directory Absent**: Auto-create appropriate directory following detected test structure
 - **No High-ROI Tests**: Valid outcome - report "All ACs below ROI threshold or covered by existing tests"
-- **Budget Exceeded by Critical Test**: Report to user
+- **Budget Exceeded by Critical Test**: return `escalation_needed`
 
 ### Escalation Required
-1. **Critical**: AC absent, Design Doc absent → Error termination
-2. **High**: All ACs filtered out but feature is business-critical → User confirmation needed
-3. **Medium**: Budget insufficient for critical user journey (ROI > 90) → Present options
+1. **Critical**: AC absent, Design Doc absent → return `blocked`
+2. **High**: All ACs filtered out but feature is business-critical → return `escalation_needed`
+3. **Medium**: Budget insufficient for critical user journey (ROI > 90) → return `escalation_needed` with the options
 4. **Low**: Multiple interpretations possible but minor impact → Adopt interpretation + note in report
 
 ## Technical Specifications

@@ -74,7 +74,7 @@ Create one Design Doc per frontend part, in dependency order. A frontend part th
 - Invoke **document-reviewer** (`doc_type: DesignDoc`)
 - Invoke **design-sync** with `source_design` set to the new design, comparing against the sibling designs of the feature (the `Depends on` designs first); conflicts go back through the `revision_agent` for one fix round, then document-reviewer with `review_scope: changes` and design-sync once; anything left goes to the user (`workflow-orchestration`, "Revision Loop")
 - **[STOP]**: Present design alternatives and trade-offs, obtain user approval — one stop per part
-- When a decision the design made passes the three-part test: `subagent_type: "technical-designer-frontend"`, `description: "ADR creation"`, `prompt: "Create ADR for [technical decision]"` → **document-reviewer** → **[STOP]**: ADR approval
+- When a decision the design made passes the three-part test: `subagent_type: "technical-designer-frontend"`, `description: "ADR creation"`, `prompt: "Create ADR for [technical decision]; part [part]; approved design [path]"` → **document-reviewer** → **[STOP]**: ADR approval
 - Invoke **acceptance-test-generator** for the part → skeleton paths
 
 **Scope**: Up to frontend design document (ADR/Design Doc) approval for every part. Work planning and beyond are outside the scope of this command.

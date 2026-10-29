@@ -46,7 +46,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Input Parameters
 
-- **source_design**: Path to the newly created/updated Design Doc (this becomes the source of truth)
+- **source_design**: Path to the newly created/updated Design Doc being checked
 
 ## Early Termination Condition
 
@@ -70,7 +70,7 @@ Read the Design Doc specified in arguments and extract:
 
 ### 2. Survey All Design Docs
 
-- Search docs/features/*/design-*.md
+- Search docs/features/{feature}/design-*.md (the source's feature)
 - Read all files except source_design
 - Start with the sibling parts of the same feature, and among them the designs the source's `Part` section names under `Depends on`: the source consumes those as contracts, so a mismatch there is a contract the downstream part has silently redefined — the costliest conflict to find later
 - Detect conflict patterns
@@ -124,7 +124,7 @@ Severity Assessment:
     {
       "id": "CONFLICT-001",
       "severity": "critical|high|medium",
-      "type": "[type definition mismatch | contract divergence | terminology drift | acceptance criteria conflict]",
+      "type": "[type definition mismatch | numeric parameter mismatch | term inconsistency | integration point conflict | acceptance criteria conflict]",
       "source": {"file": "[path]", "location": "[section or line]", "value": "[content in the source]"},
       "target": {"file": "[path]", "location": "[section or line]", "value": "[conflicting content]"},
       "recommendation": "[which value to keep, and why]",
@@ -202,7 +202,7 @@ Integration: UserService.login() → TokenService.generate()
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every document named in the source's Related Documents was compared, and all of them appear in `analyzedDocuments`
+- [ ] Every other `design-*.md` of the feature was compared, and all of them appear in `analyzedDocuments`
 - [ ] Each conflict quotes both sides verbatim rather than paraphrasing either — a paraphrase can make two identical values look different, and two different ones look the same
 - [ ] Severity follows the impact of the divergence, not the size of the text difference
 - [ ] Each conflict names the `revision_agent` that owns the document that should change

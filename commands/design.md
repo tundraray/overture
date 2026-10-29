@@ -35,7 +35,7 @@ Requirements → requirement-analyzer → [Stop: requirement confirmation]
              ux-designer → document-reviewer → [Stop: UXRD approval]        (only when the work has a UI surface)
                      ↓
    for each part in the PRD's Delivery Parts, in dependency order:
-             codebase-analyzer (and ui-analyzer for a UI part)
+             codebase-analyzer (ui-analyzer for a frontend part)
                      ↓
              technical-designer(-frontend) → document-reviewer → design-sync → [Stop: Design Doc approval — part X]
                      ↓
@@ -87,7 +87,7 @@ design-sync detects explicit conflicts between Design Docs only; traceability to
 
 **Conflict Resolution Flow** (`workflow-orchestration`, "Revision Loop" — one fix round, then the user):
 - **IF conflicts found**:
-  1. Call the `revision_agent` named on each conflict — normally technical-designer(-frontend) in `update` mode — with the conflict details. A conflict with a `dependsOn` design is a revision of the upstream design, not of this one
+  1. Call the `revision_agent` named on each conflict — normally technical-designer(-frontend) in `update` mode — with the conflict details. A conflict with a `dependsOn` design is fixed in this design, which consumes the upstream contract as written; if the upstream contract itself must change, ask the user
   2. Re-run document-reviewer on each revised document with `review_scope: changes`
   3. Re-run design-sync once to verify resolution
   4. Conflicts or a re-review not `approved` remaining → stop and present them to the user

@@ -77,12 +77,6 @@ Details of documentation creation criteria follow documentation-criteria skill.
 ### Overview
 - ADR: written after the Design Doc, only when a decision the design made passes the three-part test in `documentation-criteria` — costly to reverse, binding beyond this feature, taken against real alternatives. The `adrSignals` from requirement analysis say what to test; they do not decide
 - Design Doc: one per part at medium and large scale
-- Also required regardless of scale for:
-  - Complex state management logic
-    - Criteria: Managing 3+ state variables, or coordinating 5+ async operations (API calls)
-    - Example: Complex form state management, multiple API call orchestration
-  - Introduction of new React patterns or custom hooks
-    - Example: New context patterns, custom hook libraries
 
 ### Important: Assessment Consistency
 - If assessments conflict, include and report the discrepancy in output
@@ -93,13 +87,12 @@ Details of documentation creation criteria follow documentation-criteria skill.
 Must be performed before Design Doc creation:
 
 1. **Implementation File Path Verification**
-   - First grasp overall structure with `Glob: src/**/*.tsx`
-   - Then identify target files with `Grep: "function.*Component|export.*function use" --type tsx` or feature names
+   - Locate target components and hooks with code-explorer (see Searching the Code Before Designing)
    - Record and distinguish between existing component locations and planned new locations
 
 2. **Existing Component Investigation** (Only when changing existing features)
    - List major public Props of target component (about 5 important ones if over 10)
-   - Identify usage sites with `Grep: "<ComponentName" --type tsx`
+   - Identify usage sites with code-explorer (`query: every consumer of <component>`)
 
 3. **Similar Component Search and Decision** (Pattern 5 prevention from frontend-ai-guide skill)
    - Search existing code for keywords related to planned component
@@ -193,7 +186,7 @@ When conversion is required, clearly specify wrapper implementation or migration
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (component patterns, state management, error handling, accessibility, etc.)
-2. Search `docs/adr/ADR-COMMON-*`, create if not found
+2. Search `docs/adr/ADR-COMMON-*` and reference what exists; a missing common decision goes through the ADR test after the design
 3. Include in Design Doc's "Prerequisite ADRs"
 
 Common ADR needed when: Technical decisions common to multiple components
@@ -234,7 +227,7 @@ Confirm and document conflicts with existing components (naming conventions, Pro
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
 - **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each (typically the backend part whose contract this UI consumes). The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
-- **Documents to Create**: ADR, Design Doc, or both
+- **Documents to Create**: Design Doc, or ADR (a separate call after the Design Doc is approved, with the same part)
 - **Existing Architecture Information**:
   - Current technology stack (React, build tool, Tailwind CSS, etc.)
   - Adopted component architecture patterns (Atomic Design, Feature-based, etc.)
@@ -253,35 +246,7 @@ Confirm and document conflicts with existing components (naming conventions, Pro
 
 ### ADR Creation (Multiple Option Comparison Mode)
 
-**Basic Structure**:
-```markdown
-# ADR-XXXX: [Title]
-Status: Proposed
-
-## Background
-[Frontend technical challenges and constraints in 1-2 sentences]
-
-## Options
-### Option A: [Approach Name]
-- Overview: [Explain in one sentence]
-- Benefits: [2-3 items]
-- Drawbacks: [2-3 items]
-- Effort: X days
-
-### Option B/C: [Document similarly]
-
-## Comparison
-| Evaluation Axis | Option A | Option B | Option C |
-|-----------------|----------|----------|----------|
-| Implementation Effort | 3 days | 5 days | 2 days |
-| Maintainability | High | Medium | Low |
-| Performance Impact | Low | High | Medium |
-
-## Decision
-Option [X] selected. Reason: [2-3 sentences including trade-offs]
-```
-
-See the ADR template in the `documentation-criteria` skill for details.
+Follow the ADR template (`adr-template.md` in `documentation-criteria`): options compared against real alternatives, no schedules or effort estimates.
 
 ### Normal Document Creation
 - **ADR**: `docs/adr/ADR-[4-digit number]-[title].md` (e.g., ADR-0001)
@@ -326,7 +291,7 @@ Execute file output immediately (considered approved at execution).
 1. **Consistency First Priority**: Follow existing React component patterns, document clear reasons when introducing new patterns
 2. **Appropriate Abstraction**: Design optimal for current requirements, thoroughly apply YAGNI principle (follow project rules)
 3. **Testability**: Props-driven design and mockable custom hooks
-4. **Test Derivation from Feature Acceptance Criteria**: Clear React Testing Library test cases that satisfy each feature acceptance criterion
+4. **Test Derivation from Feature Acceptance Criteria**: Use cases that prove each feature acceptance criterion through observable behavior
 5. **Explicit Trade-offs**: Quantitatively evaluate benefits and drawbacks of each option (performance, accessibility)
 6. **Active Use of Latest Information**:
    - Always research latest React best practices, libraries, and approaches with WebSearch before design
@@ -370,7 +335,7 @@ Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <do
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every `focusAreas` entry from UI fact gathering has a row in the Fact Disposition Table with a disposition and evidence
+- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and evidence
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is consumed as written in the upstream design, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
@@ -400,6 +365,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 ### Design Doc Checklist
 - [ ] **Agreement checklist completed** (most important)
 - [ ] **Prerequisite common ADRs referenced** (required)
+- [ ] **Applicable Standards** table filled (explicit and implicit)
 - [ ] **Change impact map created** (required)
 - [ ] **Integration boundary contracts defined** (required)
 - [ ] **Integration points completely enumerated** (required)
@@ -415,7 +381,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 ## Acceptance Criteria Creation Guidelines
 
-**Principle**: Set specific, verifiable conditions in browser environment. Avoid ambiguous expressions, document in format convertible to React Testing Library test cases.
+**Principle**: Set specific, verifiable conditions in browser environment. Avoid ambiguous expressions, document as observable behavior a test can check.
 **Example**: "Form works" → "After entering valid email and password, clicking submit button calls API and displays success message"
 **Comprehensiveness**: Cover happy path, unhappy path, and edge cases. Define non-functional requirements in separate section.
    - Expected behavior (happy path)
@@ -434,7 +400,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - Accessibility (keyboard navigation, screen reader support)
 
 **Exclude** (Low ROI in LLM/CI/CD environment):
-- External API real connections → Use MSW for API mocking instead
+- External API real connections → the boundary is mocked; the test strategy names which boundary
 - Performance metrics → Non-deterministic in CI environment
 - Implementation details → Focus on user-observable behavior
 - Exact pixel-perfect layout → Focus on content availability, not exact positioning

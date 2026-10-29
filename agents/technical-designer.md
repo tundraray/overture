@@ -41,12 +41,6 @@ Details of documentation creation criteria follow documentation-criteria skill.
 ### Overview
 - ADR: written after the Design Doc, only when a decision the design made passes the three-part test in `documentation-criteria` — costly to reverse, binding beyond this feature, taken against real alternatives. The `adrSignals` from requirement analysis say what to test; they do not decide
 - Design Doc: one per part at medium and large scale
-- Also required regardless of scale for:
-  - Complex implementation logic
-    - Criteria: Managing 3+ states, or coordinating 5+ asynchronous processes
-    - Example: Complex state management, coordinating multiple asynchronous operations
-  - Introduction of new algorithms or patterns
-    - Example: New caching strategies, custom routing implementation
 
 ### Important: Assessment Consistency
 - If assessments conflict, include and report the discrepancy in output
@@ -86,7 +80,7 @@ Analyze existing code to identify:
 | Example: Repository pattern | Implicit | src/repos/*.ts | Data access must follow repository pattern |
 ```
 
-**Gate Rule**: Design work cannot proceed until at least 3 explicit and 2 implicit standards are identified. If fewer are found, investigate more thoroughly.
+**Gate Rule**: Aim for at least 3 explicit and 2 implicit standards. If the project has fewer, say so in the Applicable Standards section.
 
 #### Recording and Alignment
 1. **Identify Project Standards**
@@ -96,7 +90,7 @@ Analyze existing code to identify:
 2. **Record in Design Doc**
    - List in "Applicable Standards" section with `[explicit]`/`[implicit]` tags
    - Include the Classification Table above
-   - Implicit standards require user confirmation before design proceeds
+   - Implicit standards are confirmed by the user at the Design Doc approval stop
 
 3. **Alignment Rule**
    - Design decisions must reference applicable standards
@@ -304,7 +298,7 @@ When conversion is required, clearly specify adapter implementation or migration
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (logging, error handling, contract definitions, API design, etc.)
-2. Search `docs/adr/ADR-COMMON-*`, create if not found
+2. Search `docs/adr/ADR-COMMON-*` and reference what exists; a missing common decision goes through the ADR test after the design
 3. Include in Design Doc's "Prerequisite ADRs"
 
 Common ADR needed when: Technical decisions common to multiple components
@@ -338,8 +332,9 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
+- **focusAreas**: codebase-analyzer output — each entry gets a row in the Fact Disposition Table
 - **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each. The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
-- **Documents to Create**: ADR, Design Doc, or both
+- **Documents to Create**: Design Doc, or ADR (a separate call after the Design Doc is approved, with the same part)
 - **Existing Architecture Information**: 
   - Current technology stack
   - Adopted architecture patterns
@@ -358,34 +353,7 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 ### ADR Creation (Multiple Option Comparison Mode)
 
-**Basic Structure**:
-```markdown
-# ADR-XXXX: [Title]
-Status: Proposed
-
-## Background
-[Technical challenges and constraints in 1-2 sentences]
-
-## Options
-### Option A: [Approach Name]
-- Overview: [Explain in one sentence]
-- Benefits: [2-3 items]
-- Drawbacks: [2-3 items]
-- Effort: X days
-
-### Option B/C: [Document similarly]
-
-## Comparison
-| Evaluation Axis | Option A | Option B | Option C |
-|-----------------|----------|----------|----------|
-| Implementation Effort | 3 days | 5 days | 2 days |
-| Maintainability | High | Medium | Low |
-
-## Decision
-Option [X] selected. Reason: [2-3 sentences including trade-offs]
-```
-
-See ADR template in documentation-criteria skill for details.
+Follow the ADR template (`adr-template.md` in `documentation-criteria`): options compared against real alternatives, no schedules or effort estimates.
 
 ### Normal Document Creation
 - **ADR**: `docs/adr/ADR-[4-digit number]-[title].md` (e.g., ADR-0001)

@@ -40,7 +40,7 @@ The flow runs **once per part**, in the dependency order of the parts list, and 
 
 **For each part, in dependency order:**
 
-2. **codebase-analyzer** (and **ui-analyzer** when the part has a UI surface) → read-only fact gathering scoped to the part's requirements → `focusAreas[]`
+2. **codebase-analyzer** (**ui-analyzer** for a frontend part) → read-only fact gathering, with the part's requirements passed as `requirements` → `focusAreas[]`
 3. **technical-designer(-frontend)** → `design-{part}.md`, consuming `focusAreas` into the **Fact Disposition Table**, the expert synthesis when one was produced, and the approved designs of every part in `dependsOn` as contracts to consume rather than redefine
 4. **document-reviewer** → Design Doc review, including part scope
 5. **design-sync** → explicit-conflict check against the already-approved Design Docs of sibling parts — the `dependsOn` designs first, since a contract mismatch there is the costliest to find later. Traceability to the PRD and UXRD is `document-reviewer`'s job in step 4, not design-sync's

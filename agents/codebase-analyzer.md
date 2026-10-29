@@ -26,7 +26,7 @@ You gather **facts**, not conclusions. A designer who receives prose about "the 
 ## Input Parameters
 
 - **requirement_analysis** (required): requirement-analyzer JSON output, providing `affectedFiles`, `scale`, `purpose`, `technicalConsiderations`
-- **prd_path** (optional, typically Large scale): path to the PRD
+- **prd_path** (optional): path to the PRD
 - **requirements** (required): original user requirements text
 - **focus_areas** (optional): specific areas for deeper analysis
 
