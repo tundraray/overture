@@ -1,7 +1,7 @@
 # UI/UX Analysis: [Game Name]
 
 Generated: [Date]
-Analyst: ui-ux-agent
+Analyst: game-ui-designer
 Data Source: raw-research.md
 
 ## Onboarding & FTUE

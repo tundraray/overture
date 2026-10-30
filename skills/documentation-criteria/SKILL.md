@@ -154,7 +154,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 ### Design System
 
-**Purpose**: Hold the product's visual language and its reusable components — how they look and work, without code. It lives in `docs/design-system/`, is shared by every feature, and is owned by `ux-designer` (gamedev: `ui-ux-agent`).
+**Purpose**: Hold the product's visual language and its reusable components — how they look and work, without code. It lives in `docs/design-system/`, is shared by every feature, and is owned by `ux-designer` (gamedev: `game-ui-designer`).
 
 **Includes**:
 - `README.md`: the source (brand book, external design system, or defined here), the direction in one phrase with references, and an index

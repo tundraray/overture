@@ -49,6 +49,8 @@ Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirm
 
 Requirements: $ARGUMENTS
 
+**gamedev-overture**: every `ux-designer` call below goes to `game-ui-designer`, and the PRD reference is the feature spec (`docs/game-design/features/*-spec.md`).
+
 ## Execution Flow
 
 ### 1. Requirement Analysis Phase

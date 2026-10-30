@@ -218,7 +218,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - **Part scope**: the design covers exactly the requirements its part owns in the PRD's Delivery Parts — a sibling part's requirement appears only as a consumed contract, never redesigned
 - **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design cites its contract section by link rather than restating or altering it
 
-**Design-system checks** (the files reviewed with a UXRD; `important` per finding, `revision_agent` `ux-designer`, gamedev `ui-ux-agent`):
+**Design-system checks** (the files reviewed with a UXRD; `important` per finding, `revision_agent` `ux-designer`, gamedev `game-ui-designer`):
 - **No code**: a component spec or foundations file carries no CSS, token source, props, or markup
 - **Cite, don't restate**: a foundation that the brand book or external design system named in README Source decides is cited, not copied
 - **Spec completeness**: each new or extended spec has Purpose, Anatomy, States, and Accessibility, and lists the UXRD under Used In
@@ -280,13 +280,13 @@ Complete all items before proceeding to output.
 | gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | status | Top-level: `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — mirrors `verdict.decision`, so the orchestrator's revision loop keys on one field in every mode |
 | deferred | With `review_scope: changes`: non-critical findings in text the change did not touch. They do not affect the verdict and are shown to the user, not sent to the owner |
-| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `ui-ux-agent`, `technical-designer`, `technical-designer-frontend`, `work-planner`, `gamedev-work-planner`. Present top-level whenever `status` is not `approved` |
+| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `game-ui-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`, `gamedev-work-planner`. Present top-level whenever `status` is not `approved` |
 
 **revision_agent mapping**:
 - PRD → `prd-creator`
 - GDD → `sr-game-designer`
 - Feature Spec → `mid-game-designer`
-- UXRD and design-system files → `ux-designer` (gamedev: `ui-ux-agent`)
+- UXRD and design-system files → `ux-designer` (gamedev: `game-ui-designer`)
 - ADR → `technical-designer` or `technical-designer-frontend`
 - Design Doc → `technical-designer` or `technical-designer-frontend`
 - Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)

@@ -63,7 +63,7 @@ After requirement-analyzer returns, detect development mode from user input:
 
 **Design Only termination**: After all design documents are approved (GDD, feature specs, art direction, analytics design), present final design package summary and stop. Do NOT proceed to technical-designer or implementation.
 
-**Prototype simplification**: Skip market-analyst, sr-game-artist, technical-artist, ui-ux-agent, data-scientist. Go directly from mechanics-developer to technical-designer with minimal specs.
+**Prototype simplification**: Skip market-analyst, sr-game-artist, technical-artist, game-ui-designer, data-scientist. Go directly from mechanics-developer to technical-designer with minimal specs.
 
 ### Scenario Detection
 
@@ -118,7 +118,7 @@ Sequential agent invocations after market analysis (or directly after requiremen
 
 6. **sr-game-artist** → Art direction, style guide, asset requirements
 7. **technical-artist** → Pipeline specs, atlas optimization, rendering constraints
-8. **ui-ux-agent** → Game UI/UX design (HUD, menus, interaction patterns)
+8. **game-ui-designer** → Game UI/UX design (HUD, menus, interaction patterns)
 
 ### Analytics Phase
 
@@ -134,8 +134,8 @@ How to pass information between gamedev agents:
 | sr-game-designer | mechanics-developer | Core loop, game pillars, system requirements |
 | mechanics-developer | game-feel-developer | State machines, event system, interaction points |
 | sr-game-artist | technical-artist | Style guide, concept art, reference sheets |
-| mid-game-designer | ui-ux-agent | User stories, interaction requirements |
-| sr-game-artist | ui-ux-agent | Art direction path — the design system's source |
+| mid-game-designer | game-ui-designer | User stories, interaction requirements |
+| sr-game-artist | game-ui-designer | Art direction path — the design system's source |
 | All design agents | technical-designer | All specs for Design Doc integration |
 | technical-designer | gamedev-work-planner | Design Doc + all referenced specs |
 | acceptance-test-generator | gamedev-work-planner | Test skeleton paths (same as shared) |

@@ -47,14 +47,14 @@ const RULES = [
   {
     name: 'UXRD',
     test: /^docs\/features\/[^/]+\/uxrd\.md$/,
-    authors: ['ux-designer', 'ui-ux-agent'],
+    authors: ['ux-designer', 'game-ui-designer'],
     updaters: [],
   },
   {
     // project-wide: README, foundations, components/*; created and extended by UXRDs
     name: 'design system',
     test: /^docs\/design-system\/.+\.md$/,
-    authors: ['ux-designer', 'ui-ux-agent'],
+    authors: ['ux-designer', 'game-ui-designer'],
     updaters: [],
   },
   {

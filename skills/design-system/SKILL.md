@@ -5,7 +5,7 @@ description: This skill governs the project design system in docs/design-system/
 
 # Design System
 
-The project's visual language lives in `docs/design-system/` and is owned by `ux-designer` (gamedev: `ui-ux-agent`). It holds no code. Part A is for whoever designs it; Part B is for whoever builds UI from it. Layout and templates: `documentation-criteria`, "Design System", and `design-system-template.md`.
+The project's visual language lives in `docs/design-system/` and is owned by `ux-designer` (gamedev: `game-ui-designer`). It holds no code. Part A is for whoever designs it; Part B is for whoever builds UI from it. Layout and templates: `documentation-criteria`, "Design System", and `design-system-template.md`.
 
 ## Reading the System
 

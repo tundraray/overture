@@ -73,7 +73,7 @@
     "./agents/sr-game-artist.md",
     "./agents/sr-game-designer.md",
     "./agents/technical-artist.md",
-    "./agents/ui-ux-agent.md",
+    "./agents/game-ui-designer.md",
     "./agents/security-reviewer.md",
     "./agents/game-researcher.md"
   ],

@@ -207,7 +207,7 @@ Interface Change Matrix:
 
 ### UXRD (UX Requirements Document)
 
-**Purpose**: Specify what the player sees and does for the feature spec's acceptance criteria that have a UI surface — HUD, menus, dialogs. Written by `ui-ux-agent` when the feature has a UI surface, after Feature Spec approval.
+**Purpose**: Specify what the player sees and does for the feature spec's acceptance criteria that have a UI surface — HUD, menus, dialogs. Written by `game-ui-designer` when the feature has a UI surface, after Feature Spec approval.
 
 **Includes**:
 - AC Traceability: each user-visible feature-spec acceptance criterion by ID → the screen, state, and element that deliver it
@@ -224,7 +224,7 @@ Interface Change Matrix:
 
 ### Design System
 
-**Purpose**: Hold the game's UI visual language and its reusable components — how they look and work, without code. It lives in `docs/design-system/`, is shared by every feature, and is owned by `ui-ux-agent`.
+**Purpose**: Hold the game's UI visual language and its reusable components — how they look and work, without code. It lives in `docs/design-system/`, is shared by every feature, and is owned by `game-ui-designer`.
 
 **Includes**:
 - `README.md`: the source (the art direction in `docs/art/`, the GDD, an external design system, or defined here), the direction in one phrase with references, and an index

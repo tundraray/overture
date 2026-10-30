@@ -1,7 +1,7 @@
 # Design System Templates
 
 <!--
-The design system lives in docs/design-system/ and is owned by ux-designer (gamedev: ui-ux-agent).
+The design system lives in docs/design-system/ and is owned by ux-designer (gamedev: game-ui-designer).
 The first UXRD that needs a design system and finds none creates README.md, foundations.md, and the component specs that feature needs. Later UXRDs follow it and add or extend components.
 Changing an existing foundation or component is a Key Decision of the UXRD that changes it.
 No code anywhere: no CSS, tokens as source, props, or markup. Implementation decides those.

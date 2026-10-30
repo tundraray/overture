@@ -175,7 +175,7 @@ Tasks in this phase cover:
 **Completion Criteria**: All art assets integrated with correct format and atlas requirements. Fallback behavior verified. Render performance within frame budget on target platform.
 
 ### Phase 4: UI Implementation
-**Owner**: ui-ux-agent
+**Owner**: game-ui-designer
 **Depends on**: Phase 1 (game state) and Phase 3 (visual assets)
 
 **Focus**: HUD, menus, game flow screens, transitions, accessibility, input feedback

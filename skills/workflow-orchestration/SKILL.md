@@ -163,8 +163,8 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | File Pattern | Owner Agent |
 |--------------|-------------|
 | `docs/features/*/prd.md` | prd-creator |
-| `docs/features/*/uxrd.md` | ux-designer (gamedev: ui-ux-agent) |
-| `docs/design-system/**` (project design system) | ux-designer (gamedev: ui-ux-agent) — created and extended through a UXRD |
+| `docs/features/*/uxrd.md` | ux-designer (gamedev: game-ui-designer) |
+| `docs/design-system/**` (project design system) | ux-designer (gamedev: game-ui-designer) — created and extended through a UXRD |
 | `docs/game-design/*.md` (GDD) | sr-game-designer (gamedev) |
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |

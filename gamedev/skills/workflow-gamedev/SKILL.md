@@ -27,7 +27,7 @@ A game feature and a service endpoint need the same design rigour, the same code
 | **game-feel-developer** | Game feel specification (juice, feedback, responsiveness) |
 | **sr-game-artist** | Art direction, style guide, colour palette — *what* |
 | **technical-artist** | Pipeline specs, atlas optimization, shaders — *how* |
-| **ui-ux-agent** | Game UI/UX — HUD, menus, interaction, accessibility |
+| **game-ui-designer** | Game UI/UX — HUD, menus, interaction, accessibility |
 | **data-scientist** | Analytics and telemetry design, KPIs, A/B tests |
 
 ### Principles
@@ -83,7 +83,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 8. **game-feel-developer** → game feel specification
 9. **sr-game-artist** → art direction, style guide, palette
    **technical-artist** → pipeline specs, atlas optimization, shader requirements
-10. **ui-ux-agent** → game UI/UX: HUD, menus, interaction, accessibility
+10. **game-ui-designer** → game UI/UX: HUD, menus, interaction, accessibility
 11. **data-scientist** → analytics and telemetry design, KPIs, A/B tests
 
 **Design Only mode stops here** — deliver the design package.
@@ -100,7 +100,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 4. **mid-game-designer** (`depth: full`) → feature spec with Delivery Parts → **document-reviewer** (`doc_type: FeatureSpec`)
    **[Stop: Feature Spec approval — includes the parts split]**
 5. **mechanics-developer** → mechanics architecture for the feature
-6. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **ui-ux-agent**, **data-scientist**
+6. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **game-ui-designer**, **data-scientist**
 
 → hand off to `workflow-technical`
 
@@ -112,7 +112,7 @@ Detected by `requirement-analyzer` from the user's request. Confirm the detected
 3. **mid-game-designer** (`depth: lite`, or `update` when a spec already covers the feature) → feature spec with Delivery Parts → **document-reviewer** (`doc_type: FeatureSpec`, `depth: lite`)
    **[Stop: Feature Spec approval — includes the parts split]**
 4. **mechanics-developer** → mechanics architecture (when new systems are involved)
-5. *[Conditional]* **ui-ux-agent** (UI work), **game-feel-developer** (polish work)
+5. *[Conditional]* **game-ui-designer** (UI work), **game-feel-developer** (polish work)
 
 → hand off to `workflow-technical`
 
@@ -160,7 +160,7 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 |------|------|
 | GDD | `docs/game-design/{project}-gdd.md`, or "unchanged by this feature" — context for the designers |
 | Feature spec | `docs/game-design/features/{feature}-spec.md`, with its depth — stands in for the PRD at the technical entry gate |
-| Discipline outputs | Paths for mechanics, game feel, art direction, UI/UX, analytics — or "N/A" each; the `ui-ux-agent` output stands in for the UXRD, with the `docs/design-system/` files it created or changed |
+| Discipline outputs | Paths for mechanics, game feel, art direction, UI/UX, analytics — or "N/A" each; the `game-ui-designer` output stands in for the UXRD, with the `docs/design-system/` files it created or changed |
 | Parts list | `{name, covers, cutAlong, dependsOn}` per part, in dependency order — copied from the feature spec's Delivery Parts; `workflow-technical` designs one `design-{part}.md` per entry |
 | Scale | `{small\|medium\|large}` plus `decidingAxis` |
 | Open questions | List of `question → decision it blocks → owner` |

@@ -59,9 +59,9 @@ These agents work the same way whether you're building a REST API or a React app
 | **producer-agent** | Project config, team selection, resource planning, timeline |
 | **sr-game-artist** | Art direction, style guide, color palette, reference sheets |
 | **technical-artist** | Pipeline specs, atlas optimization, shader requirements |
-| **ui-ux-agent** | Game UI/UX: HUD, menus, interaction patterns, accessibility |
+| **game-ui-designer** | Game UI/UX: HUD, menus, interaction patterns, accessibility |
 | **data-scientist** | Analytics/telemetry design, KPIs, A/B tests, dashboards |
 | **qa-agent** | Test plans, performance validation, playtesting protocols |
 | **gamedev-work-planner** | 6-phase game work planning (Core Mechanics → Game Feel → Art → UI → Analytics → QA) |
 
-> **Note**: gamedev-overture replaces `prd-creator` with `market-analyst` + `sr-game-designer`, `ux-designer` with `ui-ux-agent`, and `work-planner` with `gamedev-work-planner`.
+> **Note**: gamedev-overture replaces `prd-creator` with `market-analyst` + `sr-game-designer`, `ux-designer` with `game-ui-designer`, and `work-planner` with `gamedev-work-planner`.

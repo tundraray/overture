@@ -21,7 +21,7 @@ Run before invoking any agent in this phase. These are the product phase's outpu
 
 ☐ Requirements are user-confirmed (`workflow-product` or `workflow-gamedev` exit gate passed)
 ☐ Product document received: the PRD path (`workflow-product`), or the feature spec path with the GDD as context (`workflow-gamedev`). This is the source of acceptance criteria for traceability below
-☐ UX document received: the UXRD path and `docs/design-system/` when it exists, or the `ui-ux-agent` output path on the gamedev path, or an explicit "no UI surface"
+☐ UX document received: the UXRD path and `docs/design-system/` when it exists, or the `game-ui-designer` output path on the gamedev path, or an explicit "no UI surface"
 ☐ Parts list received — every part with a name, the requirements it covers, its `cutAlong` seam, and `dependsOn`, in an order where each part follows the parts it depends on. A design cannot start without a part name, and this phase does not invent one
 ☐ Scale and `decidingAxis` received
 ☐ Open questions received, and none of them blocks a decision this phase must make — when one does, return to the product phase rather than deciding it here
@@ -118,7 +118,7 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 ☐ Every part in the parts list has a `design-{part}.md` approved after `design-sync` consistency verification — no part is left undesigned, and no design exists for a part not in the list
 ☐ Each part's design was approved after the designs of every part in its `dependsOn`, and consumes their contracts as written
 ☐ Every `focusAreas` entry from fact gathering has a row in its part's Fact Disposition Table with a disposition and where it is handled — an unaddressed fact is an unexamined behavior
-☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `ui-ux-agent` output on the gamedev path) is traceable to a section of exactly one part's Design Doc, or explicitly recorded as out of scope
+☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `game-ui-designer` output on the gamedev path) is traceable to a section of exactly one part's Design Doc, or explicitly recorded as out of scope
 ☐ The ADR test was applied to each design and its outcome recorded — either an approved ADR, or a note that no decision passed all three parts
 ☐ Test skeletons are generated per part and their paths recorded
 ☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document

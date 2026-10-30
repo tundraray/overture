@@ -18,7 +18,7 @@ Run before planning begins.
 ☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
 ☐ ADR paths received per part, or an explicit "none passed the test"
 ☐ Test skeleton paths received per part
-☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `ui-ux-agent` output on the gamedev path); a small-scale plan's traceability table maps to the PRD's or feature spec's acceptance criteria
+☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `game-ui-designer` output on the gamedev path); a small-scale plan's traceability table maps to the PRD's or feature spec's acceptance criteria
 ☐ The plan state of every part is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
 
 **ENFORCEMENT**: when an item is unchecked, stop and name the missing input and the phase that produces it. An ambiguous plan state in particular must never be resolved by picking one — see "Planning" below.
