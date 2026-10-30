@@ -84,17 +84,17 @@ prompt: "Requirements: [user requirements]. Execute requirement analysis with fo
 ```yaml
 subagent_type: ux-designer
 description: "UXRD creation"
-prompt: "Create UXRD based on the following confirmed requirements: [requirement-analyzer output]. PRD Reference: docs/features/[feature]/prd.md. Operation mode: [create|update|reverse-engineer]. Include user flows, interaction states, accessibility requirements (WCAG), component specifications, and responsive design breakpoints. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Create UX Requirement Documentation only — do not include technical implementation details."
+prompt: "Create UXRD based on the following confirmed requirements: [requirement-analyzer output]. PRD Reference: docs/features/[feature]/prd.md. Design System: docs/design-system/ (create if absent). Operation mode: [create|update|reverse-engineer]. Include user flows, interaction states, accessibility requirements (WCAG), a Component Inventory linking to the design-system component specs, and responsive design breakpoints. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Create UX Requirement Documentation only — do not include technical implementation details."
 ```
 
 ### 3. Document Review Phase
 
-After ux-designer produces the UXRD, submit it for review:
+After ux-designer produces the UXRD, submit it for review together with the `docs/design-system/` files it reported in `documents[]`:
 
 ```yaml
 subagent_type: document-reviewer
 description: "UXRD review"
-prompt: "target: [document path]. doc_type: UXRD. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope."
+prompt: "target: [document path]; design-system files: [paths from documents[], if any]. doc_type: UXRD. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope."
 ```
 
 **Document Revision Flow**:
@@ -109,7 +109,7 @@ prompt: "target: [document path]. doc_type: UXRD. [SYSTEM CONSTRAINT] This agent
   3. Re-run document-reviewer once with `review_scope: changes`, the `diff_base`, and the prior issues verbatim
   4. A re-review that is not `approved` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
-**[STOP]**: Present approved UXRD to user for final approval.
+**[STOP]**: Present approved UXRD, with the design-system files it created or changed, to user for final approval.
 
 An existing Design Doc of the feature is updated through `/update-doc` after UXRD approval.
 
@@ -125,6 +125,7 @@ An existing Design Doc of the feature is updated through `/update-doc` after UXR
 UXRD phase completed.
 
 - UX Requirement Document: docs/features/[feature]/uxrd.md
+- Design System: docs/design-system/ — files created or changed
 - Approval status: User approved
 
 **Important**: This command ends with UXRD approval. Does not propose transition to next phase.

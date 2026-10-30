@@ -250,6 +250,7 @@ A per-adoption check applied each time an existing pattern or dependency is refe
 - Perform verification according to level defined in implementation-approach skill
 - Record reason if unable to verify
 - Include results in structured response
+- Remove data created only to verify (records, threads, users made via API/curl in the dev environment) afterwards, or list what was left in `runnableCheck.reason`
 
 ### 4. Completion Processing
 

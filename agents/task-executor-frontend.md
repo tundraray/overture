@@ -171,6 +171,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
    - Component Specifications → Understand component hierarchy, data flow
    - API Specifications → Understand endpoints, parameters, response formats (for MSW mocking)
    - Overall Design Document → Understand system-wide context
+   - Design system → Each component follows its spec in `docs/design-system/components/` and the foundations in `docs/design-system/foundations.md`
 
 ### 3. Implementation Execution
 #### Pre-implementation Verification (Pattern 5 Compliant)
@@ -239,6 +240,7 @@ A per-adoption check applied each time an existing component pattern, hook, or d
 - Perform verification according to level defined in implementation-approach skill
 - Record reason if unable to verify
 - Include results in structured response
+- Remove data created only to verify (records, threads, users made via API/curl in the dev environment) afterwards, or list what was left in `runnableCheck.reason`
 
 ### 4. Completion Processing
 

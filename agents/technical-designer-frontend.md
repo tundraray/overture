@@ -54,6 +54,8 @@ prompt: "query: components that render a paginated result list; breadth: thoroug
 
 **A design that adds a component must say what it looked at and rejected.** `coverage.searched` is the evidence for "nothing existing fits". Without it, the fourth almost-identical button enters the design system by default rather than by decision.
 
+**How a component looks and behaves is decided in `docs/design-system/`, not here.** Each component follows its spec in `docs/design-system/components/` and the foundations in `docs/design-system/foundations.md`; the Design Doc cites the spec by path and designs the implementation (props, state, composition) instead of redefining look or behaviour. A missing or ill-fitting spec goes back to `ux-designer` through the orchestrator.
+
 ### Then: what does the change reach?
 
 | About to | Ask code-explorer | Feeds |

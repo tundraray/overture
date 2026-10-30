@@ -21,7 +21,7 @@ Run before invoking any agent in this phase. These are the product phase's outpu
 
 ☐ Requirements are user-confirmed (`workflow-product` or `workflow-gamedev` exit gate passed)
 ☐ Product document received: the PRD path (`workflow-product`), or the feature spec path with the GDD as context (`workflow-gamedev`). This is the source of acceptance criteria for traceability below
-☐ UX document received: the UXRD path, or the `ui-ux-agent` output path on the gamedev path, or an explicit "no UI surface"
+☐ UX document received: the UXRD path and `docs/design-system/` when it exists, or the `ui-ux-agent` output path on the gamedev path, or an explicit "no UI surface"
 ☐ Parts list received — every part with a name, the requirements it covers, its `cutAlong` seam, and `dependsOn`, in an order where each part follows the parts it depends on. A design cannot start without a part name, and this phase does not invent one
 ☐ Scale and `decidingAxis` received
 ☐ Open questions received, and none of them blocks a decision this phase must make — when one does, return to the product phase rather than deciding it here
@@ -131,6 +131,6 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 | Design Docs | One `docs/features/{feature}/design-{part}.md` per part |
 | ADRs | Paths of any written here, plus existing prerequisites; or "none passed the test" — per part |
 | Test skeletons | Generated file paths, per part |
-| PRD / UXRD (or feature spec / GDD) | Carried through for plan traceability |
+| PRD / UXRD and `docs/design-system/` (or feature spec / GDD) | Carried through for plan traceability |
 
 **ENFORCEMENT**: an unchecked item means the phase is not finished. A design item missing from the payload cannot appear in the plan's traceability table, and a requirement reaching neither is how work silently disappears between phases.

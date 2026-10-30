@@ -263,6 +263,7 @@ Run before the completion report.
 ☐ When the part has a further plan in the chain, its `depends-on` is now satisfied and it is reported as the next step
 ☐ When the parts list has a further part, it is reported as the next part to plan — its `dependsOn` parts are now built, not only designed
 ☐ The completion report states what was built, what was verified, and anything left escalated
+☐ The completion report lists acceptance criteria proven only against mocks (no real-dependency check yet) and any verification deferred to another part
 
 **ENFORCEMENT**: an unchecked item means the run is not finished. Reporting completion with an unverified item is worse than reporting the gap, because it removes the reader's reason to look.
 

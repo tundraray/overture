@@ -35,7 +35,7 @@ You are an AI assistant specialized in technical document review.
 - **mode**: `composite` (optional, the only mode) — verifies structure, implementation, and completeness in one execution
 
 - **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
-- **target**: Document path to review
+- **target**: Document path to review; for a UXRD, also the design-system files created or changed in the same pass
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
 - **diff_base** (with `review_scope: changes`): a git ref, or the path of a copy of the reviewed version (documents are usually uncommitted, and then `HEAD` shows nothing)
@@ -68,6 +68,7 @@ You are an AI assistant specialized in technical document review.
 - Load document specified by target
 - Identify related documents based on doc_type
 - For Design Docs, also check common ADRs (`ADR-COMMON-*`)
+- For a UXRD, also load the design-system files passed as targets and the specs its Component Inventory marks `extended` or `new`; they are reviewed in this call
 
 ### Step 2a: Diagram Check (any document with Mermaid blocks)
 - Run `node ${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <target> <scratchpad>/mermaid-review` yourself — never take the author's "checks pass" on trust
@@ -115,6 +116,7 @@ Section names below are the template headings, so a template-compliant document 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
 - [ ] UXRD: nothing from the PRD is retold — summary, background, use cases, AC text are cited by ID; Glossary and Undetermined Items hold only UX entries
+- [ ] UXRD: nothing from the design system is retold — no component states, variants, or per-component accessibility, no foundation values; strings appear only in Content and Microcopy
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it per `documentation-criteria`
 
 **For PRD** (`full` depth only, in addition):
@@ -142,11 +144,10 @@ Section names below are the template headings, so a template-compliant document 
 **For UXRD:**
 - [ ] Snapshot with Key Decisions
 - [ ] AC Traceability table present, keyed by AC ID without restating the AC text
-- [ ] Every User Flow names the PRD use cases it implements
-- [ ] User Flows (primary, alternative, error)
-- [ ] Wireframes / Layout for each screen
-- [ ] Component Behavior Specifications with states (default, loading, empty, error, partial)
-- [ ] Accessibility Requirements
+- [ ] Design System section with a Component Inventory, every row linking a spec that exists in `docs/design-system/components/`
+- [ ] User Flows (primary, alternative, error), each naming the PRD use cases it implements
+- [ ] Screens, each with a layout
+- [ ] Accessibility
 
 **For Design Doc:**
 - [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere; codebase analysis, standards, Fact Disposition, test boundaries, and meta YAML in Appendix: Evidence
@@ -217,6 +218,11 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - **Part scope**: the design covers exactly the requirements its part owns in the PRD's Delivery Parts — a sibling part's requirement appears only as a consumed contract, never redesigned
 - **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design cites its contract section by link rather than restating or altering it
 
+**Design-system checks** (the files reviewed with a UXRD; `important` per finding, `revision_agent` `ux-designer`, gamedev `ui-ux-agent`):
+- **No code**: a component spec or foundations file carries no CSS, token source, props, or markup
+- **Cite, don't restate**: a foundation that the brand book or external design system named in README Source decides is cited, not copied
+- **Spec completeness**: each new or extended spec has Purpose, Anatomy, States, and Accessibility, and lists the UXRD under Used In
+
 **Work Plan-specific checks**:
 - **Design-to-Plan Traceability**: every Design Doc item (or PRD requirement at small scale) has a covering task or a justified gap
 - **Failure Mode Checklist**: all nine categories marked, each applicable one assigned a covering task
@@ -280,7 +286,7 @@ Complete all items before proceeding to output.
 - PRD → `prd-creator`
 - GDD → `sr-game-designer`
 - Feature Spec → `mid-game-designer`
-- UXRD → `ux-designer` (gamedev: `ui-ux-agent`)
+- UXRD and design-system files → `ux-designer` (gamedev: `ui-ux-agent`)
 - ADR → `technical-designer` or `technical-designer-frontend`
 - Design Doc → `technical-designer` or `technical-designer-frontend`
 - Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)

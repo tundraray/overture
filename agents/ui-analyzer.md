@@ -39,6 +39,8 @@ This agent outputs **UI fact gathering only**. Design decisions, component propo
 
 ### Step 1: External Resource Discovery
 
+Read the project design system first: when `docs/design-system/` exists, read its `README.md`, `foundations.md`, and the `components/*.md` specs for the components in scope. It is the project's agreed record of how components look and behave, so it comes before external resources; where an external source disagrees with it, record both.
+
 External resource access methods live in the preloaded `project-context` skill body, not in a standalone file.
 
 1. Read the `## External Resources > ### Frontend` section of the `project-context` skill content
@@ -142,6 +144,7 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 {
   "status": "completed|blocked",
   "analysisScope": {"filesAnalyzed": ["path/to/component.tsx"], "stylesAnalyzed": ["path/to/styles.module.css"], "uiConventions": {"componentExtension": ".tsx", "styleStrategy": "css-modules|vanilla-css|css-in-js|utility-classes", "storybook": true, "testRunner": "vitest|jest|other"}},
+  "projectDesignSystem": {"status": "read|absent", "componentSpecs": ["docs/design-system/components/button.md"], "conflictsWithExternal": ["what an external source says differently"]},
   "externalResources": {
     "status": "fetched|partial|not_recorded",
     "designOrigin": {"fetch_status": "fetched|mcp_unavailable|skipped|not_applicable", "accessMethod": "MCP name | URL | file path | existing-implementation-only", "fetched_summary": "screen names, frame ids, token snapshot"},
@@ -183,6 +186,7 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 
 ## Completion Criteria
 
+- [ ] Read `docs/design-system/` when present, or recorded `absent`
 - [ ] Read the project-context External Resources frontend block, or recorded `not_recorded`
 - [ ] Attempted a fetch for each recorded resource and set its `fetch_status`
 - [ ] Recorded UI conventions inferred from existing code

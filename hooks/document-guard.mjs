@@ -51,6 +51,13 @@ const RULES = [
     updaters: [],
   },
   {
+    // project-wide: README, foundations, components/*; created and extended by UXRDs
+    name: 'design system',
+    test: /^docs\/design-system\/.+\.md$/,
+    authors: ['ux-designer', 'ui-ux-agent'],
+    updaters: [],
+  },
+  {
     name: 'Design Doc',
     test: /^docs\/features\/[^/]+\/design-[^/]+\.md$/,
     authors: ['technical-designer', 'technical-designer-frontend'],

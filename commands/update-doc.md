@@ -1,6 +1,6 @@
 ---
 name: update-doc
-description: Update existing design documents (Design Doc, PRD, UXRD, ADR) with review workflow
+description: Update existing design documents (Design Doc, PRD, UXRD, design system, ADR) with review workflow
 argument-hint: <document-path-or-type>
 ---
 
@@ -39,6 +39,7 @@ If `$ARGUMENTS` is a type name → search for matching documents:
 Design Doc: docs/features/*/design-*.md
 PRD: docs/features/*/prd.md
 UXRD: docs/features/*/uxrd.md
+Design System: docs/design-system/**/*.md
 ADR: docs/adr/*.md
 ```
 
@@ -54,6 +55,7 @@ Determine the document type from path or content, then determine the layer to se
 | `docs/features/*/design-*.md` | Design Doc | technical-designer or technical-designer-frontend | document-reviewer + design-sync |
 | `docs/features/*/prd.md` | PRD | prd-creator | document-reviewer |
 | `docs/features/*/uxrd.md` | UXRD | ux-designer | document-reviewer |
+| `docs/design-system/**` | Design System | ux-designer | document-reviewer, as part of a UXRD |
 | `docs/adr/*.md` | ADR | technical-designer or technical-designer-frontend | document-reviewer |
 
 **Layer detection** (Design Doc and ADR only):
@@ -64,6 +66,8 @@ Read the document and determine its layer from content signals:
 
 Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 
+**Design system**: there is no separate review type for it. A change to `docs/design-system/` is reviewed as part of the UXRD it serves — the one whose Component Inventory links the changed file; when several do, ask the user in Step 3 which one carries the change. That UXRD records the change as a Key Decision.
+
 ### Step 3: Change Clarification
 
 **STOP** — Present current document summary and ask user:
@@ -72,7 +76,7 @@ Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 - Are there new requirements driving this change?
 
 Record the user's response for the update agent.
-Before Step 4, copy the document outside the repository — the review in Step 5 diffs against that copy.
+Before Step 4, copy the document outside the repository — the review in Step 5 diffs against that copy. For a design-system change, copy the UXRD and the design-system files being changed.
 
 ### Step 4: Document Update
 
@@ -94,6 +98,12 @@ prompt: "Operation Mode: update. Depth: [the PRD's current depth]. Update the PR
 ```yaml
 subagent_type: ux-designer
 prompt: "Operation Mode: update. Update the UXRD at [path]. Required changes: [user's changes from Step 3]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+```
+
+**For Design System:**
+```yaml
+subagent_type: ux-designer
+prompt: "Operation Mode: update. Update the design system at [path(s) under docs/design-system/]. Required changes: [user's changes from Step 3]. Record the change as a Key Decision in the UXRD at [uxrd path]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 **For ADR:**
@@ -135,6 +145,8 @@ subagent_type: document-reviewer
 prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. depth: [PRD depth] (PRD only). review_scope: changes. diff_base: [copy of the document taken before Step 4]. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
+For a design-system change: `target: [uxrd path]; design-system files: [changed paths]`, `doc_type: UXRD`, and `diff_base` covers the copies of all of them.
+
 `approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
 A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
 
@@ -164,7 +176,7 @@ prompt: "source_design: [path]"
 **REQUIRED** completion response:
 ```
 Updated: [document path]
-Type: [Design Doc / PRD / UXRD / ADR]
+Type: [Design Doc / PRD / UXRD / Design System / ADR]
 Changes: [summary of changes made]
 Review: [approved / approved with notes]
 Consistency: [verified / N/A]

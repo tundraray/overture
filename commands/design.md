@@ -32,7 +32,7 @@ Requirements → requirement-analyzer → [Stop: requirement confirmation]
                      ↓
              prd-creator (depth by scale) → document-reviewer → [Stop: PRD approval — includes the parts split]
                      ↓
-             ux-designer → document-reviewer → [Stop: UXRD approval]        (only when the work has a UI surface)
+             ux-designer (UXRD + design system) → document-reviewer → [Stop: UXRD approval]   (only when the work has a UI surface)
                      ↓
    for each part in the PRD's Delivery Parts, in dependency order:
              codebase-analyzer (ui-analyzer for a frontend part)
@@ -51,7 +51,7 @@ A PRD is written at every scale (`full` at large, `lite` at medium and small) �
 **Included in this command**:
 - Requirement analysis with requirement-analyzer
 - PRD creation or update with prd-creator, reviewed by document-reviewer
-- UXRD creation with ux-designer when the work has a UI surface
+- UXRD creation with ux-designer when the work has a UI surface, creating or extending `docs/design-system/` with it
 - Fact gathering with codebase-analyzer / ui-analyzer, per part
 - Design Doc creation with technical-designer(-frontend), per part
 - Document review with document-reviewer

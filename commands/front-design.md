@@ -13,7 +13,7 @@ argument-hint: <feature description>
 **Execution Method**:
 - Requirement analysis → performed by requirement-analyzer
 - PRD (depth by scale) → performed by prd-creator, reviewed by document-reviewer
-- UXRD → performed by ux-designer, reviewed by document-reviewer
+- UXRD and the design system (`docs/design-system/`) → performed by ux-designer, reviewed by document-reviewer
 - UI fact gathering → performed by ui-analyzer, per part
 - Design document creation → performed by technical-designer-frontend, per part
 - Document review → performed by document-reviewer
@@ -34,7 +34,7 @@ Before executing, load these skill files for guidance:
 **Included in this command**:
 - Requirement analysis with requirement-analyzer
 - PRD creation or update with prd-creator (`full` at large scale, `lite` otherwise), carrying the Delivery Parts
-- UXRD creation with ux-designer
+- UXRD creation with ux-designer, creating or extending `docs/design-system/` with it
 - Design Doc creation with technical-designer-frontend, one per frontend part, after ui-analyzer fact gathering
 - Document review with document-reviewer, consistency verification with design-sync
 - ADR creation only when a decision the design made passes the three-part test in `documentation-criteria`
@@ -64,7 +64,7 @@ Once requirements are moderately clarified:
 - Invoke **document-reviewer** (`doc_type: PRD`, same `depth`)
 - **[STOP]**: PRD approval, including the Delivery Parts split — the parts list from here on
 - Invoke **ux-designer**, then **document-reviewer** (`doc_type: UXRD`)
-- **[STOP]**: UXRD approval
+- **[STOP]**: UXRD approval, with the design-system files it created or changed
 
 ### 3. Design Document Creation Phase
 Create one Design Doc per frontend part, in dependency order. A frontend part that depends on a backend part needs that part's approved `design-{part}.md` first — its contract is consumed, not redesigned:
@@ -81,7 +81,7 @@ Create one Design Doc per frontend part, in dependency order. A frontend part th
 
 ## Output Example
 Frontend design phase completed.
-- PRD: docs/features/[feature]/prd.md (lite); UXRD: docs/features/[feature]/uxrd.md
+- PRD: docs/features/[feature]/prd.md (lite); UXRD: docs/features/[feature]/uxrd.md; Design System: docs/design-system/
 - Parts: web (depends on api, approved)
 - Design document: docs/features/[feature]/design-web.md; ADR: docs/adr/ADR-[number]-[title].md or "none passed the test"
 - Test skeletons: tests/[feature]-web.int.test.tsx

@@ -164,6 +164,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 |--------------|-------------|
 | `docs/features/*/prd.md` | prd-creator |
 | `docs/features/*/uxrd.md` | ux-designer (gamedev: ui-ux-agent) |
+| `docs/design-system/**` (project design system) | ux-designer (gamedev: ui-ux-agent) — created and extended through a UXRD |
 | `docs/game-design/*.md` (GDD) | sr-game-designer (gamedev) |
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
@@ -203,7 +204,7 @@ Autonomous execution MUST stop and wait for user input at these points.
 |-------|------------|----------|---------------------|
 | Product | After requirement-analyzer completes | feature | Confirm requirements and scale / answer questions |
 | Product | After document-reviewer completes PRD review | feature | Approve PRD, including the Delivery Parts split — every scale |
-| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD |
+| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
 | Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
 | Technical | After document-reviewer completes ADR review (only when an ADR was written) | ADR | Approve ADR |
 | Execution | After document-reviewer completes work plan review | part | Batch approval for that part's implementation |
@@ -264,7 +265,7 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 
 ### Revision Loop
 
-Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
 **What each verdict sends to the owner** (`revision_agent`, `mode: update`):
 
@@ -286,7 +287,7 @@ Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD,
 
 **Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
 
-**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
 The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. Only the user's explicit accept advances a gate past an open finding.
 
