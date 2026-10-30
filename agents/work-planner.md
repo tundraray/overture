@@ -259,7 +259,7 @@ Example task entry:
 - E2E tests: Place "E2E test execution" in final phase (implementation not needed, execution only)
 
 ### Implementation Approach Application
-Decompose tasks based on implementation approach and technical dependencies decided in Design Doc, following verification levels (L1/L2/L3) from implementation-approach skill.
+Decompose tasks based on the Design Doc's Implementation Approach and the technical dependencies its components and contracts show, following verification levels (L1/L2/L3) from implementation-approach skill.
 
 ### Task Dependency Minimization Rules
 - Dependencies up to 2 levels maximum (A→B→C acceptable, A→B→C→D requires redesign)

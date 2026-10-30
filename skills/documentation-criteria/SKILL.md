@@ -13,6 +13,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 - **[plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md)** - Work Plan template
 - **[task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md)** - Task file template for implementation tasks
 - **[uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md)** - UX Requirements Document template
+- **[design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md)** - Design system templates: README, foundations, component spec
 
 ## Creation Decision Matrix
 
@@ -36,7 +37,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
 | Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
 | Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision | Architecture, security, compliance, or irreversible operational decision |
+| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
 
 Select the highest scale triggered by any observed axis.
 
@@ -68,7 +69,7 @@ These commonly — not always — meet all three. Treat them as prompts to run t
 
 ### Signals that usually fail the test
 
-Deep nesting, a function used in several places, adding a state to an existing machine, coordinating a few async calls, or adopting a utility library are ordinary design work. They belong in the Design Doc's Minimal Surface Alternatives, which already records what was compared and why.
+Deep nesting, a function used in several places, adding a state to an existing machine, coordinating a few async calls, or adopting a utility library are ordinary design work. They belong in the Design Doc's Key Decisions, which already record what was compared and why.
 
 ## Writing for the Reader
 
@@ -94,11 +95,11 @@ A document is read far more often than it is written, and most readers stop afte
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
+**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
 
 ## Detailed Document Definitions
 
-**One fact, one document.** Each fact has exactly one home — the document listed below as including it. A later document cites an earlier one by ID (`UC-2`, `AC-01.3`, `FR-05`, `D-03`) and never retells it: a retold requirement drifts from its source at the first revision of either, and the reviewer cannot tell which copy is meant. The chain is PRD (what the user achieves) → UXRD (what the user sees and does) → Design Doc (how the system does it).
+**One fact, one document.** Each fact has exactly one home — the document listed below as including it. A later document cites an earlier one by ID (`UC-2`, `AC-01.3`, `FR-05`, `D-03`) and never retells it: a retold requirement drifts from its source at the first revision of either, and the reviewer cannot tell which copy is meant. The chain is PRD (what the user achieves) → UXRD (what the user sees and does) → Design Doc (how the system does it); the design system, shared by every feature, holds how the interface looks and how each component works.
 
 ### PRD (Product Requirements Document)
 
@@ -129,7 +130,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 - Technical selection rationale (→ADR)
 - **Implementation phases** (→Work Plan) — a part is a slice of *what* is built; a phase is a step in *when* it is built. Parts belong in the PRD, phases do not.
 - **Task breakdown** (→Work Plan)
-- **How the interface looks and behaves** (→UXRD) — screen states (loading, empty, error), microcopy, ARIA attributes and focus behaviour, breakpoints, design tokens, animation. The PRD states the observable outcome ("the open thread is marked as current") and, in Non-Functional Requirements, the target level ("WCAG 2.1 AA", "usable from 360 px") — not how either is met
+- **How the interface looks and behaves** (→UXRD and the design system) — screen states (loading, empty, error), microcopy, ARIA attributes and focus behaviour, breakpoints, design tokens, animation. The PRD states the observable outcome ("the open thread is marked as current") and, in Non-Functional Requirements, the target level ("WCAG 2.1 AA", "usable from 360 px") — not how either is met
 - **Decisions for the design and ADR signals** (→requirement-analyzer output and the Design Doc) — a list of technical questions the design must settle is not a product requirement
 
 ### UXRD (UX Requirements Document)
@@ -138,18 +139,34 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 **Includes**:
 - AC Traceability: each user-visible PRD acceptance criterion by ID → the screen, state, and element that deliver it
-- Existing component reuse decisions
+- Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the PRD use cases it implements
-- Wireframes / layout per screen and breakpoint
-- Component behaviour: states (default, loading, empty, error, partial), interactions
-- Accessibility specifics (ARIA, keyboard, focus, contrast), responsive behaviour, theme, microcopy, animation
-- UX decisions taken here, each with an ID other documents cite
+- Screens: wireframe, layout, and the screen's own states (loading, empty, error)
+- Global accessibility rules (target level cited from the PRD, focus order across screens, announcements), responsive behaviour per screen, and the feature's one list of microcopy
+- UX decisions taken here, each with an ID other documents cite — including any change to an existing foundation or component
 
 **Excludes**:
 - Summary, background, users, use cases, requirements, and acceptance criteria text (→PRD; cite by ID)
 - Success metrics and priorities (→PRD)
+- Component specs — anatomy, variants, states, per-component accessibility — and foundations — typography, color, spacing, shape, motion, icons (→Design System; link)
 - Component implementation, state management, API contracts (→Design Doc)
 - Terms already in the PRD glossary
+
+### Design System
+
+**Purpose**: Hold the product's visual language and its reusable components — how they look and work, without code. It lives in `docs/design-system/`, is shared by every feature, and is owned by `ux-designer` (gamedev: `game-ui-designer`).
+
+**Includes**:
+- `README.md`: the source (brand book, external design system, or defined here), the direction in one phrase with references, and an index
+- `foundations.md`: typography, color roles for light and dark, spacing and density, shape and elevation, motion, iconography
+- `components/{component-name}.md`: purpose, anatomy, variants and sizes, states, content rules, accessibility, and the UXRDs it is used in
+
+**Excludes**:
+- Feature flows, screens, and copy (→UXRD)
+- Code of any kind — CSS, token source, props, markup (→implementation)
+- What a brand book or external design system already defines (cite it; fill only its gaps)
+
+**Lifecycle**: the first UXRD that needs a design system and finds none creates it with the components that feature needs. Later UXRDs follow it and add or extend components in the same pass. Changing an existing foundation or component is a Key Decision of the UXRD that changes it.
 
 ### ADR (Architecture Decision Record)
 
@@ -174,10 +191,9 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 **Includes**:
 - **Existing codebase analysis** (required)
-  - Implementation path mapping (both existing and new)
+  - Code locations, existing and new (C4)
   - Integration point clarification (connection points with existing code even for new implementations)
 - Technical implementation approach (vertical/horizontal/hybrid)
-- **Technical dependencies and implementation constraints** (required implementation order)
 - Interface and contract definitions
 - Data flow and component design
 - **E2E verification procedures at integration points**
@@ -207,7 +223,7 @@ Interface Change Matrix:
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files (→written at implementation; contracts are field tables)
 - Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
-- When to implement, duration (→Work Plan)
+- Implementation order, when to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
 
 ### Work Plan
@@ -258,12 +274,17 @@ Each step names the evidence that must exist before the next step starts. A step
 
 ## Storage Locations
 
-Documents are grouped **by feature**, not by document type. Everything a feature produces lives under one directory, so the whole record of a change is readable in one place. ADRs are the exception: a decision usually outlives and spans features, so they stay global.
+Documents are grouped **by feature**, not by document type. Everything a feature produces lives under one directory, so the whole record of a change is readable in one place. ADRs and the design system are the exceptions: a decision usually outlives and spans features, and every feature's UI shares one design system, so both stay global.
 
 ```
 docs/
 ├── adr/
 │   └── ADR-0007-token-storage.md
+├── design-system/
+│   ├── README.md
+│   ├── foundations.md
+│   └── components/
+│       └── {component-name}.md
 └── features/
     └── {feature}/
         ├── prd.md
@@ -274,7 +295,6 @@ docs/
             └── {plan-name}/            # same name as its plan file
                 ├── _overview.md
                 ├── task-01.md
-                ├── phase1-completion.md
                 └── analysis/
                     └── {topic}.md
 ```
@@ -283,6 +303,7 @@ docs/
 |----------|------|------------------|----------|
 | PRD | `docs/features/{feature}/` | `prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
 | UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
+| Design System | `docs/design-system/` | `README.md`, `foundations.md`, `components/{component-name}.md` | [design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md) |
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
@@ -317,7 +338,7 @@ The confirmed Delivery Parts section is the **parts list**. It is handed from ph
 |-------|---------|
 | `name` | Short kebab-case identifier; becomes `design-{name}.md` and `{name}/` |
 | `covers` | The requirements this part delivers — by id or title from the PRD or the requirement analysis |
-| `cutAlong` | The seam the slice is cut on: `backend`, `frontend`, a bounded context, a release unit |
+| `cutAlong` | The seam the slice is cut on: `backend`, `frontend`, `domain` (a bounded context), `release-unit` |
 | `dependsOn` | Parts whose approved design this part consumes as a contract; empty for the first |
 | `rationale` | Why this is a separate part — or why the feature is one part — in one sentence |
 
@@ -373,6 +394,7 @@ The frontmatter is the single source of truth for plan sequencing — there is n
 |---------|------|
 | Every PRD | `docs/features/*/prd.md` |
 | Every UXRD | `docs/features/*/uxrd.md` |
+| Every component spec | `docs/design-system/components/*.md` |
 | Parts list of a feature | `docs/features/{feature}/prd.md`, section "Delivery Parts" |
 | Every Design Doc | `docs/features/*/design-*.md` |
 | Design for one part | `docs/features/{feature}/design-{part}.md` |

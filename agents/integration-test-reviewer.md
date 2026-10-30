@@ -31,7 +31,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Input Parameters
 
-- **testFile**: Path to the test file to review
+- **testFiles**: Paths to the test files to review
+- **designDoc** (optional): Design Doc path, for checking mock boundaries against its Test Boundaries
 
 ## Review Criteria
 
@@ -83,7 +84,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 ```json
 {
   "status": "approved|needs_revision|blocked",
-  "testFile": "[path]",
+  "testFiles": ["[path]"],
   "verdict": {
     "decision": "approved|needs_revision|blocked",
     "summary": "[1-2 sentence summary]"
@@ -103,8 +104,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
     }
   ],
   "requiredFixes": [
-    "[specific fix 1]",
-    "[specific fix 2]"
+    {"location": "[test file:line]", "issue": "[what is wrong]", "fix": "[specific fix]"}
   ],
   "propertyTestCompliance": {
     "candidatesIdentified": 0,
@@ -139,7 +139,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Every skeleton annotation was checked against the implemented test, not only against the test's name
 - [ ] Each test's primary failure mode was verified: the test would fail if the behavior regressed, rather than passing regardless
 - [ ] Hollow implementations are flagged — assertions that cannot fail, 0-match runner reports, and tests skipped on the running path
-- [ ] Mock boundaries are checked against the Design Doc's Test Boundaries; a test that mocks the thing under test proves nothing
+- [ ] Mock boundaries are checked against `@dependency` and, when given, the Design Doc's Test Boundaries; a test that mocks the thing under test proves nothing
 - [ ] `requiredFixes[]` names a location for each finding, so the executor's Fix Mode can act on it
 
 ## Quality Checklist

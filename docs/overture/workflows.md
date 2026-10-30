@@ -192,7 +192,7 @@ The workflow detects the project context and branches into two scenarios:
 **Game-specific phases** (not present in backend/frontend):
 - **Market analysis** — competitor research, target audience, monetization strategy, Go/No-Go recommendation
 - **GDD creation/update** — game vision, core loop, progression systems, balancing parameters
-- **Specialist agents** — mechanics-developer, game-feel-developer, sr-game-artist, technical-artist, ui-ux-agent, data-scientist each contribute their domain expertise
+- **Specialist agents** — mechanics-developer, game-feel-developer, sr-game-artist, technical-artist, game-ui-designer, data-scientist each contribute their domain expertise
 - **6-phase work planning** — tasks organized by game development phases instead of generic Foundation/Core/Integration/QA
 
 See [detailed gamedev workflow diagrams](gamedev-workflows.md) for all scale variants, scenario detection, development modes, and phase dependencies.

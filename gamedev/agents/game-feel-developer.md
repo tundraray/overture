@@ -131,7 +131,7 @@ export class GameJuice {
 - [ ] Satisfying particle effects for impacts/explosions
 - [ ] Screen shake for significant events
 - [ ] Smooth camera follow with lerp/deadzone
-- [ ] UI tweens for hover, press, and state changes
+- [ ] UI tweens for hover, press, and state changes, timed by the motion foundation in `docs/design-system/`
 - [ ] Loading progress bar and scene-ready feedback
 
 ### Performance Optimization

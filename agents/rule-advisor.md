@@ -171,7 +171,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 ## Important Notes
 
-- **Proactively collect information and broadly include potentially related skills**
+- **Proactively collect information**; include every skill the task concretely needs, and no more
 - Read ALL selected skill files completely
 - Extract actual section content, not just titles
 - Include enough context for standalone understanding

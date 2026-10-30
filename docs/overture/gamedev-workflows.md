@@ -76,7 +76,7 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 7. mechanics-developer → systems architecture (state machines, physics, events)
 8. game-feel-developer → feedback systems (screen shake, particles, audio, tweens)
 9. sr-game-artist + technical-artist → art direction, pipeline specs, atlas optimization
-10. ui-ux-agent → HUD, menus, interaction patterns, accessibility
+10. game-ui-designer → HUD, menus, interaction patterns, accessibility
 11. data-scientist → analytics design, KPIs, A/B test framework
 12. technical-designer → Design Doc integrating all specialist outputs
 13. gamedev-work-planner → 6-phase plan with dependencies
@@ -94,7 +94,7 @@ graph TB
     DRF --> |"Stop: Feature Spec Approval, per feature"| MD[mechanics-developer]
     MD --> GFD[game-feel-developer]
     GFD --> ART[sr-game-artist + technical-artist]
-    ART --> UI[ui-ux-agent]
+    ART --> UI[game-ui-designer]
     UI --> DS[data-scientist]
     DS --> PART[Next part in dependency order]
     PART --> TD2[technical-designer → Design Doc for the part]
@@ -130,7 +130,7 @@ Used when adding a major feature (6+ files) to an existing project that already 
 **Feature-type routing**: After mechanics-developer, the workflow branches based on what the feature involves:
 - **Polish** → game-feel-developer (screen shake, particles, audio feedback)
 - **Art** → sr-game-artist (new visual assets, style changes)
-- **UI** → ui-ux-agent (new screens, HUD elements, menu changes)
+- **UI** → game-ui-designer (new screens, HUD elements, menu changes)
 - **Analytics** → data-scientist (new event tracking, KPI dashboards)
 - **Code only** → straight to technical-designer
 
@@ -145,7 +145,7 @@ graph TB
     MD --> COND{Feature type?}
     COND --> |Polish| GFD[game-feel-developer]
     COND --> |Art| ART[sr-game-artist]
-    COND --> |UI| UI[ui-ux-agent]
+    COND --> |UI| UI[game-ui-designer]
     COND --> |Analytics| DS[data-scientist]
     COND --> |Code only| TD
     GFD --> TD[technical-designer → Design Doc]
@@ -178,7 +178,7 @@ For mid-size features — enough complexity to need a design doc but not a marke
 2. **Mechanics check** — if the feature involves new game mechanics, sr-game-designer creates a game design spec first
 3. mid-game-designer writes a lite feature specification with Delivery Parts; you approve it, parts split included
 4. mechanics-developer architects the systems when new mechanics are involved
-5. **UI/Polish check** — if the feature involves UI changes, ui-ux-agent handles it. If polish/game feel, game-feel-developer handles it. If neither, skip to design doc
+5. **UI/Polish check** — if the feature involves UI changes, game-ui-designer handles it. If polish/game feel, game-feel-developer handles it. If neither, skip to design doc
 6. technical-designer produces one Design Doc per part, reviewed and synced
 7. gamedev-work-planner plans each part in turn, then autonomous execution per part
 
@@ -194,7 +194,7 @@ graph TB
     MECH --> |Yes| MD[mechanics-developer]
     MECH --> |No| COND2{UI or Polish?}
     MD --> COND2
-    COND2 --> |UI| UI[ui-ux-agent]
+    COND2 --> |UI| UI[game-ui-designer]
     COND2 --> |Polish| GFD[game-feel-developer]
     COND2 --> |Neither| TD
     UI --> TD[technical-designer → Design Doc]
@@ -249,7 +249,7 @@ The gamedev-work-planner organizes tasks into 6 game-specific phases instead of 
 | **Phase 1: Core Mechanics** | Game systems, state machines, physics, input handling, object pooling | mechanics-developer | Playable game logic |
 | **Phase 2: Game Feel** | Screen shake, particles, audio cues, tweens, visual feedback | game-feel-developer | Polished interactions |
 | **Phase 3: Art Integration** | Asset pipeline, texture atlases, shaders, sprite animations | technical-artist | Visual assets in-engine |
-| **Phase 4: UI Implementation** | HUD, menus, game flow screens, transitions | ui-ux-agent | Complete game interface |
+| **Phase 4: UI Implementation** | HUD, menus, game flow screens, transitions | game-ui-designer | Complete game interface |
 | **Phase 5: Analytics** | Event tracking, dashboards, A/B test framework, KPIs | data-scientist | Telemetry pipeline |
 | **Phase 6: QA & Performance** | Test plans, performance profiling, memory audits, playtesting | qa-agent | Release-ready validation |
 
@@ -276,7 +276,7 @@ Phases don't always run strictly sequentially. Some can overlap based on their a
 graph TB
     P1[Phase 1: Core Mechanics<br/>mechanics-developer] --> P2[Phase 2: Game Feel<br/>game-feel-developer]
     P1 --> P3[Phase 3: Art Integration<br/>technical-artist]
-    P1 --> P4[Phase 4: UI<br/>ui-ux-agent]
+    P1 --> P4[Phase 4: UI<br/>game-ui-designer]
     P3 --> P4
     P1 -.-> P5[Phase 5: Analytics<br/>data-scientist]
     P2 --> P6[Phase 6: QA<br/>qa-agent]
@@ -326,7 +326,7 @@ Shows how information flows between game specialist agents during the design pha
 
 **Information flow**:
 - **sr-game-designer** (GDD) is the source of truth — feeds into mid-game-designer, mechanics-developer, and sr-game-artist
-- **mid-game-designer** (Feature Specs) provides detailed requirements to ui-ux-agent and technical-designer
+- **mid-game-designer** (Feature Specs) provides detailed requirements to game-ui-designer and technical-designer
 - **mechanics-developer** (Systems Architecture) feeds into game-feel-developer (needs systems to attach feedback to) and technical-designer
 - **sr-game-artist** (Art Direction) feeds into technical-artist (implements the art pipeline)
 - All specialist outputs converge at **technical-designer** who produces the integrated Design Doc
@@ -339,7 +339,7 @@ graph TB
     MD --> GFD[game-feel-developer<br/>Feedback Systems]
     SGD --> SGA[sr-game-artist<br/>Art Direction]
     SGA --> TA[technical-artist<br/>Pipeline Specs]
-    MGD --> UI[ui-ux-agent<br/>UI/UX Design]
+    MGD --> UI[game-ui-designer<br/>UI/UX Design]
 
     MGD --> TD[technical-designer<br/>Design Doc]
     MD --> TD

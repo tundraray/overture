@@ -2,6 +2,7 @@
 
 <!--
 The PRD owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
+The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy.
 Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
 -->
 
@@ -19,7 +20,8 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 ### Key Decisions
 
-<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. -->
+<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. The Why column is the rationale; no paragraph after the table repeats it.
+A change to an existing design-system foundation or component is a Key Decision here; the design-system file states the result. -->
 
 | ID | Decision | Why | Rejected alternative |
 |---|---|---|---|
@@ -37,17 +39,23 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 <!-- Every AC in the PRD that has a user-visible surface needs a row. An AC with no row is either out of UX scope — state that explicitly — or an omission. -->
 
-## Existing Component Reuse Map
+## Design System
 
-<!-- Decide reuse before specifying appearance. Skipping this is how a fourth almost-identical button enters a design system. -->
+<!--
+When docs/design-system/ does not exist yet, this pass creates it (README, foundations, and the components below) from design-system-template.md.
+Decide reuse before specifying appearance: search the design system and the code before marking a component `new`. Skipping this is how a fourth almost-identical button enters a design system.
+`extended` and `new` specs are written into docs/design-system/components/ in the same pass. Their states, variants, and accessibility live there, not here.
+-->
 
-| UI Element | Decision | Existing Component | Notes |
-|-----------|----------|-------------------|-------|
-| [Button] | Reuse | [components/ui/Button] | [No modifications needed] |
-| [DataTable] | Extend | [components/ui/Table] | [Add sorting support] |
-| [FeatureCard] | New | — | [No similar component exists] |
+Follows the [design system](../../design-system/README.md).
 
-<!-- `New` requires a note stating what was searched and why nothing fit. -->
+### Component Inventory
+
+| Component | Spec | Status | Note |
+|---|---|---|---|
+| [Button] | [button.md](../../design-system/components/button.md) | reused | — |
+| [Thread list] | [thread-list.md](../../design-system/components/thread-list.md) | extended | [what was added — variant, state] |
+| [Feature card] | [feature-card.md](../../design-system/components/feature-card.md) | new | [what was searched and why nothing fit] |
 
 ## User Flows
 
@@ -87,7 +95,9 @@ flowchart TD
 
 [Describe how errors are handled in the user flow]
 
-## Wireframes / Layout
+## Screens
+
+<!-- Each screen is a composition of inventory components. Write what is specific to this screen — layout, placement, which variant is used, the screen's own states. A component's states and accessibility are in its spec and are not repeated here. -->
 
 ### Screen 1: [Screen Name]
 
@@ -107,158 +117,49 @@ flowchart TD
 +------------------------------------------+
 ```
 
-**Layout Notes**:
+**Layout**:
 
-- [Describe layout behavior and constraints]
-- [Spacing and alignment requirements]
+- [Placement, alignment, and spacing specific to this screen — spacing values cite foundations]
+
+**Screen states**:
+
+<!-- States of the screen as a whole; delete rows that cannot occur. -->
+
+| State | What shows |
+|---|---|
+| Loading | [which components show which state] |
+| Empty | [what renders, and the action offered] |
+| Error | [display and recovery] |
 
 ### Screen 2: [Screen Name]
 
 [Add additional screens as needed]
 
-## Component Behavior Specifications
+## Accessibility
 
-### Component 1: [Component Name]
+<!-- Global rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
 
-**States**:
-| State | Visual | Behavior |
-|-------|--------|----------|
-| Default | [Description] | [Interaction behavior] |
-| Hover | [Description] | [Interaction behavior] |
-| Active/Pressed | [Description] | [Interaction behavior] |
-| Focus | [Description] | [Keyboard navigation behavior] |
-| Disabled | [Description] | [Why and when disabled] |
-| Loading | [Description] | [Loading indicator behavior] |
-| Empty | [Description] | [What renders with no data, and the action offered] |
-| Error | [Description] | [Error display and recovery] |
-| Partial | [Description] | [Rendering when only some data arrived; delete the row when the state cannot occur] |
-
-**Interactions**:
-
-- **Click/Tap**: [Behavior description]
-- **Keyboard**: [Key bindings and behavior]
-- **Touch/Gesture**: [Mobile-specific interactions]
-
-### Component 2: [Component Name]
-
-[Add additional components as needed]
-
-## Accessibility Requirements
-
-### WCAG Compliance
-
-- **Target Level**: [WCAG 2.1 AA / AAA]
-
-### ARIA Requirements
-
-| Component     | Role   | aria-label | Other ARIA attributes                |
-| ------------- | ------ | ---------- | ------------------------------------ |
-| [Component 1] | [role] | [label]    | [e.g., aria-expanded, aria-controls] |
-| [Component 2] | [role] | [label]    | [attributes]                         |
-
-### Keyboard Navigation
-
-| Key         | Action                        |
-| ----------- | ----------------------------- |
-| Tab         | [Focus movement description]  |
-| Enter/Space | [Activation behavior]         |
-| Escape      | [Dismissal behavior]          |
-| Arrow Keys  | [Navigation within component] |
-
-### Screen Reader Considerations
-
-- [Announce state changes]
-- [Reading order requirements]
-- [Live region specifications]
-
-### Color and Contrast
-
-- [Minimum contrast ratios]
-- [Color-blind friendly requirements]
-- [Dark mode considerations]
+- **Target level**: [cite the PRD requirement that sets it, e.g. NFR-03]
+- **Focus order across screens**: [where focus lands on navigation, after dialogs close, after an item is removed]
+- **Announcements**: [route changes and live updates the screen reader hears]
+- **Contrast**: [the target; color roles cite foundations]
+- **Reduced motion**: [feature-specific behaviour beyond the foundations rule, or "foundations rule applies"]
 
 ## Responsive Behavior
 
-### Breakpoints
-
-| Breakpoint | Width          | Layout Changes |
-| ---------- | -------------- | -------------- |
-| Mobile     | < 640px        | [Description]  |
-| Tablet     | 640px - 1024px | [Description]  |
-| Desktop    | > 1024px       | [Description]  |
-
-### Mobile-Specific Behavior
-
-- [Touch targets: minimum 44x44px]
-- [Gesture support]
-- [Portrait/Landscape handling]
-
-### Desktop-Specific Behavior
-
-- [Hover states]
-- [Keyboard shortcuts]
-- [Multi-window considerations]
+| Breakpoint | Width | Screen | What changes |
+|---|---|---|---|
+| Mobile | < 640px | [screen] | [one phrase] |
+| Tablet | 640px - 1024px | [screen] | [one phrase] |
+| Desktop | > 1024px | [screen] | [one phrase] |
 
 ## Content and Microcopy
 
-### UI Text
+<!-- The one list of strings in this feature — titles, labels, placeholders, validation, error, empty, and loading text. Localization works from this table; no second list. A component's generic copy rules are in its spec. -->
 
-| Element            | Text      | Notes                     |
-| ------------------ | --------- | ------------------------- |
-| Page Title         | [Title]   | [SEO/accessibility notes] |
-| Button - Primary   | [Label]   | [Action clarity]          |
-| Button - Secondary | [Label]   | [Action clarity]          |
-| Error Message      | [Message] | [Recovery guidance]       |
-| Empty State        | [Message] | [Next action guidance]    |
-| Loading State      | [Message] | [Duration expectations]   |
-
-### Validation Messages
-
-| Field     | Validation | Error Message | Success Message |
-| --------- | ---------- | ------------- | --------------- |
-| [Field 1] | [Rule]     | [Error text]  | [Success text]  |
-| [Field 2] | [Rule]     | [Error text]  | [Success text]  |
-
-### Placeholder Text
-
-| Field     | Placeholder | Notes            |
-| --------- | ----------- | ---------------- |
-| [Field 1] | [Text]      | [Usage guidance] |
-
-## Design System Integration
-
-### Components from Design System
-
-| Component             | Library Component        | Customization Needed      |
-| --------------------- | ------------------------ | ------------------------- |
-| [Feature Component 1] | [e.g., shadcn/ui Button] | [None / Variant / Custom] |
-| [Feature Component 2] | [e.g., shadcn/ui Dialog] | [None / Variant / Custom] |
-
-### Design Tokens
-
-| Token Type | Token Name          | Value/Usage     |
-| ---------- | ------------------- | --------------- |
-| Color      | [e.g., primary-500] | [Usage context] |
-| Spacing    | [e.g., spacing-4]   | [Usage context] |
-| Typography | [e.g., heading-lg]  | [Usage context] |
-
-### Custom Components Required
-
-- [ ] [New component 1]: [Reason why design system doesn't cover this]
-- [ ] [New component 2]: [Reason]
-
-## Animation and Transitions
-
-### Transitions
-
-| Element     | Trigger       | Duration      | Easing              | Effect        |
-| ----------- | ------------- | ------------- | ------------------- | ------------- |
-| [Element 1] | [e.g., hover] | [e.g., 150ms] | [e.g., ease-out]    | [Description] |
-| [Element 2] | [e.g., enter] | [e.g., 300ms] | [e.g., ease-in-out] | [Description] |
-
-### Motion Preferences
-
-- **Reduced Motion**: [How animations degrade for prefers-reduced-motion]
+| ID | Where (screen / component / state) | Text | Notes |
+|---|---|---|---|
+| MC-1 | [Screen — Button, primary] | [Label] | [one phrase] |
 
 ## Undetermined Items
 
@@ -271,14 +172,11 @@ flowchart TD
 
 ## Appendix
 
-### User Research References
+<!-- References and glossary only. A manual acceptance scenario repeats the ACs and flows; it is not written here. -->
 
-- [Link to user research findings]
-- [Link to usability test results]
+### References
 
-### Design File References
-
-- [Link to Figma/Sketch files if available]
+- [User research findings, usability test results, design files]
 
 ### Glossary
 

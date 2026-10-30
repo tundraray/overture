@@ -1,6 +1,6 @@
 {
   "name": "fullstack-overture",
-  "version": "0.18.10",
+  "version": "0.18.11",
   "description": "Full-stack development with backend + frontend orchestrated agents, comprehensive skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -80,7 +80,7 @@
   ],
   "skills": [
     "./skills/ai-development-guide",
-    "./skills/brand-system-guide",
+    "./skills/design-system",
     "./skills/coding-principles",
     "./skills/code-navigation",
     "./skills/documentation-criteria",

@@ -39,7 +39,7 @@ overture/
 │   ├── implementation-approach/
 │   ├── project-context/        # Project-specific context
 │   ├── technical-spec/         # Technical design rules
-│   ├── brand-system-guide/     # Brand design system
+│   ├── design-system/          # Design system: designing and implementing it
 │   ├── typescript-rules/       # Frontend-specific
 │   └── ...
 │
@@ -74,7 +74,7 @@ overture/
 │   │   ├── producer-agent.md         # Project management, timeline
 │   │   ├── sr-game-artist.md         # Art direction, style guide
 │   │   ├── technical-artist.md       # Pipeline, atlases, shaders
-│   │   ├── ui-ux-agent.md            # HUD, menus, accessibility
+│   │   ├── game-ui-designer.md            # HUD, menus, accessibility
 │   │   ├── data-scientist.md         # Analytics, telemetry, A/B tests
 │   │   ├── qa-agent.md               # Test plans, performance
 │   │   ├── gamedev-work-planner.md   # 6-phase game work planning

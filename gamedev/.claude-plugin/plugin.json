@@ -1,6 +1,6 @@
 {
   "name": "gamedev-overture",
-  "version": "0.20.6",
+  "version": "0.20.7",
   "description": "Game development orchestration with specialized agents for design, engineering, art, QA, analytics, and production — built on the overture framework",
   "author": {
     "name": "Mikhail Andreev",
@@ -73,13 +73,13 @@
     "./agents/sr-game-artist.md",
     "./agents/sr-game-designer.md",
     "./agents/technical-artist.md",
-    "./agents/ui-ux-agent.md",
+    "./agents/game-ui-designer.md",
     "./agents/security-reviewer.md",
     "./agents/game-researcher.md"
   ],
   "skills": [
     "./skills/ai-development-guide",
-    "./skills/brand-system-guide",
+    "./skills/design-system",
     "./skills/coding-principles",
     "./skills/code-navigation",
     "./skills/documentation-criteria",

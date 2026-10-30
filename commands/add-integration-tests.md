@@ -6,24 +6,18 @@ argument-hint: <design doc name or path>
 
 **Command Context**: Test addition workflow for existing backend implementations
 
-**Scope**: Backend only (acceptance-test-generator supports backend only)
+**Scope**: Backend only (implementation and checks use task-executor and quality-fixer)
 
 ## Orchestrator Definition
 
 **Core Identity**: "I am not a worker. I am an orchestrator."
 
-**First Action**: Register Steps 0-8 to TodoWrite before any execution.
+**First Action**: Register Steps 1-7 to TodoWrite before any execution.
 
-**Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Task files create context boundaries. Subagents work in isolated context.
-
-## Required Skills
-
-Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+**Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Subagents work in isolated context.
 
 **Execution Method**:
 - Skeleton generation → delegate to acceptance-test-generator
-- Task file creation → orchestrator creates directly (minimal context usage)
 - Test implementation → delegate to task-executor
 - Test review → delegate to integration-test-reviewer
 - Quality checks → delegate to quality-fixer
@@ -36,10 +30,6 @@ Design Doc path: $ARGUMENTS
 - Existing implementation to test
 
 ## Execution Flow
-
-### Step 0: Execute Skill
-
-Execute Skill: documentation-criteria (for task file template in Step 3)
 
 ### Step 1: Validate Design Doc
 
@@ -57,86 +47,52 @@ Invoke acceptance-test-generator using Task tool:
 
 **Expected output**: `generatedFiles` containing integration and e2e paths
 
-### Step 3: Create Task File [GATE]
+### Step 3: Test Implementation
 
-Create task file at: `docs/features/{feature}/{part}/{plan-name}/integration-tests-YYYYMMDD/task-01.md`
-
-**Template**:
-```markdown
----
-name: Implement integration tests for [feature name]
-type: test-implementation
----
-
-## Objective
-
-Implement test cases defined in skeleton files.
-
-## Target Files
-
-- Skeleton: [path from Step 2 generatedFiles]
-- Design Doc: [path from Step 1]
-
-## Tasks
-
-- [ ] Implement each test case in skeleton
-- [ ] Verify all tests pass
-- [ ] No implemented test catches a defect an existing test already catches (`testing-principles`, Test Selection)
-
-## Acceptance Criteria
-
-- All skeleton test cases implemented
-- All tests passing
-- No quality issues
-```
-
-**Output**: "Task file created at [path]. Ready for Step 4."
-
-### Step 4: Test Implementation
-
-Invoke task-executor using Task tool:
+Skeleton test cases are hollow tests, so task-executor implements them in Fix Mode — no task file:
 - `subagent_type`: "task-executor"
 - `description`: "Implement integration tests"
-- `prompt`: "Task file: docs/features/{feature}/{part}/{plan-name}/integration-tests-YYYYMMDD/task-01.md. Implement tests following the task file."
+- `prompt`: "incompleteImplementations: [one {type: hollow_test, location: <skeleton file>, description: 'implement every test case in this skeleton; skip a case an existing test already catches (testing-principles, Test Selection) and say so'} per path from Step 2 generatedFiles]. Design Doc: [path from Step 1]."
 
-**Expected output**: `status`, `testsAdded`
+**Expected output**: `status`, `changeSummary` (Fix Mode fills the existing skeleton files, so `testsAdded` may be empty)
 
-### Step 5: Test Review
+### Step 4: Test Review
 
 Invoke integration-test-reviewer using Task tool:
 - `subagent_type`: "integration-test-reviewer"
 - `description`: "Review test quality"
-- `prompt`: "Review test quality. Test files: [paths from Step 4 testsAdded]. Skeleton files: [paths from Step 2 generatedFiles]"
+- `prompt`: "testFiles: [skeleton files from Step 2 generatedFiles]. designDoc: [path from Step 1]"
 
-**Expected output**: `status` (approved/needs_revision), `requiredFixes`
+**Expected output**: `status` (approved/needs_revision/blocked), `requiredFixes`
 
-### Step 6: Apply Review Fixes
+### Step 5: Apply Review Fixes
 
-Check Step 5 result:
-- `status: approved` → Mark complete, proceed to Step 7
-- `status: needs_revision` → Invoke task-executor with requiredFixes, then return to Step 5
+Check Step 4 result:
+- `status: approved` → Mark complete, proceed to Step 6
+- `status: needs_revision` → Invoke task-executor with requiredFixes, then return to Step 4
+- `status: blocked` → STOP and present the reason to the user
 
 Invoke task-executor using Task tool:
 - `subagent_type`: "task-executor"
 - `description`: "Fix review findings"
-- `prompt`: "Fix the following issues in test files: [requiredFixes from Step 5]"
+- `prompt`: "requiredFixes: [requiredFixes from Step 4]. Design Doc: [path from Step 1]."
 
-### Step 7: Quality Check
+### Step 6: Quality Check
 
 Invoke quality-fixer using Task tool:
 - `subagent_type`: "quality-fixer"
 - `description`: "Quality gate check"
-- `prompt`: "Execute final quality checks for test files: [paths from Step 4 testsAdded]"
+- `prompt`: "Execute final quality checks for test files: [skeleton files from Step 2 generatedFiles]"
 
 **Expected output**: `approved` (true/false)
 
-### Step 8: Final Report and Commit
+### Step 7: Final Report and Commit
 
 ```
 Test Implementation Complete
 
 Generated skeletons: [paths from Step 2]
-Implemented tests: [paths from Step 4]
+Implemented tests: [Step 3 changeSummary]
 Review status: [approved]
 Quality status: [approved]
 

@@ -80,6 +80,7 @@ Select the recommended option and explain:
 
 ```json
 {
+  "status": "completed|blocked",
   "aspect": "The analyzed aspect (e.g., Security)",
   "expertName": "The adopted expert persona",
   "codeInvestigation": {
@@ -109,7 +110,8 @@ Select the recommended option and explain:
     "selectedOption": "O1",
     "reasoning": "Why this option is preferred",
     "risks": ["Residual risks even with this option"],
-    "conditions": "Any conditions or prerequisites for this recommendation"
+    "conditions": "Any conditions or prerequisites for this recommendation",
+    "confidence": "high|medium|low"
   },
   "interactionPoints": [
     {

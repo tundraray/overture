@@ -1,17 +1,19 @@
 ---
 name: brand-context
-description: Inject brand-specific design system into brand-system-guide skill
+description: Record the project's brand in its design system (docs/design-system/) through ux-designer
 argument-hint: (no arguments - interactive setup)
 ---
 
-**Command Context**: Collect project-specific brand guidelines and update brand-system-guide/SKILL.md.
+**Command Context**: Collect the project's brand guidelines and record them in the project design system — `docs/design-system/README.md` (Source, Direction) and `docs/design-system/foundations.md` — through `ux-designer`. Plugin skill files are never edited.
 
 ## Execution Process
 
 ### 1. Current State Verification
 
-! ls -la skills/brand-system-guide/SKILL.md
+! ls -la docs/design-system/ 2>/dev/null
 ! cat package.json | grep -E '"name":|"description":'
+
+When `docs/design-system/` exists, read its README and foundations first: this run updates them rather than starting over.
 
 ### 2. Brand Context Collection
 
@@ -58,109 +60,30 @@ Interact with the user to collect the following information:
     - Level AAA (strict)
 ```
 
-**Think deeply**: From the collected information, understand the brand's visual identity and construct a design system guide focused on implementable specifications.
+### 3. Record the Brand Through ux-designer
 
-### 3. Generate brand-system-guide/SKILL.md
+Map the answers onto the design system, then call `ux-designer`:
 
-## AI Execution Accuracy Maximization Criteria
+| Answers | Go to |
+|---|---|
+| 9 (brand assets), 8 (component library) | README → Source: link each, with what it covers |
+| 1, 2 (positioning, emotions) | README → Direction |
+| 3–5 (color, modes) | foundations.md → Color, as roles |
+| 6, 7 (typography) | foundations.md → Typography |
+| 10 (WCAG level) | Contrast targets in foundations.md → Color |
 
-Generated brand-system-guide/SKILL.md must follow these criteria:
-
-### Principles of Description
-
-1. **Implementable specifications**: Include exact values (hex codes, pixel sizes, ratios)
-2. **AI-decidable**: Use measurable criteria ("sufficient contrast" → "4.5:1 minimum ratio")
-3. **Code-ready**: Provide CSS variables, Tailwind classes, or component props
-4. **Visual examples**: Include HTML/CSS snippets for common patterns
-
-### Responsibility Boundaries
-
-brand-system-guide's single responsibility is "visual design system specifications" only:
-
-- ✅ Include: Colors, typography, spacing, component styling, accessibility guidelines
-- ❌ Exclude: Business logic, API design, state management, project context
-
-### Structure
-
-```markdown
----
-name: brand-system-guide
-description: [Brand name] design system - colors, typography, components, and accessibility standards.
----
-
-# Brand System Guide
-
-## Brand Positioning
-
-- **Core identity**: [Brand personality in 1-2 sentences]
-- **Design philosophy**: [Key design principles]
-
-## Color System
-
-### Primary Colors
-
-| Name | Value | Usage |
-|------|-------|-------|
-| Primary | #XXXXXX | Main actions, links |
-| Primary Foreground | #XXXXXX | Text on primary |
-
-### Semantic Colors
-
-| Name | Value | Usage |
-|------|-------|-------|
-| Success | #XXXXXX | Confirmations |
-| Error | #XXXXXX | Errors, destructive |
-| Warning | #XXXXXX | Cautions |
-
-### CSS Variables
-
-\`\`\`css
-:root {
-  --primary: #XXXXXX;
-  --primary-foreground: #XXXXXX;
-  /* ... */
-}
-\`\`\`
-
-## Typography
-
-### Font Stack
-
-- **Headings**: [Font family]
-- **Body**: [Font family]
-- **Mono**: [Font family]
-
-### Scale
-
-| Level | Size | Weight | Line Height |
-|-------|------|--------|-------------|
-| h1 | Xrem | 700 | 1.2 |
-| body | Xrem | 400 | 1.5 |
-
-## Component Patterns
-
-### Buttons
-
-\`\`\`html
-<!-- Primary Button -->
-<button class="...">Action</button>
-\`\`\`
-
-### Cards, Forms, etc.
-
-## Accessibility
-
-- **Contrast requirements**: [Ratio]
-- **Focus indicators**: [Specification]
-- **Touch targets**: [Minimum size]
+```
+subagent_type: ux-designer
+prompt: "Task: run only the Design System Workflow — no UXRD this run. Record the project's brand in docs/design-system/: README.md (Source, Direction, Index) and foundations.md, following design-system-template.md and the design-system skill. Brand answers: [collected answers]. The user's answers are decisions: record them; where a linked brand book or component library decides something, cite it instead of restating it; fill the remaining gaps per <ux_aesthetics>, traceable to the Direction. If the files exist, update them and keep what the answers do not change. Return documents[] with every file written. [SYSTEM CONSTRAINT] This agent operates within /brand-context command scope. Write only docs/design-system/README.md and docs/design-system/foundations.md; no component specs, no code."
 ```
 
-### 4. Verify Integration
+### 4. Verify and Report
 
-After generating, verify:
-- [ ] All colors have sufficient contrast ratios
-- [ ] CSS variables are valid
-- [ ] Component examples render correctly
-- [ ] Accessibility requirements are measurable
+Read the files ux-designer returned and confirm:
+- [ ] Every answer the user gave appears in README or foundations, or is cited from the linked source
+- [ ] Colors are roles with light and dark values as the mode answer requires, with contrast targets from the WCAG level
+- [ ] Nothing is both cited and restated, and the files contain no code
 
-**Scope**: Update brand-system-guide/SKILL.md only. Project context and technical specifications are the responsibility of other skill files.
+Show the user the paths and a short summary of Source, Direction, and the foundations set.
+
+**Scope**: Write `docs/design-system/README.md` and `docs/design-system/foundations.md` only, through `ux-designer`. Component specs come with the UXRDs that need them; project context and technical specifications belong to other commands.

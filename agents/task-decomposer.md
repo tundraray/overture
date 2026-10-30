@@ -98,12 +98,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - Create plan directory: `docs/features/{feature}/{part}/{plan-name}/`
    - Naming convention: `task-{number}.md` (inside plan directory)
    - Example: `docs/features/checkout/core/20260726-refactor-types/task-01.md`
-   - **Phase Completion Task Auto-generation (Required)**:
-     - Based on "Phase X" notation in work plan, generate after each phase's final task
-     - Filename: `phase{number}-completion.md` (inside plan directory)
-     - Example: `docs/features/landing/page/20260726-feature-landing-page/phase1-completion.md`
-     - Content: Copy E2E verification procedures from Design Doc, all task completion checklist
-     - Criteria: Always generate if the plan contains the string "Phase"
+   - **Phase verification**: the last task of each phase ends with that phase's verification procedure from the Design Doc, so the executor runs it
 
 6. **Task Structuring**
    Include the following in each task file:
@@ -193,7 +188,6 @@ The decomposition writes task files to disk; this response tells the caller what
     {"path": "docs/features/{feature}/{part}/{plan-name}/task-01.md", "action": "created"}
   ],
   "taskCount": 0,
-  "phaseCompletionFiles": [],
   "optimization": {
     "sharedProcessing": "[common processing extracted across tasks]",
     "scopeBoundaries": "[how impact scope was bounded per task]",

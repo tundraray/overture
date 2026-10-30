@@ -35,37 +35,35 @@ Register the following in TodoWrite and execute:
 **Task tool invocation**:
 ```
 subagent_type: code-explorer
-prompt: Scan the codebase for dead code, orphan files, unused exports, and suspicious areas.
-
-Scope: [user-provided scope or "entire project"]
-Exclusions: [standard exclusions: node_modules, dist, build, vendor, .git]
+prompt: query: what in this codebase is unused or dead?; breadth: thorough; scope_hint: [user-provided scope, if any]; exclude: node_modules, dist, build, vendor, .git
 ```
 
-**Expected output**: Categorized list of findings with suspicion levels and evidence
+**Expected output**: `findings[]` (`id`, `category`, `name`, `files`, `confidence`, `signals`, `notRuledOut`) and `coverage`
 
 ### Step 2: Scan Quality Check
 
 Review scanner output:
 
 **Quality Check** (verify JSON output contains):
-- [ ] items array with at least one finding (or confirm codebase is clean)
-- [ ] Each item has suspicionLevel and evidence
-- [ ] scanMetrics summary
+- [ ] `findings` array with at least one entry (or confirm codebase is clean)
+- [ ] Each finding has `confidence` and `signals`
+- [ ] `coverage` — areas in `notSearched` are not "clean"
 
 **If zero findings**: Report clean codebase to user and exit.
 
 ### Step 3: Interactive Review
 
-Present findings to user **one at a time**, sorted by suspicion level (high first).
+Present findings to user **one at a time**, sorted by `confidence` (high first).
 
 For EACH item, use **AskUserQuestion** with the item context:
 
 ```
 Finding: [item.name]
 Category: [item.category]
-Suspicion: [item.suspicionLevel]
+Confidence: [item.confidence]
 Files: [item.files]
 Evidence: [item.signals joined]
+Not ruled out: [item.notRuledOut joined, or "nothing"]
 
 What would you like to do with this finding?
 ```
@@ -78,7 +76,7 @@ Options:
 
 Track all decisions in a decisions list.
 
-**Efficiency**: For items with the same category and suspicion level, you may group up to 3 related items in a single question. But never group items from different categories.
+**Efficiency**: For items with the same category and confidence, you may group up to 3 related items in a single question. But never group items from different categories.
 
 ### Step 4: Decision Report
 
@@ -142,9 +140,7 @@ Test command: [detected or user-provided test command]
 
 ### Step 7: Handle Deprecations
 
-For items marked "Deprecate", add deprecation comments via task-executor or directly:
-- Add `@deprecated` or equivalent comment to the export/file
-- Include date and reason
+For items marked "Deprecate", invoke task-executor in Fix Mode with `requiredFixes`: one `{location, issue: "deprecate", fix: "@deprecated <date> <reason>"}` per item.
 
 ### Step 8: Final Report
 

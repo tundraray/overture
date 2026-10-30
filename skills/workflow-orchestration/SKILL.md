@@ -163,13 +163,15 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | File Pattern | Owner Agent |
 |--------------|-------------|
 | `docs/features/*/prd.md` | prd-creator |
-| `docs/features/*/uxrd.md` | ux-designer (gamedev: ui-ux-agent) |
+| `docs/features/*/uxrd.md` | ux-designer (gamedev: game-ui-designer) |
+| `docs/design-system/**` (project design system) | ux-designer (gamedev: game-ui-designer) — created and extended through a UXRD |
 | `docs/game-design/*.md` (GDD) | sr-game-designer (gamedev) |
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
 | `docs/features/*/design-*.md` | technical-designer(-frontend) |
 | `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes; `status` flips go through the planner in `update` mode |
 | `docs/features/{feature}/{part}/{plan-name}/*.md` | task-decomposer; executors may Edit progress |
+| `docs/features/{feature}/{part}/{plan-name}/analysis/*.md` | task-executor(-frontend) — research deliverables |
 | `src/**/*`, `tests/**/*` (code) | task-executor(-frontend) |
 | Any file (quality fixes) | quality-fixer(-frontend) |
 
@@ -202,7 +204,7 @@ Autonomous execution MUST stop and wait for user input at these points.
 |-------|------------|----------|---------------------|
 | Product | After requirement-analyzer completes | feature | Confirm requirements and scale / answer questions |
 | Product | After document-reviewer completes PRD review | feature | Approve PRD, including the Delivery Parts split — every scale |
-| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD |
+| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
 | Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
 | Technical | After document-reviewer completes ADR review (only when an ADR was written) | ADR | Approve ADR |
 | Execution | After document-reviewer completes work plan review | part | Batch approval for that part's implementation |
@@ -244,7 +246,7 @@ Call subagents using the Task tool:
 
 ### Reviewers Are Cold Readers
 
-A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
+A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref, or a copy of the reviewed version — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
 
 Never passed to a reviewer:
 - the author agent's `summary` or rationale for what it wrote
@@ -259,11 +261,11 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 ### Call Example (document-reviewer, re-review)
 - subagent_type: "document-reviewer"
 - description: "Design Doc re-review"
-- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. review_scope: changes. diff_base: [git ref the first review read, or HEAD when that version was uncommitted]. Prior issues (verbatim from the previous verdict): [issues JSON]"
+- prompt: "target: docs/features/[feature]/design-[part].md. doc_type: DesignDoc. review_scope: changes. diff_base: [git ref the first review read, or the copy of that version]. Prior issues (verbatim from the previous verdict): [issues JSON]"
 
 ### Revision Loop
 
-Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
 **What each verdict sends to the owner** (`revision_agent`, `mode: update`):
 
@@ -278,12 +280,14 @@ Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD,
 
 **Round cap.** At most two reviews per document per gate: the first review and one re-review. A re-review that is not `approved` stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
 - **Revise again** — one more owner pass with the user's instruction passed verbatim, then one more re-review
-- **Accept as is** — the owner records the accepted finding and the user's rationale in the document (`mode: update`), and the gate advances
+- **Accept as is** — the owner records the accepted finding and the user's rationale in the document (Update History where the template has one; `mode: update`), and the gate advances
 - **Abort** — hold at the current document
 
-**Re-review scope.** A re-review checks the prior issues and the changed text (`git diff <diff_base> -- <path>` plus the sections the change cites); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
+**Keep the reviewed version.** Documents are usually uncommitted while under review, so before sending one to its owner the orchestrator copies it to the session scratchpad; that copy is the re-review's `diff_base`.
 
-**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
+**Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
+
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
 The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. Only the user's explicit accept advances a gate past an open finding.
 
@@ -292,12 +296,12 @@ The orchestrator never accepts a reviewer finding on its own authority, and neve
 Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
-- **quality-fixer**: status, checksPerformed, fixesApplied, approved
+- **quality-fixer**: status, checksPerformed, fixesApplied, approved, incompleteImplementations
 - **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues, deferred (with `review_scope: changes`)
 - **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
 - **acceptance-test-generator**: status, generatedFiles, budgetUsage
-- **expert-analyst**: aspect, expertName, codeInvestigation, concerns, options, recommendation, risks, interactionPoints
+- **expert-analyst**: status, aspect, expertName, codeInvestigation, concerns, options, recommendation (with risks and confidence), interactionPoints
 - **code-explorer**: status, answer, locations (directed) or findings (sweep: id, category, files, confidence, signals, ruledOut, notRuledOut), counts, coverage
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 - **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
@@ -387,7 +391,7 @@ When rule-advisor returns its analysis, the orchestrator MUST formalize the meta
 | `metaCognitiveGuidance.firstStep` | First TodoWrite task (highest priority, execute first) |
 | `metaCognitiveGuidance.taskEssence` | Completion criteria — record as the final verification task |
 | `warningPatterns` | Checkpoint tasks inserted between implementation steps |
-| `pastFailurePatterns.countermeasures` | Guard tasks — verify these are not violated during execution |
+| `metaCognitiveGuidance.pastFailures` | Guard tasks — verify these are not repeated during execution |
 
 ### TodoWrite Structure After Rule-Advisor
 
@@ -398,14 +402,14 @@ When rule-advisor returns its analysis, the orchestrator MUST formalize the meta
 4. [pending] Checkpoint: Verify {warningPattern[1]} not triggered
 5. [pending] Implementation step 2
 ...
-N-1. [pending] Guard: Confirm {pastFailurePattern} countermeasures applied
+N-1. [pending] Guard: Confirm {pastFailures[i]} not repeated
 N. [pending] Verify task essence: {taskEssence}
 ```
 
 ### Rules
 
 1. Checkpoints are inserted between every 2-3 implementation steps
-2. Guard tasks reference specific `pastFailurePatterns` with their countermeasures
+2. Guard tasks reference specific `pastFailures` entries
 3. The final task ALWAYS verifies `taskEssence` from rule-advisor
 4. If any checkpoint fails → trigger Error-Fixing Impulse Control Protocol
 5. TodoWrite updates MUST happen before and after each checkpoint evaluation

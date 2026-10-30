@@ -41,12 +41,6 @@ Details of documentation creation criteria follow documentation-criteria skill.
 ### Overview
 - ADR: written after the Design Doc, only when a decision the design made passes the three-part test in `documentation-criteria` — costly to reverse, binding beyond this feature, taken against real alternatives. The `adrSignals` from requirement analysis say what to test; they do not decide
 - Design Doc: one per part at medium and large scale
-- Also required regardless of scale for:
-  - Complex implementation logic
-    - Criteria: Managing 3+ states, or coordinating 5+ asynchronous processes
-    - Example: Complex state management, coordinating multiple asynchronous operations
-  - Introduction of new algorithms or patterns
-    - Example: New caching strategies, custom routing implementation
 
 ### Important: Assessment Consistency
 - If assessments conflict, include and report the discrepancy in output
@@ -86,7 +80,7 @@ Analyze existing code to identify:
 | Example: Repository pattern | Implicit | src/repos/*.ts | Data access must follow repository pattern |
 ```
 
-**Gate Rule**: Design work cannot proceed until at least 3 explicit and 2 implicit standards are identified. If fewer are found, investigate more thoroughly.
+**Gate Rule**: Aim for at least 3 explicit and 2 implicit standards. If the project has fewer, say so in the Applicable Standards section.
 
 #### Recording and Alignment
 1. **Identify Project Standards**
@@ -96,7 +90,7 @@ Analyze existing code to identify:
 2. **Record in Design Doc**
    - List in "Applicable Standards" section with `[explicit]`/`[implicit]` tags
    - Include the Classification Table above
-   - Implicit standards require user confirmation before design proceeds
+   - Implicit standards go in the response's `openQuestions`, so the user confirms them at the Design Doc approval stop
 
 3. **Alignment Rule**
    - Design decisions must reference applicable standards
@@ -117,10 +111,10 @@ prompt: "query: how outbound webhooks are registered and dispatched today; bread
 
 | Question | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | Implementation Path Mapping |
-| What must know about a new unit for it to run — registration, DI, routes, subscriptions, config? | `query: where <comparable unit> is registered and constructed; breadth: medium` | Integration Point Map |
+| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | C4 Code locations |
+| What must know about a new unit for it to run — registration, DI, routes, subscriptions, config? | `query: where <comparable unit> is registered and constructed; breadth: medium` | Integration Points List |
 | What conventions does this layer follow — error handling, validation placement, transaction boundaries? | `query: how <layer> handles errors and validation; breadth: medium` | Applicable Standards |
-| Is there an abstraction here to extend instead of a new one to introduce? | `query: abstractions over <concept>; breadth: thorough` | Minimal Surface Alternatives |
+| Is there an abstraction here to extend instead of a new one to introduce? | `query: abstractions over <concept>; breadth: thorough` | Key Decisions |
 | How does data reach and leave this area today? | `query: producers and consumers of <data>; breadth: medium` | Runtime Flows; Field Propagation Map |
 
 **2. Similar Functionality Search and Decision** (Pattern 5 prevention from ai-development-guide)
@@ -146,62 +140,8 @@ Run the search before deciding, and act on what it returns:
 
 **Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
-### Integration Point Analysis【Important】
-Clarify integration points with existing systems when adding new features or modifying existing ones:
-
-1. **Identify and Document Integration Points**
-   ```yaml
-   ## Integration Point Map
-   Integration Point 1:
-     Existing Component: [Component/module name, function/method name]
-     Integration Method: [Hook Addition/Call Addition/Data Reference/etc]
-     Impact Level: High (Process Flow Change) / Medium (Data Usage) / Low (Read-Only)
-     Required Test Coverage: [Continuity Verification of Existing Features]
-   ```
-
-2. **Classification by Impact Level**
-   - **High**: Modifying or extending existing process flows
-   - **Medium**: Using or updating existing data
-   - **Low**: Read-only operations, log additions, etc.
-
-3. **Reflection in Design Doc**
-   - Create "## Integration Point Map" section
-   - Clarify responsibilities and boundaries at each integration point
-   - Define error behavior at design phase
-
 ### Data Representation Decision【Required】
-For every new data structure in the design, explicitly document the reuse-vs-new decision:
-
-**Decision Record (required in Design Doc):**
-| Data Structure | Decision | Rationale |
-|---|---|---|
-| Example: UserProfile | **Reuse** existing User type + extend | Existing type covers 80% of fields, extension is cleaner than duplication |
-| Example: AuditLog | **New** dedicated type | No existing type matches audit requirements, forcing fit would compromise both |
-
-**Decision Criteria:**
-1. **Can existing types be reused?** Search for types with >60% field overlap
-2. **Would reuse require breaking changes?** If yes, consider new type
-3. **Are there consumers of existing types?** Reuse impacts all consumers
-4. **Is the domain concept truly new?** New concepts deserve new types
-
-**Reuse Assessment:**
-- Search existing codebase for similar data structures
-- If existing structure covers 80%+ of needs -> Extend existing
-- If existing structure covers <80% -> Create new with clear justification
-
-**Evaluation Criteria:**
-- Semantic fit: Does the existing structure represent the same concept?
-- Responsibility fit: Does it belong to the same bounded context?
-- Lifecycle fit: Do instances share creation/deletion patterns?
-- Boundary/interop cost: Would reuse create unwanted coupling?
-
-**Decision Rule:**
-- All criteria satisfied -> Reuse existing
-- 1-2 criteria fail -> Evaluate extension with adapter
-- 3+ criteria fail -> New structure justified
-- Record decision and rationale in Design Doc
-
-**Rule**: Every Design Doc must explicitly state for each new data structure whether it reuses existing types or creates new ones, with rationale.
+For every new data structure, search for an existing one first and record reuse, extend, or new as a Key Decisions row, with the rejected options. Reuse when the existing structure fits the same concept, bounded context, and lifecycle without unwanted coupling; otherwise extend or create new.
 
 ### Agreement Checklist【Most Important】
 Must be performed at the beginning of Design Doc creation:
@@ -225,11 +165,7 @@ Must be performed when creating Design Doc:
    - **Vertical Slice**: Complete by feature unit, minimal external dependencies, early value delivery
    - **Horizontal Slice**: Implementation by layer, important common foundation, technical consistency priority
    - **Hybrid**: Composite, handles complex requirements
-   - Document selection reason (record results of metacognitive strategy selection process)
-
-2. **Integration Point Definition**
-   - Which task first makes the whole system operational
-   - Verification level for each task (L1/L2/L3 defined in implementation-approach skill)
+   - Record the selected approach and a one-line reason in the template's Implementation Approach; implementation order and per-task verification levels belong to the work plan
 
 ### Change Impact Map【Required】
 
@@ -304,13 +240,13 @@ When conversion is required, clearly specify adapter implementation or migration
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (logging, error handling, contract definitions, API design, etc.)
-2. Search `docs/adr/ADR-COMMON-*`, create if not found
+2. Search `docs/adr/ADR-COMMON-*` and reference what exists; a missing common decision goes through the ADR test after the design
 3. Include in Design Doc's "Prerequisite ADRs"
 
 Common ADR needed when: Technical decisions common to multiple components
 
 ### Integration Point Specification
-Document integration points with existing system (location, old implementation, new implementation, switching method).
+Document integration points with existing system in the Integration Points List (location, old implementation, new implementation, switching method, how it is verified); error behavior at each point is defined at design phase.
 
 ### Data Contracts
 Define input/output between components (types, preconditions, guarantees, error behavior).
@@ -338,8 +274,9 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
+- **focusAreas**: codebase-analyzer output — each entry gets a row in the Fact Disposition Table (disposition and where it is handled; the evidence stays in the analyzer output)
 - **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each. The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
-- **Documents to Create**: ADR, Design Doc, or both
+- **Documents to Create**: Design Doc, or ADR (a separate call after the Design Doc is approved, with the same part)
 - **Existing Architecture Information**: 
   - Current technology stack
   - Adopted architecture patterns
@@ -358,34 +295,7 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 ### ADR Creation (Multiple Option Comparison Mode)
 
-**Basic Structure**:
-```markdown
-# ADR-XXXX: [Title]
-Status: Proposed
-
-## Background
-[Technical challenges and constraints in 1-2 sentences]
-
-## Options
-### Option A: [Approach Name]
-- Overview: [Explain in one sentence]
-- Benefits: [2-3 items]
-- Drawbacks: [2-3 items]
-- Effort: X days
-
-### Option B/C: [Document similarly]
-
-## Comparison
-| Evaluation Axis | Option A | Option B | Option C |
-|-----------------|----------|----------|----------|
-| Implementation Effort | 3 days | 5 days | 2 days |
-| Maintainability | High | Medium | Low |
-
-## Decision
-Option [X] selected. Reason: [2-3 sentences including trade-offs]
-```
-
-See ADR template in documentation-criteria skill for details.
+Follow the ADR template (`adr-template.md` in `documentation-criteria`): options compared against real alternatives, no schedules or effort estimates.
 
 ### Normal Document Creation
 - **ADR**: `docs/adr/ADR-[4-digit number]-[title].md` (e.g., ADR-0001)
@@ -446,13 +356,14 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 | Identifiers exactly as in code (`ThreadsService`, `GET /api/threads`, `THREAD_NOT_FOUND`) | Schema or type source (zod, TS interfaces, classes, DTOs, SQL DDL) |
 | Contract and field tables per the template's Contract Definitions | Function bodies, "key fragments", snippets of changed files |
 | Mermaid diagrams; the YAML blocks the template defines | Test code, test file names, fixtures, test helpers, mock wiring |
-| File paths in Implementation Path Mapping and Code Inspection Evidence | Config files, command lines beyond the build/test commands the project already has |
+| File paths in C4 Code locations and Code Inspection Evidence | Config files, command lines beyond the build/test commands the project already has |
 
 Test Strategy is a list of use cases (Given / When / Then in domain terms, each naming the ACs it covers), not a list of test files.
 
 ## Update Mode Operation
 - **ADR**: Update existing file for minor changes, create new file for major changes
 - **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
+- **After approval**, the Design Doc changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design
 - **Every revision** — after review feedback or a user change — re-runs the full Self-Validation below on the whole document, not only on the edited sections. A reviewer's fix request is never a reason to add code: a contract question is answered by extending the contract table, a test question by adding or sharpening a use case.
 
 ## Diagram Creation (mermaid-diagrams skill)
@@ -468,11 +379,11 @@ Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <do
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and evidence
-- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is consumed as written in the upstream design, and an insufficiency there is recorded as an open question against that design rather than redefined here
+- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
+- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
 - [ ] The Change Impact Map was built from a resolved consumer list, not an assumed one; "No Ripple Effect" covers only what the sweep reached
-- [ ] Each new maintenance-surface element has a Minimal Surface Alternatives entry naming what the smaller option fails to satisfy
+- [ ] Each new maintenance-surface element (persistent state, boundary-crossing field, mode or flag, abstraction) is a Key Decisions row naming the smaller options rejected
 - [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed
 - [ ] Identifiers are written exactly as they appear in code, character for character
 - [ ] No source code in the document: no code blocks other than mermaid and the template's YAML blocks; contracts are tables (see No Code in Design Docs and ADRs)
@@ -481,7 +392,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
-- [ ] Snapshot and Key Decisions are current; evidence (codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
+- [ ] Snapshot and Key Decisions are current, and each decision is argued only in Key Decisions; evidence (codebase analysis, standards, Fact Disposition, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
 - [ ] On a revision, every item above was re-checked against the whole document
 - [ ] The returned `documents[].path` matches the file actually written
 
@@ -503,7 +414,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] **Integration boundary contracts defined** (required)
 - [ ] **Integration points completely enumerated** (required)
 - [ ] **Data contracts clarified** (required)
-- [ ] **E2E verification procedures for each phase** (required)
+- [ ] **Each integration point names how it is verified** (required)
 - [ ] Response to requirements and design validity
 - [ ] Test strategy as use cases covering every AC, and error handling
 - [ ] Architecture drawn as C1–C4 and behaviour as runtime flows (mermaid-diagrams)
@@ -514,7 +425,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] **Standards Identification Gate completed** (required) — at least 3 explicit and 2 implicit standards identified, Classification Table included
 - [ ] **Code Inspection Evidence included** (required, in Appendix: Evidence) — what was examined, and each finding with the design decision it drives
 - [ ] **Field Propagation Map included** (if multi-layer) — with loss_risk assessment for each field, "When Required" criteria checked
-- [ ] **Data Representation Decisions documented** (when new structures introduced) — explicit reuse-vs-new decision with rationale for every new data structure
+- [ ] **Data Representation Decisions documented** (when new structures introduced) — a Key Decisions row with the reuse/extend/new choice for every new data structure
 
 
 ## Acceptance Criteria Creation Guidelines
@@ -603,15 +514,15 @@ Add at the end of ADR/Design Doc in the following format:
 - When documenting technology decisions with current documentation
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — resolve library name to ID (e.g., "react" → library ID)
-2. `mcp__context7__get-library-docs` — fetch latest documentation for the library
+1. `resolve-library-id` — resolve library name to ID (e.g., "react" → library ID)
+2. `query-docs` — fetch latest documentation for the library
 3. Apply findings to ADR options comparison or Design Doc technical decisions
 
 **Example Flow**:
 ```
 Research: "Which state management for React?"
-→ resolve-library-id("zustand") → get-library-docs
-→ resolve-library-id("jotai") → get-library-docs
+→ resolve-library-id("zustand") → query-docs
+→ resolve-library-id("jotai") → query-docs
 → Compare in ADR options with latest API info
 ```
 

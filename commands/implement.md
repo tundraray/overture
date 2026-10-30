@@ -182,8 +182,8 @@ Store selected strategy for autonomous execution mode.
 
 **Step 2 branch conditions**:
 - `status: escalation_needed` or `status: blocked` → escalate to user
-- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`; `approved` → proceed to quality-fixer.
-- `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`. Do not advance to quality-fixer: a stub can pass quality checks while implementing nothing.
+- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`, then the reviewer again; `approved` → proceed to quality-fixer.
+- quality-fixer `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`, then quality-fixer again; never commit on it (diagram: `workflow-execution`, "The Per-Task Cycle")
 
 **Commit by strategy**:
 - **per-task**: Commit when quality-fixer returns `approved: true`
@@ -215,10 +215,8 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
    - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
 
 3. **Fix cycle** (any verifier failed, max 2 cycles):
-   - Create a consolidated fix task file (`docs/features/{feature}/{part}/{plan-name}/post-impl-fixes-YYYYMMDD.md`) from the task template
-   - Populate its Target Files with the **union** of file paths from every verifier's `requiredFixes[].location` and `discrepancies[].codeLocation`. Without this union the executor's File Scope Constraint rejects the very files it was dispatched to fix, because they belong to different original tasks.
-   - Normalize both verifiers' output into a single `requiredFixes[]` per the skill's normalization rules
-   - `task-executor` in **Fix Mode** → `quality-fixer` → re-run **only** the failed verifiers
+   - Normalize the verifiers' output into a single `requiredFixes[]` per the skill's normalization rules
+   - `task-executor` in **Fix Mode** (no task file; `Design Doc: [path]`) → `quality-fixer` → commit per strategy → re-run **only** the failed verifiers
    - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
 
 4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.
@@ -227,7 +225,7 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
 
 Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
 
-- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `phase*-completion.md`, `analysis/`, and the consolidated fix task file from the verification cycle if one was created
+- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `analysis/`
 - **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
 - When this run drove several parts, repeat the above per part rather than deleting the feature directory

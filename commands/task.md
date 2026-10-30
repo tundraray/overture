@@ -28,11 +28,10 @@ After receiving rule-advisor's JSON response, proceed with:
    - Review each selected rule section
    - Apply concrete procedures and guidelines
 
-3. **Recognize Past Failures** (from `pastFailurePatterns`)
-   - Apply countermeasures for known failure patterns
-   - Use suggested alternative approaches
+3. **Recognize Past Failures** (from `metaCognitiveGuidance.pastFailures`)
+   - Guard against each named failure pattern
 
-4. **Execute First Action** (from `firstActionGuidance`)
+4. **Execute First Action** (from `metaCognitiveGuidance.firstStep`)
    - Start with recommended action
    - Use suggested tools first
 
@@ -42,7 +41,7 @@ Register work steps. Always include: first "Confirm skill constraints", final "V
 
 Break down the task based on rule-advisor's guidance:
 - Reflect `taskEssence` in task descriptions
-- Apply `firstActionGuidance` to first task
+- Apply `metaCognitiveGuidance.firstStep` to first task
 - Restructure tasks considering `warningPatterns`
 - Set appropriate priorities
 
@@ -57,5 +56,5 @@ Proceed with task execution following:
 
 - **Execute rule-advisor first**: Mandatory metacognitive step before implementation
 - **Update TodoWrite after rule-advisor**: Reflect insights in task structure
-- **Follow firstActionGuidance**: Start with recommended action
+- **Follow `metaCognitiveGuidance.firstStep`**: Start with recommended action
 - **Monitor warningPatterns**: Watch for failure patterns throughout execution

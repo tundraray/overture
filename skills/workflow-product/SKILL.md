@@ -38,8 +38,8 @@ The flow is the same shape at every scale — a PRD is always written — and di
 2. **prd-creator** (`depth: full`) → PRD creation (update when one exists; new creation with thorough investigation when not), including the **Delivery Parts** section that refines the proposal
 3. **document-reviewer** (`doc_type: PRD`, `depth: full`) → PRD review, including part coverage and dependencies
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface) → **document-reviewer**
-   **[Stop: UXRD approval]**
+4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+   **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
 
@@ -50,8 +50,8 @@ The flow is the same shape at every scale — a PRD is always written — and di
 2. **prd-creator** (`depth: lite`, or `update` when a PRD already covers the feature) → PRD with Delivery Parts
 3. **document-reviewer** (`doc_type: PRD`, `depth: lite`) → PRD review
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface) → **document-reviewer**
-   **[Stop: UXRD approval]**
+4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+   **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
 
@@ -103,7 +103,7 @@ Every stop in this phase is a genuine decision gate, not a status update. Use `A
 |------|-------|----------------------|
 | Requirement confirmation | requirement-analyzer | Whether the understood scope and scale match intent; answers to open questions; a first look at the proposed parts |
 | PRD approval | document-reviewer completes PRD review | Whether the requirements and success metrics are right, and whether the Delivery Parts split is the right one — every scale |
-| UXRD approval | document-reviewer completes UXRD review | Whether the flows, states, and accessibility posture are right — only when the work has a UI surface |
+| UXRD approval | document-reviewer completes UXRD review | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
 
 Each stop happens **once per feature**. Per-part stops begin in the technical phase.
 
@@ -134,7 +134,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ The user has confirmed the requirements at the requirement stop
 ☐ Scale is recorded with its `decidingAxis`, and a non-`files` deciding axis was stated to the user
 ☐ PRD exists at the depth the scale requires and is approved
-☐ UXRD exists and is approved, **or** the work has no UI surface and that is recorded
+☐ UXRD exists and is approved, together with the `docs/design-system/` files it created or changed, **or** the work has no UI surface and that is recorded, **or** the scale is small
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
 ☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
@@ -144,7 +144,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 | Item | Form |
 |------|------|
 | PRD | `docs/features/{feature}/prd.md`, with its depth |
-| UXRD | `docs/features/{feature}/uxrd.md`, or "no UI surface" |
+| UXRD | `docs/features/{feature}/uxrd.md` and `docs/design-system/`, or "no UI surface" |
 | Parts list | `{name, covers, cutAlong, dependsOn}` per part, in dependency order — copied from the PRD's Delivery Parts section. `cutAlong` is what the technical phase routes on (`frontend` → `technical-designer-frontend` and `ui-analyzer`) |
 | Scale | `{small\|medium\|large}` plus `decidingAxis` |
 | Open questions | List of `question → decision it blocks → owner` |

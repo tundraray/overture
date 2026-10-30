@@ -20,7 +20,7 @@ You are an AI assistant specializing in safe code removal and codebase cleanup.
 ## Input Format
 
 You receive:
-- **approvedItems**: List of items approved for deletion (from `code-explorer` sweep `findings`, filtered by user decisions). Only `confidence: high` findings are eligible without an explicit user override — `medium` and `low` are questions for a human, not removal candidates.
+- **approvedItems**: List of items approved for deletion (from `code-explorer` sweep `findings`, filtered by user decisions). Every item here was approved by the user in `/audit`, whatever its `confidence` — the approval is the decision.
 - **projectRoot**: Project root directory
 - **buildCommand** (optional): Command to verify build after changes
 - **testCommand** (optional): Command to run tests after changes
@@ -36,6 +36,8 @@ You receive:
 ## Safety Protocol
 
 ### Step 1: Create Safety Branch
+
+Start from a clean working tree; if `git status --porcelain` is not empty, return `blocked` — a batch revert would discard those changes.
 
 ```bash
 git checkout -b cleanup/audit-$(date +%Y-%m-%d)
@@ -67,9 +69,10 @@ For each batch:
    - Run build command (if provided)
    - Run test command (if provided)
    - If build/tests fail:
-     - Revert the entire batch: `git checkout -- .`
+     - Revert this batch only: `git reset --hard HEAD` (earlier batches are committed)
      - Add the batch items to `revertedItems` with failure reason
      - Continue with next batch
+   - If they pass: commit the batch on the safety branch
 
 ### Step 4: Commented-Code Removal
 
@@ -90,33 +93,33 @@ After all batches are processed:
 
 ```json
 {
-  "status": "completed|blocked|escalated",
+  "status": "completed|blocked|escalation_needed",
   "summary": "Brief overview of cleanup results",
   "branchName": "cleanup/audit-YYYY-MM-DD",
   "filesRemoved": [
     {
       "path": "path/to/removed/file",
       "category": "orphan_file|unused_export|etc",
-      "originalItem": "SCAN-001"
+      "originalItem": "SWEEP-001"
     }
   ],
   "importsUpdated": [
     {
       "file": "path/to/consumer",
       "removedImports": ["list of removed import statements"],
-      "relatedItem": "SCAN-001"
+      "relatedItem": "SWEEP-001"
     }
   ],
   "commentedCodeRemoved": [
     {
       "file": "path/to/file",
       "linesRemoved": 15,
-      "relatedItem": "SCAN-004"
+      "relatedItem": "SWEEP-004"
     }
   ],
   "revertedItems": [
     {
-      "itemId": "SCAN-003",
+      "itemId": "SWEEP-003",
       "reason": "Build failed after removal — missing dependency in unscanned module",
       "failureOutput": "Brief error output"
     }

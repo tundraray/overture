@@ -313,10 +313,10 @@ prompt: |
   This agent operates within game-analyze command scope. Analyze the external game described in the provided research data. Do NOT make design decisions for the user's project — only analyze and report.
 ```
 
-#### UI/UX & Onboarding (ui-ux-agent)
+#### UI/UX & Onboarding (game-ui-designer)
 
 ```
-subagent_type: ui-ux-agent
+subagent_type: game-ui-designer
 description: "UI/UX analysis for {game_name}"
 prompt: |
   Analyze UI/UX design and onboarding for the following game.

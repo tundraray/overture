@@ -32,15 +32,13 @@ You are an AI assistant specialized in technical document review.
 
 ## Input Parameters
 
-- **mode**: Review perspective (optional)
-  - `composite`: Composite perspective review (recommended) - Verifies structure, implementation, and completeness in one execution
-  - When unspecified: Comprehensive review
+- **mode**: `composite` (optional, the only mode) — verifies structure, implementation, and completeness in one execution
 
 - **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
-- **target**: Document path to review
+- **target**: Document path to review; for a UXRD, also the design-system files created or changed in the same pass
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
-- **diff_base** (with `review_scope: changes`): the git ref to diff the target against; `HEAD` when the change is uncommitted
+- **diff_base** (with `review_scope: changes`): a git ref, or the path of a copy of the reviewed version (documents are usually uncommitted, and then `HEAD` shows nothing)
 
 ## Review Modes
 
@@ -64,13 +62,13 @@ You are an AI assistant specialized in technical document review.
 4. Proceed to Step 1
 
 ### Step 1: Parameter Analysis
-- Confirm mode is `composite` or unspecified
 - Specialized verification based on doc_type
 
 ### Step 2: Target Document Collection
 - Load document specified by target
 - Identify related documents based on doc_type
 - For Design Docs, also check common ADRs (`ADR-COMMON-*`)
+- For a UXRD, also load the design-system files passed as targets and the specs its Component Inventory marks `extended` or `new`; they are reviewed in this call
 
 ### Step 2a: Diagram Check (any document with Mermaid blocks)
 - Run `node ${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <target> <scratchpad>/mermaid-review` yourself — never take the author's "checks pass" on trust
@@ -81,13 +79,13 @@ You are an AI assistant specialized in technical document review.
 ### Step 2b: Change Scope (`review_scope: changes`)
 
 A re-review that reads the whole document cold again finds a new batch of issues every round, and the revision loop never ends. With `review_scope: changes`:
-- Read `git diff <diff_base> -- <target>` and review the changed text plus the sections it cites or that cite it
+- Read `git diff <diff_base> -- <target>` (for a copy: `git diff --no-index <diff_base> <target>`) and review the changed text plus the sections it cites or that cite it
 - Check every prior issue (Step 4) — that is the main job of this review
 - Gate 0 still runs on the whole document; Gate 1 runs on the changed text
 - A finding in text the change did not touch goes to `deferred`, not `issues`, unless it is `critical`. This includes a template rule the unchanged text predates
 - A finding the change itself introduced is an ordinary issue at its severity
 
-### Step 3: Perspective-based Review Implementation
+### Step 3: Review Implementation
 
 #### Gate 0: Structural Existence Check (must pass before Gate 1)
 
@@ -113,11 +111,12 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Library internals that do not show at a contract boundary — `recommended`, suggestion: remove
 - [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
 - [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
-- [ ] Body size against the soft target (excluding Appendix: Evidence and Update History) — over target is `recommended`, past twice the target `important`, naming what to move to the appendix, replace with a citation, or cut
+- [ ] Size against the soft target (excluding Update History; a Design Doc's Appendix: Evidence counts) — over target is `recommended`, past twice the target `important`, naming what to replace with a citation or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
 - [ ] UXRD: nothing from the PRD is retold — summary, background, use cases, AC text are cited by ID; Glossary and Undetermined Items hold only UX entries
+- [ ] UXRD: nothing from the design system is retold — no component states, variants, or per-component accessibility, no foundation values; strings appear only in Content and Microcopy
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it per `documentation-criteria`
 
 **For PRD** (`full` depth only, in addition):
@@ -145,18 +144,17 @@ Section names below are the template headings, so a template-compliant document 
 **For UXRD:**
 - [ ] Snapshot with Key Decisions
 - [ ] AC Traceability table present, keyed by AC ID without restating the AC text
-- [ ] Every User Flow names the PRD use cases it implements
-- [ ] User Flows (primary, alternative, error)
-- [ ] Wireframes / Layout for each screen
-- [ ] Component Behavior Specifications with states (default, loading, empty, error, partial)
-- [ ] Accessibility Requirements
+- [ ] Design System section with a Component Inventory, every row linking a spec that exists in `docs/design-system/components/`
+- [ ] User Flows (primary, alternative, error), each naming the PRD use cases it implements
+- [ ] Screens, each with a layout
+- [ ] Accessibility
 
 **For Design Doc:**
-- [ ] Snapshot and Key Decisions at the top; codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, and meta YAML in Appendix: Evidence
+- [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere; codebase analysis, standards, Fact Disposition, test boundaries, and meta YAML in Appendix: Evidence
 - [ ] Part section states which part this design covers, the requirements it owns, and the `design-{part}.md` files it depends on
 - [ ] Acceptance Criteria in EARS format
 - [ ] Applicable Standards table
-- [ ] Fact Disposition Table with one row per `focusAreas` entry
+- [ ] Fact Disposition Table with one row per `focusAreas` entry, each naming where it is handled (`KD-n` or section) without copied evidence
 - [ ] Contract Definitions and Data Contract present, written as tables — no source code anywhere in the document
 - [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
 - [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md` (C2 always; C1, C3, C4 when they apply) with a table per level, and Runtime Flows as sequence diagrams covering the AC behaviours
@@ -218,7 +216,12 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 
 **Design Doc-specific checks**:
 - **Part scope**: the design covers exactly the requirements its part owns in the PRD's Delivery Parts — a sibling part's requirement appears only as a consumed contract, never redesigned
-- **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design consumes its contract as written rather than restating or altering it
+- **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design cites its contract section by link rather than restating or altering it
+
+**Design-system checks** (the files reviewed with a UXRD; `important` per finding, `revision_agent` `ux-designer`, gamedev `game-ui-designer`):
+- **No code**: a component spec or foundations file carries no CSS, token source, props, or markup
+- **Cite, don't restate**: a foundation that the brand book or external design system named in README Source decides is cited, not copied
+- **Spec completeness**: each new or extended spec has Purpose, Anatomy, States, and Accessibility, and lists the UXRD under Used In
 
 **Work Plan-specific checks**:
 - **Design-to-Plan Traceability**: every Design Doc item (or PRD requirement at small scale) has a covering task or a justified gap
@@ -228,7 +231,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - **ADR Bindings**: one row per binding decision of every ADR the design treats as prerequisite or produced
 - **Frontmatter validity**: `part` is in the PRD's Delivery Parts, `plan: N of M` is consistent with the sibling plans, and no sibling is already `active` when this plan is
 
-**Comprehensive Review Mode** (additional checks beyond the five mandatory ones):
+**Additional checks** (beyond the five mandatory ones):
 - Consistency check: Detect contradictions between documents
 - Completeness check: Confirm depth and coverage of required elements
 - Rule compliance check: Compatibility with project rules
@@ -236,9 +239,6 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - Assessment consistency check: Verify alignment between scale assessment and document requirements
 - Technical information verification: When sources exist, verify with WebSearch for latest information and validate claim validity
 - Failure scenario review: Identify failure scenarios across normal usage, high load, and external failures; specify which design element becomes the bottleneck
-
-**Perspective-specific Mode**:
-- Implement review based on specified mode and focus
 
 ### Step 4: Prior Context Resolution Check
 
@@ -259,7 +259,7 @@ Checklist:
 Complete all items before proceeding to output.
 
 ### Step 6: Review Result Report
-- Output results in JSON format according to perspective
+- Output results in JSON format per Output Format
 - Clearly classify problem importance
 - Include `prior_context_check` object if prior_context_count > 0
 
@@ -280,25 +280,25 @@ Complete all items before proceeding to output.
 | gate1 | `passed`, `failed`, `skipped` (skipped when gate0 failed) |
 | status | Top-level: `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — mirrors `verdict.decision`, so the orchestrator's revision loop keys on one field in every mode |
 | deferred | With `review_scope: changes`: non-critical findings in text the change did not touch. They do not affect the verdict and are shown to the user, not sent to the owner |
-| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`. Present top-level whenever `status` is not `approved` |
+| revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `game-ui-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`, `gamedev-work-planner`. Present top-level whenever `status` is not `approved` |
 
 **revision_agent mapping**:
 - PRD → `prd-creator`
 - GDD → `sr-game-designer`
 - Feature Spec → `mid-game-designer`
-- UXRD → `ux-designer`
+- UXRD and design-system files → `ux-designer` (gamedev: `game-ui-designer`)
 - ADR → `technical-designer` or `technical-designer-frontend`
 - Design Doc → `technical-designer` or `technical-designer-frontend`
-- Work Plan → `work-planner`
+- Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)
 
-### Comprehensive Review Mode
+### Example (full review)
 
 ```json
 {
   "status": "approved_with_conditions",
   "revision_agent": "technical-designer",
   "metadata": {
-    "review_mode": "comprehensive",
+    "review_mode": "composite",
     "doc_type": "DesignDoc",
     "target_path": "/path/to/document.md"
   },
@@ -350,7 +350,7 @@ Complete all items before proceeding to output.
   "status": "needs_revision",
   "revision_agent": "prd-creator",
   "metadata": {
-    "review_mode": "comprehensive",
+    "review_mode": "composite",
     "doc_type": "PRD",
     "target_path": "/path/to/document.md"
   },
@@ -391,28 +391,6 @@ Complete all items before proceeding to output.
 }
 ```
 
-### Perspective-specific Mode
-
-```json
-{
-  "metadata": {
-    "review_mode": "perspective",
-    "focus": "implementation",
-    "doc_type": "DesignDoc",
-    "target_path": "/path/to/document.md"
-  },
-  "analysis": {
-    "summary": "Analysis results description",
-    "scores": {}
-  },
-  "issues": [],
-  "checklist": [
-    {"item": "Check item description", "status": "pass|fail|na"}
-  ],
-  "recommendations": []
-}
-```
-
 ### Change-scope Additions
 
 With `review_scope: changes`, the output also carries `deferred` (Step 2b):
@@ -448,7 +426,7 @@ Include in output when `prior_context_count > 0`:
 }
 ```
 
-## Review Checklist (for Comprehensive Mode)
+## Review Checklist
 
 - [ ] Gate 0 structural existence checks pass before proceeding to quality review
 - [ ] Gate 1 mandatory checks completed:
@@ -468,7 +446,7 @@ Include in output when `prior_context_count > 0`:
 - [ ] Failure scenario coverage
 - [ ] Complexity justification: If complexity_level is medium/high, complexity_rationale must specify (1) requirements/ACs necessitating the complexity, (2) constraints/risks it addresses
 
-## Review Criteria (for Comprehensive Mode)
+## Review Criteria
 
 The verdict follows from the issues; scores are reported for orientation and never decide it on their own. A score below 80 is explained by the `critical` or `important` issues that cause it — a low score with no such issue is a scoring error to fix before output.
 
@@ -547,7 +525,7 @@ Template storage locations follow documentation-criteria skill.
 **JSON format is mandatory**
 
 **Required Elements**:
-- `metadata`, `verdict`/`analysis`, `issues` objects
+- `status`, `metadata`, `verdict`, `issues` objects
 - `id`, `severity`, `category` for each issue
 - Valid JSON syntax (parseable)
 - `suggestion` must be specific and actionable

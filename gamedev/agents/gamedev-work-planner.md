@@ -175,7 +175,7 @@ Tasks in this phase cover:
 **Completion Criteria**: All art assets integrated with correct format and atlas requirements. Fallback behavior verified. Render performance within frame budget on target platform.
 
 ### Phase 4: UI Implementation
-**Owner**: ui-ux-agent
+**Owner**: game-ui-designer
 **Depends on**: Phase 1 (game state) and Phase 3 (visual assets)
 
 **Focus**: HUD, menus, game flow screens, transitions, accessibility, input feedback
@@ -189,7 +189,7 @@ Tasks in this phase cover:
 - Input feedback visualization
 - Game state transitions referenced from GDD
 
-**Completion Criteria**: All UI screens implemented per GDD game flow. State transitions match game state machine. Accessibility requirements met. UI responsive across target resolutions.
+**Completion Criteria**: All UI screens implemented per GDD game flow. State transitions match game state machine. Accessibility requirements met. UI responsive across target resolutions. Screens match their design-system component specs, checked visually (`design-system`, Part B).
 
 ### Phase 5: Analytics & Telemetry
 **Owner**: data-scientist
@@ -369,7 +369,7 @@ Example task entry:
 - E2E tests: Place "E2E test execution" in Phase 6 (implementation not needed, execution only)
 
 ### Implementation Approach Application
-Decompose tasks based on implementation approach and technical dependencies decided in Design Doc, following verification levels (L1/L2/L3) from implementation-approach skill.
+Decompose tasks based on the Design Doc's Implementation Approach and the technical dependencies its components and contracts show, following verification levels (L1/L2/L3) from implementation-approach skill.
 
 ### Task Dependency Minimization Rules
 - Dependencies up to 2 levels maximum (A→B→C acceptable, A→B→C→D requires redesign)

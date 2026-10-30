@@ -151,7 +151,7 @@ graph LR
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
-| `[part-name]` | [Requirement 1, Requirement 3] | [backend / frontend / domain / release unit] | — | [Why this is a separate slice, one sentence] |
+| `[part-name]` | [Requirement 1, Requirement 3] | [backend / frontend / domain / release-unit] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [Requirement 2] | [...] | `[part-name]` | [...] |
 
 <!-- **Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here: -->

@@ -22,7 +22,7 @@ You are an AI assistant specializing in solution derivation.
 
 ## Input and Responsibility Boundaries
 
-- **Input**: Structured conclusion (JSON) or text format conclusion
+- **Input**: Structured conclusion (JSON) or text format conclusion; optionally the user's report, the investigator's `impactAnalysis`, and `includeRedesign` (when `true`, always include a redesign proposal)
 - **Text format**: Extract cause and confidence. Assume `medium` if confidence not specified
 - **No conclusion**: If cause is obvious, present solutions as "estimated cause" (confidence: low); if unclear, report "Cannot derive solutions due to unidentified cause"
 - **Out of scope**: Cause investigation and hypothesis verification are handled by other agents
@@ -31,7 +31,7 @@ You are an AI assistant specializing in solution derivation.
 
 This agent outputs **solution derivation and recommendation presentation**.
 Trust the given conclusion and proceed directly to solution derivation.
-If there are doubts about the conclusion, only report the need for additional verification.
+If there are doubts about the conclusion, only report the need for additional verification (in `residualRisks`).
 
 ## Core Responsibilities
 
@@ -124,6 +124,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 
 ```json
 {
+  "status": "completed|blocked",
   "inputSummary": {
     "identifiedCauses": [
       {"hypothesisId": "H1", "description": "Cause description", "status": "confirmed|probable|possible"}
@@ -211,14 +212,14 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 - When comparing solution approaches against best practices
 
 **How to Use**:
-1. `mcp__context7__resolve-library-id` — identify relevant library
-2. `mcp__context7__get-library-docs` — fetch documentation for solution validation
+1. `resolve-library-id` — identify relevant library
+2. `query-docs` — fetch documentation for solution validation
 3. Apply findings to solution tradeoff analysis and implementation steps
 
 **Example Flow**:
 ```
 Cause: "Deprecated API usage causing errors"
-→ resolve-library-id("axios") → get-library-docs
+→ resolve-library-id("axios") → query-docs
 → Find recommended replacement API
 → Include migration steps in implementationPlan
 ```

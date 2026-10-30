@@ -10,7 +10,7 @@ argument-hint: (no arguments - reviews current implementation)
 
 **Core Identity**: "I am not a worker. I am an orchestrator."
 
-**First Action**: Register Steps 1-9 to TodoWrite before any execution.
+**First Action**: Register Steps 1-7 to TodoWrite before any execution.
 
 ## Required Skills
 
@@ -45,7 +45,7 @@ git diff --name-only main...HEAD
 Invoke code-reviewer using Task tool:
 - `subagent_type`: "code-reviewer"
 - `description`: "Validate compliance"
-- `prompt`: "Validate Design Doc compliance for [path from Step 1]"
+- `prompt`: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list from Step 1]"
 
 Validate:
 - Acceptance criteria fulfillment
@@ -79,57 +79,18 @@ Unfulfilled items:
 Execute fixes? (y/n):
 ```
 
-### Step 4: Execute Skill
+### Step 4: Execute Fixes
 
-If user selects `n` or compliance sufficient: Skip Steps 4-8, proceed to Step 9.
+If user selects `n` or compliance sufficient: skip to Step 7.
 
-Execute Skill: documentation-criteria (for task file template)
-
-### Step 5: Create Task File
-
-Create task file at `docs/features/{feature}/{part}/{plan-name}/review-fixes-YYYYMMDD/task-01.md`
-
-**Template**:
-```markdown
----
-name: Review compliance fixes
-type: fix-implementation
----
-
-## Objective
-
-Fix compliance issues identified by code-reviewer.
-
-## Target Files
-
-- Design Doc: [path from Step 1]
-- Implementation files: [files from git diff]
-
-## Tasks
-
-- [ ] [Unfulfilled item 1]
-- [ ] [Unfulfilled item 2]
-- [ ] Verify fixes pass quality checks
-
-## Acceptance Criteria
-
-- All fixable items resolved
-- Quality checks passing
-- No regressions introduced
-```
-
-**Output**: "Task file created at [path]. Ready for Step 6."
-
-### Step 6: Execute Fixes
-
-Invoke task-executor using Task tool:
+Invoke task-executor in Fix Mode — no task file; scope comes from the fix locations:
 - `subagent_type`: "task-executor"
 - `description`: "Execute review fixes"
-- `prompt`: "Task file: docs/features/{feature}/{part}/{plan-name}/review-fixes-YYYYMMDD/task-01.md. Apply staged fixes (stops at 5 files)."
+- `prompt`: "Design Doc: [path]. requiredFixes: [each unfulfilledItems entry as {location, issue: item, fix: solution} and each qualityIssues entry as {location, issue: type, fix: suggestion}]"
 
 **Expected output**: `status`, `filesModified`
 
-### Step 7: Quality Check
+### Step 5: Quality Check
 
 Invoke quality-fixer using Task tool:
 - `subagent_type`: "quality-fixer"
@@ -138,14 +99,14 @@ Invoke quality-fixer using Task tool:
 
 **Expected output**: `approved` (true/false)
 
-### Step 8: Re-validate
+### Step 6: Re-validate
 
 Invoke code-reviewer using Task tool:
 - `subagent_type`: "code-reviewer"
 - `description`: "Re-validate compliance"
-- `prompt`: "Re-validate Design Doc compliance after fixes."
+- `prompt`: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list, re-read]"
 
-### Step 9: Final Report
+### Step 7: Final Report
 
 ```
 Initial compliance: [X]%

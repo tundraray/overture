@@ -131,12 +131,14 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 
 ```json
 {
+  "status": "completed|blocked",
   "complianceRate": "[X]%",
   "verdict": "[pass/needs-improvement/needs-redesign]",
   
   "unfulfilledItems": [
     {
       "item": "[acceptance criteria name]",
+      "location": "[file:line, or the file the Design Doc assigns it to]",
       "priority": "[high/medium/low]",
       "solution": "[specific implementation approach]"
     }
@@ -145,7 +147,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   "qualityIssues": [
     {
       "type": "[long-function/deep-nesting/multiple-responsibilities]",
-      "location": "[filename:function]",
+      "location": "[file:line]",
       "suggestion": "[specific improvement]"
     }
   ],

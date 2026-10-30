@@ -46,8 +46,7 @@ prompt: Identify the essence and required rules for this problem: [Problem repor
 ```
 
 Confirm from rule-advisor output:
-- `taskAnalysis.mainFocus`: Primary focus of the problem
-- `mandatoryChecks.taskEssence`: Root problem beyond surface symptoms
+- `metaCognitiveGuidance.taskEssence`: Root problem beyond surface symptoms
 - `selectedRules`: Applicable rule sections
 - `warningPatterns`: Patterns to avoid
 
@@ -142,14 +141,17 @@ prompt: Derive solutions based on the following verified conclusion.
 Causes: [verifier's conclusion.causes]
 Causes relationship: [causesRelationship: independent/dependent/exclusive]
 Confidence: [high/medium/low]
+User report: [Problem reported by user]
+Impact analysis: [investigator's impactAnalysis]
+includeRedesign: [true if the user chose B above]
 ```
 
 **Expected output**: Multiple solutions (at least 3), tradeoff analysis, recommendation and implementation steps, residual risks
 
-**Completion condition**: confidence=high
+**Completion condition**: the verifier's `conclusion.confidence` is `high`
 
 **When not reached**:
-1. Return to Step 1 with uncertainties identified by solver as investigation targets
+1. Return to Step 1 with the verifier's `conclusion.recommendedVerification` as `investigationFocus`
 2. Maximum 2 additional investigation iterations
 3. After 2 iterations without reaching high, present user with options:
    - Continue additional investigation

@@ -167,5 +167,5 @@ Overall Confidence: [X]%
 
 ---
 *Analysis completed: [Date]*
-*Analyst team: game-researcher, sr-game-designer, mechanics-developer, data-scientist, market-analyst, game-feel-developer, ui-ux-agent*
+*Analyst team: game-researcher, sr-game-designer, mechanics-developer, data-scientist, market-analyst, game-feel-developer, game-ui-designer*
 *Recommended re-analysis: [Timeframe — e.g., after next major update]*

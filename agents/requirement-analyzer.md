@@ -49,11 +49,11 @@ Scale is the **highest** level any axis triggers, per `task-analyzer`. File coun
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
 | Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, persisted-data migration |
 | Boundaries | One local module | Multiple modules in one layer | Cross-layer, cross-service, external system |
-| Decision risk | Existing pattern applies | One bounded technical decision | Architecture, security, compliance, irreversible operation |
+| Decision risk | Existing pattern applies | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, irreversible operation |
 
 Report every axis and name the one that set the scale as `decidingAxis`. An axis that cannot be assessed is `unknown`, never assumed favourable. Scale-driven documents: a PRD at every scale (`lite` at small and medium, `full` at large); Design Doc and work plan per part at medium and large; a simplified plan at small.
 
-※UXRD conditions (frontend/UI work, user interaction patterns, accessibility requirements) require UXRD regardless of scale
+※UXRD conditions (frontend/UI work, user interaction patterns, accessibility requirements) require a UXRD at medium and large scale; no UXRD at small scale
 
 ### File Count Estimation (MANDATORY)
 
@@ -98,7 +98,7 @@ Report them as `adrSignals[]`; an empty list is a valid result.
 1. **Scale determination**: assess all five axes; the highest triggered level is the scale, and `decidingAxis` names it
 2. **Document determination**: apply the scale's document set — PRD at every scale, Design Doc and work plan per part at medium and large
 3. **ADR signals**: list the signals the designer must test; do not decide the ADR
-4. **UXRD determination**: Check UXRD conditions individually
+4. **UXRD determination** (medium and large scale): Check UXRD conditions individually
    - Frontend/UI components affected → UXRD mandatory
    - User interaction patterns changed → UXRD mandatory
    - Accessibility requirements involved → UXRD mandatory

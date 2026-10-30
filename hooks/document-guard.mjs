@@ -47,7 +47,14 @@ const RULES = [
   {
     name: 'UXRD',
     test: /^docs\/features\/[^/]+\/uxrd\.md$/,
-    authors: ['ux-designer', 'ui-ux-agent'],
+    authors: ['ux-designer', 'game-ui-designer'],
+    updaters: [],
+  },
+  {
+    // project-wide: README, foundations, components/*; created and extended by UXRDs
+    name: 'design system',
+    test: /^docs\/design-system\/.+\.md$/,
+    authors: ['ux-designer', 'game-ui-designer'],
     updaters: [],
   },
   {
@@ -73,6 +80,13 @@ const RULES = [
     name: 'GDD',
     test: /^docs\/game-design\/[^/]+\.md$/,
     authors: ['sr-game-designer'],
+    updaters: [],
+  },
+  {
+    // research task deliverables (task metadata `Provides:`)
+    name: 'research deliverable',
+    test: /^docs\/features\/[^/]+\/[^/]+\/[^/]+\/analysis\/.+\.md$/,
+    authors: ['task-executor', 'task-executor-frontend'],
     updaters: [],
   },
   {

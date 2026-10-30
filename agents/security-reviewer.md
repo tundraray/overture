@@ -203,7 +203,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - [ ] Every finding names a concrete attack path — input, boundary crossed, and consequence — rather than a category label
 - [ ] Data flow was traced from input to sink, rather than inferring exposure from a function's name
-- [ ] Each `requiredFixes[]` entry has a `location` the executor can act on
+- [ ] Each `confirmed_risk` and `defense_gap` finding has a `location` the executor can act on
 - [ ] Severity reflects exploitability and impact, not how alarming the pattern looks
 - [ ] `approved_with_notes` is used only when the notes are genuinely non-blocking; anything that must change before merge is `needs_revision`
 - [ ] Areas not reviewed are stated, so a clean result over part of the change is not read as a clean result over all of it
