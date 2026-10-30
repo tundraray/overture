@@ -63,6 +63,7 @@ Category: [item.category]
 Confidence: [item.confidence]
 Files: [item.files]
 Evidence: [item.signals joined]
+Not ruled out: [item.notRuledOut joined, or "nothing"]
 
 What would you like to do with this finding?
 ```

@@ -36,7 +36,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
 | Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
 | Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision | Architecture, security, compliance, or irreversible operational decision |
+| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ states, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
 
 Select the highest scale triggered by any observed axis.
 

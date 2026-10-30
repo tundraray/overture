@@ -356,6 +356,7 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 - Use class components (deprecated in modern React)
 
 **Escalation Required**:
+- A third attempt at the same failure in the same file → stop patching and escalate with what was tried (`design_compliance_violation`, listing the attempts in `attempted_approaches`)
 - When considering design deviation or shortcut fixes (see judgment criteria above)
 - When discovering similar components/hooks (Pattern 5 compliant)
 

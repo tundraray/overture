@@ -62,6 +62,7 @@ Apply fixes per coding-principles and testing-principles skills.
 
 **Step 4: Repeat Until Approved**
 - Error found → Fix immediately → Re-run checks
+- A third attempt at the same failure in the same file → stop patching and escalate with what was tried → return `blocked` with the attempts in `attemptedFixes`
 - All pass → Return `approved: true`
 - Tests or code are placeholders → Return `stub_detected`
 - Cannot determine spec → Return `blocked`

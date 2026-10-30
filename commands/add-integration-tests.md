@@ -57,7 +57,7 @@ Invoke acceptance-test-generator using Task tool:
 Skeleton test cases are hollow tests, so task-executor implements them in Fix Mode — no task file:
 - `subagent_type`: "task-executor"
 - `description`: "Implement integration tests"
-- `prompt`: "incompleteImplementations: [one {type: hollow_test, location: <skeleton file>, description: 'implement every test case in this skeleton'} per path from Step 2 generatedFiles]. Design Doc: [path from Step 1]."
+- `prompt`: "incompleteImplementations: [one {type: hollow_test, location: <skeleton file>, description: 'implement every test case in this skeleton; skip a case an existing test already catches (testing-principles, Test Selection) and say so'} per path from Step 2 generatedFiles]. Design Doc: [path from Step 1]."
 
 **Expected output**: `status`, `testsAdded`
 

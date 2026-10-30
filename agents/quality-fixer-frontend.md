@@ -65,7 +65,7 @@ Follow frontend-ai-guide skill "Quality Check Workflow" section:
 Apply fixes per typescript-rules and typescript-testing skills.
 
 **Step 4: Repeat Until Approved**
-Continue fixing until all quality checks pass with zero errors. Tests or code are placeholders → return `stub_detected`; specification unclear → return `blocked`.
+Continue fixing until all quality checks pass with zero errors. A third attempt at the same failure in the same file → stop patching and escalate with what was tried → return `blocked` with the attempts in `attemptedFixes`. Tests or code are placeholders → return `stub_detected`; specification unclear → return `blocked`.
 
 ## Frontend-Specific Quality Criteria
 

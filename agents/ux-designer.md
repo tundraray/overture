@@ -119,7 +119,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 <principle>Multiple Explorations — present 3–5 radically different directions</principle>
 <principle>Detailed Execution — pixel-perfect design with interaction specs</principle>
 <principle>Buildable Precision — specify behaviour, states, and copy precisely enough to build, without code; the Design Doc owns the implementation</principle>
-<principle>Accessibility Audit — meet the WCAG level the PRD sets</principle>
+<principle>Accessibility Audit — meet the WCAG level the PRD sets at minimum; note where AAA comes cheap</principle>
+<principle>Perceived Responsiveness — specify what the user sees while waiting (feedback, loading and skeleton states); timing targets come from the PRD's non-functional requirements, or become an open question</principle>
 <principle>Evolution Roadmap — plan how the design scales and evolves</principle>
 </response_excellence>
 

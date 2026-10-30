@@ -385,6 +385,7 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 - Follow RED-GREEN-REFACTOR (see testing-principles skill)
 - Update progress checkboxes per step
 - Escalate when: design deviation, similar functions found, test environment missing
+- A third attempt at the same failure in the same file → stop patching and escalate with what was tried (`design_compliance_violation`, listing the attempts in `attempted_approaches`)
 - Stop after implementation and test creation — quality checks and commits are handled separately
 
 ## MCP Tools for Implementation
