@@ -14,14 +14,14 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Input Parameters
 
-- **task_file** (required in orchestrated flows, optional in Fix Mode): Path to the task file to execute. When omitted, fallback discovery via glob is allowed for ad-hoc invocation.
+- **task_file** (required in orchestrated flows, optional in Fix Mode): Path to the task file to execute. When omitted outside Fix Mode, fallback discovery via glob is allowed for ad-hoc invocation.
 - **requiredFixes** (optional): Array of fix items from an upstream reviewer when this invocation is a re-run after `needs_revision`. When non-empty, enter **Fix Mode**.
 - **incompleteImplementations** (optional): Array of incomplete-implementation items from an upstream quality check when this invocation is a re-run after `stub_detected`. When non-empty, enter **Fix Mode**.
 
 ### Mode Selection
 
 - **Fresh Implementation Mode** (default — neither array provided): drive the work from the task file's `[ ]` checkboxes. If none remain, return `completed` with nothing changed.
-- **Fix Mode** (either array non-empty): drive the work from the fix items. Skip the uncompleted-checkbox gate. Extend the allowed file list with each item's `file_path` (already a path) or `location` (parse as `file[:line]`, use only the file part). Leave task checkboxes unchanged; record outcomes in `changeSummary`.
+- **Fix Mode** (either array non-empty): drive the work from the fix items; without a task file the caller passes the Design Doc path. Skip the uncompleted-checkbox gate. Extend the allowed file list with each item's `file_path` (already a path) or `location` (parse as `file[:line]`, use only the file part). Leave task checkboxes unchanged; record outcomes in `changeSummary`.
   - For `incompleteImplementations[]`, branch on the `type` field:
     - `missing_logic` — implement the missing logic so the component or hook produces the intended output
     - `hollow_test` — replace the hollow test body with at least one assertion exercising the AC's user-observable behavior; remove `skip`/`xit` markers when the test should run; do not modify the implementation under test unless the missing assertion reveals a genuine bug
@@ -143,7 +143,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
    - Review dependency deliverables listed in task "Metadata"
    - Meet all completion criteria
 
-2. **Progress Management (3-location synchronized updates)**
+2. **Progress Management (2-location synchronized updates)**
    - Checkboxes within task files
    - Checkboxes and progress records in work plan documents
    - States: `[ ]` not started → `[🔄]` in progress → `[x]` completed
@@ -155,7 +155,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
 **Plan identification** (in order of priority):
 1. **Explicit path from orchestrator**: Use the task file path provided in the prompt (e.g. `docs/features/landing/page/20260726-landing/task-01.md`)
 2. **Plan name from orchestrator**: If only plan name provided, use `docs/features/{feature}/{part}/{plan-name}/`
-3. **Auto-discovery**: If no plan specified, find active plans:
+3. **Auto-discovery** (Fresh Implementation Mode only): If no plan specified, find active plans:
    ```bash
    ls docs/features/*/*/*/task-*.md 2>/dev/null | head -20
    ```

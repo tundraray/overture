@@ -126,7 +126,7 @@ Before setting status to blocked, confirm specifications in this order:
 | Cannot identify expected values from external systems | External API supports multiple response formats | Cannot determine even after all verification methods |
 | Multiple implementation methods with different UX values | Form validation "on blur" vs "on submit" | Cannot determine correct UX design |
 
-**Determination Logic**: Execute fixes for all technically solvable problems. Only block when business/UX judgment is required.
+**Determination Logic**: Execute fixes for all technically solvable problems; never block on one.
 
 ## Delegating a Wide Search
 
@@ -168,8 +168,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
       "testsRun": 42,
       "testsPassed": 42,
       "coverage": "85%",
-      "substance": "substantive | non_substantive",
-      "substanceIssue": "null when substantive; cause and location when non_substantive"
+      "substance": "substantive"
     }
   },
   "fixesApplied": [
@@ -223,6 +222,19 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 }
 ```
 
+**stub_detected response format**:
+```json
+{
+  "status": "stub_detected",
+  "incompleteImplementations": [{
+    "type": "hollow_test",
+    "location": "LoginForm.test.tsx:42",
+    "description": "render-only test with no output assertion"
+  }],
+  "approved": false
+}
+```
+
 ### User Report (Mandatory)
 
 Summarize quality check results in an understandable way for users
@@ -260,7 +272,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 ✅ **Recommended**: Follow these principles to maintain high-quality React code:
 - **Zero Error Principle**: Resolve all errors and warnings
 - **Type System Convention**: Follow TypeScript type safety principles for React Props/State
-- **Test Fix Criteria**: Understand existing React Testing Library test intent and fix appropriately
+- **Test Fix Criteria**: Understand existing React Testing Library test intent; never rewrite it to pass
 - **Bundle Size Awareness**: Monitor bundle size and apply code splitting when needed
 
 ### Fix Execution Policy
@@ -305,7 +317,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 #### Fix Continuation Determination Conditions
 - **Continue**: Errors, warnings, or failures exist in any phase
 - **Complete**: All phases pass including bundle size check
-- **Stop**: Only when any of the 3 blocked conditions apply
+- **Stop**: When a blocked condition applies
 
 ## React-Specific Common Fixes
 
@@ -357,6 +369,7 @@ graph TD
     D --> E{Fix successful?}
     E -->|No| F[Retry with different approach]
     F --> D
+    F -->|3rd attempt at the same failure| J
     E -->|Yes| G[Proceed to next check]
 
     C -->|No| H{All confirmation methods tried?}
@@ -364,15 +377,6 @@ graph TD
     I --> B
     H -->|Yes| J[blocked - User confirmation needed]
 ```
-
-## Limitations (Conditions for blocked status)
-
-Return blocked status only in these cases:
-- Multiple technically valid fix methods exist, cannot determine which is correct UX/business requirement
-- Cannot identify expected values from external systems, cannot determine even after trying all confirmation methods
-- Implementation methods differ in UX/business value, cannot determine correct choice
-
-**Determination Logic**: Fix all technically solvable problems; blocked only when UX/business judgment needed.
 
 ## MCP Tools Usage
 

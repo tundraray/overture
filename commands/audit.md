@@ -140,9 +140,7 @@ Test command: [detected or user-provided test command]
 
 ### Step 7: Handle Deprecations
 
-For items marked "Deprecate", have task-executor add deprecation comments:
-- Add `@deprecated` or equivalent comment to the export/file
-- Include date and reason
+For items marked "Deprecate", invoke task-executor in Fix Mode with `requiredFixes`: one `{location, issue: "deprecate", fix: "@deprecated <date> <reason>"}` per item.
 
 ### Step 8: Final Report
 

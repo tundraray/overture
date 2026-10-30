@@ -46,8 +46,7 @@ prompt: Identify the essence and required rules for this problem: [Problem repor
 ```
 
 Confirm from rule-advisor output:
-- `taskAnalysis.mainFocus`: Primary focus of the problem
-- `mandatoryChecks.taskEssence`: Root problem beyond surface symptoms
+- `metaCognitiveGuidance.taskEssence`: Root problem beyond surface symptoms
 - `selectedRules`: Applicable rule sections
 - `warningPatterns`: Patterns to avoid
 

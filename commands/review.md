@@ -86,7 +86,7 @@ If user selects `n` or compliance sufficient: skip to Step 7.
 Invoke task-executor in Fix Mode — no task file; scope comes from the fix locations:
 - `subagent_type`: "task-executor"
 - `description`: "Execute review fixes"
-- `prompt`: "requiredFixes: [each unfulfilledItems entry as {location, issue: item, fix: solution} and each qualityIssues entry as {location, issue: type, fix: suggestion}]"
+- `prompt`: "Design Doc: [path]. requiredFixes: [each unfulfilledItems entry as {location, issue: item, fix: solution} and each qualityIssues entry as {location, issue: type, fix: suggestion}]"
 
 **Expected output**: `status`, `filesModified`
 

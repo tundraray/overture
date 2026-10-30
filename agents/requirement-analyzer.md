@@ -49,11 +49,11 @@ Scale is the **highest** level any axis triggers, per `task-analyzer`. File coun
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
 | Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, persisted-data migration |
 | Boundaries | One local module | Multiple modules in one layer | Cross-layer, cross-service, external system |
-| Decision risk | Existing pattern applies | One bounded technical decision; complex logic (3+ states, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, irreversible operation |
+| Decision risk | Existing pattern applies | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, irreversible operation |
 
 Report every axis and name the one that set the scale as `decidingAxis`. An axis that cannot be assessed is `unknown`, never assumed favourable. Scale-driven documents: a PRD at every scale (`lite` at small and medium, `full` at large); Design Doc and work plan per part at medium and large; a simplified plan at small.
 
-※UXRD conditions (frontend/UI work, user interaction patterns, accessibility requirements) require a UXRD at medium and large scale; at small scale the lite PRD covers the UI change
+※UXRD conditions (frontend/UI work, user interaction patterns, accessibility requirements) require a UXRD at medium and large scale; no UXRD at small scale
 
 ### File Count Estimation (MANDATORY)
 

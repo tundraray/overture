@@ -81,6 +81,7 @@
     "./skills/expert-analysis-guide",
     "./skills/frontend-ai-guide",
     "./skills/implementation-approach",
+    "./skills/integration-e2e-testing",
     "./skills/project-context",
     "./skills/workflow-orchestration",
     "./skills/workflow-execution",

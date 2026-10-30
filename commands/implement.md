@@ -182,7 +182,7 @@ Store selected strategy for autonomous execution mode.
 
 **Step 2 branch conditions**:
 - `status: escalation_needed` or `status: blocked` → escalate to user
-- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`; `approved` → proceed to quality-fixer.
+- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`, then the reviewer again; `approved` → proceed to quality-fixer.
 - quality-fixer `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`, then quality-fixer again; never commit on it (diagram: `workflow-execution`, "The Per-Task Cycle")
 
 **Commit by strategy**:
@@ -216,7 +216,7 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
 
 3. **Fix cycle** (any verifier failed, max 2 cycles):
    - Normalize the verifiers' output into a single `requiredFixes[]` per the skill's normalization rules
-   - `task-executor` in **Fix Mode** (no task file) → `quality-fixer` → commit → re-run **only** the failed verifiers
+   - `task-executor` in **Fix Mode** (no task file; `Design Doc: [path]`) → `quality-fixer` → commit per strategy → re-run **only** the failed verifiers
    - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
 
 4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.

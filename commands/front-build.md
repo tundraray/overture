@@ -69,7 +69,7 @@ Before any task processing, locate the work plan. This recipe is the **frontend*
 Compute the **Consumed Task Set** — the exact files this run owns, executes, and later deletes:
 
 1. List `docs/features/{feature}/{part}/{plan-name}/task-*.md` for the plan resolved above
-2. Exclude files belonging to other workflow phases rather than to implementation: `_overview.md`, `task-prep-*.md`, `review-fixes-*.md`, `integration-tests-*.md`
+2. Exclude files belonging to other workflow phases rather than to implementation: `_overview.md`, `task-prep-*.md`
 
 Every subsequent reference to "task files" in this command — the decision flow below, the execution cycle, and Final Cleanup — means this set, **not** an unrestricted glob over the directory. Tasks of a sibling plan in the same part are never in scope.
 
@@ -184,7 +184,7 @@ The per-task quality cycle checks tasks in isolation and cannot detect Design Do
 
 2. **Consolidate results** — apply the pass/fail criteria in the `workflow-execution` skill, "Post-Implementation Verification" section. Present a unified verification report to the user.
 
-3. **Fix cycle** (any verifier failed, max 2 cycles) — follow the normalization rules, Target Files union, and re-run rule defined in that same skill section. Dispatch fixes to `task-executor-frontend` in Fix Mode, followed by `quality-fixer-frontend`. Escalate when a cycle makes no progress or when findings remain after cycle 2.
+3. **Fix cycle** (any verifier failed, max 2 cycles) — follow the normalization rules and re-run rule defined in that same skill section. Dispatch fixes to `task-executor-frontend` in Fix Mode, followed by `quality-fixer-frontend`. Escalate when a cycle makes no progress or when findings remain after cycle 2.
 
 4. **All passed** → proceed to Final Cleanup.
 

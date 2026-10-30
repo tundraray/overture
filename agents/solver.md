@@ -219,7 +219,7 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 **Example Flow**:
 ```
 Cause: "Deprecated API usage causing errors"
-→ resolve-library-id("axios") → get-library-docs
+→ resolve-library-id("axios") → query-docs
 → Find recommended replacement API
 → Include migration steps in implementationPlan
 ```

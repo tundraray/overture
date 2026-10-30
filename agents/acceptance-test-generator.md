@@ -289,7 +289,6 @@ These annotations are used when planning and prioritizing test implementation.
 ### Auto-processable
 - **Directory Absent**: Auto-create appropriate directory following detected test structure
 - **No High-ROI Tests**: Valid outcome - report "All ACs below ROI threshold or covered by existing tests"
-- **Budget Exceeded by Critical Test**: return `escalation_needed`
 
 ### Escalation Required
 1. **Critical**: AC absent, Design Doc absent → return `blocked`

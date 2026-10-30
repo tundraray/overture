@@ -279,12 +279,12 @@ Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD,
 
 **Round cap.** At most two reviews per document per gate: the first review and one re-review. A re-review that is not `approved` stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
 - **Revise again** — one more owner pass with the user's instruction passed verbatim, then one more re-review
-- **Accept as is** — the owner records the accepted finding and the user's rationale in Update History (`mode: update`), and the gate advances
+- **Accept as is** — the owner records the accepted finding and the user's rationale in the document (Update History where the template has one; `mode: update`), and the gate advances
 - **Abort** — hold at the current document
 
-**Keep the reviewed version.** Documents are usually uncommitted while under review, so before sending one to its owner the orchestrator copies it outside the repository; that copy is the re-review's `diff_base`.
+**Keep the reviewed version.** Documents are usually uncommitted while under review, so before sending one to its owner the orchestrator copies it to the session scratchpad; that copy is the re-review's `diff_base`.
 
-**Re-review scope.** A re-review checks the prior issues and the changed text (`git diff <diff_base> -- <path>` plus the sections the change cites); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
+**Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical`.
 
 **One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
@@ -295,7 +295,7 @@ The orchestrator never accepts a reviewer finding on its own authority, and neve
 Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
-- **quality-fixer**: status, checksPerformed, fixesApplied, approved
+- **quality-fixer**: status, checksPerformed, fixesApplied, approved, incompleteImplementations
 - **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues, deferred (with `review_scope: changes`)
 - **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
 - **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict

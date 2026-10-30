@@ -13,11 +13,11 @@ argument-hint: <UX feature or interaction description>
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER investigate/analyze yourself)
 2. **Follow workflow-orchestration skill design flow exactly**:
-   - Execute: requirement-analyzer → ux-designer → document-reviewer → (if a Design Doc exists) document-reviewer on it
+   - Execute: requirement-analyzer → ux-designer → document-reviewer
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Scope**: Complete when UXRD receives approval
 
-**CRITICAL**: NEVER skip document-reviewer, document-reviewer (Design Doc) (when applicable), or stopping points defined in workflow-orchestration skill flows.
+**CRITICAL**: NEVER skip document-reviewer or stopping points defined in workflow-orchestration skill flows.
 
 ## Required Skills
 
@@ -30,9 +30,7 @@ Before executing, load these skill files for guidance:
 ```
 Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirmation]
                                             ↓
-                                      ux-designer → document-reviewer
-                                            ↓
-                                    (if Design Doc exists) → document-reviewer (Design Doc) → [Stop: UXRD approval]
+                                      ux-designer → document-reviewer → [Stop: UXRD approval]
 ```
 
 ## Scope Boundaries
@@ -41,7 +39,6 @@ Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirm
 - Requirement analysis with requirement-analyzer (focused on UX scope)
 - UXRD creation with ux-designer
 - Document review with document-reviewer
-- Cross-document consistency verification with document-reviewer (Design Doc) (if Design Doc exists)
 
 **Excluded from this command**:
 - PRD creation — the UXRD cites the PRD, so an approved `prd.md` must exist; if it does not, use `/design` or `/implement`
@@ -114,37 +111,13 @@ prompt: "target: [document path]. doc_type: UXRD. [SYSTEM CONSTRAINT] This agent
 
 **[STOP]**: Present approved UXRD to user for final approval.
 
-### 4. Consistency Verification (Conditional)
-
-**Think deeply**: Check whether a Design Doc exists for the feature (glob `docs/features/*/design-*.md`). If one exists, cross-document consistency verification is mandatory.
-
-**IF Design Doc exists**:
-
-```yaml
-subagent_type: document-reviewer   # design-sync compares Design Docs only; a Design Doc review checks traceability to the UXRD
-description: "Design Doc traceability to the UXRD"
-prompt: "target: [design doc path]. doc_type: DesignDoc. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope."
-```
-
-**Conflict Resolution Flow**:
-- **IF conflicts found**:
-  1. Present conflict report to user with specific inconsistencies
-  2. **STOP** — Wait for user decision on resolution approach
-  3. Call ux-designer to update the UXRD resolving identified conflicts:
-     ```yaml
-     subagent_type: ux-designer
-     description: "UXRD conflict resolution"
-     prompt: "Update UXRD at [path] to resolve the following conflicts with Design Doc: [conflict details from document-reviewer (Design Doc)]. Preserve existing approved UX patterns where possible. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Resolve conflicts between UXRD and Design Doc."
-     ```
-  4. Re-run document-reviewer on the UXRD with `review_scope: changes` and document-reviewer (Design Doc) once to verify resolution; anything left goes to the user (`workflow-orchestration`, "Revision Loop")
-- **IF no conflicts**: Present clean verification result and proceed
+An existing Design Doc of the feature is updated through `/update-doc` after UXRD approval.
 
 ## Completion Criteria
 
 - [ ] Executed requirement-analyzer and confirmed UX scope
 - [ ] Created UXRD with ux-designer (appropriate operation mode)
 - [ ] Executed document-reviewer; `critical` and `important` issues resolved or accepted by the user, `recommended` ones shown to the user
-- [ ] Executed document-reviewer (Design Doc) for consistency verification (if Design Doc exists)
 - [ ] Obtained user approval for UXRD
 
 ## Output Example
@@ -153,6 +126,5 @@ UXRD phase completed.
 
 - UX Requirement Document: docs/features/[feature]/uxrd.md
 - Approval status: User approved
-- Consistency check: Passed (or N/A if no Design Doc)
 
 **Important**: This command ends with UXRD approval. Does not propose transition to next phase.

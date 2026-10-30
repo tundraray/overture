@@ -90,7 +90,7 @@ Analyze existing code to identify:
 2. **Record in Design Doc**
    - List in "Applicable Standards" section with `[explicit]`/`[implicit]` tags
    - Include the Classification Table above
-   - Implicit standards are confirmed by the user at the Design Doc approval stop
+   - Implicit standards go in the response's `openQuestions`, so the user confirms them at the Design Doc approval stop
 
 3. **Alignment Rule**
    - Design decisions must reference applicable standards
@@ -578,8 +578,8 @@ Add at the end of ADR/Design Doc in the following format:
 **Example Flow**:
 ```
 Research: "Which state management for React?"
-→ resolve-library-id("zustand") → get-library-docs
-→ resolve-library-id("jotai") → get-library-docs
+→ resolve-library-id("zustand") → query-docs
+→ resolve-library-id("jotai") → query-docs
 → Compare in ADR options with latest API info
 ```
 

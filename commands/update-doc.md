@@ -132,10 +132,10 @@ Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` b
 
 ```yaml
 subagent_type: document-reviewer
-prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. review_scope: changes. diff_base: [copy of the document taken before Step 4]. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. depth: [PRD depth] (PRD only). review_scope: changes. diff_base: [copy of the document taken before Step 4]. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
-`approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, the same `diff_base`, and the prior issues verbatim.
+`approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
 A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
 
 ### Step 6: Consistency Verification (Design Doc only)

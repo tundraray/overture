@@ -209,7 +209,7 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 **Example Flow**:
 ```
 Issue: "Component not rendering after library update"
-→ resolve-library-id("react-query") → get-library-docs
+→ resolve-library-id("react-query") → query-docs
 → Check migration guide for breaking changes
 → Add to externalResearch with relevance assessment
 ```

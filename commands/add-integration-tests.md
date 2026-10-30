@@ -14,12 +14,7 @@ argument-hint: <design doc name or path>
 
 **First Action**: Register Steps 1-7 to TodoWrite before any execution.
 
-**Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Task files create context boundaries. Subagents work in isolated context.
-
-## Required Skills
-
-Before executing, load these skill files for guidance:
-- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+**Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Subagents work in isolated context.
 
 **Execution Method**:
 - Skeleton generation → delegate to acceptance-test-generator
@@ -59,14 +54,14 @@ Skeleton test cases are hollow tests, so task-executor implements them in Fix Mo
 - `description`: "Implement integration tests"
 - `prompt`: "incompleteImplementations: [one {type: hollow_test, location: <skeleton file>, description: 'implement every test case in this skeleton; skip a case an existing test already catches (testing-principles, Test Selection) and say so'} per path from Step 2 generatedFiles]. Design Doc: [path from Step 1]."
 
-**Expected output**: `status`, `testsAdded`
+**Expected output**: `status`, `changeSummary` (Fix Mode fills the existing skeleton files, so `testsAdded` may be empty)
 
 ### Step 4: Test Review
 
 Invoke integration-test-reviewer using Task tool:
 - `subagent_type`: "integration-test-reviewer"
 - `description`: "Review test quality"
-- `prompt`: "testFiles: [paths from Step 3 testsAdded]. designDoc: [path from Step 1]"
+- `prompt`: "testFiles: [skeleton files from Step 2 generatedFiles]. designDoc: [path from Step 1]"
 
 **Expected output**: `status` (approved/needs_revision/blocked), `requiredFixes`
 
@@ -80,14 +75,14 @@ Check Step 4 result:
 Invoke task-executor using Task tool:
 - `subagent_type`: "task-executor"
 - `description`: "Fix review findings"
-- `prompt`: "requiredFixes: [requiredFixes from Step 4]"
+- `prompt`: "requiredFixes: [requiredFixes from Step 4]. Design Doc: [path from Step 1]."
 
 ### Step 6: Quality Check
 
 Invoke quality-fixer using Task tool:
 - `subagent_type`: "quality-fixer"
 - `description`: "Quality gate check"
-- `prompt`: "Execute final quality checks for test files: [paths from Step 3 testsAdded]"
+- `prompt`: "Execute final quality checks for test files: [skeleton files from Step 2 generatedFiles]"
 
 **Expected output**: `approved` (true/false)
 
@@ -97,7 +92,7 @@ Invoke quality-fixer using Task tool:
 Test Implementation Complete
 
 Generated skeletons: [paths from Step 2]
-Implemented tests: [paths from Step 3]
+Implemented tests: [Step 3 changeSummary]
 Review status: [approved]
 Quality status: [approved]
 

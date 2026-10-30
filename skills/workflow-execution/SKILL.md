@@ -119,16 +119,19 @@ flowchart TD
     TE[task-executor] -->|escalation_needed / blocked| U[Escalate to user]
     TE -->|int/e2e tests added| ITR[integration-test-reviewer]
     TE -->|completed| QF[quality-fixer]
-    ITR -->|needs_revision: requiredFixes| FIX[task-executor Fix Mode]
+    ITR -->|needs_revision: requiredFixes| FIX_ITR[task-executor Fix Mode]
     ITR -->|blocked| U
     ITR -->|approved| QF
-    QF -->|stub_detected: incompleteImplementations| FIX
+    FIX_ITR --> ITR
+    FIX_ITR -->|escalation_needed| U
+    QF -->|stub_detected: incompleteImplementations| FIX_QF[task-executor Fix Mode]
     QF -->|blocked| U
     QF -->|approved| C[Commit per strategy]
-    FIX --> QF
+    FIX_QF --> QF
+    FIX_QF -->|escalation_needed| U
 ```
 
-Never commit on `stub_detected`: a stub passes quality checks while implementing nothing.
+Never commit on `stub_detected`: a stub can pass every other check while implementing nothing.
 
 ### Commit execution by strategy
 
@@ -169,9 +172,9 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 - When `discrepancy.codeLocation` is `null` (the claim is unimplemented), set `location` to the planned target file. If no target file can be determined, escalate rather than dispatching Fix Mode with an unresolvable location.
 - `drift` means the code moved past the document (code-verifier: "document update needed") — it goes to the completion report, not to the executor.
 
-**Fix cycle** (any verifier failed — maximum 2 cycles):
+**Fix cycle** (any verifier failed — maximum 2 cycles; when normalization yields no items, e.g. only `drift`, skip it and report the verdict and drift in the completion report):
 
-1. `task-executor` in **Fix Mode** with the normalized array — no task file; Fix Mode takes its file scope from the fix locations
+1. `task-executor` in **Fix Mode** with the normalized array and `Design Doc: [path]` — no task file; Fix Mode takes its file scope from the fix locations
 2. `quality-fixer` → commit per strategy → re-run **only the failed verifiers**, retaining recorded evidence from those that passed
 
 **Re-run rule**: a cycle makes progress only when a previously failing verifier reaches a pass status, or its count of named remaining findings decreases. Escalate immediately when a cycle makes no progress or needs external input. After cycle 2, escalate every remaining failure with its findings.
@@ -295,9 +298,9 @@ graph TD
     MORE -->|No| REPORT[Completion report]
 
     LOOP --> INTERRUPT{User input?}
-    INTERRUPT -->|None| TE
+    INTERRUPT -->|None| CYCLE
     INTERRUPT -->|Yes| REQCHECK{Requirement change?}
-    REQCHECK -->|No| TE
+    REQCHECK -->|No| CYCLE
     REQCHECK -->|Yes| STOP[Stop autonomous execution]
     STOP --> RA[Re-analyze with requirement-analyzer]
 ```

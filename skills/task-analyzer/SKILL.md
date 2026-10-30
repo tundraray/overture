@@ -45,7 +45,7 @@ File count is one signal, not the deciding rule — a two-file change that break
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
 | Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
 | Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ states, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
+| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
 
 Record which axis determined the final scale in `scaleRationale.decidingAxis`. A high file count caused only by mechanical generated-file updates may be reduced when repository evidence proves the change has one behavior and one verification path — record that evidence.
 

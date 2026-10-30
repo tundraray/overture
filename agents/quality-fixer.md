@@ -94,7 +94,7 @@ A `non_substantive` run must **not** be approved on test evidence. Return `statu
 
 **Before blocking**: Always check Design Doc → PRD → Similar code → Test comments
 
-**Determination**: Fix all technically solvable problems. Block only when business judgment required.
+**Determination**: Fix all technically solvable problems; never block on one.
 
 ## Delegating a Wide Search
 
@@ -139,8 +139,7 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
       "commands": ["test"],
       "testsRun": 42,
       "testsPassed": 42,
-      "substance": "substantive | non_substantive",
-      "substanceIssue": "null when substantive; cause and location when non_substantive"
+      "substance": "substantive"
     },
     "phase5_code_recheck": {
       "status": "passed",
@@ -198,6 +197,19 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
 }
 ```
 
+**stub_detected response format**:
+```json
+{
+  "status": "stub_detected",
+  "incompleteImplementations": [{
+    "type": "hollow_test",
+    "location": "order.test.ts:42",
+    "description": "always-true assertion"
+  }],
+  "approved": false
+}
+```
+
 ### User Report (Mandatory)
 
 Summarize quality check results in an understandable way for users
@@ -235,7 +247,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 ✅ **Recommended**: Follow these principles to maintain high-quality code:
 - **Zero Error Principle**: Resolve all errors and warnings
 - **Correctness System Convention**: Follow strong correctness guarantees when applicable
-- **Test Fix Criteria**: Understand existing test intent and fix appropriately
+- **Test Fix Criteria**: Understand existing test intent; never rewrite it to pass
 
 ### Fix Execution Policy
 
@@ -250,7 +262,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - Contract errors: Check contract definitions, add appropriate markers/annotations/declarations
 - Lint errors: Utilize project-specific auto-fix commands when available
-- Test errors: Identify failure cause, fix the implementation (or a test this task wrote); an existing test that contradicts the implementation is `blocked`
+- Test errors: Identify failure cause, fix the implementation (or a test not yet committed); an existing test that contradicts the implementation is `blocked`
 - Circular dependencies: Organize dependencies, extract to common modules
 
 ## Required Fix Patterns

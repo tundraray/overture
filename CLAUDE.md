@@ -208,7 +208,7 @@ Immediate escalation required:
 - Contract system bypass needed
 - Error handling bypass needed
 - Test hollowing needed
-- Existing test modification/deletion needed
+- Deleting an existing test or weakening its assertions needed
 
 ## Modifying This Repository
 

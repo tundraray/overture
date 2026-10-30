@@ -84,7 +84,7 @@ A re-review that reads the whole document cold again finds a new batch of issues
 - A finding in text the change did not touch goes to `deferred`, not `issues`, unless it is `critical`. This includes a template rule the unchanged text predates
 - A finding the change itself introduced is an ordinary issue at its severity
 
-### Step 3: Perspective-based Review Implementation
+### Step 3: Review Implementation
 
 #### Gate 0: Structural Existence Check (must pass before Gate 1)
 
@@ -225,7 +225,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - **ADR Bindings**: one row per binding decision of every ADR the design treats as prerequisite or produced
 - **Frontmatter validity**: `part` is in the PRD's Delivery Parts, `plan: N of M` is consistent with the sibling plans, and no sibling is already `active` when this plan is
 
-**Comprehensive Review Mode** (additional checks beyond the five mandatory ones):
+**Additional checks** (beyond the five mandatory ones):
 - Consistency check: Detect contradictions between documents
 - Completeness check: Confirm depth and coverage of required elements
 - Rule compliance check: Compatibility with project rules
@@ -233,9 +233,6 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - Assessment consistency check: Verify alignment between scale assessment and document requirements
 - Technical information verification: When sources exist, verify with WebSearch for latest information and validate claim validity
 - Failure scenario review: Identify failure scenarios across normal usage, high load, and external failures; specify which design element becomes the bottleneck
-
-**Perspective-specific Mode**:
-- Implement review based on specified mode and focus
 
 ### Step 4: Prior Context Resolution Check
 
@@ -288,7 +285,7 @@ Complete all items before proceeding to output.
 - Design Doc → `technical-designer` or `technical-designer-frontend`
 - Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)
 
-### Comprehensive Review Mode
+### Example (full review)
 
 ```json
 {
@@ -423,7 +420,7 @@ Include in output when `prior_context_count > 0`:
 }
 ```
 
-## Review Checklist (for Comprehensive Mode)
+## Review Checklist
 
 - [ ] Gate 0 structural existence checks pass before proceeding to quality review
 - [ ] Gate 1 mandatory checks completed:
@@ -443,7 +440,7 @@ Include in output when `prior_context_count > 0`:
 - [ ] Failure scenario coverage
 - [ ] Complexity justification: If complexity_level is medium/high, complexity_rationale must specify (1) requirements/ACs necessitating the complexity, (2) constraints/risks it addresses
 
-## Review Criteria (for Comprehensive Mode)
+## Review Criteria
 
 The verdict follows from the issues; scores are reported for orientation and never decide it on their own. A score below 80 is explained by the `critical` or `important` issues that cause it — a low score with no such issue is a scoring error to fix before output.
 

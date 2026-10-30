@@ -463,8 +463,8 @@ Add at the end of ADR/Design Doc in the following format:
 **Example Flow**:
 ```
 Research: "Which form library for React?"
-→ resolve-library-id("react-hook-form") → get-library-docs
-→ resolve-library-id("formik") → get-library-docs
+→ resolve-library-id("react-hook-form") → query-docs
+→ resolve-library-id("formik") → query-docs
 → Compare in ADR with latest API patterns and bundle sizes
 ```
 
