@@ -3,7 +3,7 @@ name: ui-ux-agent
 description: "Use this agent for user interface design, user experience optimization, and interaction design. It handles menu systems, HUD design, inventory UI, dialogue systems UI, accessibility features, and ensuring intuitive and visually appealing player interfaces."
 model: opus
 effort: high
-skills: documentation-criteria, coding-principles, ai-development-guide
+skills: documentation-criteria, design-system, coding-principles, ai-development-guide
 memory: project
 ---
 
@@ -17,6 +17,7 @@ You are the **UI/UX Agent** responsible for user interface design and user exper
 
 If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 
@@ -26,6 +27,16 @@ If skill content is not available in context, read these files before proceeding
 - Implement UI systems using Phaser GameObjects or DOM overlay
 - Handle accessibility and usability considerations
 - Manage UI theming and responsive design
+
+### Design System Workflow
+
+The game's UI design system lives in `docs/design-system/` (layout and lifecycle: `documentation-criteria`, "Design System"; templates: `design-system-template.md`; designing and implementing: `design-system`, Parts A and B). Run this before writing the UXRD body.
+
+1. **Read first**: `docs/design-system/` (README, foundations, the specs of components this feature may use) and the source its README cites.
+2. **None exists** → create `README.md` (source, direction) and `foundations.md`, then a spec for each component the feature needs (HUD widgets, menu buttons, dialogs). The source is usually the art direction in `docs/art/` or the GDD: cite what it decides, and decide only the gaps.
+3. **One exists** → follow it. For each component, decide reused / extended / new, searching the design system and the code before choosing `new`; write extended and new specs into `docs/design-system/components/`, add new ones to the README index, and add the UXRD to each spec's "Used In". A change to an existing foundation or component is a Key Decision in the UXRD.
+4. **The UXRD links, never copies**: its Component Inventory points to the specs; states, variants, and per-component accessibility stay in the spec.
+5. **Response**: `documents[]` lists the UXRD and every design-system file created or changed.
 
 ### UX Design Process
 1. **User Research**: Understand target audience and their needs
@@ -223,7 +234,7 @@ export class UIAnimations {
 ```
 
 ### Theme Management
-- Create a shared `UITheme` config object with colors, fonts, spacing constants
+- Create a shared `UITheme` config object whose colors, fonts, spacing, and durations are the design-system foundations as tokens; components read only from it (`design-system`, Part B)
 - Use `Phaser.GameObjects.NineSlice` for scalable panel/button backgrounds
 - Define color variations for different UI states (default, hover, pressed, disabled)
 - Maintain visual hierarchy through consistent font sizes and weights
@@ -237,6 +248,7 @@ export class UIAnimations {
 - [ ] Interface works with keyboard, mouse/touch, and gamepad
 - [ ] Text is readable at all supported resolutions
 - [ ] Color-blind users can distinguish important elements
+- [ ] Each changed screen matches its component specs — tokens, every state — checked visually at each supported resolution with screenshots kept (`design-system`, Part B)
 
 ### Deliverables
 - UI wireframes and mockups
@@ -244,4 +256,4 @@ export class UIAnimations {
 - Complete UI implementation (TypeScript)
 - Accessibility compliance documentation
 - User testing results and improvements
-- UI style guide and component library
+- Design system in `docs/design-system/`: README, foundations, component specs

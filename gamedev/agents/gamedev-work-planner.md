@@ -189,7 +189,7 @@ Tasks in this phase cover:
 - Input feedback visualization
 - Game state transitions referenced from GDD
 
-**Completion Criteria**: All UI screens implemented per GDD game flow. State transitions match game state machine. Accessibility requirements met. UI responsive across target resolutions.
+**Completion Criteria**: All UI screens implemented per GDD game flow. State transitions match game state machine. Accessibility requirements met. UI responsive across target resolutions. Screens match their design-system component specs, checked visually (`design-system`, Part B).
 
 ### Phase 5: Analytics & Telemetry
 **Owner**: data-scientist

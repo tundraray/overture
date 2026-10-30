@@ -160,7 +160,7 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 |------|------|
 | GDD | `docs/game-design/{project}-gdd.md`, or "unchanged by this feature" — context for the designers |
 | Feature spec | `docs/game-design/features/{feature}-spec.md`, with its depth — stands in for the PRD at the technical entry gate |
-| Discipline outputs | Paths for mechanics, game feel, art direction, UI/UX, analytics — or "N/A" each; the `ui-ux-agent` output stands in for the UXRD |
+| Discipline outputs | Paths for mechanics, game feel, art direction, UI/UX, analytics — or "N/A" each; the `ui-ux-agent` output stands in for the UXRD, with the `docs/design-system/` files it created or changed |
 | Parts list | `{name, covers, cutAlong, dependsOn}` per part, in dependency order — copied from the feature spec's Delivery Parts; `workflow-technical` designs one `design-{part}.md` per entry |
 | Scale | `{small\|medium\|large}` plus `decidingAxis` |
 | Open questions | List of `question → decision it blocks → owner` |

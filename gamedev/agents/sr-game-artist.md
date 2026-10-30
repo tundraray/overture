@@ -66,6 +66,8 @@ If skill content is not available in context, read these files before proceeding
 - **Interactive Elements**: [Button styles, feedback]
 ```
 
+The UI Design Language and the UI colors are the source `ui-ux-agent` cites in the design system (`docs/design-system/`); it fills only the gaps this guide leaves, so keep UI decisions here at the level of direction, not component specs.
+
 ### Asset Creation Pipeline
 1. **Concept Sketches**: Initial ideas and iterations
 2. **Style Tests**: Ensure consistency with guide

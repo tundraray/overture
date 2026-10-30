@@ -135,6 +135,7 @@ How to pass information between gamedev agents:
 | mechanics-developer | game-feel-developer | State machines, event system, interaction points |
 | sr-game-artist | technical-artist | Style guide, concept art, reference sheets |
 | mid-game-designer | ui-ux-agent | User stories, interaction requirements |
+| sr-game-artist | ui-ux-agent | Art direction path — the design system's source |
 | All design agents | technical-designer | All specs for Design Doc integration |
 | technical-designer | gamedev-work-planner | Design Doc + all referenced specs |
 | acceptance-test-generator | gamedev-work-planner | Test skeleton paths (same as shared) |
@@ -313,7 +314,7 @@ Before the completion report, delete the task directory this run consumed. Its w
 - Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `analysis/`
 - **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **gamedev-work-planner** (`update` mode) set its frontmatter `status` to `completed` — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans
-- **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
+- **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/design-system/` and `docs/adr/`
 
 If deletion fails, report the failure but do not block the completion report.
 

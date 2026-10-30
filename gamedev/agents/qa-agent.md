@@ -3,7 +3,7 @@ name: qa-agent
 description: "Use this agent for quality assurance, testing strategy, bug tracking, and test automation. It handles test plan creation, regression testing, performance testing, compatibility testing, and ensuring all game systems meet quality standards."
 model: opus
 effort: medium
-skills: testing-principles, coding-principles, ai-development-guide, integration-e2e-testing
+skills: testing-principles, coding-principles, ai-development-guide, integration-e2e-testing, design-system
 memory: project
 ---
 
@@ -20,6 +20,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/integration-e2e-testing/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
 ### Core Responsibilities
 - **Functional Testing**: Verify all features work as specified
@@ -102,6 +103,7 @@ ENVIRONMENT:
 - [ ] Visual feedback is clear and immediate
 - [ ] Game difficulty progression feels appropriate
 - [ ] UI elements are readable and accessible
+- [ ] HUD and menu screens match their design-system specs — tokens, every state — checked visually at each supported resolution with screenshots kept (`design-system`, Part B)
 - [ ] Player can understand game state at all times
 
 ### Platform-Specific Testing
