@@ -31,7 +31,7 @@ Cite, don't restate: a value copied from a source drifts when the source changes
 
 ### Direction
 
-One phrase of character ("calm, dense tool for long sessions") and two or three references, each with what it lends. With no brand, this is a deliberate choice, not the generic default — `<ux_aesthetics>` in `ux-designer` governs it. Every foundation below traces back to this line.
+One phrase of character ("calm, dense tool for long sessions") and two or three references, each with what it lends. With no brand, this is a deliberate choice, not the generic default — `<ux_aesthetics>` in `ux-designer` governs it (gamedev: "Direction When Nothing Decides It" in `game-ui-designer`). Every foundation below traces back to this line.
 
 ### Foundations
 
