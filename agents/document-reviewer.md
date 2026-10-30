@@ -110,7 +110,7 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Library internals that do not show at a contract boundary — `recommended`, suggestion: remove
 - [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
 - [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
-- [ ] Body size against the soft target (excluding Appendix: Evidence and Update History) — over target is `recommended`, past twice the target `important`, naming what to move to the appendix, replace with a citation, or cut
+- [ ] Size against the soft target (excluding Update History; a Design Doc's Appendix: Evidence counts) — over target is `recommended`, past twice the target `important`, naming what to replace with a citation or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
@@ -149,11 +149,11 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Accessibility Requirements
 
 **For Design Doc:**
-- [ ] Snapshot and Key Decisions at the top; codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, and meta YAML in Appendix: Evidence
+- [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere; codebase analysis, standards, Fact Disposition, test boundaries, and meta YAML in Appendix: Evidence
 - [ ] Part section states which part this design covers, the requirements it owns, and the `design-{part}.md` files it depends on
 - [ ] Acceptance Criteria in EARS format
 - [ ] Applicable Standards table
-- [ ] Fact Disposition Table with one row per `focusAreas` entry
+- [ ] Fact Disposition Table with one row per `focusAreas` entry, each naming where it is handled (`KD-n` or section) without copied evidence
 - [ ] Contract Definitions and Data Contract present, written as tables — no source code anywhere in the document
 - [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
 - [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md` (C2 always; C1, C3, C4 when they apply) with a table per level, and Runtime Flows as sequence diagrams covering the AC behaviours
@@ -215,7 +215,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 
 **Design Doc-specific checks**:
 - **Part scope**: the design covers exactly the requirements its part owns in the PRD's Delivery Parts — a sibling part's requirement appears only as a consumed contract, never redesigned
-- **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design consumes its contract as written rather than restating or altering it
+- **Upstream contracts**: the Part section's `Depends on` lists design files (`design-{part}.md`); resolve each to its part, confirm that design is approved, and that this design cites its contract section by link rather than restating or altering it
 
 **Work Plan-specific checks**:
 - **Design-to-Plan Traceability**: every Design Doc item (or PRD requirement at small scale) has a covering task or a justified gap

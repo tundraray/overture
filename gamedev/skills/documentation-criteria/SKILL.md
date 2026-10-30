@@ -70,7 +70,7 @@ A document is read far more often than it is written, and most readers stop afte
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the body, in characters, excluding the Evidence appendix and Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, Design Doc 35 000 per part, ADR 10 000. Over the target, the author moves evidence to the appendix, merges restated content into a citation, or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
+**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
 
 ## Detailed Document Definitions
 
@@ -120,10 +120,9 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Includes**:
 - **Existing codebase analysis** (required)
-  - Implementation path mapping (both existing and new)
+  - Code locations, existing and new (C4)
   - Integration point clarification (connection points with existing code even for new implementations)
 - Technical implementation approach (vertical/horizontal/hybrid)
-- **Technical dependencies and implementation constraints** (required implementation order)
 - Interface and contract definitions
 - Data flow and component design
 - **E2E verification procedures at integration points**
@@ -153,7 +152,7 @@ Interface Change Matrix:
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files (→written at implementation; contracts are field tables)
 - Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
-- When to implement, duration (→Work Plan)
+- Implementation order, when to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
 
 ### GDD (Game Design Document)

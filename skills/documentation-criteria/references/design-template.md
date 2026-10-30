@@ -22,17 +22,18 @@ a section marked "when applicable" is deleted when it does not apply (no N/A stu
 
 ### Key Decisions
 
-<!-- Three to seven rows: the decisions a reviewer would argue about. Every other section cites the ID instead of re-arguing it. -->
+<!-- Three to seven rows: the decisions a reviewer would argue about, each with every option not taken. This is the one place a decision is argued; every other section cites the ID instead of re-arguing it.
+When choosing, prefer the option adding the least: new persistent state, then crossing a boundary, then a new concept/mode/flag/prop, then a breaking change. -->
 
-| ID | Decision | Why | Rejected alternative |
+| ID | Decision | Why | Rejected alternatives |
 |---|---|---|---|
-| KD-1 | [what was decided] | [one phrase] | [the option not taken, one phrase] |
+| KD-1 | [what was decided] | [one phrase] | [each option not taken, one phrase each] |
 
 ## Part
 
 - **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
 - **Covers**: [requirement ids this part owns — the PRD holds their text]
-- **Depends on**: [`design-[other-part].md` — the approved designs whose contracts this design consumes as written], or "none — first part"
+- **Depends on**: [link to the contract section of each approved upstream design, e.g. `design-[other-part].md#contract-definitions` — cited, never restated: a copy forces a revision every time upstream changes], or "none — first part"
 - **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
 ### Agreement Checklist
@@ -134,9 +135,11 @@ No Ripple Effect:
 
 ### Integration Points List
 
-| Integration Point | Location | Old Implementation | New Implementation | Switching Method |
-|-------------------|----------|-------------------|-------------------|------------------|
-| Integration Point 1 | [Class/Function] | [Existing Process] | [New Process] | [DI/Factory etc.] |
+<!-- Each integration point names how it is verified. One integration case proves the wiring; E2E is reserved for the part's 1–2 journeys (`integration-e2e-testing`). -->
+
+| Integration Point | Location | Old Implementation | New Implementation | Switching Method | Verified by |
+|-------------------|----------|-------------------|-------------------|------------------|-------------|
+| Integration Point 1 | [Class/Function] | [Existing Process] | [New Process] | [DI/Factory etc.] | [integration case / E2E journey] |
 
 ### Contract Definitions
 
@@ -210,23 +213,9 @@ System Invariants:
 
 [What to record in logs and how to monitor]
 
-## Implementation Plan
-
 ### Implementation Approach
 
-**Selected Approach**: [Approach name or combination]
-**Selection Reason**: [Reason considering project constraints and technical dependencies]
-
-### Technical Dependencies and Implementation Order
-
-1. **[Component/Feature A]** — [why first; what depends on it]
-2. **[Component/Feature B]** — [why after A]
-
-### Integration Points
-
-<!-- Each integration point names how it is verified. One integration case proves the wiring; E2E is reserved for the part's 1–2 journeys (`integration-e2e-testing`). -->
-
-- **[Name]**: [Component A] → [Component B] — verified by [how]
+**Selected Approach**: [vertical / horizontal / hybrid] — [one-line reason]
 
 ### Migration Strategy
 
@@ -300,7 +289,7 @@ System Invariants:
 
 ## Future Extensibility
 
-<!-- When applicable. Capability-level items considered and excluded; element-level rejected alternatives belong in Appendix: Evidence → Minimal Surface Alternatives. -->
+<!-- When applicable. Capability-level items considered and excluded; element-level rejected alternatives belong in Key Decisions. -->
 
 - **Deferred possibilities**: [capability — the requirement it would have served]
 - **Intentional limitations**: [what was kept small, and why]
@@ -346,35 +335,10 @@ unknowns:
 
 ### Existing Codebase Analysis
 
-#### Implementation Path Mapping
-
-| Type | Path | Description |
-|------|------|-------------|
-| Existing | src/[actual-path] | [Current implementation] |
-| New | src/[planned-path] | [Planned new creation] |
-
-#### Integration Point Map
-
-```yaml
-Integration Point 1:
-  Existing Component: [Component/module name, function/method name]
-  Integration Method: [Hook Addition / Call Addition / Data Reference / ...]
-  Impact Level: High (process flow change) / Medium (data usage) / Low (read-only)
-  Required Test Coverage: [Continuity verification of existing features]
-```
-
 #### Code Inspection Evidence
 
 - **Examined**: [path:function] — [relevance]
-- **Finding**: [finding, with the `code-explorer` coverage and `resolvedBy` that supports it] → [design decision it drives]
-
-#### Data Representation Decision
-
-<!-- When applicable: a new data structure is introduced. -->
-
-| Data Structure | Decision | Rationale |
-|---|---|---|
-| [e.g. UserProfile] | **Reuse** existing [type] + extend | [one phrase] |
+- **Finding**: [finding, with the `code-explorer` coverage and `resolvedBy` that supports it] → [KD-n or section it drives]
 
 #### Field Propagation Map
 
@@ -395,37 +359,17 @@ fields:
 
 #### Fact Disposition Table
 
-<!-- One row per `focusAreas` entry from codebase analysis. Other sections cite the row by `fact_id` rather than restating it. A row per fact with an explicit disposition makes deliberate removal distinguishable from oversight. -->
+<!-- One row per `focusAreas` entry from codebase analysis, one phrase per cell. The analyzer output already holds the evidence and files; this table records only what happened to each fact and where. A row per fact with an explicit disposition makes deliberate removal distinguishable from oversight. -->
 
-| Fact ID | Focus Area | Disposition | Rationale | Evidence | Related Files |
-|---------|------------|-------------|-----------|----------|---------------|
-| [fact_id] | [area name] | preserve / transform / remove / out-of-scope | [preserve: "retained without modification"; transform: the new observable outcome; remove: reason plus PRD/UXRD citation; out-of-scope: the scope-defining section] | [evidence verbatim from focusAreas] | [paths from focusAreas.relatedFiles] |
+| Fact ID | Disposition | Handled in |
+|---------|-------------|------------|
+| [fact_id] | preserve / transform / remove / out-of-scope | [KD-n or section] |
 
 #### Cross-Layer Assumptions
 
 <!-- When applicable: this design relies on unverified claims from a prior-layer Design Doc. -->
 
 - [claim]: [justification]; verify at [step or artifact]
-
-### Minimal Surface Alternatives
-
-<!--
-When applicable: the design introduces persistent state, a public-contract element or cross-boundary field/prop, a behavioral mode/flag/variant, or a reusable abstraction / component split.
-One entry per element. Resolution priority for "smallest": new persistent state → crosses a boundary → new concept/mode/flag/prop → breaking change or migration → subjective cost.
-Backend columns: "Crosses module/service boundary", "New concept / mode / flag"; frontend: "Crosses component boundary", "New props / modes / variants".
--->
-
-#### Element 1: [name of the new element]
-
-- **Fixed requirements**: [AC reference]: [requirement]
-
-| Alternative | Requirements covered (AC ref) | New persistent state (count) | New concept / mode / flag / prop (count) | Crosses boundary (yes/no) | Breaking change or migration (yes/no) | Cost notes |
-|---|---|---|---|---|---|---|
-| [The added element as proposed] | | | | | | |
-| [Subtractive alternative] | | | | | | |
-
-- **Selected**: [alternative] — [smallest considered; or the fixed requirement the smaller ones fail]
-- **Rejected**: [alternative] — [one line why]
 
 ### Test Boundaries
 
@@ -444,7 +388,8 @@ Backend columns: "Crosses module/service boundary", "New concept / mode / flag";
 
 ## Update History
 
-<!-- One line per version, newest last: what changed in the design, in a phrase. No reviewer IDs, no "user decision of <date>" — the body states the current truth, this table says when it changed. -->
+<!-- One line per version, newest last: what changed in the design, in a phrase. No reviewer IDs, no "user decision of <date>" — the body states the current truth, this table says when it changed.
+After approval the design changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design. -->
 
 | Version | Date | Change |
 |---------|------|--------|

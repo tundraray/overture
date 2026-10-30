@@ -72,7 +72,7 @@ This means the Design Doc references **existing** ADRs as prerequisites, and any
 
 `codebase-analyzer` and `ui-analyzer` are read-only and produce `focusAreas[]` — `fact_id`-anchored statements about existing behavior that the design must explicitly dispose of.
 
-Without them, a designer investigates ad hoc and the Design Doc records conclusions but not what was considered. A reviewer then cannot distinguish a deliberate omission from an oversight. The Fact Disposition Table makes each fact's treatment explicit: preserve, transform, remove, or out-of-scope, each with evidence.
+Without them, a designer investigates ad hoc and the Design Doc records conclusions but not what was considered. A reviewer then cannot distinguish a deliberate omission from an oversight. The Fact Disposition Table makes each fact's treatment explicit: preserve, transform, remove, or out-of-scope, each naming where the design handles it.
 
 Run them **after** any expert analysis and **before** the designer, so the designer receives both the outside perspective and the ground truth.
 
@@ -117,7 +117,7 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 
 ☐ Every part in the parts list has a `design-{part}.md` approved after `design-sync` consistency verification — no part is left undesigned, and no design exists for a part not in the list
 ☐ Each part's design was approved after the designs of every part in its `dependsOn`, and consumes their contracts as written
-☐ Every `focusAreas` entry from fact gathering has a row in its part's Fact Disposition Table with a disposition and evidence — an unaddressed fact is an unexamined behavior
+☐ Every `focusAreas` entry from fact gathering has a row in its part's Fact Disposition Table with a disposition and where it is handled — an unaddressed fact is an unexamined behavior
 ☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `ui-ux-agent` output on the gamedev path) is traceable to a section of exactly one part's Design Doc, or explicitly recorded as out of scope
 ☐ The ADR test was applied to each design and its outcome recorded — either an approved ADR, or a note that no decision passed all three parts
 ☐ Test skeletons are generated per part and their paths recorded

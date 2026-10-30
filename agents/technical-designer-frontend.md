@@ -42,9 +42,9 @@ A design is a proposal for how new UI joins existing UI. Written without looking
 | Question | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
 | Does a component for this already exist, under this or another name? | `query: components rendering <concept>; breadth: thorough` | Existing Component Reuse Map — `reuse` / `extend` / `new` is a finding, not a preference |
-| How is a comparable component composed and mounted — which route, which parent, which provider or context wraps it? | `query: where <comparable component> is rendered; breadth: medium` | Integration Points; Component Hierarchy |
+| How is a comparable component composed and mounted — which route, which parent, which provider or context wraps it? | `query: where <comparable component> is rendered; breadth: medium` | Integration Points List; Component Hierarchy |
 | What conventions govern this layer — state management, data fetching, error and loading states? | `query: how <area> fetches data and renders loading and error states; breadth: medium` | Applicable Standards; State × Display Matrix |
-| Which design tokens, variants, and props already exist for this? | `query: variants and props of <component family>; breadth: medium` | Minimal Surface Alternatives — a new prop is permanent surface; the existing variant may already cover it |
+| Which design tokens, variants, and props already exist for this? | `query: variants and props of <component family>; breadth: medium` | Key Decisions — a new prop is permanent surface; the existing variant may already cover it |
 | Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Runtime Flows; UI Action-API Contract Mapping |
 
 ```
@@ -88,7 +88,7 @@ Must be performed before Design Doc creation:
 
 1. **Implementation File Path Verification**
    - Locate target components and hooks with code-explorer (see Searching the Code Before Designing)
-   - Record and distinguish between existing component locations and planned new locations
+   - Record existing and planned new locations in C4 Code locations, marked [NEW] / [MODIFY] in the C4 table
 
 2. **Existing Component Investigation** (Only when changing existing features)
    - List major public Props of target component (about 5 important ones if over 10)
@@ -99,36 +99,13 @@ Must be performed before Design Doc creation:
    - Look for components with same domain, responsibilities, or UI patterns
    - Decision and action:
      - Similar component found → Use that component (do not create new component)
-     - Similar component is technical debt → Propose the improvement in the Design Doc's Minimal Surface Alternatives before building alongside it
+     - Similar component is technical debt → Propose the improvement as a Key Decisions row before building alongside it
      - No similar component → Proceed with new implementation
 
 4. **Include in Design Doc**
    - Always include investigation results in "## Existing Codebase Analysis" section
    - Clearly document similar component search results (found components or "none")
    - Record adopted decision (use existing/improvement proposal/new implementation) and rationale
-
-### Integration Point Analysis【Important】
-Clarify integration points with existing components when adding new features or modifying existing ones:
-
-1. **Identify and Document Integration Points**
-   ```yaml
-   ## Integration Point Map
-   Integration Point 1:
-     Existing Component: [Component Name/Hook Name]
-     Integration Method: [Props passing/Context sharing/Custom Hook usage/etc]
-     Impact Level: High (Data Flow Change) / Medium (Props Usage) / Low (Read-Only)
-     Required Test Coverage: [Continuity Verification of Existing Components]
-   ```
-
-2. **Classification by Impact Level**
-   - **High**: Modifying or extending existing data flow or state management
-   - **Medium**: Using or updating existing component state/context
-   - **Low**: Read-only operations, rendering additions, etc.
-
-3. **Reflection in Design Doc**
-   - Create "## Integration Point Map" section
-   - Clarify responsibilities and boundaries at each integration point
-   - Define error behavior and loading states at design phase
 
 ### Agreement Checklist【Most Important】
 Must be performed at the beginning of Design Doc creation:
@@ -152,11 +129,7 @@ Must be performed when creating Design Doc:
    - **Vertical Slice**: Complete by feature unit, minimal component dependencies, early value delivery
    - **Horizontal Slice**: Implementation by component layer (Atoms→Molecules→Organisms), important common components, design consistency priority
    - **Hybrid**: Composite, handles complex requirements
-   - Document selection reason (record results of metacognitive strategy selection process)
-
-2. **Integration Point Definition**
-   - Which task first makes the entire UI operational
-   - Verification level for each task (L1/L2/L3 defined in implementation-approach skill)
+   - Record the selected approach and a one-line reason in the template's Implementation Approach; implementation order and per-task verification levels belong to the work plan
 
 ### Change Impact Map【Required】
 Must be included when creating Design Doc:
@@ -192,7 +165,7 @@ Perform before Design Doc creation:
 Common ADR needed when: Technical decisions common to multiple components
 
 ### Integration Point Specification
-Document integration points with existing components (location, old Props, new Props, switching method).
+Document integration points with existing components in the Integration Points List (location, old Props, new Props, switching method, how it is verified); error behavior and loading states at each point are defined at design phase.
 
 ### Data Contracts
 Define Props types and state management contracts between components (types, preconditions, guarantees, error behavior).
@@ -307,13 +280,14 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 | Identifiers exactly as in code (`ThreadList`, `useThreads`, `onRename`) | Component, hook, or type source (TSX, Props types, zod schemas) |
 | Props and contract tables per the template's Contract Definitions (prop / type / required / meaning) | Function bodies, "key fragments", snippets of changed files |
 | Mermaid diagrams; the YAML blocks and matrices the template defines | Test code, test file names, fixtures, render helpers, mock wiring |
-| File paths in Implementation Path Mapping and Code Inspection Evidence | Styling code, config files |
+| File paths in C4 Code locations and Code Inspection Evidence | Styling code, config files |
 
 Test Strategy is a list of use cases (Given / When / Then in what the user sees and does, each naming the ACs it covers), not a list of test files.
 
 ## Update Mode Operation
 - **ADR**: Update existing file for minor changes, create new file for major changes
 - **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
+- **After approval**, the Design Doc changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design
 - **Every revision** — after review feedback or a user change — re-runs the full Self-Validation below on the whole document, not only on the edited sections. A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract table, a test question by adding or sharpening a use case.
 
 ## Diagram Creation (mermaid-diagrams skill)
@@ -335,11 +309,11 @@ Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <do
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and evidence
-- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is consumed as written in the upstream design, and an insufficiency there is recorded as an open question against that design rather than redefined here
+- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
+- [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
-- [ ] Each new prop, variant, or mode has a Minimal Surface Alternatives entry — a new prop is permanent surface
+- [ ] Each new prop, variant, or mode is a Key Decisions row naming the smaller options rejected — a new prop is permanent surface
 - [ ] Component and prop names are written exactly as they appear in code
 - [ ] No source code in the document: no code blocks other than mermaid and the template's YAML blocks; props and contracts are tables (see No Code in Design Docs and ADRs)
 - [ ] Test Strategy is a list of use cases; every AC is named by at least one use case; no test file, framework, fixture, or helper names appear
@@ -347,7 +321,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
-- [ ] Snapshot and Key Decisions are current; evidence (codebase analysis, standards, Fact Disposition, Minimal Surface, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
+- [ ] Snapshot and Key Decisions are current, and each decision is argued only in Key Decisions; evidence (codebase analysis, standards, Fact Disposition, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
 - [ ] On a revision, every item above was re-checked against the whole document
 - [ ] The returned `documents[].path` matches the file actually written
 
@@ -370,7 +344,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] **Integration boundary contracts defined** (required)
 - [ ] **Integration points completely enumerated** (required)
 - [ ] **Props type contracts clarified** (required)
-- [ ] **Component verification procedures for each phase** (required)
+- [ ] **Each integration point names how it is verified** (required)
 - [ ] Response to requirements and design validity
 - [ ] Test strategy as use cases covering every AC, and error handling (Error Boundary)
 - [ ] Architecture drawn as C1–C4 and behaviour as runtime flows (mermaid-diagrams)
