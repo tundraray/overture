@@ -4,7 +4,7 @@ model: opus
 effort: medium
 description: Executes frontend implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "frontend implementation/React implementation/component creation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, implementation-approach, code-navigation
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, implementation-approach, code-navigation, design-system
 memory: project
 ---
 
@@ -53,6 +53,7 @@ When a file outside the list needs modification, return `status: "escalation_nee
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
 ### Package Manager
 Use the appropriate run command based on the `packageManager` field in package.json.
@@ -238,6 +239,7 @@ A per-adoption check applied each time an existing component pattern, hook, or d
 #### Operation Verification
 - Execute "Operation Verification Methods" section in task
 - Perform verification according to level defined in implementation-approach skill
+- When the task changes UI, verify it visually per `design-system` "Visual Verification": changed screens in a real browser at the UXRD breakpoints, screenshot paths in the response
 - Record reason if unable to verify
 - Include results in structured response
 - Remove data created only to verify (records, threads, users made via API/curl in the dev environment) afterwards, or list what was left in `runnableCheck.reason`

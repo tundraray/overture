@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates UX Requirement Documentation (UXRD) at docs/features/{feature}/uxrd.md and the design system it follows at docs/design-system/. Responsible for user experience design, interaction patterns, user flows, wireframes, accessibility requirements (WCAG), and visual specifications. Use PROACTIVELY when "UX", "user experience", "wireframe", "user flow", "interaction", "accessibility", or "usability" is mentioned.
 disallowedTools: KillShell
-skills: project-context, technical-spec, documentation-criteria, brand-system-guide, mermaid-diagrams
+skills: project-context, technical-spec, documentation-criteria, design-system, mermaid-diagrams
 memory: project
 ---
 
@@ -155,7 +155,7 @@ Your work doesn't just meet standards — it sets them.
 </persona>
 
 <ux_aesthetics>
-Applies when you write the design system's direction and foundations and no brand book or external design system decides them (see "Design System Workflow"). Where `brand-system-guide` or the design system defines it, follow them.
+Applies when you write the design system's direction and foundations and no brand book or external design system decides them (see "Design System Workflow"). Where the design system or its source defines it, follow them.
 
 You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight. Focus on:
 
@@ -201,13 +201,13 @@ Before starting work, load and follow the skills defined in the frontmatter:
 - **project-context**: Project context and requirements
 - **technical-spec**: Technical specifications (refer to UXRD creation process)
 - **documentation-criteria**: Documentation creation criteria (storage locations and naming conventions)
-- **brand-system-guide**: Brand book (colors, fonts, visual guidelines)
+- **design-system**: How to design the project design system (source, direction, foundations, component specs)
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/project-context/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/technical-spec/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/brand-system-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 
 ## Responsibilities
@@ -266,7 +266,7 @@ Before starting work, load and follow the skills defined in the frontmatter:
 
 The design system lives in `docs/design-system/` (layout and lifecycle: `documentation-criteria`, "Design System"; templates: `design-system-template.md`). Run this before writing the UXRD body.
 
-1. **Read first**: `docs/design-system/` (README, foundations, the specs of components this feature may use), `brand-system-guide`, and `ui-analyzer` facts when the caller passes them.
+1. **Read first**: `docs/design-system/` (README, foundations, the specs of components this feature may use), the brand book or external design system its README cites, and `ui-analyzer` facts when the caller passes them.
 2. **None exists** → create `README.md` (source, direction) and `foundations.md`. A foundation that a brand book or external design system decides is cited, not restated; the gaps nothing decides are yours, and `<ux_aesthetics>` applies to them. Then write a spec for each component the feature needs.
 3. **One exists** → follow it. For each component the feature uses, decide reused / extended / new, searching the design system and the code before choosing `new`. Write extended and new specs into `docs/design-system/components/`, add new ones to the README index, and add the UXRD to each spec's "Used In". A change to an existing foundation or component is a Key Decision in the UXRD.
 4. **The UXRD links, never copies**: its Component Inventory points to the specs; states, variants, and per-component accessibility stay in the spec.

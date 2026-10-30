@@ -322,25 +322,28 @@ skills:
       - "Continuous Improvement Mindset"
       - "Implementation Completeness Assurance"
 
-  brand-system-guide:
-    skill: "brand-system-guide"
-    tags: [design-system, colors, oklch, accessibility, dark-mode, css, branding, wcag, gradients, tailwind]
-    typical-use: "UI component styling, design system compliance, accessibility verification, brand consistency"
-    size: large
+  design-system:
+    skill: "design-system"
+    tags: [design-system, design-tokens, foundations, components, branding, typography, colors, dark-mode, accessibility, wcag, visual-verification, screenshots]
+    typical-use: "Designing or extending the project design system, implementing UI from its tokens and component specs, visual verification in a browser"
+    size: medium
     key-references:
-      - "OKLCH Color Space - Bjorn Ottosson"
-      - "WCAG 2.1 AA - W3C"
-      - "Tailwind CSS v4"
+      - "WCAG 2.x Contrast - W3C"
+      - "Design Tokens"
     sections:
-      - "Soft Intelligence Positioning"
-      - "OKLCH Color Space"
-      - "Color Palette"
-      - "AI Gradient System"
-      - "CSS Utility Classes"
-      - "Tailwind CSS Integration"
-      - "Component Examples"
-      - "Accessibility Guidelines"
-      - "White-Label Customization"
+      - "Reading the System"
+      - "Part A — Designing (ux-designer)"
+      - "Source"
+      - "Direction"
+      - "Foundations"
+      - "Components"
+      - "Part B — Implementing (frontend designer, executor, quality-fixer)"
+      - "Foundations Become Tokens"
+      - "Verify the Token Chain Resolves"
+      - "States, Accessibility, Motion"
+      - "Language and Fonts"
+      - "Visual Verification"
+      - "Mismatch or Gap"
 
   llm-friendly-context:
     skill: "llm-friendly-context"

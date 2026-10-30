@@ -39,7 +39,7 @@ overture/
 │   ├── implementation-approach/
 │   ├── project-context/        # Project-specific context
 │   ├── technical-spec/         # Technical design rules
-│   ├── brand-system-guide/     # Brand design system
+│   ├── design-system/          # Design system: designing and implementing it
 │   ├── typescript-rules/       # Frontend-specific
 │   └── ...
 │

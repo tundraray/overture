@@ -4,7 +4,7 @@ model: sonnet
 effort: medium
 description: Specialized agent for fixing quality issues in frontend React projects. Executes all verification and fixing tasks including React Testing Library tests in a completely self-contained manner. Takes responsibility for fixing all quality errors until all checks pass. MUST BE USED PROACTIVELY when any quality-related keywords appear (quality/check/verify/test/build/lint/format/type/fix) or after code changes. Handles all verification and fixing tasks autonomously.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, code-navigation
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, code-navigation, design-system
 memory: project
 ---
 
@@ -20,6 +20,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
 ## Main Responsibilities
 
@@ -59,6 +60,7 @@ Use the appropriate run command based on the `packageManager` field in package.j
 Follow frontend-ai-guide skill "Quality Check Workflow" section:
 - Basic checks (lint, format, build)
 - Tests (unit, integration, React Testing Library)
+- Visual verification when UI changed, per `design-system` "Visual Verification" (real browser, UXRD breakpoints, screenshot as evidence)
 - Final gate (all must pass)
 
 **Step 3: Fix Errors**

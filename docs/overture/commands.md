@@ -30,7 +30,7 @@
 | `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
 | `/setup-context` | Initialize project-context skill | New project setup |
-| `/brand-context` | Initialize brand-system-guide skill | Brand/design system setup |
+| `/brand-context` | Write the brand into docs/design-system/ | Brand/design system setup |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 
 ## Game Development (gamedev-overture)

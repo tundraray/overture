@@ -24,7 +24,7 @@ All skills from backend-overture (except integration-e2e-testing) plus:
 
 | Skill | Description |
 |-------|-------------|
-| **brand-system-guide** | Design system setup (customizable via `/brand-context`) |
+| **design-system** | Design and implement the project design system in `docs/design-system/` (brand via `/brand-context`) |
 | **frontend-ai-guide** | React-specific AI development patterns |
 | **typescript-rules** | TypeScript best practices for React |
 | **typescript-testing** | React Testing Library patterns |
@@ -37,5 +37,5 @@ All shared skills from backend-overture (except typescript-rules-backend, typesc
 |-------|-------------|
 | **workflow-gamedev** | Gamedev-specific agent coordination with 4 flows, scenario detection, development modes |
 | **documentation-criteria** | Extended with GDD, market analysis, feature spec templates and game doc types |
-| **brand-system-guide** | Visual design system and brand guidelines |
+| **design-system** | Design system: foundations, component specs, tokens, visual verification |
 | **type-safety-standards** | Type safety patterns and standards |
