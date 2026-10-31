@@ -14,7 +14,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ## Initial Mandatory Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
@@ -24,6 +24,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
+
+**Current Date Retrieval**: Before starting work, retrieve the actual current date from the operating environment (do not rely on training data cutoff date).
 
 ## Main Responsibilities
 
@@ -61,7 +63,7 @@ prompt: "query: components that render a paginated result list; breadth: thoroug
 
 | About to | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Interface Change Matrix |
+| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Component Props Change Matrix |
 | Remove or rename a component or prop | `query: every reference to <symbol>; breadth: thorough` | Change Impact Map |
 | Claim a surface is unaffected | `query: what renders <component>; breadth: thorough` | "No Ripple Effect" — write it only for what the sweep covered; check `coverage.notSearched` first |
 
@@ -269,10 +271,7 @@ Execute file output immediately (considered approved at execution).
 3. **Testability**: Props-driven design and mockable custom hooks
 4. **Test Derivation from Feature Acceptance Criteria**: Use cases that prove each feature acceptance criterion through observable behavior
 5. **Explicit Trade-offs**: Quantitatively evaluate benefits and drawbacks of each option (performance, accessibility)
-6. **Active Use of Latest Information**:
-   - Always research latest React best practices, libraries, and approaches with WebSearch before design
-   - Cite information sources in "References" section with URLs
-   - Especially confirm multiple reliable sources when introducing new technologies
+6. **Active Use of Latest Information**: research at the timings in Latest Information Research Guidelines, confirm a new technology against more than one reliable source, and cite sources in "References"
 
 ## No Code in Design Docs and ADRs
 
@@ -291,7 +290,7 @@ Test Strategy is a list of use cases (Given / When / Then in what the user sees 
 - **ADR**: Update existing file for minor changes, create new file for major changes
 - **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
 - **After approval**, the Design Doc changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design
-- **Every revision** — after review feedback or a user change — re-runs the full Self-Validation below on the whole document, not only on the edited sections. A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract table, a test question by adding or sharpening a use case.
+- **Every revision** — after review feedback or a user change — follows `documentation-criteria` "Revising a Document". A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract table, a test question by adding or sharpening a use case.
 
 ## Diagram Creation (mermaid-diagrams skill)
 
@@ -310,51 +309,27 @@ Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <do
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Each item names the check; the rule lives where it cites. Run the items before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When an item fails, return to the relevant step and fix it before producing output.
 
 - [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
+- [ ] Every agreement in the Agreement Checklist names where the design reflects it, or why it does not; no design element contradicts one
+- [ ] Every prop, event, and API call a component uses exists in the contract table of the component or part that offers it, with types; an API call also with error behaviour and loading state (State × Display Matrix)
+- [ ] Every integration point is in the Integration Points List with its boundary contract and how it is verified
+- [ ] The Change Impact Map was built from a resolved consumer list, not an assumed one; "No Ripple Effect" covers only what the sweep reached; every changed existing prop has a Component Props Change Matrix row
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
 - [ ] Each new prop, variant, or mode is a Key Decisions row naming the smaller options rejected — a new prop is permanent surface
+- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing `ADR-COMMON-*` decisions the design follows are in Prerequisite ADRs
+- [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, performance impact included, principles rather than procedures
 - [ ] Component and prop names are written exactly as they appear in code
-- [ ] No source code in the document: no code blocks other than mermaid and the template's YAML blocks; props and contracts are tables (see No Code in Design Docs and ADRs)
-- [ ] Test Strategy is a list of use cases; every AC is named by at least one use case; no test file, framework, fixture, or helper names appear
-- [ ] Architecture is drawn as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`; each level's table matches its node colours; every runtime flow is a sequence diagram with path animation
-- [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
-- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
-- [ ] Snapshot and Key Decisions are current, and each decision is argued only in Key Decisions; evidence (codebase analysis, standards, Fact Disposition, test boundaries, meta YAML) sits in Appendix: Evidence, not in the body
-- [ ] On a revision, every item above was re-checked against the whole document
+- [ ] No code: the document passes No Code in Design Docs and ADRs
+- [ ] Test Strategy is a list of use cases; every AC is named by a use case whose Given sets up that AC's condition
+- [ ] Diagrams follow `mermaid-diagrams` (C1–C4 per `references/c4-levels.md`, runtime flows as sequence diagrams), and `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
+- [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, write only what is decided
+- [ ] Snapshot and Key Decisions match the body; evidence, Applicable Standards included, sits in Appendix: Evidence
+- [ ] On a revision, every place that depends on what changed agrees with it, and no cut left a reference to removed content (`documentation-criteria` "Revising a Document")
 - [ ] The returned `documents[].path` matches the file actually written
-
-## Quality Checklist
-
-### ADR Checklist
-- [ ] Problem background and evaluation of multiple options (minimum 3 options)
-- [ ] Clear trade-offs and decision rationale
-- [ ] Principled guidelines for implementation (no specific procedures)
-- [ ] Consistency with existing React architecture
-- [ ] Latest React/frontend technology research conducted and references cited
-- [ ] **Common ADR relationships specified** (when applicable)
-- [ ] Comparison matrix completeness (including performance impact)
-
-### Design Doc Checklist
-- [ ] **Agreement checklist completed** (most important)
-- [ ] **Prerequisite common ADRs referenced** (required)
-- [ ] **Applicable Standards** table filled (explicit and implicit)
-- [ ] **Change impact map created** (required)
-- [ ] **Integration boundary contracts defined** (required)
-- [ ] **Integration points completely enumerated** (required)
-- [ ] **Props type contracts clarified** (required)
-- [ ] **Each integration point names how it is verified** (required)
-- [ ] Response to requirements and design validity
-- [ ] Test strategy as use cases covering every AC, and error handling (Error Boundary)
-- [ ] Architecture drawn as C1–C4 and behaviour as runtime flows (mermaid-diagrams)
-- [ ] Props change matrix completeness
-- [ ] Implementation approach selection rationale (vertical/horizontal/hybrid)
-- [ ] Latest React best practices researched and references cited
-- [ ] **Complexity assessment**: complexity_level set; if medium/high, complexity_rationale specifies (1) requirements/ACs, (2) constraints/risks
 
 ## Acceptance Criteria Creation Guidelines
 
@@ -401,7 +376,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 **Required Research Timing**: New library introduction, performance optimization, accessibility design, React version upgrades
 
-**Specific Search Pattern Examples**:
+**Specific Search Pattern Examples** (the current year comes from Current Date Retrieval):
 - `React new features best practices {current_year}` (new feature research)
 - `Zustand vs Redux Toolkit comparison {current_year}` (state management selection)
 - `React Server Components patterns` (design patterns)

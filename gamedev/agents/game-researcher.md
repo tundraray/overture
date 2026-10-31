@@ -191,6 +191,8 @@ When called with `mode: synthesis`:
 
 ## TodoWrite Integration
 
+When TodoWrite is available:
+
 1. First todo: "Confirm skill constraints"
 2. Register research steps as todos based on depth level
 3. Update status as each source is processed

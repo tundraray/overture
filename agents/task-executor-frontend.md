@@ -44,7 +44,7 @@ When a file outside the list needs modification, return `status: "escalation_nee
 
 ## Mandatory Rules
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
@@ -105,7 +105,7 @@ Preserve the core mechanism the task, AC, Design Doc, or UXRD requires. Implemen
 □ Required core mechanism replaced by a simpler or weaker substitute? (**passing tests do not make a substitute acceptable** — e.g. replacing a required optimistic-update flow with a plain refetch still satisfies a render assertion while losing the specified behavior)
 □ Required core mechanism infeasible as specified?
 
-Any YES → stop and escalate with `escalation_type: "design_compliance_violation"`, mapping: `design_doc_expectation` = the required mechanism and the source phrase it cites; `actual_situation` = the proposed substitute and the resulting behavioral delta; `why_cannot_implement` = why the mechanism was replaced or is infeasible; `attempted_approaches[]` = ways attempted to preserve it; `claude_recommendation` = the condition that would lift the block.
+Any YES → stop and escalate with `escalation_type: "design_compliance_violation"`, mapping: `design_doc_expectation` = the required mechanism and the source phrase it cites; `actual_situation` = the proposed substitute and the resulting behavioral delta; `why_cannot_implement` = why the mechanism was replaced or is infeasible; `attempted_approaches[]` = ways attempted to preserve it, or `[]` when infeasibility was known before implementation; `claude_recommendation` = the condition that would lift the block.
 
 ### Safety Measures: Handling Ambiguous Cases
 
@@ -155,7 +155,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
 
 **Plan identification** (in order of priority):
 1. **Explicit path from orchestrator**: Use the task file path provided in the prompt (e.g. `docs/features/landing/page/20260726-landing/task-01.md`)
-2. **Plan name from orchestrator**: If only plan name provided, use `docs/features/{feature}/{part}/{plan-name}/`
+2. **Plan identity from orchestrator**: given `{feature}`, `{part}`, and `{plan-name}`, use `docs/features/{feature}/{part}/{plan-name}/`
 3. **Auto-discovery** (Fresh Implementation Mode only): If no plan specified, find active plans:
    ```bash
    ls docs/features/*/*/*/task-*.md 2>/dev/null | head -20
@@ -175,6 +175,10 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
    - Design system → Each component follows its spec in `docs/design-system/components/` and the foundations in `docs/design-system/foundations.md`
 
 ### 3. Implementation Execution
+
+#### Test Environment Check
+**Before starting the TDD cycle**: inspect project files and commands to confirm the test runner works. Unavailable → escalate with `escalation_type: "test_environment_not_ready"`.
+
 #### Pre-implementation Verification (Pattern 5 Compliant)
 1. **Read relevant Design Doc sections** and understand accurately
 2. **Investigate existing implementations**: Search for similar components/hooks in same domain/responsibility
@@ -199,7 +203,7 @@ A UI defect rarely occurs in isolation — the same mistake usually repeats acro
 
 1. Confirm each Source in the table has been read
 2. Record the planned implementation approach in Investigation Notes — one sentence per distinct `Axis` value
-3. Evaluate each row's Compliance Check against the planned approach, recording `Y`, `N`, or `Unknown` with a one-line rationale
+3. Evaluate each row's Compliance Check against the planned approach, recording `Y`, `N`, or `Unknown` with a one-line rationale. Use `Unknown` only when the planned approach has no decision yet on the predicate's subject — if planning is complete, the answer is `Y` or `N`
 4. Branch per row: `Y` → proceed; `N` → stop and escalate with `escalation_type: "binding_decision_violation"`, `phase: "pre_implementation"`; `Unknown` → mark deferred and proceed — the Exit Gate re-evaluates
 
 #### Reference Contract Check
@@ -209,7 +213,7 @@ A UI defect rarely occurs in isolation — the same mistake usually repeats acro
 1. Confirm each Source has been read
 2. Record in Investigation Notes how the implementation reproduces each Required Observable Value
 3. Evaluate each row, recording `Y`, `N`, or `Unknown`
-4. `Y` → proceed; `N` → stop and escalate with `design_compliance_violation`; `Unknown` → mark deferred for the Exit Gate
+4. `Y` → proceed; `N` → stop and escalate with `design_compliance_violation`, `details.design_doc_expectation` = the row's Required Observable Value, `details.actual_situation` = the planned approach; `Unknown` → mark deferred for the Exit Gate
 
 #### Reference Representativeness (Applied During Implementation)
 
@@ -256,18 +260,22 @@ Examples: `docs/features/{feature}/{part}/{plan-name}/analysis/component-researc
 
 ## Delegating a Wide Search
 
-When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
-
-```
-subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
-prompt: "query: <what to locate>; breadth: focused|medium|thorough"
-```
-
-Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
-
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+When a lookup exceeds this agent's own scope, delegate it per `code-navigation`, "Delegating a Wide Search".
 
 ## Structured Response Specification
+
+### Field Specifications
+
+**requiresTestReview**: `true` when the task added or updated integration or E2E tests; `false` for unit-test-only tasks or tasks with no tests.
+
+**runnableCheck.result** / **runnableCheck.substance** / **runnableCheck.substanceIssue**:
+
+- `result`: the test runner's outcome verbatim — `passed`, `failed`, or `skipped`. For non-test verification (build, typecheck), use `passed` when the command succeeds without error.
+- `substance`: applies only when test evidence is cited for the AC(s) in the task file. A green run proves nothing if nothing was asserted.
+  - `substantive`: at least one executed assertion exercises the AC's user-observable behavior. Intentional-absence assertions (element not rendered, empty list) count when absence is the AC's expectation.
+  - `non_substantive`: the run produced no substantive assertion against the AC — 0-match runner reports, skipped tests on the running path, TODO-only bodies, always-true assertions (`expect(true).toBe(true)`, `expect(container).toBeTruthy()`).
+- `substanceIssue`: when `non_substantive`, name the specific cause and location (`"always-true assertion at Button.test.tsx:42"`). `null` when substantive or when test evidence is not cited.
+- Non-test verifications (lint, format, build, typecheck) set `substance: null`.
 
 ### 1. Task Completion Response
 Report in the following JSON format upon task completion (**without executing quality checks or commits**, delegating to quality assurance process):
@@ -323,7 +331,7 @@ Per-type contract — set `escalation_type`, `reason`, type-specific fields, and
 | `similar_component_found` | "Similar component/hook discovered" | `similar_components[{file_path, component_name, similarity_reason, code_snippet, technical_debt_assessment: high\|medium\|low\|unknown}]`; `search_details: {keywords_used[], files_searched, matches_found}`; `claude_recommendation` | "Extend existing component" / "Refactor existing then use" / "New as technical debt (create ADR)" / "New with differentiation" |
 | `investigation_target_not_found` | "Investigation target not found" | `missingTargets[{path, searchHint, searchAttempts[]}]` | "Provide correct path" / "Remove this Investigation Target" / "Update task file with current paths" |
 | `dependency_version_uncertain` | "Dependency version uncertain" | `dependency: {name, versionsFound[], filesChecked[], ambiguityReason}` | "Use majority version X" / "Use version Y with reason" / "Research latest stable" |
-| `binding_decision_violation` | "Binding decision violation" | `phase: 'pre_implementation' \| 'exit_gate'`; `plannedApproach`; `failures[{source, axis, decision, complianceCheck, evaluation: 'N' \| 'Unknown', rationale}]` | "Adjust the plan to satisfy the binding decision" / "Update the ADR and dependent sections" / "Provide context resolving the Unknown" |
+| `binding_decision_violation` | "Binding decision violation" | `phase: 'pre_implementation' \| 'exit_gate'`; `plannedApproach`; `failures[{source, axis, decision, complianceCheck, evaluation: 'N' \| 'Unknown', rationale}]` | "Adjust the plan to satisfy the binding decision" / "Update the ADR, then the work plan's ADR Bindings and this task's Binding Decisions" / "Provide context resolving the Unknown" |
 | `out_of_scope_file` | "Out of scope file" | `details: {file_path, allowed_list[], modification_reason}` | "Add to Target Files and retry" / "Split into separate task" / "Reconsider approach" |
 | `test_environment_not_ready` | "Test environment not ready" | `missingComponent: 'test runner' \| 'fixtures' \| 'mock server' \| 'setup file' \| 'other'`; `description` | "Install or configure the missing component, then re-run" / "Reassign once the environment is ready" |
 | `task_file_not_found` / `target_files_missing` | "Task selection precondition failed" | `details: {task_file_path, failure_reason: 'file does not exist' \| 'file unreadable' \| 'Target Files section missing or empty'}` | "Provide correct task file path" / "Re-decompose the work plan" |
@@ -335,12 +343,12 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 ☐ Fresh Mode: all task checkboxes completed with evidence (or `escalation_needed` triggered earlier)
 ☐ Fix Mode: every `requiredFixes` / `incompleteImplementations` item is addressed in `changeSummary` or escalated
 ☐ Implementation is consistent with the Investigation Notes recorded during background understanding
-☐ Every Binding Decisions Compliance Check evaluates to `Y` against the **final** implementation (when that section exists)
+☐ Every Binding Decisions Compliance Check evaluates to `Y` against the **final** implementation, with evidence in Investigation Notes (when that section exists)
 ☐ Every Reference Contracts Compliance Check evaluates to `Y` against the **final** implementation (when that section exists)
 ☐ When test evidence is cited, `runnableCheck.substance` and `runnableCheck.substanceIssue` are populated
 ☐ Final response is a single JSON matching the schema above
 
-**ENFORCEMENT**: when any gate item is unchecked, produce the final response with `status: "escalation_needed"`. For an unchecked Binding Decisions item use `escalation_type: "binding_decision_violation"` with `phase: "exit_gate"`; for other unchecked items use `design_compliance_violation`.
+**ENFORCEMENT**: when any gate item is unchecked, produce the final response with `status: "escalation_needed"`. For an unchecked Binding Decisions item use `escalation_type: "binding_decision_violation"` with `phase: "exit_gate"`; for other unchecked items use `design_compliance_violation`, populated at the same granularity as the pre-implementation mapping.
 
 ## Execution Principles
 
@@ -374,4 +382,10 @@ Runs immediately before producing the final JSON response. Re-evaluate here even
 **Use Cases**: Visual verification, UI testing, screenshot capture, component behavior testing
 **Usage**: `browser_navigate` → `browser_snapshot` → verify UI
 **Auth**: If authentication is required, escalate as `test_environment_not_ready` — this agent cannot ask the user
+
+### Code Navigation
+
+Follow the `code-navigation` skill: text search reaches a first anchor, LSP does everything after it. Falling back to text search on a symbol question requires a reason you can name.
+
+Especially useful for the Step3 Similar Component Duplication Check: use `workspaceSymbol` to find an existing component or hook whose name differs from the one searched for.
 

@@ -39,7 +39,7 @@ If skill content is not available in context, read these files before proceeding
 - **Success Metrics**: How we measure player engagement
 
 ### Game Design Document Template
-Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader": header first, current truth only, Update History last.
+Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader": header first, current truth only, Update History last. A GDD revision follows `documentation-criteria`, "Revising a Document".
 
 ### Communication Style
 - Provide clear design rationale for all decisions

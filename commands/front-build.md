@@ -139,11 +139,6 @@ Use Task tool to invoke sub-agents:
 - `description`: Brief task description (3-5 words)
 - `prompt`: Specific instructions
 
-### Structured Response Specification
-Each sub-agent responds in JSON format:
-- **task-executor-frontend**: status, filesModified, testsAdded, readyForQualityCheck
-- **quality-fixer-frontend**: status, checksPerformed, fixesApplied, approved
-
 ### Execution Flow for Each Task
 
 For EACH task, YOU MUST:
@@ -153,9 +148,8 @@ For EACH task, YOU MUST:
    - Invocation example: `subagent_type: "task-executor-frontend"`, `description: "Task execution"`, `prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`
 3. **FOLLOW the per-task cycle diagram** in `workflow-execution` for every status task-executor-frontend, integration-test-reviewer and quality-fixer-frontend return
 4. **EXECUTE quality-fixer-frontend** after each completed task
-5. **USE quality-fixer-frontend**: Execute all quality checks (Lighthouse, bundle size, tests, etc.)
    - Invocation example: `subagent_type: "quality-fixer-frontend"`, `description: "Quality check"`, `prompt: "Execute all frontend quality checks and fixes"`
-6. **COMMIT based on strategy**:
+5. **COMMIT based on strategy**:
    - **per-task**: Commit immediately after `approved: true`
    - **per-phase**: Accumulate, commit when phase completes
    - **per-feature**: Accumulate all, single commit at end
@@ -204,7 +198,7 @@ If deletion fails (filesystem error), report the failure but do not block the co
 Frontend implementation phase completed.
 - Task decomposition: Generated under docs/features/{feature}/{part}/{plan-name}/
 - Implemented tasks: [number] tasks
-- Quality checks: All passed (Lighthouse, bundle size, tests)
+- Quality checks: All passed
 - Commits: [number] commits created
 
 **Important**: This command manages the entire autonomous execution flow for FRONTEND implementation from task decomposition to completion. Automatically uses frontend-specialized agents (task-executor-frontend, quality-fixer-frontend).

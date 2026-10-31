@@ -94,6 +94,7 @@ skills:
       - "Templates"
       - "Creation Decision Matrix"
       - "ADR Creation Conditions (Required if Any Apply)"
+      - "Revising a Document"
       - "Detailed Document Definitions"
       - "Creation Process"
       - "Storage Locations"
@@ -176,8 +177,8 @@ skills:
 
   technical-spec:
     skill: "technical-spec"
-    tags: [architecture, environment-variables, data-flow, build-commands, testing-commands, quality-check, security]
-    typical-use: "Technical design, environment configuration, build commands, quality check execution"
+    tags: [architecture, environment-variables, data-flow, quality-check, security]
+    typical-use: "Technical design, environment configuration, quality check execution"
     size: small
     key-references:
       - "Single Source of Truth"
@@ -496,3 +497,4 @@ skills:
       - "Worked Examples"
       - "Sequencing Rules"
       - "Escalation"
+      - "Delegating a Wide Search"

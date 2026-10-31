@@ -229,7 +229,7 @@ useEffect(() => {
 - Component Memoization: Use React.memo for expensive components
 - State Optimization: Minimize re-renders with proper state structure
 - Lazy Loading: Use React.lazy and Suspense for code splitting
-- Bundle Size: Monitor with the `build` script and keep under 500KB
+- Bundle Size: Keep within the project's budget, when it sets one
 
 ## Non-functional Requirements
 

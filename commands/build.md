@@ -189,8 +189,8 @@ If deletion fails (filesystem error), report the failure but do not block the co
 ### IN SCOPE
 - Reading and executing tasks from existing work plan
 - Running post-implementation verification (code-verifier + security-reviewer, test-auditor advisory)
-- Calling task-executor / task-executor-frontend for each task
-- Running quality-fixer / quality-fixer-frontend after each task
+- Calling task-executor for each task
+- Running quality-fixer after each task
 - Executing commits according to selected commit strategy
 - Reporting progress and completion status
 - Escalating blockers and design deviations

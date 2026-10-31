@@ -16,7 +16,8 @@ argument-hint: <game feature or project description>
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
-3. **Enter autonomous mode** only after "batch approval for entire implementation phase"
+3. **Enter autonomous mode** only after the batch approval of the current part's plan
+4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
 
 **CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-gamedev skill flows.
 
@@ -45,7 +46,7 @@ Instruction Content: $ARGUMENTS
 ### 2. Progress Verification for Continuation
 
 When continuing existing flow, verify:
-- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan/Tasks), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a `completed` plan chain
+- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan/Tasks), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a `completed` plan chain — the current part is the first one not finished in the current phase
 - Current phase position (Requirements/Market Analysis/Game Design/Technical Design/Planning/Implementation/QA)
 - Identify next step in workflow-gamedev skill corresponding flow
 
@@ -116,13 +117,13 @@ Sequential agent invocations after market analysis (or directly after requiremen
 
 ### Art & Visual Phase
 
-6. **sr-game-artist** → Art direction, style guide, asset requirements
-7. **technical-artist** → Pipeline specs, atlas optimization, rendering constraints
-8. **game-ui-designer** → Game UI/UX design (HUD, menus, interaction patterns)
+7. **sr-game-artist** → Art direction, style guide, asset requirements
+8. **technical-artist** → Pipeline specs, atlas optimization, rendering constraints
+9. **game-ui-designer** → Game UI/UX design (HUD, menus, interaction patterns)
 
 ### Analytics Phase
 
-9. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
+10. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
 
 ### Game-Specific Information Flow
 
@@ -142,15 +143,13 @@ How to pass information between gamedev agents:
 
 **CRITICAL**: The orchestrator is responsible for extracting outputs from each agent and composing them into the prompt for the next agent. Never assume agents can read each other's outputs directly.
 
-### Scope Change Detection
+### 3. Scope Change Detection
 
 After requirement-analyzer returns, evaluate scope implications before proceeding:
 
 **Think deeply** about whether the requirements imply scope changes beyond what was initially apparent.
 
 #### Scope Dependency Analysis
-
-For each identified requirement, assess:
 
 requirement-analyzer reports a top-level `confidence` (`confirmed` | `provisional`) and, when provisional, the questions whose answers would move the scale:
 
@@ -179,9 +178,9 @@ scopeDependencies:
 ```
 ## Scope Change Detection Report
 
-### High-Impact Dependencies Requiring Confirmation:
-1. [question] — Impact: [impact], Confidence: [confidence]
-   Explanation: [why this matters and what could go wrong]
+### Scale-Changing Questions Requiring an Answer:
+1. [question] — if yes: [scale], if no: [scale]
+   Reason: [why this matters and what could go wrong]
 
 ### Confirmed Scope Items:
 - [items with high confidence that will proceed]
@@ -238,9 +237,18 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 
 ## Mandatory Orchestrator Responsibilities
 
+### Parts Loop (MANDATORY)
+
+The parts list confirmed in the product phase — the feature spec's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
+
+1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
+2. **Execution phase**: for each part, plan → review → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+
+Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`mid-game-designer` in `update` mode and feature spec re-approval).
+
 ### Commit Strategy Selection (MANDATORY before implementation)
 
-**After requirement-analyzer and before batch approval**, ask user:
+**After feature spec approval and before the first part's batch approval**, ask user:
 
 "Which commit strategy do you prefer?"
 - **per-task** (default) — Commit after each task. Atomic commits, easy rollback
@@ -264,7 +272,7 @@ Store selected strategy for autonomous execution mode.
 1. Execute ONE task completely before starting next
 2. Check task-executor status before quality-fixer (escalation check)
 3. quality-fixer MUST run after each task-executor (no skipping)
-4. Commit execution depends on strategy (see workflow-gamedev)
+4. Commit execution depends on strategy (see the `workflow-execution` skill)
 
 **Step 2 branch conditions**:
 - `status: escalation_needed` or `status: blocked` → escalate to user
@@ -296,7 +304,7 @@ The per-task quality cycle checks tasks in isolation. It cannot detect drift bet
 
    Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
 
-2. **Apply pass/fail criteria**:
+2. **Apply pass/fail criteria** from the `workflow-execution` skill, "Post-Implementation Verification" section:
    - `code-verifier`: `consistent` / `mostly_consistent` = pass; `needs_review` / `inconsistent` = fail
    - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
 
@@ -314,12 +322,13 @@ Before the completion report, delete the task directory this run consumed. Its w
 - Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `analysis/`
 - **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **gamedev-work-planner** (`update` mode) set its frontmatter `status` to `completed` — the orchestrator does not edit the plan itself
 - **Preserve** every sibling plan and its directory — a part may hold several plans
+- When this run drove several parts, repeat the above per part rather than deleting the feature directory
 - **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/design-system/` and `docs/adr/`
 
 If deletion fails, report the failure but do not block the completion report.
 
 ### Test Information Communication
-After acceptance-test-generator execution, when calling work-planner, communicate:
+After acceptance-test-generator execution, when calling gamedev-work-planner, communicate:
 - Generated integration test file path
 - Generated E2E test file path
 - Explicit note that integration tests are created simultaneously with implementation, E2E tests are executed after all implementations

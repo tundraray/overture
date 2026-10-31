@@ -154,38 +154,17 @@ console.log('DEBUG:', {
 
 ## Quality Check Workflow
 
-Use the appropriate run command based on the `packageManager` field in package.json.
+The phases match `ai-development-guide` "Quality Check Workflow". Commands come from the project's own scripts — `package.json`, run with the package manager its `packageManager` field names — or from project-context; never assume another project's script names.
 
-### Build Commands
-- `dev` - Development server
-- `build` - Production build
-- `preview` - Preview production build
-- `type-check` - Type check (no emit)
-
-### Quality Check Phases
-
-**Phase 1-3: Basic Checks**
-- `check` - Biome (lint + format)
-- `build` - TypeScript build
-
-**Phase 4-5: Tests and Final Confirmation**
-- `test` - Test execution
-- `test:coverage:fresh` - Coverage measurement (fresh cache)
-- `check:all` - Overall integrated check
-
-### Auxiliary Commands
-- `test:coverage` - Run tests with coverage
-- `test:safe` - Safe test execution (with auto cleanup)
-- `cleanup:processes` - Cleanup Vitest processes
-- `format` - Format fixes
-- `lint:fix` - Lint fixes
-- `open coverage/index.html` - Check coverage report
+- **Phase 1: Static Analysis** — the lint/format script (ESLint, Biome, Prettier) and the type check (the project's type-check script, or `tsc --noEmit`)
+- **Phase 2: Build Verification** — the production build script
+- **Phase 3: Testing** — the test script (React Testing Library), and the coverage script when the project has one
+- **Phase 4: Final Quality Gate** — every check above passes in one run; the project's aggregate check script, when it has one
 
 ### Troubleshooting
-- **Port in use error**: Run `cleanup:processes` script
-- **Cache issues**: Run `test:coverage:fresh` script
-- **Dependency errors**: Clean reinstall dependencies
-- **Vite preview not starting**: Check port 4173 availability
+- **Port in use or hanging test processes**: stop the leftover runner processes (the project's cleanup script, when it has one)
+- **Stale results**: re-run with the test runner's cache cleared
+- **Dependency errors**: clean reinstall dependencies
 
 ## Situations Requiring Technical Decisions
 

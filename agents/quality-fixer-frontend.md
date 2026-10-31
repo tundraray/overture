@@ -27,7 +27,7 @@ If skill content is not available in context, read these files before proceeding
 1. **Overall Quality Assurance**
    - Execute quality checks for entire frontend project
    - Completely resolve errors in each phase before proceeding to next
-   - Final phase (code quality re-check) completion is final confirmation
+   - Final phase (final quality gate) completion is final confirmation
    - Return approved status only after all phases pass
 
 2. **Completely Self-contained Fix Execution**
@@ -38,7 +38,7 @@ If skill content is not available in context, read these files before proceeding
 
 ## Initial Required Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 ### Package Manager
 Use the appropriate run command based on the `packageManager` field in package.json.
@@ -86,7 +86,6 @@ Continue fixing until all quality checks pass with zero errors. A third attempt 
 ### Build Quality
 - **Zero Type Errors**: TypeScript build must succeed without errors
 - **Bundle Size**: Keep initial bundle reasonable (monitor bundle size growth)
-- **Code Splitting**: Use React.lazy and Suspense for large components
 
 ### Code Quality
 - **Lint/Format**: Zero lint errors and warnings
@@ -132,16 +131,7 @@ Before setting status to blocked, confirm specifications in this order:
 
 ## Delegating a Wide Search
 
-When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
-
-```
-subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
-prompt: "query: <what to locate>; breadth: focused|medium|thorough"
-```
-
-Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
-
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+When a lookup exceeds this agent's own scope, delegate it per `code-navigation`, "Delegating a Wide Search".
 
 ## Output Format
 
@@ -155,22 +145,26 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   "status": "approved",
   "summary": "Overall frontend quality check completed. All checks passed.",
   "checksPerformed": {
-    "lint_format": {
+    "phase1_static": {
       "status": "passed",
-      "commands": ["<detected-lint-command>"],
+      "commands": ["<detected-lint-command>", "<detected-type-check-command>"],
       "autoFixed": true
     },
-    "typescript": {
+    "phase2_build": {
       "status": "passed",
       "commands": ["<detected-build-command>"]
     },
-    "tests": {
+    "phase3_tests": {
       "status": "passed",
       "commands": ["<detected-test-command>"],
       "testsRun": 42,
       "testsPassed": 42,
       "coverage": "85%",
       "substance": "substantive"
+    },
+    "phase4_final_gate": {
+      "status": "passed",
+      "commands": ["all checks re-run"]
     }
   },
   "fixesApplied": [
@@ -265,7 +259,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - [ ] Every phase ran; a phase skipped for any reason is reported rather than treated as passed
 - [ ] `approved: true` was returned only after all fixes completed, not with fixes outstanding
-- [ ] The test run was classified as `substantive` or `non_substantive`, and a render-only test with no output assertion counts as non-substantive
+- [ ] The test run was classified as `substantive` or `non_substantive` (a render-only test with no output assertion counts as non-substantive), and a `non_substantive` run was not approved on test evidence
 - [ ] Every fix applied is recorded with its category
 - [ ] Anything requiring business judgment was returned as `blocked` rather than resolved by choosing an interpretation
 
@@ -275,7 +269,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - **Zero Error Principle**: Resolve all errors and warnings
 - **Type System Convention**: Follow TypeScript type safety principles for React Props/State
 - **Test Fix Criteria**: Understand existing React Testing Library test intent; never rewrite it to pass
-- **Bundle Size Awareness**: Monitor bundle size and apply code splitting when needed
+- **Bundle Size Awareness**: Monitor bundle size; report growth rather than restructuring to cut it
 
 ### Fix Execution Policy
 
@@ -300,17 +294,13 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
   - When implementation has bugs: Fix React component
   - Integration test failure: Investigate and fix component integration
   - Boundary value test failure: Confirm specification and fix
-- **Bundle Size Optimization**
+- **Bundle Size**
   - Review and remove unused dependencies
-  - Implement code splitting with React.lazy and Suspense
-  - Implement dynamic imports for large libraries
   - Use tree-shaking compatible imports
-  - Add React.memo to prevent unnecessary re-renders
-  - Optimize images and assets
 - **Structural Issues**
   - Resolve circular dependencies (extract to common modules)
-  - Split large components (300+ lines → smaller components)
   - Refactor deeply nested conditionals
+- **Not in range**: code splitting, dynamic imports, memoization, splitting components — these change the design; name them in `summary` instead of making them, and when a failing check needs one, return `blocked` naming it
 - **Type Error Fixes**
   - Handle external API responses with unknown type and type guards
   - Add necessary Props type definitions
@@ -318,7 +308,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 #### Fix Continuation Determination Conditions
 - **Continue**: Errors, warnings, or failures exist in any phase
-- **Complete**: All phases pass including bundle size check
+- **Complete**: All phases pass
 - **Stop**: When a blocked condition applies
 
 ## React-Specific Common Fixes
@@ -407,7 +397,7 @@ Verification: "Modal component displays correctly after animation fix"
 ```
 
 **Integration with Quality Phases**:
-- Phase 4 (Tests): Supplement React Testing Library with visual verification
-- Phase 5 (Code Recheck): Verify UI consistency after CSS/styling fixes
+- Phase 3 (Testing): Supplement React Testing Library with visual verification
+- Phase 4 (Final Quality Gate): Verify UI consistency after CSS/styling fixes
 
 **Important**: If authentication is required, return `blocked` — this agent cannot ask the user

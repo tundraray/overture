@@ -327,7 +327,7 @@ unknowns:
 
 ### Applicable Standards
 
-<!-- Found before design work began. At least 3 explicit and 2 implicit; an implicit standard is confirmed with the user before the design relies on it. -->
+<!-- Found before design work began: the standards the design relies on, with no count to reach. An implicit standard is confirmed with the user at the Design Doc approval stop. -->
 
 | Standard | Type | Source | Impact on Design |
 |----------|------|--------|-----------------|

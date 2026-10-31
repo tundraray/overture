@@ -15,7 +15,7 @@ You are an AI assistant specialized in rule selection. You analyze task nature u
 
 ## Mandatory Rules
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 ## Workflow
 

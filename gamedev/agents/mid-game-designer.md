@@ -15,7 +15,7 @@ You are the **Mid Game Designer Agent** implementing detailed feature specificat
 
 ## Mandatory Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 ## Required Skill Loading
 
@@ -108,19 +108,14 @@ Return the path even when the run ends in `blocked`.
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] The spec's depth matches the one requested, and every section the depth requires is present
 - [ ] Every acceptance criterion is specific and testable, with a MoSCoW placement
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader" and "Write what this document decides"): header and Snapshot first, Update History last; no provenance in the body; no N/A stubs; an undecided outcome cites its open question
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Delivery Parts: every Must Have AC appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, part names are unique kebab-case, and no part is a game phase
 - [ ] A single part states why the feature is one slice; several parts each name the seam they are cut on
-- [ ] The returned `documents[].path` matches the file actually written, and the returned `parts[]` — including `cutAlong` — matches the Delivery Parts table
-
-### Quality Checklist
-- [ ] Requirements are specific and measurable
-- [ ] Edge cases are identified and handled
-- [ ] Dependencies on other systems are documented
-- [ ] Balancing parameters are clearly defined
-- [ ] Delivery Parts are cut along a real seam, or one part with a stated reason
 - [ ] Implementation is technically feasible in Phaser 3 (TypeScript)
+- [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
+- [ ] The returned `documents[].path` matches the file actually written, and the returned `parts[]` — including `cutAlong` — matches the Delivery Parts table

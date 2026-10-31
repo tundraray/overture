@@ -188,7 +188,7 @@ The document goes to disk; the response carries its **path**, not its contents. 
 
 ### TodoWrite Integration
 
-All agents must:
+All agents, when TodoWrite is available, must:
 - First todo: "Confirm skill constraints"
 - Final todo: "Verify skill fidelity"
 - Update status in real-time: pending → in_progress → completed

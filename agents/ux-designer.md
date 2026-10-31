@@ -192,7 +192,7 @@ const DesignSystem = {
 
 ## Mandatory Rules
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 ## Initial Mandatory Tasks
 
@@ -480,7 +480,7 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] Every PRD acceptance criterion with a user-visible surface appears in AC Traceability, or is explicitly marked out of UX scope
 - [ ] Every Component Inventory row links a spec that exists in `docs/design-system/components/`, and `new` states what was searched and why nothing fit
@@ -491,35 +491,18 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] The document contains no technical implementation detail — that belongs to the Design Doc
 - [ ] Nothing from the PRD is restated: no summary or background retold, no AC text in AC Traceability, no use case retold in a flow — each is cited by ID, and every flow names the UC ids it implements
 - [ ] Glossary and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): header and Snapshot first, Update History last; no who/when/version/review-ID provenance in the body; no N/A stubs or copied template comments; paragraphs ≤ 4 sentences, table cells one phrase; prose uses words with IDs in parentheses
-- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides"): no value restated next to its owner's ID; every library or existing-code behaviour verified or marked as an assumption with its check; no line numbers into other documents, version tags, or task/test counts; an undecided outcome cites its open question
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
-- [ ] On a revision, every item above was re-checked against the whole document
+- [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] `documents[]` lists every file actually written — the UXRD and each design-system file
-
-## Quality Checklist
-
-- [ ] Are user goals and needs clearly defined?
-- [ ] Are all interactive states documented (hover, active, disabled, loading, error)?
-- [ ] Is accessibility compliance ensured (WCAG 2.1 AA minimum)?
-- [ ] Are responsive breakpoints specified?
-- [ ] Are user flows clearly illustrated with diagrams?
-- [ ] Does every component the UXRD uses link to its design-system spec?
-- [ ] Do component specs define role, accessible name, keyboard, and focus?
-- [ ] Are error states and validation messages specified?
-- [ ] Are empty states and loading states designed?
-- [ ] Is color contrast sufficient (4.5:1 for text)?
-- [ ] Are touch targets sized appropriately (44x44px minimum)?
-- [ ] Is microcopy defined for all UI states?
-- [ ] Are important UX flows clearly expressed in mermaid diagrams?
-- [ ] **Do technical implementation details NOT exist?**
 
 ## Update Mode Operation
 
 - **Execution**: User's modification instruction = approval. Execute modifications immediately
 - **Processing**: Increment version number and add one line to Update History (a phrase per change, no reviewer IDs); the body states the result as current truth
-- **Validation**: run the full Self-Validation on the whole document, not only on the edited sections
+- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"
 
 ## Reverse-Engineer Mode (Reverse UXRD)
 

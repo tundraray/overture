@@ -67,11 +67,19 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
 - **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit.
-- **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component) are not written at all; implementation decides them.
+- **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation or splits the part — and `document-reviewer` raises a `recommended` issue naming what to move or cut; past twice the target the issue is `important`, because a document that large holds more statements than anyone keeps consistent. The target is a signal, not a cap.
+**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
+
+## Revising a Document
+
+An edit is finished when nothing else still says the old thing. Most findings on a re-review sit not in the edited lines but in the places that relied on them.
+
+- **Dependents.** After an edit, find every place that cites, depends on, or restates what changed in this document, and make it agree. A dependent in another document — found by searching for the changed IDs — is named in the response (`nextSteps`), not edited; the orchestrator routes it to its owner.
+- **Cuts.** Removing or merging content leaves no reference pointing at what was removed. Passages that share words but make different claims are not duplicates, and both stay.
+- **Self-check scope.** A new document, or a change to sections, numbering, or IDs, runs the author's whole Self-Validation. A targeted edit runs the items whose subject it touched, plus the dependents check above; the diagram render check runs on every revision.
 
 ## Detailed Document Definitions
 
@@ -202,6 +210,7 @@ Interface Change Matrix:
 
 **Excludes**:
 - Full game vision (→GDD)
+- Technical implementation details and the questions the design must settle (→Design Doc)
 - Implementation plan (→Work Plan)
 - **How the interface looks and behaves** (→UXRD and the design system) — HUD and menu states, microcopy, focus and input navigation, resolutions, design tokens, UI animation. The spec states the observable outcome ("the player sees remaining ammo at all times") and the target level ("readable at 720p", "WCAG 2.1 AA for menus") — not how either is met
 
@@ -292,7 +301,7 @@ Each step names the evidence that must exist before the next step starts. A step
 
 **3. Creation** — use templates, include measurable conditions
 - *Output evidence*: every mandatory template section filled (or answered in one line with the reason), every *when applicable* section that does not apply deleted; every acceptance criterion measurable
-- *Transition*: proceed when no section is silently empty
+- *Transition*: proceed when no section is silently empty — an unanswered question is not the same as an inapplicable one
 
 **4. Approval** — "Accepted" after review enables implementation
 - *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
@@ -313,7 +322,7 @@ docs/
     ├── design-{part}.md
     └── {part}/
         ├── {plan-name}.md
-        └── {plan-name}/{_overview,task-01}.md
+        └── {plan-name}/{_overview,task-01}.md, analysis/{topic}.md
 ```
 
 | Document | Path | Naming Convention | Template |
@@ -323,6 +332,7 @@ docs/
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
 | Task File | `docs/features/{feature}/{part}/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
+| Analysis deliverable | `docs/features/{feature}/{part}/{plan-name}/analysis/` | `{topic}.md` | — |
 | UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 | Design System | `docs/design-system/` | `README.md`, `foundations.md`, `components/{component-name}.md` | [design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md) |
 | GDD | `docs/game-design/` | `[project-name]-gdd.md` | [gdd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md) |
