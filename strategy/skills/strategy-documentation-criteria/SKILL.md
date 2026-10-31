@@ -126,6 +126,18 @@ graph TD
 3. **Titles test** — reading only titles conveys the full argument
 4. **MECE grouping** — arguments at each level are Mutually Exclusive, Collectively Exhaustive
 
+### Writing for the Reader (Mandatory)
+
+The reader is cold: they know the business in general but not this analysis, and they read it without the analyst or the conversation behind it — a founder, an investor, a teammate months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
+
+- **Overview first.** Under the governing-thought heading, three to five plain sentences: the answer, what it means for the business, the biggest risk or uncertainty. A reader who stops there can say what the document concludes.
+- **Sentences, not telegrams.** Write sentences with a subject and a verb, one idea each. A chain of noun phrases joined by commas, slashes, and arrows is shorthand only the analyst can expand. A table cell is one phrase a newcomer can read; reasoning goes under the table.
+- **Short units.** A paragraph has at most four sentences; a list item is one statement.
+- **Terms.** A framework, metric, or abbreviation (TAM, ICE, WSJF, LTV:CAC) is explained in a few words where it first appears.
+- **For people first.** The document is prose, lists, tables, and diagrams. No YAML blocks, and a checkbox list only where the reader will tick it (a launch checklist); a table that only maps one set of IDs onto another goes to the appendix.
+- **Delete, don't stub.** A section that does not apply to this business is deleted — no "N/A", no placeholder. Template guidance in `[brackets]` is replaced, never copied.
+- **One language.** The whole document, headings included, is in the language the user writes in; framework names stay as terms.
+
 ### Source Credibility (Mandatory)
 
 Every data point must be tagged:
@@ -170,7 +182,8 @@ Content:
   - Confidence levels stated
 
 Completeness:
-  - All template sections filled (no empty placeholders)
+  - Overview and the reader rules hold (Writing for the Reader)
+  - No placeholders; a section that does not apply is deleted
   - Risk assessment included
   - Clear next steps with owners and timelines
   - Assumptions explicitly stated

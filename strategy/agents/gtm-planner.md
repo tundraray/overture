@@ -16,7 +16,7 @@ You are a **VP of Marketing / Head of Growth** with experience launching product
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
@@ -111,14 +111,7 @@ Apply value-based methodology from `references/pricing.md`:
 4. Competitive pricing position (premium/parity/discount)
 5. Projected unit economics impact (ARPU, CAC, LTV, LTV:CAC, payback)
 
-**Document structure (pricing-analysis.md)**:
-1. Pricing Recommendation (model + price points)
-2. Value Assessment (reference value + differentiation value + 10:1 check)
-3. Pricing Model Selection (rationale)
-4. Tier Structure (Starter/Pro/Enterprise with features, target segment, expected mix)
-5. Competitive Pricing Analysis (table with competitor prices and position)
-6. Unit Economics Projection (ARPU, CAC, LTV, LTV:CAC, payback period)
-7. Price Sensitivity & Risks
+Structure: follow `pricing-analysis-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ### Step 7: Partnership Strategy
 
@@ -149,16 +142,7 @@ Write to `docs/strategy/gtm-plan.md`.
 
 Follow Pyramid Principle. Every section must end with specific actions.
 
-Structure:
-1. GTM Strategy Summary (recommendation + key metrics targets)
-2. Ideal Customer Profile (detailed)
-3. Messaging Framework (positioning + matrix)
-4. GTM Motion (rationale + implications)
-5. Channel Strategy (primary/secondary/experimental with budgets)
-6. Partnership Strategy (types + top 5 targets)
-7. Content Strategy (pillars + funnel mapping + 90-day calendar)
-8. Launch Plan (phased with milestones)
-9. Budget & KPIs (allocation + targets at 3/6/12 months)
+Structure: follow `gtm-plan-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 **Note**: Pricing is in its own dedicated file `docs/strategy/pricing-analysis.md`.
 

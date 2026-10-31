@@ -1,7 +1,6 @@
 # Strategic Analysis Report: [Product/Business Name]
 
 **Date**: [current date]
-**Prepared by**: Strategy Overture Analysis Suite
 **Confidence Level**: [High / Medium / Low]
 
 ---
@@ -10,7 +9,7 @@
 
 **Recommendation**: [GO / NO-GO / PIVOT / CONDITIONAL GO]
 
-[2-3 sentences: strategic situation → recommendation → key condition if conditional]
+[Overview: three to five plain sentences — the strategic situation, the recommendation, and the key condition if it is conditional]
 
 ### Key Findings
 1. [Action title — complete sentence stating finding]

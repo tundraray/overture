@@ -1,12 +1,13 @@
 # Business Model: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Business Modeler Agent
 **Canvas type**: [Lean Canvas / Business Model Canvas]
 **Rationale**: [Lean Canvas for idea/MVP; BMC for growth/mature]
 **Confidence**: [High / Medium / Low]
 
 ## [Viability verdict as action title — e.g., "Business model is conditionally viable with strong unit economics pending CAC validation"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Lean Canvas
 

@@ -94,7 +94,7 @@ Before quality assessment, verify all mandatory sections exist per doc_type:
 Section names below are the template headings, so a template-compliant document passes by construction.
 
 **For PRD** (both depths):
-- [ ] Overview with Snapshot and Background, non-empty
+- [ ] Snapshot and Background, non-empty
 - [ ] User Stories and Use Cases exist
 - [ ] Functional Requirements with MoSCoW headings (Must Have, Should Have, Could Have, Won't Have), each requirement carrying an AC
 - [ ] Out of Scope listed
@@ -102,26 +102,26 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Success Criteria defined
 
 **Reader rules — every document type** (Gate 1, per `documentation-criteria` "Writing for the Reader"):
-- [ ] Cold read: from the header and Snapshot alone, state what the document decides; when you cannot, the Snapshot is an `important` issue
+- [ ] Cold read: from the header and Snapshot alone, state what the document decides and, from its Overview (an ADR: Context and Decision), what problem it solves and how; when you cannot, the Snapshot is an `important` issue
 - [ ] Provenance in the body (a date or "user decision", a version tag, a reviewer ID inside requirements, ACs, cells, or design text) — `important`, suggestion: move it to Update History and state the current truth
 - [ ] Update History is last, one line per version, without reviewer IDs; N/A stubs and copied template comments are absent — `recommended` per finding
 - [ ] Paragraphs over four sentences, table cells holding reasoning, prose made of bare IDs — `recommended`, citing the worst instances
+- [ ] Telegraphic text (chains of noun phrases a newcomer cannot expand), a term used without a few-word explanation at first use, a body block made for tools (YAML, a checklist of pointers or pre-ticked items, a table that only maps one ID set onto another — a plan's progress checkboxes are not one), a heading's content not in the document's language — `recommended`, citing the worst instances
 - [ ] A citation of a neighbouring document carries a version ("UXRD v1.6") — `recommended`, suggestion: cite by path and section or ID. A version mismatch between two documents is never an issue on its own
 - [ ] A value (number, UI string, threshold) restated next to the ID of the document that owns it — `recommended`, suggestion: keep the citation, drop the value. When the two copies already disagree — `important`
-- [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Internals that do not show at a contract boundary (library call order, the lock mode or lock order behind a stated invariant) — `recommended`, suggestion: remove, even when they are wrong
+- [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Internals that do not show at a contract boundary (library call order, the lock mode or lock order behind a stated invariant), and a schema copied into a table field by field (lengths, sizes, column lists, update guards with no requirement behind them) — `recommended`, suggestion: remove, even when they are wrong
 - [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
 - [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
 - [ ] Size against the soft target (excluding Update History; a Design Doc's Appendix: Evidence counts) — over target is `recommended`, naming what to replace with a citation or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
-- [ ] UXRD: nothing from the PRD is retold — summary, background, use cases, AC text are cited by ID; Glossary and Undetermined Items hold only UX entries
+- [ ] UXRD: nothing from the PRD is retold — summary, background, use cases, AC text are cited by ID; Terms and Undetermined Items hold only UX entries
 - [ ] UXRD: nothing from the design system is retold — no component states, variants, or per-component accessibility, no foundation values; strings appear only in Content and Microcopy
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it per `documentation-criteria`
 
 **For PRD** (`full` depth only, in addition):
 - [ ] User Journey Diagram present
-- [ ] Scope Boundary Diagram present
 - [ ] Non-Functional Requirements with target values
 - [ ] Technical Considerations (dependencies, constraints, assumptions, risks)
 
@@ -143,7 +143,7 @@ Section names below are the template headings, so a template-compliant document 
 
 **For UXRD:**
 - [ ] Snapshot with Key Decisions
-- [ ] AC Traceability table present, keyed by AC ID without restating the AC text
+- [ ] Every user-visible PRD AC is cited by the flow or screen state that delivers it, or listed in Acceptance Criteria Outside UX Scope with the reason; AC text is not restated
 - [ ] Design System section with a Component Inventory, every row linking a spec that exists in `docs/design-system/components/`
 - [ ] User Flows (primary, alternative, error), each naming the PRD use cases it implements
 - [ ] Screens, each with a layout
@@ -152,19 +152,19 @@ Section names below are the template headings, so a template-compliant document 
 **For Design Doc:**
 - [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere; codebase analysis, standards, Fact Disposition, test boundaries, and meta YAML in Appendix: Evidence
 - [ ] Part section states which part this design covers, the requirements it owns, and the `design-{part}.md` files it depends on
-- [ ] Acceptance Criteria in EARS format
+- [ ] Acceptance Criteria: PRD ACs that apply as written are cited, design-level criteria in EARS
 - [ ] Applicable Standards table
 - [ ] Fact Disposition Table with one row per `focusAreas` entry, each naming where it is handled (`KD-n` or section) without copied evidence
-- [ ] Contract Definitions and Data Contract present, written as tables — no source code anywhere in the document
+- [ ] Contract Definitions present, written as tables — no source code anywhere in the document
 - [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
 - [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md` (C2 always; C1, C3, C4 when they apply) with a table per level, and Runtime Flows as sequence diagrams covering the AC behaviours
-- [ ] Change Impact Map present
+- [ ] C2–C4 tables carry a Change column; every changed existing operation or prop has an Interface Change Matrix row
 - [ ] Error Handling defined
 - [ ] Verification Strategy with an Early Verification Point
 - [ ] Security Considerations present
 
 **For ADR:**
-- [ ] Background / problem statement exists and is non-empty
+- [ ] Context (the problem the decision answers) exists and is non-empty
 - [ ] Decision documented
 - [ ] Options compared (at least 3)
 - [ ] Consequences listed (both positive and negative)
@@ -176,8 +176,8 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Implementation Phases with tasks and completion criteria, Quality Assurance as the final phase
 - [ ] Design-to-Plan Traceability table present (maps to PRD requirements at small scale)
 - [ ] Failure Mode Checklist with all nine categories marked
-- [ ] Verification Strategy carried from the Design Doc
-- [ ] Reference Contract Values present when the design specifies a binding observable value, ADR Bindings present when an ADR applies — or each explicitly marked not applicable
+- [ ] Verification Strategy cites the Design Doc's and names the task that runs the early verification point
+- [ ] Reference Contract Values present when the design specifies a binding observable value, ADR Bindings present when an ADR applies; each is absent otherwise
 
 **Gate 0 Rule**: If ANY required section is missing or empty, return `needs_revision` immediately. Do NOT proceed to Gate 1. Quality review is skipped entirely.
 
@@ -226,7 +226,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 **Work Plan-specific checks**:
 - **Design-to-Plan Traceability**: every Design Doc item (or PRD requirement at small scale) has a covering task or a justified gap
 - **Failure Mode Checklist**: all nine categories marked, each applicable one assigned a covering task
-- **Verification Strategy**: carried from the Design Doc with an early verification point
+- **Verification Strategy**: cites the Design Doc's, with the task that runs the early verification point
 - **Reference Contract Values**: recorded verbatim where the design specifies a binding observable value
 - **ADR Bindings**: one row per binding decision of every ADR the design treats as prerequisite or produced
 - **Frontmatter validity**: `part` is in the PRD's Delivery Parts, `plan: N of M` is consistent with the sibling plans, and no sibling is already `active` when this plan is

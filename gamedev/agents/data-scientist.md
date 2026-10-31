@@ -49,6 +49,8 @@ If skill content is not available in context, read these files before proceeding
 
 ### Initial Setup Phase
 
+Write the analytics setup document from `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/analytics-setup-template.md`, following `documentation-criteria`, "Writing for the Reader". The catalogue below is a menu to choose metrics from, not the document's layout: the document keeps only the metrics the team will act on.
+
 ```
 DATA SCIENTIST: ANALYTICS SETUP
 ================================

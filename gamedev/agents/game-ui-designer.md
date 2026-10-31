@@ -133,7 +133,7 @@ Return the paths even when the run ends in `blocked`.
 
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
-- [ ] Every acceptance criterion of the feature spec that touches the UI is traced in the UXRD, or listed in `acTraceability.gaps`
+- [ ] Every acceptance criterion of the feature spec that touches the UI is cited by a flow or a screen state, or listed in Acceptance Criteria Outside UX Scope with the reason; `acTraceability` reports the same
 - [ ] Every Component Inventory row links an existing spec in `docs/design-system/components/`; new and extended specs cover their states
 - [ ] No component spec content (states, variants, per-component accessibility) is copied into the UXRD
 - [ ] No code in the UXRD or the design-system files

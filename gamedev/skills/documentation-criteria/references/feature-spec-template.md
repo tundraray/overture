@@ -9,13 +9,15 @@ Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot f
 
 ## Snapshot
 
-<!-- At most ten lines: what the player gets, the Must Have capabilities, the parts, the biggest risk, how many questions are open. -->
+<!-- At most ten lines. -->
 
-- **Player gets**: [one sentence]
-- **Must Have**: [the core capabilities, in words] · **Parts**: [part names]
+**Overview.** [three to five plain sentences — what the player is missing today, what the feature gives them, and how it plays, told to a colleague who has not seen the GDD]
+
+- **Does not change**: [the one or two things a reader would otherwise assume change]
+- **Parts**: [part names]
 - **Priority**: [High / Medium / Low] — [one-phrase reason]
 - **Biggest risk**: [one phrase]
-- **Open questions**: [n] (see Open Questions)
+- **Open questions**: [a link to Open Questions, or "none"]
 
 ## Market Justification *(full depth)*
 
@@ -33,14 +35,14 @@ Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot f
 ## Acceptance Criteria
 <!-- Each criterion is one testable statement with one outcome. An outcome that is not decided yet cites its open question (OQ-n) and states nothing else. -->
 ### Must Have
-- [ ] **AC-1**: [Specific, testable requirement]
-- [ ] **AC-2**: [Specific, testable requirement]
+- **AC-1**: [Specific, testable requirement]
+- **AC-2**: [Specific, testable requirement]
 
 ### Should Have
-- [ ] **AC-3**: [Nice-to-have requirement]
+- **AC-3**: [Nice-to-have requirement]
 
 ### Could Have
-- [ ] **AC-4**: [Optional enhancement]
+- **AC-4**: [Optional enhancement]
 
 ## Delivery Parts
 
@@ -112,7 +114,10 @@ graph LR
 ## Balancing Parameters *(full depth)*
 <!-- This spec owns these values; the Design Doc and code cite them by name. -->
 ### Tunable Values
-- **[Parameter Name]**: [Current Value] - [Range] - [Purpose]
+
+| Parameter | Value | Range | What it tunes |
+|---|---|---|---|
+| [name] | [value] | [min–max] | [what the player feels when it changes] |
 
 ### Balancing Goals
 [What we're trying to achieve with these parameters]
@@ -153,7 +158,7 @@ graph LR
 
 ## Player Verification *(full depth)*
 <!-- What playtests must show. Automated tests are planned from the Design Doc under `testing-principles`, Test Selection — they are not listed here. -->
-- [ ] [Usability/fun check, tied to an AC]
+- [Usability or fun check, and the AC it confirms]
 
 ## Risks *(full depth)*
 - **[Risk]**: [Mitigation strategy]

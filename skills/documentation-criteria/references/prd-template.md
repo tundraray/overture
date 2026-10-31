@@ -12,34 +12,39 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 |---|---|---|---|---|
 | Draft / Approved | YYYY-MM-DD | full / lite | [uxrd.md](./uxrd.md) or — | [design-[part].md] or — |
 
-## Overview
+## Snapshot
 
-### Snapshot
+<!-- At most ten lines. The Overview is the story a newcomer needs; the bullets are what they would ask next. -->
 
-<!-- At most ten lines: what the feature gives the user, for whom, the Must Have capabilities, the delivery parts, the biggest risk. -->
+**Overview.** [Three to five plain sentences: what problem the users have today, what they can do once this ships, and the core capabilities that make it possible. No IDs.]
 
-- **In one line**: [what the user can do after this ships that they cannot do now]
 - **For**: [primary users]
-- **Must Have**: [the core capabilities, in words] · **Parts**: [part names]
+- **Not included**: [the one or two things a reader would expect here but that are out of scope]
+- **Parts**: [part names, in build order]
 - **Biggest risk**: [one line]
+- **Open questions**: [a link to Undetermined Items, or "none"]
 
-### Background
+## Terms
 
-<!-- At most three short paragraphs: the problem and why now. Market context, when needed, goes to Appendix → References. -->
+<!-- When applicable: the document leans on five or more words a newcomer may not know. One line each. Later documents add only terms that are new to them. -->
 
-[Why is this feature needed? What problem does it solve?]
+- **[Term]**: [what it means here, in a few plain words]
+
+## Background
+
+<!-- At most three short paragraphs: what exists today, why now, and the context a reader needs to judge the problem. The Overview already states the problem; do not restate it. Market context, when needed, goes to Appendix → References. -->
+
+[What exists today and why this is needed now]
 
 ## User Stories
 
 ### Primary Users
-[Define the main target users]
+
+- **[User type]** — [who they are, and what matters to them in this feature]
 
 ### User Stories
-```
-As a [user type]
-I want to [goal/desire]
-So that [expected value/benefit]
-```
+
+- As a [user type], I want to [goal], so that [value].
 
 ### Use Cases
 
@@ -71,79 +76,42 @@ journey
 
 ## Functional Requirements
 
-<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation. -->
+<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
+IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents cite these. -->
 
 ### Must Have (MVP)
-- [ ] Requirement 1: [Detailed description]
-  - AC: [Acceptance criteria - Given/When/Then format or measurable standard. An observable outcome for the user ("the open thread is marked as current"), not its markup or styling ("`aria-current` is set", "a skeleton is shown")]
-- [ ] Requirement 2: [Detailed description]
-  - AC: [Acceptance criteria]
-- [ ] Requirement 3: [Detailed description]
-  - AC: [Acceptance criteria]
+
+- **FR-01. [Short name].** [What the user or the system can do, in one or two sentences]
+  - AC-01.1: Given [state], when [action], then [observable outcome for the user — "the open thread is marked as current", not its markup or styling ("`aria-current` is set", "a skeleton is shown")]
+- **FR-02. [Short name].** [...]
+  - AC-02.1: [...]
 
 ### Should Have
-- [ ] Requirement 4: [Detailed description]
-  - AC: [Acceptance criteria]
+
+- **FR-03. [Short name].** [...]
+  - AC-03.1: [...]
 
 ### Could Have
-- [ ] Requirement 5: [Detailed description]
-  - AC: [Acceptance criteria]
+
+- **FR-04. [Short name].** [...]
+  - AC-04.1: [...]
 
 ### Won't Have (this release)
-- Item 1: [Description and reason]
-- Item 2: [Description and reason]
+
+- [What is left out] — [why]
 
 ### Out of Scope
-- Item 1: [Description and reason — work explicitly not part of this feature]
-- Item 2: [Description and reason]
 
-### Scope Boundary Diagram *(full depth)*
-
-```mermaid
----
-config:
-  theme: base
-  look: classic
-  themeVariables:
-    primaryColor: "#eef1f5"
-    primaryBorderColor: "#4b5563"
-    primaryTextColor: "#1a1a1a"
-    lineColor: "#6b7280"
-  flowchart:
-    curve: step
----
-graph LR
-    subgraph InScope[In scope]
-        A[Requirement 1]
-        B[Requirement 2]
-    end
-    subgraph OutOfScope[Out of scope]
-        C[Excluded item]
-    end
-    A --> C
-```
+- [Work explicitly not part of this feature] — [why]
 
 ## Non-Functional Requirements
 
-[Lite depth: list only the requirements this feature sets; write "none beyond project defaults" when that is the case.]
+<!-- Only the categories this feature sets a requirement for — performance, reliability, security, scalability, accessibility and responsiveness; delete the rest. When the feature sets none, one line: "none beyond project defaults".
+Each requirement has an ID (`NFR-01`) and states a target and how it is measured. Accessibility and responsiveness give the target level only ("WCAG 2.1 AA", "usable from 360 px width"); how each is met is the UXRD's. -->
 
-### Performance
-- Response Time: [Target value]
-- Throughput: [Target value]
-- Concurrency: [Target value]
+### [Category]
 
-### Reliability
-- Availability: [Target value]
-- Error Rate: [Target value]
-
-### Security
-- [Security requirements details]
-
-### Scalability
-- [Considerations for future scaling]
-
-### Accessibility and Responsiveness *(when the feature has a UI)*
-- [Target level only — e.g. "WCAG 2.1 AA", "usable from 360 px width", "light and dark themes". How each target is met is the UXRD's]
+- **NFR-01**: [target, and how it is measured]
 
 ## Delivery Parts
 
@@ -151,18 +119,18 @@ graph LR
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
-| `[part-name]` | [Requirement 1, Requirement 3] | [backend / frontend / domain / release-unit] | — | [Why this is a separate slice, one sentence] |
-| `[part-name]` | [Requirement 2] | [...] | `[part-name]` | [...] |
+| `[part-name]` | [FR-01, FR-03] | [backend / frontend / domain / release-unit] | — | [Why this is a separate slice, one sentence] |
+| `[part-name]` | [FR-02] | [...] | `[part-name]` | [...] |
 
 <!-- **Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here: -->
 
-- Deferred: [Requirement assigned to no part, with reason]
+- Deferred: [FR-nn assigned to no part] — [why]
 
 <!-- **Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case. -->
 
 ### Part Dependency Diagram
 
-[Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes.]
+<!-- Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes. -->
 
 ```mermaid
 ---
@@ -214,19 +182,15 @@ graph LR
 
 ## Undetermined Items
 
-- [ ] [Question 1]: [Description of options or impacts]
-- [ ] [Question 2]: [Description of options or impacts]
+- [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
 <!-- *Discuss with user until this section is empty, then delete after confirmation* -->
 
 ## Appendix *(full depth)*
 
 ### References
-- [Related document 1]
-- [Related document 2]
 
-### Glossary
-- **Term 1**: [Definition — product terms; later documents add only terms that are new to them]
+- [Related document 1]
 
 ## Update History
 

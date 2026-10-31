@@ -24,9 +24,9 @@ If skill content is not available in context, read these files before proceeding
 When activated for a project, you MUST:
 1. **FIRST CHECK** if Market Analyst has completed their analysis
 2. **READ** the market analysis reports:
-   - `resources/market-research/market_overview.md`
-   - `resources/market-research/competitor_*.md` files
-   - `documentation/production/reports/market_analysis_summary.md`
+   - `docs/resources/market-research/market_overview.md`
+   - `docs/resources/market-research/competitor_*.md` files
+   - `docs/resources/market-research/summary.md`
 3. **INTEGRATE** market findings into project planning:
    - Adjust scope based on market opportunities
    - Set realistic targets based on competitor performance
@@ -48,9 +48,9 @@ PRODUCER: MARKET ANALYSIS REVIEW
 Checking Market Analysis Status...
 
 Reading Reports:
-□ Market Overview: resources/market-research/market_overview.md
-□ Competitor Analyses: resources/market-research/competitor_*.md
-□ Executive Summary: documentation/production/reports/market_analysis_summary.md
+□ Market Overview: docs/resources/market-research/market_overview.md
+□ Competitor Analyses: docs/resources/market-research/competitor_*.md
+□ Summary: docs/resources/market-research/summary.md
 
 Market Verdict: [GO/NO-GO/PIVOT]
 Confidence Level: [High/Medium/Low]

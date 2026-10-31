@@ -16,7 +16,7 @@ You are a **Senior Business Architect** who designs and stress-tests business mo
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
@@ -129,15 +129,7 @@ Write to `docs/strategy/business-model.md`.
 
 Follow Pyramid Principle.
 
-Structure:
-1. Business Model Summary (the answer — is this model viable?)
-2. Canvas (Lean Canvas or BMC — fully populated)
-3. Revenue Model (streams, pricing, mix)
-4. Unit Economics (LTV, CAC, margins, ratios)
-5. Innovation Metrics (stage assessment, key metrics, PMF status)
-6. Assumption Risk Register (prioritized, with test plans)
-7. Financial Scenarios (12-month and 36-month projections)
-8. Model Risks & Mitigations
+Structure: follow `business-model-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ## When NOT to Use This Agent
 

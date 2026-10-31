@@ -296,10 +296,11 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
+- [ ] A cold reader can follow it (`documentation-criteria`, "Writing for the Reader"): the Snapshot says what gets built and in what order, each task opens with what it delivers in words, traceability tables sit in Appendix: Traceability
 - [ ] Phases follow Phase Composition and Operational Verification above, and, when test design information was provided, Test Design Information Processing
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 
 ## Update Mode Operation
 - **Constraint**: Structural changes (phases, tasks, traceability) are made only before execution starts; a plan in progress gets a new plan in the chain instead. The frontmatter `status` flip (`active` after batch approval, `completed` in Final Cleanup) is exempt — it is the one update made to an executing or executed plan, and this agent is the only one that makes it
-- **Processing**: Record change history
+- **Processing**: Add one line to Update History (a phrase per change); fold the change into the body as current truth, and update the Snapshot when it changed
 - **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"

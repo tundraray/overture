@@ -1,13 +1,12 @@
 # Jobs Graph: [Segment Name] — [Core Job]
 
 **Date**: [current date]
-**Analyst**: Product Analyst Agent
 **Segment**: [segment name from segments analysis]
 **Core Job**: [core job being decomposed]
 
 ## [Number] jobs form the critical path from [point A] to [desired outcome] — jobs [X] and [Y] carry the highest problem severity
 
-[Executive summary: total jobs in sequence, where the biggest friction lies, what this means for product design]
+[Overview: total jobs in sequence, where the biggest friction lies, what this means for product design — in plain sentences]
 
 ## Job 1: [Job Name]
 

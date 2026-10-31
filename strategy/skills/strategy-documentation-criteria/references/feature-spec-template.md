@@ -7,6 +7,8 @@
 **WSJF Score**: CoD [X] / Duration [X] = [Score]
 **Appetite**: S (1-2 days) / M (1-2 weeks) / L (3-6 weeks)
 
+[Overview: three to five plain sentences — what the user can do once this exists, and why it matters to them]
+
 ## Cross-References
 
 | Source | Reference | What It Provides |

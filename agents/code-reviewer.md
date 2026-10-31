@@ -52,7 +52,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 ### 1. Load Baseline Documents
 ```
 1. Load Design Doc and extract:
-   - Functional requirements and acceptance criteria
+   - Functional requirements and acceptance criteria — for criteria the Design Doc cites as applying as written, read their text from the PRD linked in its header
    - Architecture design
    - Data flow
    - Error handling policy

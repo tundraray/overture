@@ -1,347 +1,76 @@
-# Analytics Setup Template
+# [Project Name] — Analytics Setup
 
-## Project Analytics Framework
-**Project**: [Project Name]  
-**Engine**: [Godot/Unity/Unreal Engine]  
-**Platform**: [Target Platforms]  
-**Setup Date**: [Date]  
-**Data Scientist**: Data Scientist Agent
+<!--
+Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot first, delete what does not apply.
+Targets the GDD sets under Success Metrics are cited from it, not repeated. Implementation order belongs to the work plan.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
 
-## Core Metrics Framework
+**Date**: YYYY-MM-DD · **Engine**: [engine] · **Platform**: [platforms] · **GDD**: [path]
 
-### Player Engagement Metrics
-| Metric | Definition | Target Value | Collection Method | Frequency |
-|--------|------------|--------------|-------------------|-----------|
-| Session Length | Average time per play session | [X minutes] | [Automatic/Event] | [Real-time] |
-| Sessions per User | Daily sessions per active player | [X sessions] | [Automatic] | [Daily] |
-| Retention Rate (Day 1) | % players returning after 1 day | [X%] | [Cohort Analysis] | [Daily] |
-| Retention Rate (Day 7) | % players returning after 7 days | [X%] | [Cohort Analysis] | [Weekly] |
-| Retention Rate (Day 30) | % players returning after 30 days | [X%] | [Cohort Analysis] | [Monthly] |
-| Feature Adoption | % players using key features | [X%] | [Event Tracking] | [Real-time] |
+## Snapshot
 
-### Performance Metrics
-| Metric | Definition | Target Value | Alert Threshold | Monitoring |
-|--------|------------|--------------|-----------------|------------|
-| Frame Rate | Average FPS during gameplay | [60 FPS] | [<45 FPS] | [Continuous] |
-| Load Time | Time to load game/levels | [<3 seconds] | [>5 seconds] | [Per Session] |
-| Crash Rate | % sessions ending in crash | [<1%] | [>2%] | [Real-time] |
-| Memory Usage | Peak memory consumption | [<X MB] | [>Y MB] | [Continuous] |
-| Battery Drain | Power consumption (mobile) | [<X%/hour] | [>Y%/hour] | [Per Session] |
+<!-- At most ten lines. -->
 
-### Business Metrics (if applicable)
-| Metric | Definition | Target Value | Collection Method | Frequency |
-|--------|------------|--------------|-------------------|-----------|
-| Conversion Rate | % users making first purchase | [X%] | [Purchase Tracking] | [Daily] |
-| ARPU | Average Revenue Per User | [$X] | [Revenue Analysis] | [Monthly] |
-| LTV | Lifetime Value per User | [$X] | [Cohort Analysis] | [Monthly] |
-| CAC | Customer Acquisition Cost | [$X] | [Marketing Attribution] | [Campaign] |
-| Churn Rate | % users who stop playing | [X%] | [Retention Analysis] | [Weekly] |
+**Overview.** [three to five plain sentences — the questions the game's data must answer, what is collected to answer them, and where it goes]
+
+- **Biggest risk**: [one line, e.g. a privacy constraint or a missing SDK]
+- **Open questions**: [a link to Open Questions, or "none"]
+
+## Metrics
+
+<!-- One row per metric the team will act on. "Alert when" is the value that makes someone look. -->
+
+| Metric | What it measures | Target | Alert when |
+|---|---|---|---|
+| Day-1 retention | share of new players who return the next day | [GDD Success Metrics] | [below X%] |
+| Crash rate | share of sessions that end in a crash | [GDD Success Metrics] | [> 2%] |
 
 ## Telemetry Events
 
-### Core Game Events
-```json
-{
-  "event_category": "gameplay",
-  "events": [
-    {
-      "event_name": "game_start",
-      "description": "Player starts a new game session",
-      "parameters": {
-        "session_id": "string",
-        "player_level": "integer",
-        "game_mode": "string",
-        "platform": "string"
-      },
-      "frequency": "once_per_session"
-    },
-    {
-      "event_name": "level_complete",
-      "description": "Player completes a level/stage",
-      "parameters": {
-        "level_id": "string",
-        "completion_time": "float",
-        "score": "integer",
-        "deaths": "integer",
-        "difficulty": "string"
-      },
-      "frequency": "per_level"
-    },
-    {
-      "event_name": "player_death",
-      "description": "Player character dies or fails",
-      "parameters": {
-        "location": "vector3",
-        "cause_of_death": "string",
-        "time_in_level": "float",
-        "player_level": "integer"
-      },
-      "frequency": "per_death"
-    }
-  ]
-}
-```
+<!-- One row per event. Parameters are named in words; the event schema is written at implementation. -->
 
-### User Experience Events
-```json
-{
-  "event_category": "user_experience",
-  "events": [
-    {
-      "event_name": "feature_usage",
-      "description": "Player uses a specific game feature",
-      "parameters": {
-        "feature_name": "string",
-        "usage_duration": "float",
-        "success": "boolean",
-        "context": "string"
-      },
-      "frequency": "per_usage"
-    },
-    {
-      "event_name": "ui_interaction",
-      "description": "Player interacts with UI elements",
-      "parameters": {
-        "ui_element": "string",
-        "action_type": "string",
-        "screen_name": "string",
-        "time_to_interact": "float"
-      },
-      "frequency": "per_interaction"
-    },
-    {
-      "event_name": "tutorial_step",
-      "description": "Player progresses through tutorial",
-      "parameters": {
-        "step_number": "integer",
-        "step_name": "string",
-        "completion_time": "float",
-        "attempts": "integer"
-      },
-      "frequency": "per_step"
-    }
-  ]
-}
-```
+| Event | Fires when | Parameters | How often |
+|---|---|---|---|
+| `game_start` | the player starts a session | session, player level, game mode | once per session |
+| `level_complete` | the player finishes a level | level, time taken, score, deaths | per level |
 
-### Performance Events
-```json
-{
-  "event_category": "performance",
-  "events": [
-    {
-      "event_name": "performance_sample",
-      "description": "Regular performance metrics sample",
-      "parameters": {
-        "fps": "float",
-        "memory_usage": "float",
-        "cpu_usage": "float",
-        "gpu_usage": "float",
-        "temperature": "float"
-      },
-      "frequency": "every_30_seconds"
-    },
-    {
-      "event_name": "loading_time",
-      "description": "Time taken to load content",
-      "parameters": {
-        "content_type": "string",
-        "load_duration": "float",
-        "content_size": "integer",
-        "cache_hit": "boolean"
-      },
-      "frequency": "per_load"
-    }
-  ]
-}
-```
+## Experiments
 
-## A/B Testing Framework
+<!-- Delete the section when no experiment is planned. -->
 
-### Test Categories
-1. **Core Mechanics Testing**
-   - Difficulty curves
-   - Game balance parameters
-   - Control schemes
-   - Physics settings
+| Experiment | Question it answers | Variants | Decides on | Guardrail |
+|---|---|---|---|---|
+| [name] | [hypothesis, in a sentence] | [control and treatment] | [primary metric] | [metric that must not get worse] |
 
-2. **User Experience Testing**
-   - UI layouts and flows
-   - Onboarding sequences
-   - Menu navigation
-   - Tutorial effectiveness
+- **Significance**: [confidence level, minimum effect, minimum players per variant, duration]
 
-3. **Monetization Testing** (if applicable)
-   - Pricing strategies
-   - Offer presentations
-   - Purchase flows
-   - Reward systems
+## Engine Integration
 
-### Statistical Framework
-**Confidence Level**: 95%  
-**Minimum Effect Size**: [5% improvement]  
-**Minimum Sample Size**: [1000 users per variant]  
-**Test Duration**: [Minimum 1 week, Maximum 4 weeks]  
-**Early Stopping Rules**: [Statistical significance + business significance]
+- **SDK**: [analytics SDK, or custom]
+- **Where events go**: [service or storage, and how they are sent]
+- **Performance monitoring**: [profiling or crash-reporting tool]
 
-### Test Implementation
-```json
-{
-  "ab_test_structure": {
-    "test_id": "string",
-    "test_name": "string",
-    "hypothesis": "string",
-    "variants": [
-      {
-        "variant_id": "control",
-        "description": "Current implementation",
-        "traffic_percentage": 50
-      },
-      {
-        "variant_id": "treatment",
-        "description": "New implementation",
-        "traffic_percentage": 50
-      }
-    ],
-    "success_metrics": ["primary_metric", "secondary_metric"],
-    "guardrail_metrics": ["retention", "crash_rate"],
-    "start_date": "YYYY-MM-DD",
-    "end_date": "YYYY-MM-DD"
-  }
-}
-```
+## Privacy and Compliance
 
-## Engine-Specific Implementation
+- **Collected**: [only what the metrics above need; no personally identifiable information]
+- **Consent**: [how the player opts in and out]
+- **Retention**: [how long data is kept]
+- **Regulations**: [which apply — GDPR, CCPA, COPPA, store policies — and how each is met]
 
-### [Engine] Integration
-**Analytics SDK**: [Unity Analytics/GameAnalytics/Custom]  
-**Event Tracking Method**: [Engine-specific approach]  
-**Performance Monitoring**: [Engine profiling tools]  
-**Data Storage**: [Local/Cloud approach]
+## Reporting
 
-#### Implementation Example
-```
-[Engine-specific code example for event tracking]
-```
+| Report | Reader | What it shows | How often |
+|---|---|---|---|
+| [dashboard / weekly report] | [team or role] | [the metrics and decisions it supports] | [real time / weekly] |
 
-### Platform Considerations
-**iOS**: [App Store guidelines compliance]  
-**Android**: [Google Play requirements]  
-**PC**: [Privacy regulations - GDPR/CCPA]  
-**Console**: [Platform-specific analytics requirements]
+## Data Quality
 
-## Data Privacy and Compliance
+- **Validation**: [how events are checked — schema, types, ranges, duplicates]
+- **Freshness and completeness**: [the delay and coverage the reports can tolerate]
 
-### Data Collection Principles
-- **Minimal Collection**: Only collect data necessary for game improvement
-- **User Consent**: Clear opt-in/opt-out mechanisms
-- **Data Anonymization**: No personally identifiable information
-- **Secure Storage**: Encrypted data transmission and storage
-- **Retention Policy**: [X days/months] data retention period
+## Open Questions
 
-### Compliance Requirements
-- [ ] GDPR compliance (EU players)
-- [ ] CCPA compliance (California players)
-- [ ] COPPA compliance (if applicable for children)
-- [ ] Platform privacy policies (iOS/Android/Console)
-- [ ] Transparent privacy policy in game
+<!-- Delete the section when none are open. -->
 
-## Dashboard and Reporting
-
-### Real-Time Dashboard
-**Key Metrics Displayed**:
-- Current active players
-- Session length trends
-- Crash rate alerts
-- Performance metrics
-- Feature usage heatmaps
-
-### Weekly Reports
-**Stakeholder**: Development Team  
-**Content**:
-- Player engagement summary
-- Performance overview
-- Feature adoption metrics
-- A/B test results
-- Actionable insights
-
-### Monthly Business Reports
-**Stakeholder**: Project Leadership  
-**Content**:
-- Growth metrics and trends
-- Revenue performance (if applicable)
-- Market performance vs. competitors
-- Strategic recommendations
-- Forecast updates
-
-## Data Quality and Validation
-
-### Data Validation Rules
-- [ ] Event schema validation
-- [ ] Data type enforcement
-- [ ] Range validation for numeric values
-- [ ] Required field verification
-- [ ] Duplicate event detection
-
-### Quality Monitoring
-**Data Freshness**: [Maximum acceptable delay]  
-**Completeness**: [Minimum data coverage percentage]  
-**Accuracy**: [Validation against known benchmarks]  
-**Consistency**: [Cross-platform data alignment]
-
-## Implementation Checklist
-
-### Phase 1: Core Analytics (Week 1-2)
-- [ ] Basic telemetry infrastructure setup
-- [ ] Core engagement metrics implementation
-- [ ] Performance monitoring integration
-- [ ] Real-time dashboard creation
-- [ ] Data validation and testing
-
-### Phase 2: Advanced Analytics (Week 3-4)
-- [ ] A/B testing framework implementation
-- [ ] Feature-specific event tracking
-- [ ] Cohort analysis setup
-- [ ] Automated reporting system
-- [ ] Performance optimization
-
-### Phase 3: Business Intelligence (Week 5-6)
-- [ ] Revenue tracking (if applicable)
-- [ ] Predictive modeling setup
-- [ ] Competitive benchmarking
-- [ ] Advanced segmentation
-- [ ] ROI analysis framework
-
-## Success Criteria
-
-### Technical Success
-- [ ] All core events tracking correctly
-- [ ] Dashboard displaying real-time data
-- [ ] A/B testing framework operational
-- [ ] Data quality metrics within targets
-- [ ] Performance monitoring active
-
-### Business Success
-- [ ] Actionable insights generated weekly
-- [ ] Data-driven decisions documented
-- [ ] Player behavior patterns identified
-- [ ] Game improvement opportunities quantified
-- [ ] ROI of analytics investment demonstrated
-
----
-
-## Sign-off and Validation
-
-### Technical Validation
-- [ ] **Mechanics Developer**: Gameplay event tracking approved
-- [ ] **Technical Artist**: Performance monitoring comprehensive
-- [ ] **QA Agent**: Testing and validation framework adequate
-
-### Business Validation
-- [ ] **Market Analyst**: Business metrics align with market strategy
-- [ ] **Producer Agent**: Implementation timeline and resources approved
-- [ ] **Master Orchestrator**: Analytics framework supports project goals
-
-**Data Scientist Agent Sign-off**: [Date]  
-**Producer Agent Approval**: [Date]  
-**Master Orchestrator Final Approval**: [Date]
+- **OQ-1**: [Question] — [who decides, what it blocks]

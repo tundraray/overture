@@ -1,11 +1,12 @@
 # MVP Definition: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Product Planner Agent
 **MVP Type**: [Wizard of Oz / Concierge / Landing Page / Single-Feature / Full MVP]
 **Confidence**: [High / Medium / Low]
 
 ## [MVP scope statement as action title — e.g., "MVP with 5 Must-Have features completing the Core Job for Segment #1 in 4 weeks"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Core Job Being Served
 

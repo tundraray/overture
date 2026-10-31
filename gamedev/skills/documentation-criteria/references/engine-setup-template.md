@@ -1,11 +1,14 @@
-# Engine-Specific Project Setup Template
+# [Project Name] — Engine Setup
 
-## Project Engine Configuration
-**Project**: [Project Name]  
-**Engine**: [Godot/Unity/Unreal Engine]  
-**Engine Version**: [Specific Version]  
-**Target Platforms**: [Platform List]  
-**Setup Date**: [Date]
+<!--
+Keep only the section for the project's engine and delete the other engines' sections. The settings and folder layouts below are starting points; replace each with what the project actually uses.
+Implementation order and setup tasks belong to the work plan.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
+
+**Date**: YYYY-MM-DD · **Engine**: [engine and exact version] · **Platform**: [target platforms]
+
+**Overview.** [two or three plain sentences — which engine and version, why it fits this game, and the platform constraint that shapes the setup most]
 
 ---
 
@@ -275,110 +278,22 @@ void UAnalyticsManager::TrackPlayerAction(const FString& Action, const FVector& 
 
 ---
 
-## Cross-Platform Considerations
+## Platform Settings
 
-### Performance Optimization
-| Platform | Frame Rate Target | Memory Limit | Special Considerations |
-|----------|------------------|--------------|----------------------|
-| PC | 60 FPS | 4-8 GB | Variable hardware, multiple input methods |
-| Mobile | 30-60 FPS | 1-4 GB | Battery life, touch input, varied performance |
-| Console | 60 FPS | Fixed RAM | Platform certification, controller input |
-| Web | 30-60 FPS | 2-4 GB | WebGL limitations, browser compatibility |
+<!-- Only the engine settings that differ per target platform — texture and audio compression, input map, quality presets. Frame rate, memory, and download-size targets are owned by the GDD's Technical Requirements: cite them, do not repeat them. -->
 
-### Input Handling
-- **PC**: Keyboard + Mouse + Controller support
-- **Mobile**: Touch gestures, gyroscope, accelerometer
-- **Console**: Platform-specific controllers
-- **Web**: Keyboard + Mouse (primary)
+| Platform | Settings that differ | Why |
+|---|---|---|
+| [platform] | [compression, input, quality preset] | [the GDD target or platform rule it serves] |
 
-### Asset Optimization
-```
-Platform-Specific Settings:
-├── Textures:
-│   ├── Mobile: ASTC/PVRTC compression, max 1024x1024
-│   ├── PC: BC7/DXT compression, up to 4K
-│   └── Console: Platform-specific formats
-├── Audio:
-│   ├── Mobile: OGG Vorbis, lower bitrates
-│   ├── PC: Uncompressed/FLAC for music
-│   └── Console: Platform-optimized formats
-└── Models:
-    ├── Mobile: <10k triangles per character
-    ├── PC: Variable LOD system
-    └── Console: Platform-optimized meshes
-```
+## Build and Test
 
-## Quality Assurance Integration
-
-### Testing Framework
-```
-Engine-Specific Testing:
-├── Unit Tests: [Engine's testing framework]
-├── Integration Tests: [Cross-system validation]
-├── Performance Tests: [Platform-specific benchmarks]
-└── Platform Tests: [Device/platform-specific validation]
-```
-
-### Continuous Integration
-- **Version Control**: Git with [Engine]-specific .gitignore
-- **Build Pipeline**: Automated builds for all target platforms
-- **Testing Pipeline**: Automated test execution
-- **Performance Monitoring**: FPS, memory, and loading time tracking
+- **Test framework**: [the engine test tool the project uses, and what it runs]
+- **Build pipeline**: [how a build is produced for each target platform]
 
 ## Analytics and Telemetry Setup
 
-### Engine-Specific Analytics
-- **Event Tracking**: [Engine-specific implementation]
-- **Performance Monitoring**: [Engine profiling tools integration]
-- **Crash Reporting**: [Platform crash reporting setup]
-- **A/B Testing**: [Framework integration approach]
+<!-- Events, metrics, and privacy rules are owned by the analytics setup document; this section names only how the engine connects to them. -->
 
-### Data Collection Compliance
-- **Privacy Settings**: User consent management
-- **Data Minimization**: Collect only necessary metrics
-- **Platform Compliance**: iOS/Android/Console requirements
-- **GDPR/CCPA**: Privacy regulation compliance
-
----
-
-## Implementation Checklist
-
-### Phase 1: Basic Setup
-- [ ] Engine project created with correct settings
-- [ ] Folder structure established
-- [ ] Basic input system configured
-- [ ] Target platform settings applied
-- [ ] Version control initialized
-
-### Phase 2: Framework Integration
-- [ ] Analytics SDK integrated
-- [ ] Performance monitoring setup
-- [ ] Cross-platform input handling
-- [ ] Asset pipeline configured
-- [ ] Testing framework established
-
-### Phase 3: Platform Optimization
-- [ ] Platform-specific optimizations applied
-- [ ] Performance targets validated
-- [ ] Platform certification requirements met
-- [ ] Analytics compliance verified
-- [ ] Quality assurance integration complete
-
----
-
-## Agent Validation
-
-### Technical Validation
-- [ ] **Mechanics Developer**: Core systems architecture approved
-- [ ] **Technical Artist**: Asset pipeline and performance targets confirmed
-- [ ] **Game Feel Developer**: Input and feedback systems validated
-
-### Production Validation
-- [ ] **QA Agent**: Testing framework comprehensive and achievable
-- [ ] **Data Scientist**: Analytics integration complete and compliant
-- [ ] **Producer Agent**: Setup timeline and milestones realistic
-
-**Setup Completion Date**: [Date]  
-**Lead Technical Agent Sign-off**: [Agent Name] - [Date]  
-**Producer Agent Approval**: [Date]  
-**Master Orchestrator Final Approval**: [Date]
+- **Analytics SDK hook**: [where the engine sends events]
+- **Profiling and crash reporting**: [engine tools and platform crash reporting]

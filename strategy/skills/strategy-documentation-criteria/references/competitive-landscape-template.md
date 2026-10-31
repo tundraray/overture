@@ -1,12 +1,11 @@
 # Competitive Landscape: [Product/Industry]
 
 **Date**: [current date]
-**Analyst**: Market Analyst Agent
 **Confidence**: [High / Medium / Low]
 
 ## [Key competitive finding as action title — e.g., "Three competitors control 60% of market but none serve mid-market effectively"]
 
-[Executive summary: competitive intensity, biggest threat, biggest opportunity, overall attractiveness]
+[Overview: competitive intensity, biggest threat, biggest opportunity, overall attractiveness — in plain sentences]
 
 ## Industry Structure (Porter's Five Forces)
 

@@ -1,10 +1,11 @@
 # Pricing Analysis: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: GTM Planner Agent
 **Confidence**: [High / Medium / Low]
 
 ## [Pricing recommendation as action title — e.g., "Tiered pricing at $29/$79/$249 positions as premium with 12:1 value ratio"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Value Assessment
 

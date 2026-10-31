@@ -50,7 +50,7 @@ Run for the current part, then repeat for the next part in the list:
 2. **document-reviewer** → work plan review, checking:
    - **Design-to-Plan Traceability** — every Design Doc item has a covering task or a justified gap
    - **Failure Mode Checklist** — all nine categories marked, applicable ones assigned a covering task
-   - **Verification Strategy** carried across from the Design Doc, with an early verification point
+   - **Verification Strategy** citing the Design Doc's, with the task that runs the early verification point
    - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
    - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
    `approved_with_conditions` or `needs_revision` → `{planner}` addresses the `critical` and `important` issues, then one re-review with `review_scope: changes`; a re-review that is not `approved`, or `rejected`, goes to the user — see `workflow-orchestration`, "Revision Loop"

@@ -1,13 +1,12 @@
 # AJTBD Segments: [Product/Service]
 
 **Date**: [current date]
-**Analyst**: Product Analyst Agent
 **Product**: [product/service name]
 **Market Type**: [B2B / B2C]
 
 ## [Primary segment] dominates with [X]% SAM share because [key reason] — focus here first
 
-[Executive summary: why these 5 segments, which is primary, what the segmentation reveals about the market]
+[Overview: why these 5 segments, which is primary, what the segmentation reveals about the market — in plain sentences]
 
 ## Segment 1: "[Name]" — Priority: HIGH
 

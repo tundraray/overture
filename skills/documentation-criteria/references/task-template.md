@@ -1,13 +1,14 @@
 # Task: [Task Name]
 
+<!-- Written in the plan's language, in sentences rather than telegrams ("Writing for the Reader" in documentation-criteria); headings stay as written, because the executor finds sections by them, and values copied verbatim stay verbatim. Guidance in these comments and in parenthesized "Include when" notes is not copied into the task. -->
+
 Metadata:
 - Dependencies: task-01 → Deliverable: {plan-dir}/analysis/research-results.md
 - Provides: {plan-dir}/analysis/api-spec.md (for research/design tasks)
 - Size: Small (1-2 files)
 
 ## Implementation Content
-[What this task will achieve]
-*Reference dependency deliverables if applicable
+[Two or three sentences: what this task delivers and why, citing dependency deliverables when it builds on them]
 
 ## Target Files
 - [ ] [Implementation file path]

@@ -25,8 +25,8 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 ## Required Information
 
 - **Part**: the part whose Design Doc the skeletons are generated from — its name and `design-{part}.md` path. Skeletons, budget, and file names are scoped to it; a missing part name is a blocking input, not a reason to fall back to feature-level naming
-- **Design Doc**: `docs/features/{feature}/design-{part}.md`, the source of the acceptance criteria
-- **PRD / UXRD**: feature-level documents, for AC traceability
+- **Design Doc**: `docs/features/{feature}/design-{part}.md`, the source of the acceptance criteria — the EARS criteria it writes plus the PRD criteria it cites as applying as written
+- **PRD / UXRD**: feature-level documents — the text of the cited PRD criteria, and the UXRD flow or screen state citing each AC
 
 ### Implementation Approach Compliance
 - **Test Code Generation**: MUST strictly comply with Design Doc implementation patterns (function vs class selection)

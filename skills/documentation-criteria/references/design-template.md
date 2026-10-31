@@ -3,8 +3,8 @@
 <!--
 Reader order: header → Snapshot → what the part is and is not → design → how it is proven → Appendix: Evidence → Update History.
 Text inside these comments is guidance for the author; it is not copied into the document.
-Rules for every section: "Writing for the Reader" in documentation-criteria — current truth only (no who/when/which-review in the body),
-a section marked "when applicable" is deleted when it does not apply (no N/A stub), paragraphs of at most four sentences, table cells of one phrase.
+Every section follows "Writing for the Reader" in documentation-criteria: written for a cold reader, in sentences rather than shorthand,
+at the design's altitude rather than the code's; a section marked "when applicable" is deleted when it does not apply.
 -->
 
 | Status | Date | PRD | UXRD | Depends on |
@@ -13,21 +13,31 @@ a section marked "when applicable" is deleted when it does not apply (no N/A stu
 
 ## Snapshot
 
-<!-- At most ten lines. A reader who stops here knows what changes, what does not, and what could go wrong. -->
+<!-- At most ten lines. A cold reader who stops here can say what this part does, how it works in outline, and what could go wrong. -->
 
-- **Changes**: [two or three sentences — what this part adds or changes, in the user's and the system's terms]
+**Overview.** [Three to five plain sentences: the problem this part solves, what it adds or changes, and how it works in outline — as you would explain it to a colleague who has not followed the feature. No IDs, no code names the reader has not met.]
+
 - **Does not change**: [the one or two things a reader would otherwise assume change]
 - **Biggest risk**: [one line, or "none above low"]
-- **Open questions**: [count, with a link to Open Questions, or "none"]
+- **Open questions**: [a link to Open Questions, or "none"]
 
 ### Key Decisions
 
 <!-- Three to seven rows: the decisions a reviewer would argue about, each with every option not taken. This is the one place a decision is argued; every other section cites the ID instead of re-arguing it.
+The Rejected alternatives cell names the options; why each was not taken is a sentence under the table.
 When choosing, prefer the option adding the least: new persistent state, then crossing a boundary, then a new concept/mode/flag/prop, then a breaking change. -->
 
 | ID | Decision | Why | Rejected alternatives |
 |---|---|---|---|
-| KD-1 | [what was decided] | [one phrase] | [each option not taken, one phrase each] |
+| KD-1 | [what was decided, in a sentence] | [the reason, in words a newcomer follows] | [each option not taken, by name] |
+
+[KD-1: why each rejected option was not taken, in a sentence or two.]
+
+### Terms
+
+<!-- When applicable: the document leans on five or more words a cold reader may not know. -->
+
+- **[word]** — [what it means in this design, in a few plain words]
 
 ## Part
 
@@ -36,54 +46,37 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 - **Depends on**: [link to the contract section of each approved upstream design, e.g. `design-[other-part].md#contract-definitions` — cited, never restated: a copy forces a revision every time upstream changes], or "none — first part"
 - **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
-### Agreement Checklist
+<!-- Scope as agreed with the user. What changes is the Change column of the C2, C3, and C4 tables; this section says what does not, and what the design must respect. -->
 
-#### Scope
-- [ ] [Features/components to change]
-- [ ] [Features to add]
+**Out of scope**
 
-#### Non-Scope (Explicitly not changing)
-- [ ] [Features/components not to change]
-- [ ] [Existing logic to preserve]
-- [ ] [Requirements owned by sibling parts]
+- [existing behaviour, component, or data this part leaves as it is, in a sentence]
 
-#### Constraints
-- [ ] Parallel operation: [Yes/No]
-- [ ] Backward compatibility: [Required/Not required]
-- [ ] Performance measurement: [Required/Not required]
+**Constraints**
+
+- [each agreed constraint — parallel operation, backward compatibility, performance measurement — in a sentence, with how the design meets it]
 
 ## Acceptance Criteria (AC) - EARS Format
 
 <!--
+A PRD criterion that already states testable behaviour applies as written: cite its ID under its requirement, do not restate it.
+Write an EARS criterion only where the design refines a PRD criterion into system behaviour the PRD does not spell out — a trigger, a state, an error case.
+No table mapping criteria to sections or use cases, and no prose saying where each one is handled: each use case in Test Strategy names the criteria it covers.
 EARS keywords: When (event-triggered) · While (state-dependent) · If-then (conditional) · none (ubiquitous).
 Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
-Group by the PRD requirement each AC refines; the requirement text stays in the PRD.
 -->
 
 ### [Requirement ID]: [short name]
 
+- Applies as written: [PRD AC ids]
 - [ ] **When** user clicks login button with valid credentials, the system shall authenticate and redirect to dashboard
 - [ ] **If** credentials are invalid, **then** the system shall display the invalid-credentials error (UXRD copy, `uxrd.md` E-2)
 
 ## Design
 
-### Change Impact Map
-
-```yaml
-Change Target: [Component/feature to change]
-Direct Impact:
-  - [Files/functions requiring direct changes]
-  - [Interface change points]
-Indirect Impact:
-  - [Data format changes]
-  - [Processing time changes]
-No Ripple Effect:
-  - [Explicitly specify unaffected features]
-```
-
 ### Architecture (C1–C4)
 
-<!-- Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows the change: green new, red changed, black unchanged. -->
+<!-- Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows the change: green new, red changed, black unchanged. The Change columns of the C2, C3, and C4 tables are the change impact: built from the resolved consumer list, they name every changed caller; what stays untouched is in Part, Out of scope. -->
 
 #### C1 · Context
 
@@ -95,7 +88,7 @@ No Ripple Effect:
 
 | Container | Role | Change |
 |---|---|---|
-| [name] | [one line] | [NEW] / [MODIFY] / [READ] |
+| [name] | [one line] | [NEW] / [MODIFY] / [REMOVE] / [READ] |
 
 #### C3 · Components: [container]
 
@@ -103,7 +96,7 @@ No Ripple Effect:
 
 | Component | Responsibility in this flow | Change |
 |---|---|---|
-| [name] | [one line] | [NEW] / [MODIFY] / [READ] |
+| [name] | [one line] | [NEW] / [MODIFY] / [REMOVE] / [READ] |
 
 #### C4 · Code flow: [scope]
 
@@ -115,7 +108,7 @@ No Ripple Effect:
 
 | Type | Name | Change | Notes |
 |---|---|---|---|
-| [Controller / Service / Component / Hook / ...] | [name as in code] | [NEW] / [MODIFY] | [route, rule, or constraint in words — no code] |
+| [Controller / Service / Component / Hook / ...] | [name as in code] | [NEW] / [MODIFY] / [REMOVE] | [route, rule, or constraint in words — no code] |
 
 ### Runtime Flows
 
@@ -143,36 +136,36 @@ No Ripple Effect:
 
 ### Contract Definitions
 
-<!-- Contracts are tables, not source code. The schema, interface, or type is written at implementation from these tables; a code block here is a second copy that drifts from the first. -->
+<!-- What each operation offers its caller, at the design's altitude ("Writing for the Reader"): what it does, what it returns, which failures the caller handles. Contracts are tables, not source code — the schema or type is written at implementation; a code block here, or a table that copies one field by field, is a second copy that drifts.
+A precondition or guarantee the row does not make obvious is one or two sentences under the table. -->
 
-| Operation | Input | Output | Errors |
+| Operation | What it does | Output | Errors |
 |---|---|---|---|
-| [route / method / event name] | [shape name or "none"] | [status + shape name] | [status + error code, per case] |
+| [route / method / event name] | [what it does for the caller, naming its input, in a sentence] | [status + shape name] | [status + error code, per case] |
+
+#### Interface Change Matrix
+
+<!-- When applicable: an existing operation, signature, or prop changes. One row per change, from the resolved consumer list. An indirect effect on an unchanged caller — a data format or timing change — is recorded in How existing callers keep working. -->
+
+| Existing | New | Conversion required | How existing callers keep working |
+|---|---|---|---|
+| [operation or prop as it is] | [as it becomes] | [yes / no] | [adapter, wrapper, or migration path — or "unchanged"] |
 
 #### [Shape name]
 
-| Field | Type | Constraint | Meaning |
+<!-- Only for a shape another part or the UI uses; any other shape is named in a sentence. The fields a caller must understand. A length, size, or format limit is written only when a requirement sets it or another part relies on it, and then in Meaning with its source. -->
+
+| Field | Type | Meaning |
+|---|---|---|
+| [field] | [string / number / enum (a, b) / [Other shape]; optional or nullable] | [what it is for the caller] |
+
+### Data Model
+
+<!-- When applicable: the part adds or changes persistent stores. What each store holds, how stores relate, and the constraints that keep the invariants — not column lists, types, or indexes: those are the migration's. -->
+
+| Store | Holds | Related to | Enforces |
 |---|---|---|---|
-| [field] | [string / number / enum (a, b) / [Other shape] / nullable] | [required, length, range, format] | [what it is for the caller] |
-
-### Data Contract
-
-#### Component 1
-
-```yaml
-Input:
-  Type: [Shape name from Contract Definitions]
-  Preconditions: [Required items, format constraints]
-  Validation: [Validation method]
-
-Output:
-  Type: [Shape name from Contract Definitions]
-  Guarantees: [Conditions that must always be met]
-  On Error: [Exception/null/default value]
-
-Invariants:
-  - [Conditions that remain unchanged before and after processing]
-```
+| [table / collection / key space] | [what one record is, in words] | [other store, and how] | [the invariant this store guarantees, or —] |
 
 ### Frontend Design (frontend parts only)
 
@@ -198,12 +191,11 @@ Invariants:
 
 ### State Transitions and Invariants
 
-<!-- When applicable: an entity moves through states. A `stateDiagram-v2`, then the invariants. -->
+<!-- When applicable: an entity moves through states. A `stateDiagram-v2`, then the invariants as plain sentences — the rule, not the mechanism that enforces it. -->
 
-```yaml
-System Invariants:
-  - [Conditions that hold in any state]
-```
+**Invariants**
+
+1. [a rule that holds in every state, in a sentence]
 
 ### Error Handling
 
@@ -350,8 +342,7 @@ fields:
     origin: "[API Request / Database / User Input]"
     transformations:
       - layer: "[API Layer]"
-        type: "[RequestDTO]"
-        validation: "[required, max 255 chars]"
+        transformation: "[what happens to the field here]"
     destination: "[Database table.column / API Response / UI Component]"
     loss_risk: "none | low | medium | high"
     loss_risk_reason: "[required when risk > none]"

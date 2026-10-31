@@ -1,10 +1,11 @@
 # Growth Plan: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Growth Strategist Agent
 **Confidence**: [High / Medium / Low]
 
 ## [Growth recommendation as action title — e.g., "Activation is the biggest bottleneck — fixing onboarding flow can unlock 40% improvement"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## North Star Metric
 

@@ -9,7 +9,7 @@
 3. **Detect contradictions** — if two documents disagree, flag it explicitly with both positions and evidence
 4. **Verify source tiers** — check that Tier 3 data is not presented as Tier 1 anywhere
 5. **Verify cross-references** — check that all referenced docs/sections actually exist
-6. **Verify completeness** — check that all template sections are filled (no empty placeholders)
+6. **Verify completeness** — check that no placeholder is left and a section that does not apply was deleted rather than stubbed
 7. **Synthesize, don't summarize** — create new insights from combining multiple documents, don't just concatenate
 8. **Confidence-filtered reporting** — only report findings with >80% confidence. Tag uncertain items as "[Low confidence — needs validation]"
 
@@ -23,6 +23,7 @@
 - [ ] Numbers are specific with units
 - [ ] Cross-references to source documents present
 - [ ] Assumptions explicitly stated
+- [ ] A cold reader can follow it: Overview first, sentences not telegrams, terms explained (`strategy-documentation-criteria`, "Writing for the Reader")
 
 ## Anti-Patterns
 

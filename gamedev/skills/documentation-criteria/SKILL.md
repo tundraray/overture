@@ -33,7 +33,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 **The ADR follows the Design Doc**, and is written only when a decision the design made passes all three parts of the test below. Most features produce none. Documents in `[brackets]` are conditional.
 
-**A feature spec is written at every scale.** It is the feature-level product document — the PRD's role in the shared workflow — and its depth follows the scale: `full` at large (every template section), `lite` at medium and small (Feature Overview, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, Integration Points). The GDD stays at project level. Design Docs and work plans are written per part; the parts list is the feature spec's Delivery Parts section (see "Parts and plans").
+**A feature spec is written at every scale.** It is the feature-level product document — the PRD's role in the shared workflow — and its depth follows the scale: `full` at large (every template section), `lite` at medium and small (header and Snapshot, Problem Statement, User Stories, Acceptance Criteria, Delivery Parts, Integration Points). The GDD stays at project level. Design Docs and work plans are written per part; the parts list is the feature spec's Delivery Parts section (see "Parts and plans").
 
 ## ADR Creation Conditions
 
@@ -49,17 +49,27 @@ Game-specific decisions that commonly meet all three: save-file format, netcode 
 
 ## Writing for the Reader
 
-A document is read far more often than it is written, and most readers stop after the first screen. Every PRD, UXRD, Design Doc, ADR, and work plan — and in gamedev every GDD and Feature Spec — follows these rules; the templates are laid out to match them.
+A document is read far more often than it is written, and most readers stop after the first screen. Every document this plugin writes — PRD, UXRD, Design Doc, ADR, work plan, GDD, Feature Spec, and the market, analytics, engine-setup, and handoff documents — follows these rules; the templates are laid out to match them.
 
-**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → **Appendix: Evidence** (Design Doc) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
+**The reader is cold.** They know the product and the codebase in general, but not this feature, and they read without the author or the conversation that produced the document — a teammate, the user at an approval stop, the implementer months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
 
-**Snapshot.** At most ten lines at the top: what changes, what does not, the biggest risk, how many questions are open. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD add a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows); the rest of the document cites `KD-n` instead of re-arguing the decision.
+**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
+
+**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD add a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows); the rest of the document cites `KD-n` instead of re-arguing the decision.
 
 **Current truth only.** The body states what is true now. Who decided, on which date, in which version, or in answer to which review finding belongs to Update History and to git — not to requirements, acceptance criteria, table cells, or design text. "(user decision 2026-10-28)", "v1.2:", "per review I003" in the body are defects. Update History has one line per version, a phrase per change, no reviewer IDs.
 
 **Delete, don't stub.** A section marked *when applicable* is deleted when it does not apply — no "N/A", no "does not exist", no placeholder sentence. Template guidance in `<!-- -->` comments is never copied into the document. A mandatory section that has nothing to say answers in one line with the reason.
 
-**Short units.** A paragraph has at most four sentences. A table cell holds one phrase; reasoning goes under the table or into Key Decisions. A list item is one statement.
+**Short units.** A paragraph has at most four sentences. A table cell holds one phrase or short sentence; reasoning goes under the table or into Key Decisions. A list item is one statement.
+
+**Sentences, not telegrams.** Write sentences with a subject and a verb, one idea each. A chain of noun phrases joined by commas, semicolons, and parentheses is shorthand only the author can expand — split it, or cut what the reader does not need. A table cell is one phrase a newcomer can read: "the event survives a crash because it is written in the same transaction", not "tx outbox, crash-safe". A table or diagram whose title does not say what it shows gets one lead sentence that does.
+
+**Terms.** A word the cold reader may not know — a domain term, a technique, an abbreviation — is explained in a few words where it first appears. A document that leans on five or more such words gathers them in a short **Terms** list after the Snapshot instead.
+
+**For people first.** The body is prose, lists, tables, and diagrams a person reads. YAML blocks, checklists of pointers or pre-ticked items, and tables that only map one ID set onto another do not appear in the body — progress checkboxes a reader or executor ticks, as in a work plan or task file, are not such a checklist: traceability is written once where the reader meets it ("covers AC-03.1" on a use case), and a record kept for tools goes to the document's appendix. No sentence only tells the reader where else to look; the link sits where the reader needs it.
+
+**One language.** The document is written in the project's document language. Section headings keep the template's wording, because other documents and agents link to them by anchor; everything under a heading — labels, table headers, text — is in the document's language.
 
 **Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
 
@@ -68,6 +78,7 @@ A document is read far more often than it is written, and most readers stop afte
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
 - **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit.
 - **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
+- **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Field lengths and sizes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. A limit is written only when a requirement sets it or another part relies on it.
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
@@ -98,7 +109,6 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - MoSCoW prioritization (Must/Should/Could/Won't)
 - MVP and Future phase separation
 - User journey diagram (required)
-- Scope boundary diagram (required)
 
 **Excludes**:
 - Technical implementation details (→Design Doc)
@@ -137,29 +147,13 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Data flow and component design
 - **E2E verification procedures at integration points**
 - **Acceptance criteria (measurable format)**
-- Change impact map (clearly specify direct impact/indirect impact/no ripple effect)
+- Change impact: the Change columns of the C2–C4 tables, and an Interface Change Matrix row for every changed existing operation or prop
 - Complete enumeration of integration points
-- Data contract clarification
-- **Agreement checklist** (agreements with stakeholders)
+- Scope agreed with the user: what is out of scope and the constraints the design meets
 - **Prerequisite ADRs** (including common ADRs)
 
-**Required Structural Elements**:
-```yaml
-Change Impact Map:
-  Change Target: [Component/Feature]
-  Direct Impact: [Files/Functions]
-  Indirect Impact: [Data format/Processing time]
-  No Ripple Effect: [Unaffected features]
-
-Interface Change Matrix:
-  Existing: [Function/method/operation name]
-  New: [Function/method/operation name]
-  Conversion Required: [Yes/No]
-  Compatibility Method: [Approach]
-```
-
 **Excludes**:
-- Source code of any kind — schemas, interfaces, function bodies, snippets of changed files (→written at implementation; contracts are field tables)
+- Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
 - Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
 - Implementation order, when to implement, duration (→Work Plan)
@@ -219,7 +213,7 @@ Interface Change Matrix:
 **Purpose**: Specify what the player sees and does for the feature spec's acceptance criteria that have a UI surface — HUD, menus, dialogs. Written by `game-ui-designer` when the feature has a UI surface, after Feature Spec approval.
 
 **Includes**:
-- AC Traceability: each user-visible feature-spec acceptance criterion by ID → the screen, state, and element that deliver it
+- AC coverage: each user-visible feature-spec acceptance criterion cited by ID in the flow or screen state that delivers it; one not delivered here is listed in the appendix with the reason
 - Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the user stories it implements
 - Screens: wireframe, layout, and the screen's own states (loading, empty, error)
@@ -254,7 +248,7 @@ Interface Change Matrix:
 **Includes**:
 - Task breakdown and dependencies (maximum 2 levels)
 - Schedule and duration estimates
-- **Copy E2E verification procedures from Design Doc** (cannot delete, can add)
+- Verification: cites the Design Doc's Verification Strategy and states only the plan's own steps — which task runs the early verification point, and each phase's operational verification
 - **Phase 4 Quality Assurance Phase (required)**
 - Progress records (checkbox format)
 
@@ -316,6 +310,7 @@ docs/
 ├── adr/ADR-0007-save-format.md
 ├── design-system/{README,foundations}.md, components/{component-name}.md
 ├── game-design/{project}-gdd.md
+├── resources/market-research/{market_overview,summary}.md
 └── features/{feature}/
     ├── prd.md
     ├── uxrd.md
@@ -336,7 +331,7 @@ docs/
 | UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 | Design System | `docs/design-system/` | `README.md`, `foundations.md`, `components/{component-name}.md` | [design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md) |
 | GDD | `docs/game-design/` | `[project-name]-gdd.md` | [gdd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md) |
-| Market Analysis | `docs/market-research/` | `[project-name]-market-analysis.md` | [market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/market-analysis-template.md) |
+| Market Analysis | `docs/resources/market-research/` | `market_overview.md`, `summary.md` | [market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/market-analysis-template.md) |
 | Feature Spec | `docs/game-design/features/` | `[feature-name]-spec.md` | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/feature-spec-template.md) |
 | Art Direction | `docs/art/` | `[project-name]-art-direction.md` | N/A |
 | Analytics Setup | `docs/analytics/` | `[project-name]-analytics.md` | [analytics-setup-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/analytics-setup-template.md) |
@@ -379,7 +374,7 @@ Required diagrams for each document. Every diagram follows the `mermaid-diagrams
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
-| PRD | User journey diagram, Scope boundary diagram | Clarify user experience and scope |
+| PRD | User journey diagram | Clarify user experience |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
 | Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |

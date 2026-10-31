@@ -1,13 +1,12 @@
 # RAT Analysis: [Product/Service]
 
 **Date**: [current date]
-**Analyst**: Product Analyst Agent
 **Product**: [product/service name]
 **Stage**: [idea / MVP / growth / mature]
 
 ## Five critical assumptions threaten [product] viability — two require immediate validation before committing resources
 
-[Executive summary: which risks dominate, total risk exposure, recommended validation sequence]
+[Overview: which risks dominate, total risk exposure, recommended validation sequence — in plain sentences]
 
 ## Risk Card 1: "[Risk Name]" — Rank: [1-5]
 

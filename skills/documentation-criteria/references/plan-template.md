@@ -7,7 +7,15 @@ status: draft                     # draft | active | completed
 depends-on:                       # previous plan filename; omit for the first
 ---
 
-# Work Plan: [Feature Name] Implementation
+<!--
+Reader order: header → Snapshot → how the work runs (diagrams, phases, verification, risks) → Appendix: Traceability → Update History.
+The user reads this plan at batch approval; every section follows "Writing for the Reader" in documentation-criteria.
+Frontmatter is the source of truth for plan sequencing: `plan: N of M` states how many plans the part is expected to need, `status` marks which one runs now,
+`depends-on` fixes the order without relying on filename sort. Exactly one plan per part may be `active`; raise `M` rather than adding an unannounced plan file.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
+
+# Work Plan: [Feature Name] — [part-name]
 
 Created Date: YYYY-MM-DD
 Type: feature|fix|refactor
@@ -15,7 +23,15 @@ Estimated Duration: X days
 Estimated Impact: X files
 Related Issue/PR: #XXX (if any)
 
-**Frontmatter is the source of truth for plan sequencing.** `plan: N of M` states how many plans this part is expected to need, `status` marks which one runs now, and `depends-on` fixes the order without relying on filename sort. Exactly one plan per part may be `active`. Raise `M` when the part turns out to need another pass, rather than adding an unannounced plan file.
+## Snapshot
+
+<!-- At most ten lines. A reader who stops here knows what gets built, in what order, and what could go wrong. The why of the feature is the PRD's and the design's; cite them, don't retell them. -->
+
+**Overview.** [Three to five plain sentences: what this plan builds, in what order, and why that order.]
+
+- **Does not change**: [what a reader would otherwise assume this plan touches]
+- **Biggest risk**: [one line, and the task that meets it first]
+- **Open questions**: [each question and who resolves it, or "none"]
 
 ## Related Documents
 - PRD: [docs/features/{feature}/prd.md]
@@ -66,23 +82,80 @@ graph TD
     T3 --> T4
 ```
 
+## Implementation Phases
+
+<!-- Phases follow the Design Doc's technical dependencies and Implementation Approach. Repeat the phase block per phase; the final phase is always Quality Assurance.
+A task opens with one line saying, in words, what it delivers; Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
+
+### Phase 1: [Phase Name] (Estimated commits: X)
+**Purpose**: [what this phase delivers, in one or two sentences]
+
+#### Tasks
+- [ ] Task 1: [what it delivers]
+- [ ] Task 2: [what it delivers]
+- [ ] Quality check: staged quality checks (`ai-development-guide`)
+- [ ] Unit tests: all related tests pass
+
+#### Phase Completion Criteria
+- [ ] [Functional completion criteria]
+- [ ] [Quality completion criteria]
+
+#### Operational Verification Procedures
+1. [Operation verification steps — for the integration points this phase completes (Design Doc, Integration Points List)]
+2. [Expected result verification]
+3. [Performance verification (when applicable)]
+
+### Final Phase: Quality Assurance (Required) (Estimated commits: 1)
+**Purpose**: Overall quality assurance and Design Doc consistency verification
+
+#### Tasks
+- [ ] Verify all Design Doc acceptance criteria achieved
+- [ ] Quality checks (types, lint, format)
+- [ ] Execute all tests
+- [ ] Test set within the part budget (`testing-principles`, Test Selection); no two tests catch the same defect
+- [ ] Document updates
+
+#### Operational Verification Procedures
+[End-to-end verification steps for the part's journeys]
+
 ## Verification Strategy (from Design Doc)
 
-### Correctness Proof Method
-- **Correctness definition**: [extracted from Design Doc]
-- **Verification method**: [extracted from Design Doc]
-- **Verification timing**: [extracted from Design Doc]
+<!-- The design owns the correctness definition and the early verification point; cite them by section, don't copy them. This plan owns where they land. -->
 
-### Early Verification Point
-- **First verification target**: [extracted from Design Doc]
-- **Success criteria**: [extracted from Design Doc]
-- **Failure response**: [extracted from Design Doc]
+- **Correctness definition and method**: `design-{part}.md`, Verification Strategy
+- **Early verification point**: [the design's first verification target, in a few words] — run by [Phase X Task Y]
+- **Proof obligations**: from test skeleton annotations (primary failure mode, proof obligation) when skeletons exist; otherwise each AC's primary failure mode, plus every applicable Failure Mode Checklist category. Each task that implements a claim records its Proof Obligations (task template), so review can judge whether the tests *prove* the claim rather than merely run
 
-### Proof Strategy
-- **Proof obligation source**: test skeleton annotations (primary failure mode, proof obligation) when skeletons exist; otherwise each AC's primary failure mode, plus any applicable Failure Mode Checklist categories mapped to tasks
-- **Per-task propagation**: every task implementing a claim or covering an applicable Failure Mode category records Proof Obligations (see task template), so downstream review can judge whether the tests *prove* the claim rather than merely run
+## Risks and Countermeasures
 
-## Quality Assurance Mechanisms (from Design Doc)
+### Technical Risks
+- **Risk**: [Risk description]
+  - **Impact**: [Impact assessment]
+  - **Countermeasure**: [How to address it]
+
+### Schedule Risks
+- **Risk**: [Risk description]
+  - **Impact**: [Impact assessment]
+  - **Countermeasure**: [How to address it]
+
+## Completion Criteria
+- [ ] All phases completed
+- [ ] Each phase's operational verification procedures executed
+- [ ] Design Doc acceptance criteria satisfied
+- [ ] Staged quality checks completed (zero errors)
+- [ ] All tests pass
+- [ ] Necessary documentation updated
+- [ ] User review approval obtained
+
+## Notes
+
+<!-- When applicable: anything the executor must know that no section above holds. -->
+
+## Appendix: Traceability
+
+<!-- The record that the plan covers the design: the reviewer and the executors check it, the reader reaches it by link. A subsection marked "when applicable" is deleted when it does not apply. -->
+
+### Quality Assurance Mechanisms (from Design Doc)
 
 Adopted quality gates for the change area. Each task in this plan must satisfy these mechanisms.
 
@@ -91,7 +164,7 @@ Adopted quality gates for the change area. Each task in this plan must satisfy t
 | [Tool/check name] | [What quality aspect it enforces] | [path/to/config] | [literal paths, directory prefixes, or "project-wide"] | executable_check |
 | [Domain constraint] | [What it enforces] | [path/to/source] | [literal paths, directory prefixes, or "project-wide"] | passive_constraint |
 
-## Design-to-Plan Traceability
+### Design-to-Plan Traceability
 
 Maps each Design Doc technical requirement to its covering task(s). One row per extracted item. Every row needs at least one covering task **or** an explicit gap justification — an item that appears in neither is how a requirement silently disappears between design and implementation.
 
@@ -104,17 +177,17 @@ Maps each Design Doc technical requirement to its covering task(s). One row per 
 
 **Gap Status values**: `covered` (task exists), `gap` (no task — requires justification in Notes and user confirmation before plan approval)
 
-## Reference Contract Values
+### Reference Contract Values
 
-Include when the Design Doc specifies a **binding observable value** the implementation must reproduce exactly: a column/label set and its order, a derived-display rule, or a state-lifecycle negative. Extract these from the Design Doc directly, not from the Traceability table's summarized DD Item.
+<!-- When applicable: the Design Doc specifies a binding observable value the implementation must reproduce exactly — a column/label set and its order, a derived-display rule, or a state-lifecycle negative. Extract it from the Design Doc directly, not from the Traceability table's summarized DD Item. Serialized boundaries belong to the Connection Map; ADR-derived structural decisions to ADR Bindings. -->
 
-The Traceability table records *that* a row is covered; this table carries the value **verbatim**, so the covering task is checked against the exact contract rather than a re-derived summary. Serialized boundaries belong to the Connection Map below; ADR-derived structural decisions to ADR Bindings. Omit when none apply.
+The Traceability table records *that* a row is covered; this table carries the value **verbatim**, so the covering task is checked against the exact contract rather than a re-derived summary.
 
 | Design Doc (§ Section) | Contract Type | Required Observable Value (verbatim) | Covered By Task(s) |
 |---|---|---|---|
 | [docs/features/{feature}/design-{part}.md (§ Section)] | structure-order / derived-display / state-lifecycle-negative | [exact value copied from the Design Doc — e.g. "the listed fields in the specified order"; "the label shows the looked-up name in place of the raw code"; "persisted state is applied only when an explicit restore signal is present"] | [Phase X Task Y] |
 
-## Failure Mode Checklist
+### Failure Mode Checklist
 
 Domain-independent failure categories this implementation must guard against. Enumerate all nine, mark each yes/no, and list a covering task for each that applies. Keep entries free of project-specific names — these categories are what test suites most often omit precisely because they are unglamorous.
 
@@ -130,9 +203,9 @@ Domain-independent failure categories this implementation must guard against. En
 | rollback-only visibility | yes/no | |
 | missing-sort-key ordering | yes/no | |
 
-## UXRD Component → Task Mapping
+### UXRD Component → Task Mapping
 
-Include when a UXRD is among the inputs. Maps each documented component to the task(s) implementing it. Downstream steps read this table to populate each task's Investigation Targets with the corresponding UXRD section. Omit when no UXRD exists.
+<!-- When applicable: a UXRD is among the inputs. Downstream steps read this table to populate each task's Investigation Targets with the corresponding UXRD section. -->
 
 | UXRD Component (section heading) | States to Cover | Covered By Task(s) | Gap Status | Notes |
 |---|---|---|---|---|
@@ -142,9 +215,9 @@ Include when a UXRD is among the inputs. Maps each documented component to the t
 
 **Gap Status values**: `covered`, `gap` (requires justification in Notes and user confirmation before plan approval)
 
-## ADR Bindings
+### ADR Bindings
 
-Include when ADRs are provided as input or listed in the Design Doc's Prerequisite ADRs. Omit when no ADR applies.
+<!-- When applicable: ADRs are provided as input or listed in the Design Doc's Prerequisite ADRs. -->
 
 A decision is **implementation-binding** when it constrains code placement, dependency direction, contract/schema shape, data flow, or persistence. Acceptance criteria and required behaviors live in the Design Doc; this table covers only structural constraints from ADRs.
 
@@ -154,129 +227,20 @@ A decision is **implementation-binding** when it constrains code placement, depe
 
 One row per binding decision. A single ADR can contribute multiple rows; a single task can appear in multiple rows.
 
-## Connection Map
+### Connection Map
 
-Include when the implementation crosses a package, service, or process boundary — **or when a value is serialized and re-parsed across a boundary even within one runtime**: query strings, route/CLI arguments, environment variables, config entries, message payloads, storage keys, files. Producer and consumer must agree on the exact representation, and that agreement is invisible to the type system.
+<!-- When applicable: the implementation crosses a package, service, or process boundary — or a value is serialized and re-parsed across a boundary even within one runtime: query strings, route/CLI arguments, environment variables, config entries, message payloads, storage keys, files. Producer and consumer must agree on the exact representation, and that agreement is invisible to the type system. -->
 
-Record each Owner as concrete file path(s), not a bare module name, so it resolves as an Investigation Target the executor can read. Omit when no such boundary exists.
+Each Owner is a concrete file path, not a bare module name, so it resolves as an Investigation Target the executor can read.
 
 | Boundary | Owner (left side) | Owner (right side) | Serialized Format | Consumer Parse Rule | Expected Signal | Covered By Task(s) |
 |---|---|---|---|---|---|---|
 | [producing side → consuming side] | [file path(s)] | [file path(s)] | [exact representation the producer emits; "—" if not serialized] | [how the consumer decodes/validates it; "—" if not serialized] | [observable evidence the boundary works] | [Phase X Task Y on each side] |
 
-## Objective
-[Why this change is necessary, what problem it solves]
+## Update History
 
-## Background
-[Current state and why changes are needed]
+<!-- One line per version, newest last: what changed in the plan, in a phrase. -->
 
-## Risks and Countermeasures
-
-### Technical Risks
-- **Risk**: [Risk description]
-  - **Impact**: [Impact assessment]
-  - **Countermeasure**: [How to address it]
-
-### Schedule Risks
-- **Risk**: [Risk description]
-  - **Impact**: [Impact assessment]
-  - **Countermeasure**: [How to address it]
-
-## Implementation Phases
-
-(Note: Phase structure is determined based on Design Doc technical dependencies and implementation approach)
-
-### Phase 1: [Phase Name] (Estimated commits: X)
-**Purpose**: [What this phase aims to achieve]
-
-#### Tasks
-- [ ] Task 1: Specific work content
-- [ ] Task 2: Specific work content
-- [ ] Quality check: Implement staged quality checks (refer to ai-development-guide skill)
-- [ ] Unit tests: All related tests pass
-
-#### Phase Completion Criteria
-- [ ] [Functional completion criteria]
-- [ ] [Quality completion criteria]
-
-#### Operational Verification Procedures
-1. [Operation verification steps]
-2. [Expected result verification]
-3. [Performance verification (when applicable)]
-
-### Phase 2: [Phase Name] (Estimated commits: X)
-**Purpose**: [What this phase aims to achieve]
-
-#### Tasks
-- [ ] Task 1: Specific work content
-- [ ] Task 2: Specific work content
-- [ ] Quality check: Implement staged quality checks (refer to ai-development-guide skill)
-- [ ] Integration tests: Verify overall feature functionality
-
-#### Phase Completion Criteria
-- [ ] [Functional completion criteria]
-- [ ] [Quality completion criteria]
-
-#### Operational Verification Procedures
-1. [Operation verification steps]
-2. [Expected result verification]
-3. [Performance verification (when applicable)]
-
-### Phase 3: [Phase Name] (Estimated commits: X)
-**Purpose**: [What this phase aims to achieve]
-
-#### Tasks
-- [ ] Task 1: Specific work content
-- [ ] Task 2: Specific work content
-- [ ] Quality check: Implement staged quality checks (refer to ai-development-guide skill)
-- [ ] Integration tests: Verify component coordination
-
-#### Phase Completion Criteria
-- [ ] [Functional completion criteria]
-- [ ] [Quality completion criteria]
-
-#### Operational Verification Procedures
-[Copy relevant integration point operational verification from Design Doc]
-
-### Final Phase: Quality Assurance (Required) (Estimated commits: 1)
-**Purpose**: Overall quality assurance and Design Doc consistency verification
-
-#### Tasks
-- [ ] Verify all Design Doc acceptance criteria achieved
-- [ ] Quality checks (types, lint, format)
-- [ ] Execute all tests
-- [ ] Test set within the part budget (`testing-principles`, Test Selection); no two tests catch the same defect
-- [ ] Document updates
-
-#### Operational Verification Procedures
-[Copy operational verification procedures from Design Doc]
-
-### Quality Assurance
-- [ ] Implement staged quality checks (details: refer to ai-development-guide skill)
-- [ ] All tests pass
-- [ ] Static check pass
-- [ ] Lint check pass
-- [ ] Build success
-
-## Completion Criteria
-- [ ] All phases completed
-- [ ] Each phase's operational verification procedures executed
-- [ ] Design Doc acceptance criteria satisfied
-- [ ] Staged quality checks completed (zero errors)
-- [ ] All tests pass
-- [ ] Necessary documentation updated
-- [ ] User review approval obtained
-
-## Progress Tracking
-### Phase 1
-- Start: YYYY-MM-DD HH:MM
-- Complete: YYYY-MM-DD HH:MM
-- Notes: [Any special remarks]
-
-### Phase 2
-- Start: YYYY-MM-DD HH:MM
-- Complete: YYYY-MM-DD HH:MM
-- Notes: [Any special remarks]
-
-## Notes
-[Special notes, reference information, important points, etc.]
+| Version | Date | Change |
+|---------|------|--------|
+| 1.0 | YYYY-MM-DD | Initial version |

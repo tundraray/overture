@@ -1,183 +1,122 @@
-# Market Analysis Report Template
+# [Project Name] — Market Analysis
 
-## Executive Summary
-**Project**: [Project Name]  
-**Analysis Date**: [Date]  
-**Analyst**: Market Analyst Agent  
-**Recommendation**: [GO/NO-GO/PIVOT] - [Brief rationale]
+<!--
+Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot first, delete what does not apply.
+Every number names its source and date in Sources; an estimate says it is one.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
+
+**Date**: YYYY-MM-DD · **Genre**: [genre] · **Platform**: [platforms] · **Recommendation**: GO / NO-GO / PIVOT · **Confidence**: High / Medium / Low
+
+## Snapshot
+
+<!-- At most ten lines. -->
+
+**Overview.** [three to five plain sentences — the market this game enters, the gap it can fill, and why the recommendation follows]
+
+- **Biggest risk**: [one line]
+- **Key findings**: [the two or three facts the recommendation rests on]
 
 ## Market Overview
 
-### Market Size Analysis
-**Total Addressable Market (TAM)**: [Global market size for genre]  
-**Serviceable Addressable Market (SAM)**: [Realistic market we can reach]  
-**Serviceable Obtainable Market (SOM)**: [Market share we can capture]
+### Market Size
 
-**Market Growth Rate**: [Annual growth percentage]  
-**Market Maturity**: [Emerging/Growing/Mature/Declining]  
-**Geographic Focus**: [Primary target regions]
+| Measure | Value | What it means |
+|---|---|---|
+| Total market (TAM) | [size] | [every player of the genre on these platforms] |
+| Reachable market (SAM) | [size] | [the part this game can realistically reach] |
+| Obtainable share (SOM) | [size] | [the part it can expect to win] |
 
-### Target Audience Analysis
-**Primary Audience**: [Demographics, psychographics, behavior]  
-**Secondary Audience**: [Additional player segments]  
-**Audience Size**: [Number of potential players]  
-**Player Spending Habits**: [Average revenue per user, purchase frequency]  
-**Platform Preferences**: [Where target audience plays]
+- **Growth**: [annual growth, and whether the market is emerging, growing, mature, or declining]
+- **Regions**: [where the target players are]
+
+### Target Audience
+
+- **Primary audience**: [who they are, what they play, what they spend]
+- **Secondary audience**: [other players the game can reach]
+- **Where they play**: [platforms and stores]
 
 ## Competitive Analysis
 
 ### Direct Competitors
-| Game Title | Developer | Platform | Revenue Model | Key Features | Market Position |
-|------------|-----------|----------|---------------|--------------|-----------------|
-| [Game 1] | [Developer] | [Platform] | [Model] | [Features] | [Position] |
-| [Game 2] | [Developer] | [Platform] | [Model] | [Features] | [Position] |
-| [Game 3] | [Developer] | [Platform] | [Model] | [Features] | [Position] |
+
+| Game | Developer | Platform | Revenue model | What players like about it |
+|---|---|---|---|---|
+| [game] | [developer] | [platform] | [model] | [one phrase] |
 
 ### Indirect Competitors
-| Game Title | Why Competitive | Player Overlap | Threat Level |
-|------------|-----------------|----------------|--------------|
-| [Game A] | [Reason] | [Percentage] | [High/Medium/Low] |
-| [Game B] | [Reason] | [Percentage] | [High/Medium/Low] |
 
-### Competitive Landscape Analysis
-**Market Leader**: [Top game in space] - [Why they lead]  
-**Market Dynamics**: [How competition affects pricing, features, etc.]  
-**Barriers to Entry**: [What makes it difficult for new games to succeed]  
-**Competitive Advantages**: [What successful games do well]
+| Game | Why it competes for the same players | Threat |
+|---|---|---|
+| [game] | [one phrase] | High / Medium / Low |
+
+### Landscape
+
+- **Leader**: [the top game, and why it leads]
+- **Barriers to entry**: [what makes it hard for a new game to succeed]
+- **What successful games do well**: [a sentence]
 
 ## Market Opportunity
 
-### Market Gaps Identified
-1. **[Gap 1]**: [Description of unmet player need]
-   - **Evidence**: [Research supporting this gap]
-   - **Opportunity Size**: [Potential revenue/players]
-   - **Competition Level**: [How many others target this]
+### Gaps
 
-2. **[Gap 2]**: [Description of unmet player need]
-   - **Evidence**: [Research supporting this gap]
-   - **Opportunity Size**: [Potential revenue/players]
-   - **Competition Level**: [How many others target this]
+- **[Gap]**: [the unmet player need] — [the evidence for it, and how many others target it]
 
-### Differentiation Strategy
-**Unique Value Proposition**: [What makes our game special]  
-**Core Differentiators**:
-- [Differentiator 1]: [How this creates competitive advantage]
-- [Differentiator 2]: [How this creates competitive advantage]
-- [Differentiator 3]: [How this creates competitive advantage]
+### Differentiation
 
-**Positioning Statement**: [How we want to be perceived in the market]
+- **Value proposition**: [what makes this game worth choosing, in a sentence]
+- **Differentiators**: [each one, and why competitors cannot easily copy it]
 
-## Monetization Analysis
+## Monetization
 
-### Revenue Model Recommendation
-**Primary Model**: [Premium/F2P/Subscription/etc.]  
-**Secondary Revenue Streams**: [DLC, merchandise, etc.]  
-**Pricing Strategy**: [Price point and rationale]
+- **Recommended model**: [premium / free-to-play / subscription] — [why it fits this audience]
+- **Price**: [price point] — [how it compares with the competitors below]
+- **Other revenue**: [DLC, cosmetics — delete when none]
 
-### Market Pricing Analysis
-| Game | Price | Revenue Model | Success Metrics |
-|------|-------|---------------|-----------------|
-| [Competitor 1] | [Price] | [Model] | [Downloads/Revenue] |
-| [Competitor 2] | [Price] | [Model] | [Downloads/Revenue] |
-| [Market Average] | [Price] | [Model] | [Typical Performance] |
+| Game | Price | Revenue model | Result |
+|---|---|---|---|
+| [competitor] | [price] | [model] | [downloads or revenue] |
 
-**Our Pricing Recommendation**: [Price] - [Justification]
+### Projections
 
-### Revenue Projections
-**Conservative Estimate**: [Revenue Year 1]  
-**Optimistic Estimate**: [Revenue Year 1]  
-**Factors Affecting Revenue**: [Key variables that impact projections]
+| Scenario | Year-one revenue | What it assumes |
+|---|---|---|
+| Conservative | [amount] | [assumption] |
+| Optimistic | [amount] | [assumption] |
 
-## Market Entry Strategy
+## Launch
 
-### Launch Strategy
-**Platform Priority**: [Primary platform for launch]  
-**Geographic Rollout**: [Which regions first]  
-**Marketing Channels**: [Most effective ways to reach audience]  
-**Influencer Strategy**: [Key content creators/communities]
+- **First platform and regions**: [where to launch first, and why]
+- **Channels**: [how to reach the audience — stores, creators, communities]
+- **Targets**: [downloads and revenue at month 1, month 3, year 1]
 
-### Success Metrics
-**Download Targets**:
-- Month 1: [X downloads]
-- Month 3: [X downloads]  
-- Year 1: [X downloads]
+## Risks
 
-**Revenue Targets**:
-- Month 1: [$ amount]
-- Month 3: [$ amount]
-- Year 1: [$ amount]
+| Risk | Probability | Impact | Mitigation |
+|---|---|---|---|
+| [risk, including competitor response and new entrants] | High / Medium / Low | High / Medium / Low | [what reduces it] |
 
-**Market Share Goals**: [Percentage of market we aim to capture]
+## Recommendation
 
-## Risk Assessment
+<!-- Keep the branch that matches the recommendation; delete the others. -->
 
-### Market Risks
-| Risk | Probability | Impact | Mitigation Strategy |
-|------|-------------|---------|---------------------|
-| [Risk 1] | [High/Med/Low] | [High/Med/Low] | [Strategy] |
-| [Risk 2] | [High/Med/Low] | [High/Med/Low] | [Strategy] |
-| [Risk 3] | [High/Med/Low] | [High/Med/Low] | [Strategy] |
+[The recommendation and the two or three reasons for it, in a short paragraph]
 
-### Competitive Risks
-**New Entrants**: [Risk of new competitors entering market]  
-**Existing Competitor Response**: [How competitors might react]  
-**Technology Disruption**: [Risk of new tech changing market]
+- **If GO — next actions**: [what design and production should do first]
+- **If NO-GO — alternatives**: [a different market, genre, or timing]
+- **If PIVOT — changes**: [what to change for the concept to work]
 
-## Recommendations
+### What This Means for the Design
 
-### Go/No-Go Decision
-**Recommendation**: [GO/NO-GO/PIVOT]
+<!-- Only the findings the GDD should act on, each in a sentence. -->
 
-**Rationale**:
-- [Key reason 1 supporting decision]
-- [Key reason 2 supporting decision]  
-- [Key reason 3 supporting decision]
+- [finding] → [design consequence]
 
-### If GO - Strategic Recommendations
-1. **[Recommendation 1]**: [Specific action item]
-2. **[Recommendation 2]**: [Specific action item]
-3. **[Recommendation 3]**: [Specific action item]
+## Monitoring
 
-### If NO-GO - Alternative Strategies
-1. **[Alternative 1]**: [Different approach or pivot]
-2. **[Alternative 2]**: [Different market or genre]
-3. **[Alternative 3]**: [Timing considerations]
+- **What to watch**: [the metrics and competitor moves that would change the recommendation]
+- **When to refresh**: [how often, or what event triggers a new analysis]
 
-## Market Intelligence Updates
+## Sources
 
-### Monitoring Plan
-**Key Metrics to Track**: [What to monitor ongoing]  
-**Update Frequency**: [How often to refresh analysis]  
-**Alert Triggers**: [Market changes that require immediate attention]
-
-### Information Sources
-- [Source 1]: [Type of data provided]
-- [Source 2]: [Type of data provided]
-- [Source 3]: [Type of data provided]
-
----
-
-## Validation and Next Steps
-
-### Data Validation
-- [ ] Market size data verified from multiple sources
-- [ ] Competitive analysis based on recent data (within 3 months)
-- [ ] Target audience insights validated through research
-- [ ] Revenue projections use conservative assumptions
-- [ ] Risk assessment covers major market factors
-
-### Next Phase Requirements
-**For Design Team**: [Market insights that should influence design]  
-**For Data Science Team**: [Analytics needed to validate market assumptions]  
-**For Production Team**: [Timeline and resource implications]
-
-### Ongoing Market Support
-**Regular Updates**: [Schedule for market intelligence updates]  
-**Competitive Monitoring**: [How to track competitor actions]  
-**Player Feedback Integration**: [How market insights inform development]
-
----
-
-**Market Analyst Agent Sign-off**: [Date]  
-**Producer Agent Review**: [Date]  
-**Master Orchestrator Approval**: [Date]
+- [source] — [what it provided, and its date]

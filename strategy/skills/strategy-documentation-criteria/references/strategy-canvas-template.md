@@ -1,12 +1,11 @@
 # Strategy Canvas: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Strategy Architect Agent
 **Confidence**: [High / Medium / Low]
 
 ## [Strategic recommendation as action title — e.g., "Enter via category creation with value innovation on [factor] and [factor]"]
 
-[Executive summary: core strategic bet, what must be true, biggest risk]
+[Overview: core strategic bet, what must be true, biggest risk — in plain sentences]
 
 ## Blue Ocean Strategy Canvas
 
