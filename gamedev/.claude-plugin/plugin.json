@@ -99,7 +99,9 @@
     "./skills/workflow-execution",
     "./skills/workflow-orchestration",
     "./skills/workflow-technical",
-    "./skills/game-analysis-criteria"
+    "./skills/game-analysis-criteria",
+    "./skills/technical-design",
+    "./skills/work-planning"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

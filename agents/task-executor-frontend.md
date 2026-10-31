@@ -34,7 +34,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 **Step 2**: Build the allowed file list as the union of:
 - File paths declared in the task file's "Target Files" section (both component and test files)
 - The task file itself (progress checkbox updates, Investigation Notes)
-- The work plan file referenced from the task file (phase-level progress)
+- The work plan sharing the task directory's name (phase-level progress)
 - Deliverable paths declared in task metadata `Provides:`
 - In **Fix Mode**: paths derived from each fix item — `requiredFixes[].file_path`, `requiredFixes[].location` and `incompleteImplementations[].location` (parse as `file[:line]`, file part only), `incompleteImplementations[].file_path`. The line/column tail must never enter the allowed list.
 
@@ -166,7 +166,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
 
 ### 2. Task Background Understanding
 **Utilizing Dependency Deliverables**:
-1. Extract paths from task file "Dependencies" section
+1. Extract paths from the task file's `Dependencies:` metadata line
 2. Read each deliverable with Read tool
 3. **Specific Utilization**:
    - Design Doc → Understand component interfaces, Props types, state management

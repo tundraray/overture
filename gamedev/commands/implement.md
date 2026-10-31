@@ -88,17 +88,18 @@ Sequential agent invocations after market analysis (or directly after requiremen
 5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
 6. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
 
-**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a game design spec; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
+**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a GDD update; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
 
 ### Art & Visual Phase
 
 7. **sr-game-artist** → Art direction, style guide, asset requirements
 8. **technical-artist** → Pipeline specs, atlas optimization, rendering constraints
-9. **game-ui-designer** → Game UI/UX design (HUD, menus, interaction patterns)
+9. **game-ui-designer** → UXRD for the game UI (HUD, menus, interaction patterns) and the design-system files it touches, with its draft check
+10. **[Stop: UXRD Approval]** — a document stop; an independent review uses `doc_type: UXRD`
 
 ### Analytics Phase
 
-10. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
+11. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
 
 ### Game-Specific Information Flow
 

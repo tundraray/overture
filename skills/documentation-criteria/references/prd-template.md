@@ -90,18 +90,14 @@ Each requirement has an ID (`NFR-01`) and states a target and how it is measured
 
 ## Delivery Parts
 
-<!-- Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here and confirmed by the user at PRD approval; criteria are in the `documentation-criteria` skill, "Parts". -->
+<!-- Criteria: `documentation-criteria`, "Parts". -->
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
 | `[part-name]` | [FR-01, FR-03] | [backend / frontend / domain / release-unit] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [FR-02] | [...] | `[part-name]` | [...] |
 
-<!-- **Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here: -->
-
 - Deferred: [FR-nn assigned to no part] — [why]
-
-<!-- **Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case. -->
 
 ### Part Dependency Diagram
 

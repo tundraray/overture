@@ -1,22 +1,12 @@
 # [Feature Name] Design Document — [part-name]
 
-<!--
-A person reads this document top to bottom. The sections follow the questions they ask, in order:
-what is this and why is it built this way (Snapshot, Key Decisions) → which words need explaining (Terms) → what it covers and leaves alone (Part) → what must be true when it is done (Acceptance Criteria)
-→ how it works (Design) → how we will know it works (Test Strategy) → what could go wrong (Security Considerations, Risks and Mitigation, Open Questions)
-→ what happened to the existing behaviour it found (Appendix: Fact Disposition) → when it changed (Update History).
-Text inside these comments is guidance for the author; it is not copied into the document.
-Every section follows "Writing for the Reader" in documentation-criteria: written for a cold reader, in sentences and short lists rather than tables or shorthand,
-at the design's altitude rather than the code's; a section marked "when applicable" is deleted when it does not apply.
-A table appears only where the reader compares several rows across the same columns. A cell is never just an ID: the words come first, the ID follows in parentheses.
-Which files and components change, in what order, and how each step is verified belong to the work plan, not here.
--->
+<!-- Guidance for the author sits in comments like this one; every section follows "Writing for the Reader" in documentation-criteria. -->
 
 **Status:** Draft / Approved · **Date:** YYYY-MM-DD · **PRD:** [prd.md](./prd.md) · **UXRD:** [uxrd.md](./uxrd.md) or none · **Depends on:** [`design-[part].md`] or nothing
 
 ## Snapshot
 
-<!-- Answers: what is this, and what could go wrong? At most ten lines. A cold reader who stops here can say what this part does, how it works in outline, and what could go wrong. -->
+<!-- Answers: what is this, and what could go wrong? At most ten lines. -->
 
 **Overview.** [Three to five plain sentences: the problem this part solves, what it adds or changes, and how it works in outline — as you would explain it to a colleague who has not followed the feature. No IDs, no code names the reader has not met.]
 
@@ -76,23 +66,23 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ### Architecture (C1–C4)
 
-<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows what is new and what changes. Each level is drawn only when the change touches it, and at least one is drawn; delete the subsection of a level not drawn. -->
+<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill; which levels are drawn, and how, is in its `references/c4-levels.md`. Delete the subsection of a level not drawn. -->
 
 #### C1 · Context
 
-<!-- When the change alters actors, external systems, or the system boundary. `flowchart LR`, ≤ 6 nodes: the product as one box, the people and external systems that use the running change. -->
+<!-- `references/c4-levels.md`, "C1 · Context". -->
 
 #### C2 · Containers
 
-<!-- When containers or their connections change. `flowchart LR`, ≤ 8 nodes: apps, services, stores, and the calls between them inside a dashed product boundary. Under the diagram, a sentence per container the part touches: what it does in this part. -->
+<!-- `references/c4-levels.md`, "C2 · Containers". -->
 
 #### C3 · Components: [container]
 
-<!-- One subsection per container whose components change; inside it one diagram per flow the part touches, titled **[container] — [flow]**: `flowchart TB`, ≤ 10 nodes: caller on top, the container's components in call order inside its boundary, stores and external systems at the bottom. Under the diagram, a sentence per component that is not obvious from its name. No field tables and no per-component interface or dependency lists: what a component offers is in Contract Definitions. -->
+<!-- `references/c4-levels.md`, "C3 · Components". -->
 
 #### C4 · Code flow: [scope]
 
-<!-- When a component's internals are the point of the change. One vertical `flowchart TB` chain per entry point: classes, functions, or components as frames, step nodes `N · Name<br/>what it does`, arrows step to step, the return leg as its own steps. -->
+<!-- `references/c4-levels.md`, "C4 · Code flow". -->
 
 ### Runtime Flows
 

@@ -136,7 +136,6 @@ prompt: |
   doc_type: PRD
   depth: full
   target: $STEP_2_OUTPUT
-  mode: composite
 
   ## Code Verification Results
   $STEP_3_OUTPUT
@@ -271,7 +270,6 @@ prompt: |
 
   doc_type: DesignDoc
   target: $STEP_7_OUTPUT
-  mode: composite
 
   ## Code Verification Results
   $STEP_8_OUTPUT

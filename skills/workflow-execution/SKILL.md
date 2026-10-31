@@ -47,12 +47,7 @@ Commit strategy is asked once, before the first part's batch approval, and holds
 Run for the current part, then repeat for the next part in the list:
 
 1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying the frontmatter that positions it within its part (`plan: N of M`, `status`, `depends-on`) and incorporating the part's test skeleton paths
-2. **`{planner}`'s draft check** — `document-reviewer`, run by the planner on the plan it wrote (`documentation-criteria`, "Draft Check"); the orchestrator runs no plan review of its own. The check covers:
-   - **Coverage** — every Design Doc item is cited by a task line, or listed as uncovered with its reason
-   - **Failure Mode Checklist** — each applicable category assigned a covering task
-   - **Verification Strategy**: what correctness means and how it is proven, with the task that runs the early verification point
-   - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
-   - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
+2. **`{planner}`'s draft check** — `document-reviewer`, run by the planner on the plan it wrote (`documentation-criteria`, "Draft Check"); the orchestrator runs no plan review of its own
 3. **Commit strategy selection** — ask the user, first part only (see below)
 
    **[Stop: batch approval — part `{part}`]** — shows the plan path and the planner's `draftCheck.open` items, and offers independent review as an option; when the user picks it, `workflow-orchestration`, "Revision Loop" applies before approval

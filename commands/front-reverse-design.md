@@ -117,7 +117,6 @@ prompt: |
 
   doc_type: DesignDoc
   target: $STEP_2_OUTPUT
-  mode: composite
 
   ## Code Verification Results
   $STEP_3_OUTPUT

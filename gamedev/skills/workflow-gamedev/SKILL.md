@@ -88,7 +88,8 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 7. **game-feel-developer** → game feel specification
 8. **sr-game-artist** → art direction, style guide, palette
    **technical-artist** → pipeline specs, atlas optimization, shader requirements
-9. **game-ui-designer** → game UI/UX: HUD, menus, interaction, accessibility
+9. **game-ui-designer** → UXRD for the game UI (HUD, menus, interaction, accessibility) and the `docs/design-system/` files it touches, with its draft check
+   **[Stop: UXRD approval]**
 10. **data-scientist** → analytics and telemetry design, KPIs, A/B tests
 
 **Design Only mode stops here** — deliver the design package.
@@ -104,7 +105,7 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 3. **mid-game-designer** (`depth: full`) → feature spec with Delivery Parts, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]**
 4. **mechanics-developer** → mechanics architecture for the feature
-5. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **game-ui-designer**, **data-scientist**
+5. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **game-ui-designer** (UXRD with its draft check, then **[Stop: UXRD approval]**), **data-scientist**
 
 → hand off to `workflow-technical`
 
@@ -112,11 +113,11 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 
 1. **requirement-analyzer** → requirement analysis + preliminary part proposal
    **[Stop: requirements confirmation]**
-2. *[Conditional]* **sr-game-designer** → game design spec (when new mechanics are involved)
+2. *[Conditional]* **sr-game-designer** → GDD update (when new mechanics are involved), with its draft check
 3. **mid-game-designer** (`depth: lite`, or `update` when a spec already covers the feature) → feature spec with Delivery Parts, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]**
 4. **mechanics-developer** → mechanics architecture (when new systems are involved)
-5. *[Conditional]* **game-ui-designer** (UI work), **game-feel-developer** (polish work)
+5. *[Conditional]* **game-ui-designer** (UI work; UXRD with its draft check, then **[Stop: UXRD approval]**), **game-feel-developer** (polish work)
 
 → hand off to `workflow-technical`
 
@@ -129,8 +130,6 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 
 No technical documents → `workflow-execution` for a simplified plan whose traceability maps to the spec's acceptance criteria.
 
-The feature spec plays the role the PRD plays in `workflow-product`: it exists at every scale, its depth follows the scale, and its Delivery Parts section is the only source of part names. The GDD stays at project level and does not carry parts.
-
 ## Stop Points
 
 | Stop | After | What the user decides |
@@ -139,6 +138,7 @@ The feature spec plays the role the PRD plays in `workflow-product`: it exists a
 | Go/No-Go | market-analyst | Whether the project proceeds at all (Scenario A) |
 | GDD approval | sr-game-designer returns the GDD with its draft check | Whether the vision, pillars, and core loop are right (Scenario A and B) |
 | Feature Spec approval | mid-game-designer returns the feature spec with its draft check | Whether the acceptance criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| UXRD approval | game-ui-designer returns the UXRD with its draft check | Whether the flows, screen states, and accessibility are right, and the design-system files the UXRD created or changed — only when the feature has a UI surface |
 
 A document stop shows the author's `draftCheck.open` items and offers independent review as an option — see `workflow-orchestration`, "Explicit Stop Points".
 

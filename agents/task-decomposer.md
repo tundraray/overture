@@ -53,7 +53,6 @@ Decompose tasks based on implementation strategy patterns determined in implemen
 
 3. **Task File Generation**
    - Create individual task files in `docs/features/<feature>/<part>/<plan-name>/`
-   - Plan name extracted from plan filename (e.g., `20260726-feature-landing-page.md` → `20260726-feature-landing-page`)
    - Document concrete executable procedures
    - **Always include operation verification methods**
    - Define clear completion criteria (within executor's scope of responsibility)
@@ -80,18 +79,7 @@ When the code contradicts the plan, don't reshape the plan to fit. That happens 
 
 ## Workflow
 
-1. **Plan Selection**
-
-   ```bash
-   ls docs/features/*/*/*.md   # every work plan
-   ```
-
-2. **Plan Name Extraction**
-   - Extract plan name from plan filename (e.g., `20260726-feature-landing-page.md` → `20260726-feature-landing-page`)
-   - Create plan directory: `docs/features/{feature}/{part}/{plan-name}/`
-   - All task files for this plan will be placed in this directory
-
-3. **Plan Analysis and Overall Design**
+1. **Plan Analysis and Overall Design**
    - Confirm phase structure
    - Extract task list
    - Identify dependencies
@@ -101,29 +89,19 @@ When the code contradicts the plan, don't reshape the plan to fit. That happens 
      - Identify information sharing points between tasks
    - Check the plan's paths and symbols against current code (see "Checking the Plan Against Current Code")
 
-4. **Overall Design Document Creation**
+2. **Overall Design Document Creation**
    - Record overall design in `docs/features/{feature}/{part}/{plan-name}/_overview.md`, with frontmatter `temporary: true` like every task file
    - Clarify positioning and relationships of each task
    - Document design intent and important notes
 
-5. **Task File Generation**
+3. **Task File Generation**
    - Create plan directory: `docs/features/{feature}/{part}/{plan-name}/`
    - Naming convention: `task-{number}.md` (inside plan directory)
    - Example: `docs/features/checkout/core/20260726-refactor-types/task-01.md`
    - **Phase verification**: the last task of each phase ends with that phase's verification procedure from the work plan, so the executor runs it
 
-6. **Task Structuring**
-   Include the following in each task file:
-   - Task overview
-   - Target files
-   - Concrete implementation steps
-   - Completion criteria
-
-7. **Implementation Pattern Consistency**
+4. **Implementation Pattern Consistency**
    When including implementation samples, MUST ensure strict compliance with the implementation approach named in the work plan's Overview
-
-8. **Utilize Test Information**
-   When test information (@category, @dependency, @complexity, etc.) is documented in the work plan, reflect that information in task files
 
 ## Task File Template
 
@@ -239,21 +217,6 @@ Every task file created appears in `documents`. A task written but not reported 
    - Confirm consistency with ADR/Design Doc
    - Comply with design decisions
 
-5. **Maintaining Appropriate Granularity**
-   - Small (1-2 files), Medium (3-5 files), Large must be split (6+ files)
-
-## Task Decomposition Checklist
-
-- [ ] Previous task deliverable paths specified in subsequent tasks
-- [ ] Deliverable filenames specified for research tasks
-- [ ] Common processing identification and shared design
-- [ ] Task dependencies and execution order clarification
-- [ ] Impact scope and boundaries definition for each task
-- [ ] Appropriate granularity (1-5 files/task)
-- [ ] Clear completion criteria setting
-- [ ] Overall design document creation
-- [ ] Implementation efficiency and rework prevention (pre-identification of common processing, clarification of impact scope)
-
 ## Important Task Design Principles
 
 ### Task Design Principles
@@ -262,7 +225,6 @@ Every task file created appears in `documents`. A task written but not reported 
 - Research tasks generate deliverables
 - Implementation tasks that add behaviour follow TDD (Red→Green→Refactor); the test is the one named in `Proven by`
 - Dependency deliverables explicitly referenced
-- Task size 1-5 files (split if 6+)
 
 **Prohibited**:
 - Including quality assurance in tasks

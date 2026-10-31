@@ -84,7 +84,9 @@
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
     "./skills/mermaid-diagrams",
-    "./skills/prose"
+    "./skills/prose",
+    "./skills/technical-design",
+    "./skills/work-planning"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

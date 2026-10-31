@@ -84,12 +84,7 @@ Ask user before implementation phase:
 
 ### Document Revision Flow
 
-When an orchestrator-run document-reviewer (independent review picked by the user, or the one review round over a multi-document change) returns `needs_revision` or `approved_with_conditions`:
-1. Orchestrator extracts the `critical` and `important` issues; `recommended` ones and `deferred` findings go to the user at the stop point, never back to the owner on their own
-2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field) with `draft_check: skip` — the re-review is the check
-3. Revision agent edits the document
-4. Orchestrator re-runs document-reviewer once with `review_scope: changes` — prior issues plus the diff, not a fresh full read
-5. A re-review that is not `approved` goes to the user (revise again / accept with rationale recorded / abort) — at most two reviews per document per gate; a change touching several documents gets one review round over the set — see `workflow-orchestration`, "Revision Loop"
+An orchestrator-run `document-reviewer` (independent review picked by the user, or the one review round over a multi-document change) that does not return `approved` follows `workflow-orchestration`, "Revision Loop": the owner named in `revision_agent` fixes the `critical` and `important` issues, one re-review with `review_scope: changes` follows, and anything still open goes to the user.
 
 **CRITICAL**: Orchestrator NEVER edits documents directly — always delegate to agents.
 
@@ -143,7 +138,9 @@ Skills contain structured guidance used by agents:
 - **workflow-technical**: Technical phase — codebase fact gathering, Design Doc, conditional ADR, test skeletons, ending at Design Doc approval
 - **workflow-execution**: Planning and execution — work plan, draft check, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
 - **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
-- **documentation-criteria**: PRD/ADR/Design Doc/Plan/Task templates and creation decision matrices
+- **documentation-criteria**: Which documents each scale needs, their definitions, storage and parts, templates; `references/authoring-rules.md` holds the rules every author and reviewer follows — Writing for the Reader, Revising a Document, Draft Check
+- **technical-design**: The part `technical-designer` and `technical-designer-frontend` share — investigation, contracts, ADR process, update mode, draft check, response to caller
+- **work-planning**: The part `work-planner` and `gamedev-work-planner` share — the plan file, task design, test placement, draft check, response to caller, update mode
 - **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels (drawn per task) and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards
 - **testing-principles**: Test Selection (which tests earn their place), TDD practices, test patterns

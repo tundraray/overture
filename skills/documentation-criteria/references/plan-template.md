@@ -1,7 +1,7 @@
 ---
 feature: [feature-name]           # directory under docs/features/
 part: [part-name]                 # directory holding this plan
-design: design-[part-name].md     # governing design, at feature level; `none` only at small scale (the PRD is the specification)
+design: design-[part-name].md     # governing design, at feature level; `none` for a simplified plan (the PRD or feature spec is the specification)
 plan: 1 of 1                      # position in the part, and expected total
 status: draft                     # draft | active | completed
 depends-on:                       # previous plan filename; omit for the first
@@ -10,8 +10,6 @@ temporary: true                   # AI working file — see documentation-criter
 
 <!--
 Temporary AI working file — not in git, deleted after the feature ships. It must state exactly what the documentation states; nothing else is judged.
-Frontmatter is the source of truth for plan sequencing: `plan: N of M` states how many plans the part is expected to need, `status` marks which one runs now,
-`depends-on` fixes the order without relying on filename sort. Exactly one plan per part may be `active`; raise `M` rather than adding an unannounced plan file.
 Text inside these comments is guidance for the author; it is not copied into the document.
 -->
 
@@ -37,33 +35,24 @@ Type: feature|fix|refactor
 A task opens with one line saying, in words, what it delivers, ending with what it covers: the Design Doc section and AC IDs (the PRD's requirement IDs at small scale). Every Design Doc implementation target, connection or registration, contract change, verification requirement, and prerequisite is covered by some task line, or listed under "Design items no task covers" in the Snapshot.
 Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
 
-### Phase 1: [Phase Name] (Estimated commits: X)
+### Phase 1: [Phase Name]
 **Purpose**: [what this phase delivers, in one or two sentences]
 
 #### Tasks
 - [ ] Task 1: [what it delivers] — covers DD §[Section] / AC-[n]
 - [ ] Task 2: [what it delivers] — covers DD §[Section] / AC-[n]
-- [ ] Quality check: staged quality checks (`ai-development-guide`)
-- [ ] Unit tests: all related tests pass
-
-#### Phase Completion Criteria
-- [ ] [Functional completion criteria]
-- [ ] [Quality completion criteria]
 
 #### Operational Verification Procedures
 1. [Operation verification steps — for each integration point this phase completes, where new code joins existing code]
 2. [Expected result verification]
 3. [Performance verification (when applicable)]
 
-### Final Phase: Quality Assurance (Required) (Estimated commits: 1)
+### Final Phase: Quality Assurance (Required)
 **Purpose**: Overall quality assurance and Design Doc consistency verification
 
 #### Tasks
 - [ ] Verify all Design Doc acceptance criteria achieved
-- [ ] Quality checks (types, lint, format)
-- [ ] Execute all tests
 - [ ] Test set within the part budget (`testing-principles`, Test Selection); no two tests catch the same defect
-- [ ] Document updates
 
 #### Operational Verification Procedures
 [End-to-end verification steps for the part's journeys]
@@ -75,7 +64,7 @@ Target Files, dependencies, and the tests it adds (by title, with what each prov
 - **Correctness definition and method**: [what "correct" means here, and the technique that proves it]
 - **Early verification point**: [the smallest unit proving the approach works, its success criteria, and what to do if it fails] — run by [Phase X Task Y]
 - **Output comparison** (when the part replaces existing behaviour): [identical input for both implementations, the fields compared, and how they are diffed]
-- **Proof obligations**: from test skeleton annotations (primary failure mode, proof obligation) when skeletons exist; otherwise each AC's primary failure mode, plus every applicable Failure Mode Checklist category. Each task that implements a claim records its Proof Obligations (task template), so review can judge whether the tests *prove* the claim rather than merely run
+- **Proof obligations**: from test skeleton annotations (primary failure mode, proof obligation) when skeletons exist; otherwise each AC's primary failure mode, plus every applicable Failure Mode Checklist category
 
 ## Risks and Countermeasures
 
@@ -95,8 +84,6 @@ Target Files, dependencies, and the tests it adds (by title, with what each prov
 
 <!-- When applicable: the Design Doc specifies a binding observable value the implementation must reproduce exactly — an exact value from Contract Definitions (a limit, enum value, status code, timeout, setting name or default), a column/label set and its order, a derived-display rule, or a state-lifecycle negative. Extract it from the Design Doc directly, not from a task line's summary. Serialized boundaries belong to the Connection Map; ADR-derived structural decisions to ADR Bindings. -->
 
-A task line records *that* a design item is covered; this table carries the value **verbatim**, so the covering task is checked against the exact contract rather than a re-derived summary.
-
 | Design Doc (§ Section) | Contract Type | Required Observable Value (verbatim) | Covered By Task(s) |
 |---|---|---|---|
 | [docs/features/{feature}/design-{part}.md (§ Section)] | exact-value / structure-order / derived-display / state-lifecycle-negative | [exact value copied from the Design Doc — e.g. "the listed fields in the specified order"; "the label shows the looked-up name in place of the raw code"; "persisted state is applied only when an explicit restore signal is present"] | [Phase X Task Y] |
@@ -111,7 +98,7 @@ A task line records *that* a design item is covered; this table carries the valu
 
 ### UXRD Component → Task Mapping
 
-<!-- When applicable: a UXRD is among the inputs. Downstream steps read this table to populate each task's Investigation Targets with the UXRD elements it names. -->
+<!-- When applicable: a UXRD is among the inputs. -->
 
 | UXRD Element | States to Cover | Covered By Task(s) | Gap Status | Notes |
 |---|---|---|---|---|
@@ -121,21 +108,15 @@ A task line records *that* a design item is covered; this table carries the valu
 
 ### ADR Bindings
 
-<!-- When applicable: ADRs are provided as input or listed in the Design Doc's Prerequisite ADRs. -->
-
-A decision is **implementation-binding** when it constrains code placement, dependency direction, contract/schema shape, data flow, or persistence. Acceptance criteria and required behaviors live in the Design Doc; this table covers only structural constraints from ADRs.
+<!-- When applicable: ADRs are provided as input or listed in the Design Doc's Prerequisite ADRs. One row per implementation-binding decision — one that constrains code placement, dependency direction, contract/schema shape, data flow, or persistence. Acceptance criteria and required behaviors live in the Design Doc. -->
 
 | ADR | Source Section | Axis | Binding Decision | Covered By Task(s) |
 |---|---|---|---|---|
 | [docs/adr/ADR-XXXX.md] | Decision / Implementation Guidance | placement \| dependency_direction \| contract_schema \| data_flow \| persistence | [one binding decision sentence, copied or condensed from the named section] | [Phase X Task Y] |
 
-One row per binding decision. A single ADR can contribute multiple rows; a single task can appear in multiple rows.
-
 ### Connection Map
 
 <!-- When applicable: the implementation crosses a package, service, or process boundary — or a value is serialized and re-parsed across a boundary even within one runtime: query strings, route/CLI arguments, environment variables, config entries, message payloads, storage keys, files. Producer and consumer must agree on the exact representation, and that agreement is invisible to the type system. -->
-
-Each Owner is a concrete file path, not a bare module name, so it resolves as an Investigation Target the executor can read.
 
 | Boundary | Owner (left side) | Owner (right side) | Serialized Format | Consumer Parse Rule | Expected Signal | Covered By Task(s) |
 |---|---|---|---|---|---|---|

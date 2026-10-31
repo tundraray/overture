@@ -11,8 +11,6 @@ Mechanics common to every phase — how to invoke subagents, response contracts,
 
 ## Domain Independence
 
-This phase is identical for every domain — a game feature and a service endpoint need the same fact gathering, the same design rigour, and the same consistency verification. Planning is where the domain difference appears, and planning belongs to `workflow-execution`.
-
 Layer selection between `technical-designer` and `technical-designer-frontend`, and between `codebase-analyzer` and `ui-analyzer`, follows the part being designed, not the domain — a part whose `cutAlong` is `frontend` takes the frontend pair, whatever the project is. gamedev-overture ships no frontend designer: a `ui`, `hud`, or `menu` part there takes `technical-designer` with `ui-analyzer` (`workflow-orchestration`, "Gamedev Substitutions").
 
 ## Entry Gate [BLOCKING]
@@ -41,7 +39,7 @@ The flow runs **once per part**, in the dependency order of the parts list, and 
 **For each part, in dependency order:**
 
 2. **codebase-analyzer** (**ui-analyzer** for a frontend part) → read-only fact gathering, with the part's requirements passed as `requirements` → `focusAreas[]`
-3. **technical-designer(-frontend)** → `design-{part}.md`, consuming `focusAreas` into the **Fact Disposition Table**, the expert synthesis when one was produced, and the approved designs of every part in `dependsOn` as contracts to consume rather than redefine, with its draft check (`document-reviewer`, including part scope)
+3. **technical-designer(-frontend)** → `design-{part}.md`, consuming `focusAreas` into its **Appendix: Fact Disposition**, the expert synthesis when one was produced, and the approved designs of every part in `dependsOn` as contracts to consume rather than redefine, with its draft check (`document-reviewer`, including part scope)
 4. **design-sync** → explicit-conflict check against the already-approved Design Docs of sibling parts — the `dependsOn` designs first, since a contract mismatch there is the costliest to find later. Traceability to the PRD and UXRD is the draft check's job in step 3, not design-sync's
    **[Stop: Design Doc approval — part `{part}`]**
 5. *[Conditional]* **technical-designer(-frontend)** → ADR, when a decision this design made passes the three-part test in `documentation-criteria`, with its draft check
@@ -54,37 +52,15 @@ A single-part feature runs steps 2-6 once; nothing else changes.
 
 ### Small scale
 
-No technical documents. → `workflow-execution`.
-
-## Why the ADR Comes After the Design
-
-Writing the ADR first means deciding before understanding. Which choices are genuinely architecture-binding — costly to reverse, constraining work beyond this feature, taken against real alternatives — is only visible once the design exists.
-
-So the design surfaces the decision and the ADR **extracts** it, so it outlives the feature that produced it. The Design Doc records the full reasoning; the ADR records the part future unrelated work must comply with.
-
-This means the Design Doc references **existing** ADRs as prerequisites, and any ADR written in step 5 records a decision this design made. The plan's ADR Bindings table then binds tasks to both.
-
-**Most features produce no ADR.** A decision record written for every change stops being read.
+No technical documents (`documentation-criteria`, "Creation Decision Matrix"). → `workflow-execution`.
 
 ## Why Fact Gathering Precedes Design
 
 `codebase-analyzer` and `ui-analyzer` are read-only and produce `focusAreas[]` — `fact_id`-anchored statements about existing behavior that the design must explicitly dispose of.
 
-Without them, a designer investigates ad hoc and the Design Doc records conclusions but not what was considered. A reviewer then cannot distinguish a deliberate omission from an oversight. The Fact Disposition Table makes each fact's treatment explicit: a row naming where the design handles each fact it transforms, removes, or puts out of scope, and one sentence listing the facts it preserves.
+Without them, a designer investigates ad hoc and the Design Doc records conclusions but not what was considered. A reviewer then cannot distinguish a deliberate omission from an oversight. The design's Appendix: Fact Disposition makes each fact's treatment explicit.
 
 Run them **after** any expert analysis and **before** the designer, so the designer receives both the outside perspective and the ground truth.
-
-## Document Requirements by Scale
-
-| Scale | Design Doc | ADR |
-|-------|------------|-----|
-| Small | Not needed | Not needed |
-| Medium | **Required** | Rare※ |
-| Large | **Required** | Rare※ |
-
-※ Only when a decision the design made passes all three parts of the test in `documentation-criteria`: costly to reverse, binding beyond this feature, and taken against real alternatives. Most features produce none.
-
-Scale comes from `task-analyzer`'s five-axis assessment, not file count alone. Work plans are produced in `workflow-execution`.
 
 ## Stop Points
 
@@ -117,7 +93,7 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 
 ☐ Every part in the parts list has a `design-{part}.md` approved after `design-sync` consistency verification — no part is left undesigned, and no design exists for a part not in the list
 ☐ Each part's design was approved after the designs of every part in its `dependsOn`, and consumes their contracts as written
-☐ Every `focusAreas` entry from fact gathering is disposed of in its part's Fact Disposition Table — a row for a transformed, removed, or out-of-scope fact, the preserved-facts sentence otherwise; an unaddressed fact is an unexamined behavior
+☐ Every `focusAreas` entry from fact gathering is disposed of in its part's Appendix: Fact Disposition; an unaddressed fact is an unexamined behavior
 ☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `game-ui-designer` output on the gamedev path) is covered by exactly one part's Design Doc — named by one of its Test Strategy use cases — or explicitly recorded as out of scope
 ☐ The ADR test was applied to each design and its outcome recorded — either an approved ADR, or a note that no decision passed all three parts
 ☐ Test skeletons are generated per part and their paths recorded

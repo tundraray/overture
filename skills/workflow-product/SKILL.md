@@ -28,7 +28,7 @@ This is the first phase, so its entry gate checks the session rather than a pred
 
 ## Flow
 
-The flow is the same shape at every scale — a PRD is always written — and differs in the PRD's depth and in whether a UXRD follows.
+The flow is the same shape at every scale — a PRD is always written — and differs in the PRD's depth (`documentation-criteria`, "PRD depth") and in whether a UXRD follows. Scale comes from `task-analyzer`'s five-axis assessment, not from file count alone — see `workflow-orchestration`, "Scale Determination".
 
 ### Large scale
 
@@ -65,31 +65,9 @@ A lite PRD for a two-file fix is a page, not a ceremony: it is where the accepta
 
 ## Parts
 
-A **part** is one independently designable slice of the feature; each gets its own Design Doc in the technical phase and its own plans in execution. The split is a product decision made here, because whoever splits the work also fixes where the contracts between the halves fall — and that is agreed with the user, not chosen by the first designer to open a file. Criteria and the record format are in `documentation-criteria`, "Parts".
-
-The path is the same at every scale, because the PRD is:
-
-| Step | Agent | Record |
-|------|-------|--------|
-| Propose | `requirement-analyzer` | `parts[]` — shown at the requirement confirmation stop as a preliminary split |
-| Refine | `prd-creator` | PRD, "Delivery Parts" section — the authoritative parts list |
-| Confirm | user | PRD approval stop |
+Criteria, the record format, and who proposes, refines, and confirms the split: `documentation-criteria`, "Parts".
 
 Present the split as a decision at the PRD stop, not as a line in a summary: name each part, what it covers, and what it depends on, and offer the alternative — fewer parts, or a different seam. One part is a legitimate answer and the common one; the question put to the user is whether the proposed seam is real.
-
-After confirmation, a change to the parts list re-enters this phase through `prd-creator` in `update` mode and PRD re-approval. Designs of parts the change does not touch stay approved; an already implemented part is frozen.
-
-## Document Requirements by Scale
-
-| Scale | PRD | UXRD |
-|-------|-----|------|
-| Small | **Required**, `lite` depth | Not needed |
-| Medium | **Required**, `lite` depth (update when one exists) | When frontend/UI work is involved |
-| Large | **Required**, `full` depth (new, updated, or reverse-engineered) | When frontend/UI work is involved |
-
-Depth is defined in `documentation-criteria`, "PRD depth". An existing PRD keeps its depth when updated.
-
-Scale comes from `task-analyzer`'s five-axis assessment, not from file count alone — see `workflow-orchestration`, "Scale Determination".
 
 ## Stop Points
 
