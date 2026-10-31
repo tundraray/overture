@@ -1,6 +1,6 @@
 ---
 name: mermaid-diagrams
-description: This skill governs how Mermaid diagrams in PRD, UXRD, Design Doc, ADR, and work plan documents are drawn, animated, and checked — rendering target, redraw test, four-colour palette, path animation, C1–C4 levels, runtime flow diagrams, syntax to avoid, and the render check script. Automatically loaded when creating, revising, or reviewing a document that contains Mermaid diagrams, or when "mermaid", "diagram", "схема", "C1-C4", "C4 model", "sequence diagram", "data flow diagram", or "redraw test" are mentioned.
+description: This skill governs how Mermaid diagrams in PRD, UXRD, Design Doc, and ADR documents are drawn, animated, and checked — rendering target, redraw test, four-colour palette, path animation, C1–C4 levels, runtime flow diagrams, syntax to avoid, and the render check script. Automatically loaded when creating, revising, or reviewing a document that contains Mermaid diagrams, or when "mermaid", "diagram", "схема", "C1-C4", "C4 model", "sequence diagram", "data flow diagram", or "redraw test" are mentioned.
 ---
 
 # Mermaid Diagrams
@@ -13,6 +13,7 @@ A diagram in a design document is read twice: by a human who must understand the
 
 - **Mermaid 11.x**, rendered by a browser Markdown viewer with a Mermaid plugin. Do not use Mermaid 12-only syntax.
 - The render check pins Mermaid **11.16.1** (section 8). A diagram that fails the check is broken, whatever it looks like elsewhere.
+- Verified to render on 11.16.1: expanded shapes `id@{ shape: cyl, label: "…" }`, edge IDs `A e1@--> B` with `class e1 …`, sequence `box`, typed participants `X@{ "type": "database" }`, `rect`, `autonumber`, `activate` / `deactivate`, `alt` / `else`, `Note over A,B`.
 - When unsure whether a feature renders, put it alone in a probe `.md` in the scratchpad, render it with the script, and look at the PNG. Unverified syntax does not go into a document.
 
 ## 2. Diagram first
@@ -31,6 +32,7 @@ A diagram is good when it can be redrawn from memory at a whiteboard in two minu
 - **No step codes** (`W1`, `R1`, `S3`) anywhere — not on edges, not in prose. When order matters, the step number sits in the node: `1 · ThreadsController`.
 - **Single flow direction** per diagram, the main path on a straight line, side effects off to the side, no crossing edges on the main path. If the layout engine crosses them, reorder the nodes in the source (section 7).
 - **Sequential calls are a numbered chain**, never a star fanning out of one node — a star reads as parallel branches.
+- **Shared points make one diagram.** Pictures that share a node (the same service, store, or component) are one path and become one diagram, vertical when it is long. Pictures that share nothing stay separate, and so do two independent entry points (an event that writes, a request that reads), each drawn with the shared store.
 - **Shapes carry meaning only:** box = service or component, cylinder `[( )]` = data store, stadium `([ ])` = external system or person, diamond = decision, stadium with `▶` = entry. No decorative shapes.
 
 ## 4. Palette and frontmatter
@@ -44,7 +46,7 @@ Four colours, the same meaning on screen and on a whiteboard:
 | blue | — | read path: base `#9ec1f7` 2px, lit `#1d4ed8` 6px | edge reads |
 | green | fill `#e6f4ea`, stroke `#16a34a` | — | node new |
 
-- **Change is shown by node colour only.** No `[NEW]` / `[MODIFY]` / `[READ]` text inside a diagram; tables keep the tags.
+- **Change is shown by node colour only.** No `[NEW]` / `[MODIFY]` / `[READ]` text inside a diagram.
 - No fifth colour. A risk or decision path is a dashed black edge with a label.
 - Every diagram of a document carries the **same frontmatter `config:` block**; a flowchart also sets `curve: step`:
 
@@ -147,7 +149,7 @@ Every message line in the rendered SVG carries `class="messageLine0|1"` and `dat
 
 - **The sequence diagram is the flow.** Each runtime flow has a **Starts when** line, its diagram, an **Outcome** line (result and persisted state the picture does not show), and **Failure handling** as a list.
 - **One message per step.** Every `alt` / `else` branch ends with its own return; no return follows the `end`.
-- **A store never replies.** Row state is a `Note over Writer,Store: …`, not `DB-->>Service`.
+- **A store never replies.** Row state is a `Note over Writer,Store: …`, not `DB-->>Service`. Declare the store as `participant DB@{ "type": "database" } as Postgres`, so the render check sees it.
 - **One journey shape per document.** All runtime flows of one document follow the same journey (client → api → store, note, api → client); a flow whose behaviour never reaches the store (a validation rejection, a cache hit) ends where the behaviour ends rather than drawing an access that does not happen. A reply without a request is a defect.
 - **Platform participants in a `box`**; an external system's message goes before a coloured `rect` block, never inside it (the rect stretches out of the box).
 
@@ -158,12 +160,12 @@ Every message line in the rendered SVG carries `class="messageLine0|1"` and `dat
 | `fontFamily` / `fontSize` in `themeVariables` | custom fonts are not wanted |
 | `sequence: mirrorActors: false` | lifelines end in nothing — the bottom looks cut off |
 | actor menus `link X: label @ url` | popups do not open in the viewer; on typed participants they crash 11.16.1 |
-| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. Code locations go into the **Code locations** list under the diagram as relative Markdown links |
+| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. A code path the diagram hides goes into Appendix: Evidence, "Code Inspection Evidence", as a relative Markdown link |
 | Markdown links `[x](y)` in node labels | rendered as plain text |
 | `;` inside sequence messages or notes | ends the statement → parse error |
 | `#` inside sequence text | starts a comment |
 | tooling as nodes (`pnpm build`, `prisma generate`) | noise; a build step is not runtime |
-| delivery as nodes (a migration run, a deploy, a toggle flip, a team) | diagrams draw the running system; delivery belongs in Migration Strategy and the work plan |
+| delivery as nodes (a migration run, a deploy, a toggle flip, a team) | diagrams draw the running system; delivery belongs in the work plan; a migration decision is a Key Decision |
 | a subgraph with its own `direction` that outside arrows target | every outside arrow lands on the frame edge, not on the node inside |
 | `A --> subgraphId` | routes to the border and crosses; attach to a node inside |
 | UML `classDiagram` for C4; ASCII box art for a flow or structure | fails the redraw test / not rendered. A UXRD wireframe sketch in a plain text block is the one place ASCII layout is allowed |
@@ -183,10 +185,11 @@ node check-mermaid.mjs <doc.md> <outdir>
 - On first use it installs `@mermaid-js/mermaid-cli` pinned to Mermaid 11.16.1 into `<outdir>/../mmdc` (needs `npm` and network once).
 - It extracts every Mermaid block (including indented ones), renders SVG and PNG, and fails on a syntax error.
 - It lints the source against section 7 and checks that every path flowchart has scoped keyframes and an animated class on its path edges.
-- For every sequence diagram it prints `order · data-id · from→to · delay · keyframe · text` and fails on a message without an animation rule, a rule hitting no message, delays not strictly increasing, or a reply with no earlier request. It warns when runtime flows differ in journey shape.
+- For every sequence diagram it prints `order · data-id · from→to · delay · keyframe · text` and fails on a message without an animation rule, a rule hitting no message, delays not strictly increasing, a reply with no earlier request, or a message sent by a store (a participant declared `@{ "type": "database" }`). It warns when runtime flows differ in journey shape.
+- It warns on the part of the redraw test it can count: a flowchart over its node budget (the C-level is read from the title), a node label over two lines, an edge label over four words. Warnings feed the PNG review; they do not fail the check.
 
 **Run it before declaring a document done**, and look at the PNG of at least one C-level diagram and one runtime flow. When it cannot run (no `node`/`npm`, no network for the first install), say so in the response summary — never report diagrams as checked when they were not.
 
 ## 9. Revisions
 
-A revision — after review or a user change — re-runs the render check on the whole document, not only on the diagrams that were touched: a renamed component changes C2, C3, C4, and every runtime flow it appears in. The same system keeps its place across C1, C2, and C3 after the edit.
+A revision — after review or a user change — re-runs the render check on the whole document, not only on the diagrams that were touched: a renamed component changes C2, C3, C4 when the document has one, and every runtime flow it appears in. The same system keeps its place across C1, C2, and C3 after the edit.

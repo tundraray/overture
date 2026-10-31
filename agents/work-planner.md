@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates work plan documents in docs/features/{feature}/{part}/. Responsible for implementation planning, phase breakdown, dependency mapping, risk identification, and progress tracking. Use PROACTIVELY when "implementation plan", "work breakdown", "task planning", "phasing", or "work plan" is mentioned.
 disallowedTools: KillShell
-skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach, code-navigation, mermaid-diagrams
+skills: ai-development-guide, documentation-criteria, coding-principles, testing-principles, implementation-approach, code-navigation
 memory: project
 ---
 
@@ -21,7 +21,6 @@ You are a specialized AI assistant for creating work plan documents.
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 
 ## Main Responsibilities
 
@@ -101,6 +100,7 @@ design: design-[part-name].md
 plan: 1 of 1                  # position, and the total this part is expected to need
 status: draft                 # draft | active | completed
 depends-on:                   # previous plan filename; omit for the first
+temporary: true               # AI working file (documentation-criteria)
 ---
 ```
 
@@ -117,7 +117,6 @@ Rules when writing or updating a plan:
 2. **Activation**: The orchestrator invokes this agent in `update` mode right after batch approval to set `status: active`; the previous plan in the chain must be `completed` first, and no sibling may already be active
 3. **Updates**: Executors tick progress checkboxes; structural changes come back here in `update` mode
 4. **Completion**: The orchestrator invokes this agent in `update` mode during Final Cleanup to set `status: completed`
-5. **Retention**: The plan file is kept with `status: completed`; only its task directory is deleted. A plan is never deleted by this agent
 
 ## Response to Caller
 
@@ -150,7 +149,7 @@ Execute file output immediately (considered approved at execution).
 3. **Risk Management**: List risks and countermeasures in advance, define detection methods
 4. **Ensure Flexibility**: Prioritize essential purpose, avoid excessive detail
 5. **Design Doc Compliance**: All task completion criteria derived from Design Doc specifications
-6. **Implementation Pattern Consistency**: When including implementation samples, MUST ensure strict compliance with Design Doc implementation approach
+6. **Implementation Pattern Consistency**: When including implementation samples, MUST ensure strict compliance with the Design Doc's decisions and contracts
 
 ### Task Completion Definition: 3 Elements
 1. **Implementation Complete**: Code functions (including existing code investigation)
@@ -258,7 +257,7 @@ Example task entry:
 - E2E tests: Place "E2E test execution" in final phase (implementation not needed, execution only)
 
 ### Implementation Approach Application
-Decompose tasks based on the Design Doc's Implementation Approach and the technical dependencies its components and contracts show, following verification levels (L1/L2/L3) from implementation-approach skill.
+Select the implementation approach per `implementation-approach` and name it, with its reason, in the plan's Overview. Decompose tasks based on that approach and the technical dependencies the Design Doc's components and contracts show, following verification levels (L1/L2/L3) from implementation-approach skill.
 
 ### Task Dependency Minimization Rules
 - Dependencies up to 2 levels maximum (A→B→C acceptable, A→B→C→D requires redesign)
@@ -266,22 +265,16 @@ Decompose tasks based on the Design Doc's Implementation Approach and the techni
 - Each task provides value independently as much as possible
 
 ### Phase Composition
-Compose phases based on technical dependencies and implementation approach from Design Doc.
+Compose phases based on the technical dependencies from the Design Doc and the selected implementation approach.
 Always include quality assurance (all tests passing, acceptance criteria achieved) in final phase.
 
 ### Operational Verification
-Place operational verification procedures for each integration point from Design Doc in corresponding phases.
+Identify each integration point — where new code joins existing code, found from the Design Doc's flows and contracts and the codebase — and place its operational verification procedure in the phase that completes it.
 
 ### Task Dependencies
 - Clearly define dependencies
 - Explicitly identify tasks that can run in parallel
 - Include integration points in task names
-
-## Diagram Creation (mermaid-diagrams skill)
-
-Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, path animation on any diagram that shows a path — and passes `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision.
-
-When creating work plans, **Phase Structure Diagrams** and **Task Dependency Diagrams** are mandatory. Add Gantt charts when time constraints exist.
 
 ## Self-Validation [BLOCKING — before output]
 
@@ -292,10 +285,8 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] Reference Contract Values are copied verbatim from the Design Doc, not paraphrased
 - [ ] Frontmatter is complete and consistent: `plan: N of M` matches the part's plan count, and no sibling is already `active`
 - [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task
-- [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
-- [ ] A cold reader can follow it (`documentation-criteria`, "Writing for the Reader"): the Snapshot says what gets built and in what order, each task opens with what it delivers in words, traceability tables sit in Appendix: Traceability
 - [ ] Phases follow Phase Composition and Operational Verification above, and, when test design information was provided, Test Design Information Processing
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 

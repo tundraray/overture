@@ -80,7 +80,7 @@ The path is the same at every scale, because the PRD is:
 
 Present the split as a decision at the PRD stop, not as a line in a summary: name each part, what it covers, and what it depends on, and offer the alternative — fewer parts, or a different seam. One part is a legitimate answer and the common one; the question put to the user is whether the proposed seam is real.
 
-After confirmation, a change to the parts list re-enters this phase through `prd-creator` in `update` mode and PRD re-approval. Designs of parts the change does not touch stay approved; a part whose plan is `completed` is frozen.
+After confirmation, a change to the parts list re-enters this phase through `prd-creator` in `update` mode and PRD re-approval. Designs of parts the change does not touch stay approved; an already implemented part is frozen.
 
 ## Document Requirements by Scale
 
@@ -118,7 +118,7 @@ Requirements change mid-flow. Detecting that early is cheaper than discovering i
 - Changed technical requirements (processing method, output format)
 - A change to which parts exist or what they cover — a PRD change, through `prd-creator` in `update` mode and PRD re-approval
 
-Restart from `requirement-analyzer` with the integrated requirements rather than patching the current document. A change that arrives during execution is applied as `workflow-execution`, "Resuming after a stop that changes documents", describes. Two things survive a restart: a part whose plan is `completed` is **frozen** (its code is committed; a change to it is a new feature), and a part whose requirements the change does not touch keeps its approved design.
+Restart from `requirement-analyzer` with the integrated requirements rather than patching the current document. A change that arrives during execution is applied as `workflow-execution`, "Resuming after a stop that changes documents", describes. Two things survive a restart: an already implemented part is **frozen** (its code is committed; a change to it is a new feature), and a part whose requirements the change does not touch keeps its approved design.
 
 ## Revision Loop
 

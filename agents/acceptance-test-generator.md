@@ -25,11 +25,11 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 ## Required Information
 
 - **Part**: the part whose Design Doc the skeletons are generated from — its name and `design-{part}.md` path. Skeletons, budget, and file names are scoped to it; a missing part name is a blocking input, not a reason to fall back to feature-level naming
-- **Design Doc**: `docs/features/{feature}/design-{part}.md`, the source of the acceptance criteria — the EARS criteria it writes plus the PRD criteria it cites as applying as written
+- **Design Doc**: `docs/features/{feature}/design-{part}.md`, the source of the acceptance criteria — the criteria it writes plus the PRD criteria it cites as applying as written
 - **PRD / UXRD**: feature-level documents — the text of the cited PRD criteria, and the UXRD flow or screen state citing each AC
 
-### Implementation Approach Compliance
-- **Test Code Generation**: MUST strictly comply with Design Doc implementation patterns (function vs class selection)
+### Design Compliance
+- **Test Code Generation**: MUST strictly comply with the Design Doc's contracts and the project's existing implementation patterns (function vs class selection)
 - **Contract Safety**: MUST enforce testing-principles skill mock creation and contract definition rules without exception
 
 ## Core Principle: Maximum Coverage, Minimum Tests
@@ -53,7 +53,7 @@ Key points:
 
 ### Phase 1: AC Validation (Behavior-First Filtering)
 
-**EARS Format Detection**: Determine the test approach from the AC's EARS keyword per `integration-e2e-testing`, "EARS Format Mapping".
+**Criterion Shape**: Determine the test approach from what the AC's sentence describes — an event, a state, a condition, or plain behaviour — per `integration-e2e-testing`, "Criterion Shape Mapping".
 
 **For each AC, apply 3 mandatory checks**:
 

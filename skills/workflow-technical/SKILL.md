@@ -105,7 +105,7 @@ The same applies to `design-sync`: it reads the Design Docs on disk, not an acco
 
 ## Part Sequencing
 
-Parts are designed in dependency order, each to approval before the next begins. When a feature spans layers this means the backend part reaches approval **before** the frontend part is designed: the frontend designer then reads a verified contract instead of a proposed one, and can flag anything still unstable in its Cross-Layer Assumptions.
+Parts are designed in dependency order, each to approval before the next begins. When a feature spans layers this means the backend part reaches approval **before** the frontend part is designed: the frontend designer then reads a verified contract instead of a proposed one, and records anything still unstable as an open question against the upstream design.
 
 The same holds for any `dependsOn` edge — a domain part consuming another domain's events, a feature part building on a migration part. The upstream design is the contract; the downstream design consumes it and does not restate or alter it. When the downstream design finds the contract insufficient, that is a revision of the upstream design through its own revision loop, not a redefinition inside the downstream one.
 

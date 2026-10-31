@@ -15,7 +15,10 @@
  *     names unique across the document (section 5)
  *   - sequence diagrams: every message has an animation rule, no rule hits a
  *     missing message, delays strictly increase, no reply without an earlier
- *     request; warns when runtime flows differ in journey shape (sections 5-6)
+ *     request, no message sent by a store; warns when runtime flows differ in
+ *     journey shape (sections 5-6)
+ *   - redraw test (warnings): node budget per C-level, node labels over two
+ *     lines, edge labels over four words (section 3)
  *
  * Exits 1 on any problem. Dependency-free apart from mermaid-cli itself.
  */
@@ -161,7 +164,58 @@ for (const b of blocks) {
   }
 
   const kind = (body.match(/^\s*(\w[\w-]*)/m) || [])[1];
-  if (kind === 'flowchart' || kind === 'graph') checkFlowchart(b, body);
+  if (kind === 'flowchart' || kind === 'graph') {
+    checkRedraw(b, body);
+    checkFlowchart(b, body);
+  }
+  if (kind === 'sequenceDiagram') checkStoreReplies(b, body);
+}
+
+// Redraw test (section 3): node budget per level, label length. Warnings — the
+// reviewer looks at the PNG and decides.
+function checkRedraw(b, body) {
+  const title = (b.src.match(/^\s*title:\s*"?([^"\n]*)/m) || [])[1] ?? '';
+  const level = (title.match(/^C([1-4])\b/) || [])[1];
+  const budget = { 1: 6, 2: 8, 3: 10, 4: 10 }[level] ?? 10;
+  const SKIP = /^(subgraph|end|classDef|class|style|linkStyle|click|direction|flowchart|graph)\b/;
+  const nodes = new Set();
+  for (const raw of body.split('\n')) {
+    const line = raw.replace(/%%.*$/, '').trim();
+    if (!line || SKIP.test(line)) continue;
+    for (const m of line.matchAll(/\[\s*"([^"]*)"\s*\]|\(\s*"([^"]*)"\s*\)|\{\s*"([^"]*)"\s*\}/g)) {
+      const label = m[1] ?? m[2] ?? m[3];
+      const lines = label.split(/<br\s*\/?>/i).length;
+      if (lines > 2) warnings.push(`${b.label}: node label "${label.replace(/<[^>]+>/g, ' ').slice(0, 40)}" has ${lines} lines — a name plus one role line`);
+    }
+    for (const m of line.matchAll(/\|\s*"?([^|"]*)"?\s*\||(?:--|-\.|==)\s+"?([^"\->=.|]+?)"?\s+(?:-->|\.->|==>|---)/g)) {
+      m[1] ??= m[2];
+      const words = m[1].replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+      if (words > 4) warnings.push(`${b.label}: edge label "${m[1].trim()}" has ${words} words — 1–4 domain words`);
+    }
+    const ids = line
+      .replace(/"[^"]*"/g, '""')
+      .replace(/\|[^|]*\|/g, ' ')
+      .replace(/(?:--|-\.|==)\s+[^\->=.]+?\s+(?:-->|\.->|==>|---)/g, ' --> ')
+      .replace(/:::[\w-]+/g, '')
+      .replace(/@\{[^}]*\}/g, '[]')
+      .replace(/\[[^\]]*\]|\([^)]*\)|\{[^}]*\}/g, ' ')
+      .replace(/\b\w+@(?=[-=.~])/g, ' ');
+    for (const m of ids.matchAll(/[A-Za-z_]\w*/g)) nodes.add(m[0]);
+  }
+  if (nodes.size > budget) {
+    warnings.push(`${b.label}: ${nodes.size} nodes, budget ${budget}${level ? ` for C${level}` : ''} — split it${level === '4' ? ' (one long C4 chain may exceed it if it stays readable)' : ''}`);
+  }
+}
+
+// A store never replies (section 6): a database participant sends no message.
+function checkStoreReplies(b, body) {
+  const stores = new Set(
+    [...body.matchAll(/^\s*participant\s+(\w+)@\{[^}]*["']?type["']?\s*:\s*["']database["']/gm)].map((m) => m[1]),
+  );
+  if (stores.size === 0) return;
+  for (const m of body.matchAll(/^\s*(\w+)\s*(?:-->>|->>|-->|->|--x|-x|--\)|-\))\s*[+-]?\s*(\w+)\s*:/gm)) {
+    if (stores.has(m[1])) problems.push(`${b.label}: store ${m[1]} sends a message to ${m[2]} — describe row state with a Note over the writer and the store`);
+  }
 }
 
 function checkFlowchart(b, body) {

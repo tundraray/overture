@@ -1,6 +1,10 @@
+---
+temporary: true
+---
+
 # Task: [Task Name]
 
-<!-- Written in the plan's language, in sentences rather than telegrams ("Writing for the Reader" in documentation-criteria); headings stay as written, because the executor finds sections by them, and values copied verbatim stay verbatim. Guidance in these comments and in parenthesized "Include when" notes is not copied into the task. -->
+<!-- Temporary AI working file — not in git, deleted after the feature ships; it states exactly what the work plan and the documentation state. Written in the plan's language; headings stay as written, because the executor finds sections by them, and values copied verbatim stay verbatim. Guidance in these comments and in parenthesized "Include when" notes is not copied into the task. -->
 
 Metadata:
 - Dependencies: task-01 → Deliverable: {plan-dir}/analysis/research-results.md

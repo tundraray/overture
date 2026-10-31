@@ -101,7 +101,7 @@ Select optimal solution from basic implementation approaches (creative combinati
 **Application Conditions**: Unclear requirements, need to change approach per phase, transition from prototyping to full implementation
 **Verification Method**: Verify at appropriate L1/L2/L3 levels according to each phase's goals
 
-The decision is recorded as one line in the Design Doc's Implementation Approach (the approach and its reason); implementation order and per-task verification levels belong to the work plan.
+The decision is recorded as one line in the work plan's Overview (the approach and its reason), together with the implementation order and per-task verification levels.
 
 ## Verification Level Definitions
 

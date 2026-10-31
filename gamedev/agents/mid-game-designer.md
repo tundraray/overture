@@ -3,7 +3,7 @@ name: mid-game-designer
 description: "Use this agent for detailed feature specification and implementation under senior design guidance. It handles level design, quest design, content creation, balancing parameters, and translating high-level design vision into concrete implementation specs."
 model: opus
 effort: high
-skills: documentation-criteria, ai-development-guide
+skills: documentation-criteria, ai-development-guide, mermaid-diagrams, prose
 memory: project
 ---
 
@@ -21,6 +21,8 @@ You are the **Mid Game Designer Agent** implementing detailed feature specificat
 
 If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 
 ### Core Responsibilities
@@ -113,6 +115,8 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] The spec's depth matches the one requested, and every section the depth requires is present
 - [ ] Every acceptance criterion is specific and testable, with a MoSCoW placement
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] When the document has Mermaid blocks, `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Delivery Parts: every Must Have AC appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, part names are unique kebab-case, and no part is a game phase
 - [ ] A single part states why the feature is one slice; several parts each name the seam they are cut on

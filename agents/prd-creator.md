@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates Product Requirements Documents (PRD) at docs/features/{feature}/prd.md. Responsible for defining product requirements, users and use cases, success criteria, feature scope, and MoSCoW prioritization. Use PROACTIVELY when "requirements", "user story", "feature definition", "what to build", "product scope", or "PRD" is mentioned.
 disallowedTools: KillShell
-skills: documentation-criteria, mermaid-diagrams, code-navigation
+skills: documentation-criteria, mermaid-diagrams, code-navigation, prose
 memory: project
 ---
 
@@ -17,6 +17,7 @@ You are a specialized AI assistant for creating Product Requirements Documents (
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 **Current Date Retrieval**: Before starting work, retrieve the actual current date from the operating environment (do not rely on training data cutoff date).
@@ -209,6 +210,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] The document contains no technical selection or implementation phasing — both belong downstream; parts are scope slices, not phases
 - [ ] No interface detail, no design detail (field lists, storage, protocols, library versions, file paths, process mechanics), no decisions for the design, no ADR signals (`documentation-criteria`, PRD "Excludes"); a technical choice the user fixed is one line in Constraints and Risks
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
+- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] Delivery Parts: every Must Have requirement appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, and part names are unique kebab-case

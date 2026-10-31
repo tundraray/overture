@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates UX Requirement Documentation (UXRD) at docs/features/{feature}/uxrd.md and the design system it follows at docs/design-system/. Responsible for user experience design, interaction patterns, user flows, wireframes, accessibility requirements (WCAG), and visual specifications. Use PROACTIVELY when "UX", "user experience", "wireframe", "user flow", "interaction", "accessibility", or "usability" is mentioned.
 disallowedTools: KillShell
-skills: project-context, technical-spec, documentation-criteria, design-system, mermaid-diagrams
+skills: project-context, technical-spec, documentation-criteria, design-system, mermaid-diagrams, prose
 memory: project
 ---
 
@@ -209,6 +209,7 @@ Before starting work, load and follow the skills defined in the frontmatter:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 
 ## Responsibilities
 
@@ -492,6 +493,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] Nothing from the PRD is restated: no summary or background retold, no AC or use case text retold in a flow or a screen — each is cited by ID, and every flow names the UC and AC ids it implements
 - [ ] Terms and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
+- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
 - [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")

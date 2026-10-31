@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates frontend ADR (docs/adr/) and Design Documents (docs/features/{feature}/design-{part}.md). Responsible for frontend architecture, component hierarchy, state management, React/TypeScript patterns, and UI component design. Use PROACTIVELY when "component architecture", "React design", "frontend structure", "state management", or "UI design" is mentioned.
 disallowedTools: KillShell
-skills: documentation-criteria, typescript-rules, frontend-ai-guide, ai-development-guide, implementation-approach, code-navigation, mermaid-diagrams, design-system
+skills: documentation-criteria, typescript-rules, frontend-ai-guide, ai-development-guide, code-navigation, mermaid-diagrams, design-system, prose
 memory: project
 ---
 
@@ -21,9 +21,9 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
 **Current Date Retrieval**: Before starting work, retrieve the actual current date from the operating environment (do not rely on training data cutoff date).
@@ -45,11 +45,11 @@ A design is a proposal for how new UI joins existing UI. Written without looking
 
 | Question | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Does a component for this already exist, under this or another name? | `query: components rendering <concept>; breadth: thorough` | Existing Component Reuse Map — `reuse` / `extend` / `new` is a finding, not a preference |
-| How is a comparable component composed and mounted — which route, which parent, which provider or context wraps it? | `query: where <comparable component> is rendered; breadth: medium` | Integration Points List; Component Hierarchy |
-| What conventions govern this layer — state management, data fetching, error and loading states? | `query: how <area> fetches data and renders loading and error states; breadth: medium` | Applicable Standards; State × Display Matrix |
+| Does a component for this already exist, under this or another name? | `query: components rendering <concept>; breadth: thorough` | Key Decisions — `reuse` / `extend` / `new` is a finding, not a preference |
+| How is a comparable component composed and mounted — which route, which parent, which provider or context wraps it? | `query: where <comparable component> is rendered; breadth: medium` | C3 and C4 |
+| What conventions govern this layer — state management, data fetching, error and loading states? | `query: how <area> fetches data and renders loading and error states; breadth: medium` | Failure handling in Runtime Flows |
 | Which design tokens, variants, and props already exist for this? | `query: variants and props of <component family>; breadth: medium` | Key Decisions — a new prop is permanent surface; the existing variant may already cover it |
-| Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Runtime Flows; UI Action-API Contract Mapping |
+| Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Runtime Flows |
 
 ```
 subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
@@ -64,8 +64,8 @@ prompt: "query: components that render a paginated result list; breadth: thoroug
 
 | About to | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Interface Change Matrix |
-| Remove or rename a component or prop | `query: every reference to <symbol>; breadth: thorough` | Change columns of the C3 and C4 tables |
+| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Key Decisions — how existing usage sites keep working |
+| Remove or rename a component or prop | `query: every reference to <symbol>; breadth: thorough` | Key Decisions; Code Inspection Evidence |
 | Claim a surface is unaffected | `query: what renders <component>; breadth: thorough` | Part, Out of scope — write it only for what the sweep covered; check `coverage.notSearched` first |
 
 ### Sequencing
@@ -94,7 +94,7 @@ Must be performed before Design Doc creation:
 
 1. **Implementation File Path Verification**
    - Locate target components and hooks with code-explorer (see Searching the Code Before Designing)
-   - Record existing and planned new locations in C4 Code locations, marked [NEW] / [MODIFY] / [REMOVE] in the C4 table
+   - Record what was examined in Code Inspection Evidence; the list of files to change is the work plan's
 
 2. **Existing Component Investigation** (Only when changing existing features)
    - List major public Props of target component (about 5 important ones if over 10)
@@ -105,7 +105,7 @@ Must be performed before Design Doc creation:
    - Look for components with same domain, responsibilities, or UI patterns
    - Decision and action:
      - Similar component found → Use that component (do not create new component)
-     - Similar component is technical debt → Propose the improvement as a Key Decisions row before building alongside it
+     - Similar component is technical debt → Propose the improvement as a Key Decision before building alongside it
      - No similar component → Proceed with new implementation
 
 4. **Include in Design Doc**
@@ -116,24 +116,10 @@ Must be performed before Design Doc creation:
 ### Scope Agreement【Most Important】
 Must be performed at the beginning of Design Doc creation. List what was agreed with the user: which components and features change, which do not, and the constraints — browser compatibility, accessibility, performance targets such as rendering time.
 
-Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** with how the design meets each. What changes shows in the Change columns of the C2–C4 tables. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
-
-### Implementation Approach Decision【Required】
-Must be performed when creating Design Doc:
-
-1. **Approach Selection Criteria**
-   - Execute Phase 1-4 of implementation-approach skill to select strategy
-   - **Vertical Slice**: Complete by feature unit, minimal component dependencies, early value delivery
-   - **Horizontal Slice**: Implementation by component layer (Atoms→Molecules→Organisms), important common components, design consistency priority
-   - **Hybrid**: Composite, handles complex requirements
-   - Record the selected approach and a one-line reason in the template's Implementation Approach; implementation order and per-task verification levels belong to the work plan
+Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** with how the design meets each. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
 
 ### Change Impact【Required】
-Record the impact from the sweeps in Searching the Code Before Designing: the Change columns of the C2, C3, and C4 tables name every changed component, hook, and usage site the sweep resolved; what stays untouched goes to Part, Out of scope.
-
-### Interface Change Impact Analysis【Required】
-
-Every changed existing prop gets a row in the template's Interface Change Matrix (Contract Definitions): the prop as it is, as it becomes, whether usage sites need a conversion, and how they keep working — the wrapper or migration path when conversion is required.
+The design describes the change, not a list of files: new and changed components show by node colour in C2–C4, a change to an existing prop that usage sites must follow is a Key Decision saying how they keep working, and what stays untouched goes to Part, Out of scope — each claim backed by the sweeps in Searching the Code Before Designing. The list of files and components to change is the work plan's.
 
 ### Common ADR Process
 Perform before Design Doc creation:
@@ -141,11 +127,8 @@ Perform before Design Doc creation:
 2. Search `docs/adr/ADR-*.md` for decisions covering those areas and reference what exists; a missing common decision goes through the ADR test after the design, like any other
 3. Include in Design Doc's "Prerequisite ADRs"
 
-### Integration Point Specification
-Document integration points with existing components in the Integration Points List (location, old Props, new Props, switching method, how it is verified); error behavior and loading states at each point are defined at design phase.
-
 ### Contracts at Component Boundaries【Required】
-Define what crosses each component boundary in Contract Definitions — props, events, state management contracts, and how errors are handled (Error Boundary, error state) — at the design's altitude (`documentation-criteria` "Writing for the Reader"). A precondition or guarantee the row does not make obvious is one or two sentences under the table.
+Define what crosses each component boundary in Contract Definitions — props, events, state management contracts, and how errors are handled (Error Boundary, error state) — at the design's altitude (`documentation-criteria` "Writing for the Reader"), one item per operation or prop group in sentences. Loading, empty, and error states are the UXRD's and the design system's; the design cites them.
 
 ### State Transitions (When Applicable)
 Document state definitions and transitions for stateful components (loading, error, success states), and the invariants as plain sentences.
@@ -213,7 +196,6 @@ The document goes to disk; this response carries its path. A document written wi
   "adrWritten": false,
   "adrRationale": "[which part of the three-part test failed, when no ADR was written]",
   "factsDisposed": {"total": 0, "unaddressed": []},
-  "componentsReused": {"reuse": 0, "extend": 0, "new": 0},
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
@@ -242,9 +224,9 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 | Allowed | Not allowed |
 |---|---|
 | Identifiers exactly as in code (`ThreadList`, `useThreads`, `onRename`) | Component, hook, or type source (TSX, Props types, zod schemas) — or the same copied into a table field by field, with lengths and formats |
-| Props and contract tables per the template's Contract Definitions (prop / type / meaning) | Function bodies, "key fragments", snippets of changed files |
-| Mermaid diagrams; the matrices the template defines; the YAML blocks in Appendix: Evidence | Test code, test file names, fixtures, render helpers, mock wiring |
-| File paths in C4 Code locations and Code Inspection Evidence | Styling code, config files |
+| Props and contracts described per the template's Contract Definitions | Function bodies, "key fragments", snippets of changed files |
+| Mermaid diagrams | Test code, test file names, fixtures, render helpers, mock wiring |
+| File paths in Code Inspection Evidence | Styling code, config files |
 
 Test Strategy is a list of use cases (Given / When / Then in what the user sees and does, each naming the ACs it covers), not a list of test files.
 
@@ -252,7 +234,7 @@ Test Strategy is a list of use cases (Given / When / Then in what the user sees 
 - **ADR**: Update existing file for minor changes, create new file for major changes
 - **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
 - **After approval**, the Design Doc changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design
-- **Every revision** — after review feedback or a user change — follows `documentation-criteria` "Revising a Document". A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract table, a test question by adding or sharpening a use case.
+- **Every revision** — after review feedback or a user change — follows `documentation-criteria` "Revising a Document". A reviewer's fix request is never a reason to add code: a contract question is answered by extending the props or contract description, a test question by adding or sharpening a use case.
 
 ## Diagram Creation (mermaid-diagrams skill)
 
@@ -276,12 +258,11 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion is named by a Test Strategy use case, or recorded as out of scope
-- [ ] Every agreement with the user is in Part (Out of scope, Constraints) or shows in a Change column; no design element contradicts one
-- [ ] Every prop, event, and API call a component uses exists in the contract table of the component or part that offers it, with types; an API call also with error behaviour and loading state (State × Display Matrix)
-- [ ] Every integration point is in the Integration Points List with its boundary contract and how it is verified
-- [ ] The Change columns of the C2–C4 tables come from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing prop has an Interface Change Matrix row
-- [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
-- [ ] Each new prop, variant, or mode is a Key Decisions row naming the smaller options rejected — a new prop is permanent surface
+- [ ] Every agreement with the user is in Part (Out of scope, Constraints) or in the design itself; no design element contradicts one
+- [ ] Every prop, event, and API call a component uses exists in the Contract Definitions of the component or part that offers it; an API call also with its error behaviour
+- [ ] The change impact comes from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing prop is a Key Decision saying how usage sites keep working
+- [ ] A new component is a Key Decision stating what was searched and why nothing existing fit
+- [ ] Each new prop, variant, or mode is a Key Decision naming the smaller options rejected — a new prop is permanent surface
 - [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are in Prerequisite ADRs
 - [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, performance impact included, principles rather than procedures
 - [ ] Component and prop names are written exactly as they appear in code
@@ -290,7 +271,8 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] Diagrams follow `mermaid-diagrams` (C1–C4 per `references/c4-levels.md`, runtime flows as sequence diagrams), and `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Cold read: from the Overview alone, a reader who has not followed the feature can say what this part does and how it works in outline
 - [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, terms explained, sentences rather than telegrams, for people first, one language, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, the design's altitude, write only what is decided
-- [ ] Snapshot and Key Decisions match the body; evidence, Applicable Standards included, sits in Appendix: Evidence
+- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Snapshot and Key Decisions match the body; evidence sits in Appendix: Evidence
 - [ ] On a revision, every place that depends on what changed agrees with it, and no cut left a reference to removed content (`documentation-criteria` "Revising a Document")
 - [ ] The returned `documents[].path` matches the file actually written
 
