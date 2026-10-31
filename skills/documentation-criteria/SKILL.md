@@ -67,7 +67,7 @@ A document is read far more often than it is written, and most readers stop afte
 
 **The reader is cold.** They know the product and the codebase in general, but not this feature, and they read without the author or the conversation that produced the document — a teammate, the user at an approval stop, the implementer months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
 
-**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
+**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Fact Disposition** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
 **Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with three to seven **Key Decisions** — in a Design Doc a `KD-n` heading with a paragraph of why and the options not taken, in a UXRD a table — not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
 
@@ -85,26 +85,53 @@ A document is read far more often than it is written, and most readers stop afte
 
 **One language.** The document is written in the project's document language. Section headings keep the template's wording, because other documents and agents link to them by anchor; everything under a heading — labels, table headers, text — is in the document's language.
 
-**Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
+**Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". A list citing PRD requirements or criteria by ID only (Covers, From the PRD, a flow's "for") is allowed. Each ID is defined in exactly one place and cited everywhere else.
 
-**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
+**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6"; a UXRD element is cited by its ID (TH-10), not by its section number. A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
 
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
 - **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit. The one exception is a work plan's Reference Contract Values, which copy a binding value verbatim next to its source because the executor reads the task without the design open.
 - **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
-- **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Field lengths and sizes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. A limit is written only when a requirement sets it or another part relies on it.
-- **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
+- **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Storage lengths and sizes no caller observes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. An exact value a caller or test observes at the contract — a limit, an enum value, a status code, a timeout, a setting's name and default — is written as it is; the work plan's Reference Contract Values copy it.
+- **No references that go stale on their own.** No line numbers into another document or the codebase, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
+**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (appendix included), ADR 10 000. Over the target, the author merges restated content into a citation — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
 
 ## Revising a Document
 
 An edit is finished when nothing else still says the old thing. Most findings on a re-review sit not in the edited lines but in the places that relied on them.
 
+- **Bounds.** A revision edits only the finding's span and the passages that depend on it; every other passage stays byte-for-byte. A sound paragraph reworded in passing is how a revision breaks a section that already passed review.
+- **One write per region.** The change to a region — a section, a table, a diagram — is composed whole and written in one Write or Edit, not built up by a run of small edits.
 - **Dependents.** After an edit, find every place that cites, depends on, or restates what changed in this document, and make it agree. A dependent in another document — found by searching for the changed IDs — is named in the response (`nextSteps`), not edited; the orchestrator routes it to its owner.
 - **Cuts.** Removing or merging content leaves no reference pointing at what was removed. Passages that share words but make different claims are not duplicates, and both stay.
-- **Self-check scope.** A new document, or a change to sections, numbering, or IDs, runs the author's whole Self-Validation. A targeted edit runs the items whose subject it touched, plus the dependents check above; the diagram render check runs on every revision.
+- **Self-check scope.** A new document settles every item of the author's Self-Validation while it is composed, before the Write; after the Write the items are a check, not an edit pass. A change to sections, numbering, or IDs checks every item again, and a targeted edit checks the items whose subject it touched, plus the dependents check above. The diagram render check runs on every revision.
+
+## Draft Check
+
+Before it returns, the author has its written document read cold by `document-reviewer`. Most review findings are visible from the author's own inputs to a reader who did not write the text, so the author catches them before the stop instead of after it. This applies to the authors of a PRD, UXRD, Design Doc, ADR, and work plan, and in gamedev of a GDD and Feature Spec too; the gamedev UXRD (`game-ui-designer`) has none. Task files and the simplified plan (`design: none`, at small scale and in gamedev Prototype) have no draft check. Neither has a document whose caller reviews it itself — the reverse-engineering generation loops, or a change to several documents reviewed as one set: the caller's prompt says `draft_check: skip`, and the author returns `"verdict": "skipped"`.
+
+1. **Creation.** The author composes the whole document, writes it once to its path, and runs the checks it already runs on the written file, such as the diagram render check. It then spawns the reviewer with coordinates only: `target` (the document path, and for a UXRD the design-system files written with it), `doc_type`, `depth` for a PRD or Feature Spec, and `review_scope: full`. No summary, rationale, or self-assessment goes with them, because the reviewer reads cold.
+2. **Update or revision.** Before the first edit, the author copies the current version out of the repository with the shell — `cp docs/features/{feature}/prd.md <scratchpad>/prd.base.md`, where `<scratchpad>` is the session's scratchpad directory. The document guard allows a copy whose destination is outside the repository. After its edits the author spawns the reviewer with the same coordinates, `review_scope: changes`, `diff_base` set to the copy, and the issues the revision was asked to fix, if any.
+3. **One round.** The author fixes the `critical` and `important` issues its inputs resolve, one Edit per region within the bounds of "Revising a Document", and does not run the reviewer again. Issues that need a user decision (scope, product judgment), `recommended` issues, and `deferred` findings are returned, not acted on.
+4. **Return.** The author's JSON response gains a `draftCheck` field. Every finding the reviewer returned appears in `fixed` or in `open`; none is dropped.
+
+   ```json
+   "draftCheck": {
+     "verdict": "<reviewer status> | not_run | skipped",
+     "fixed": ["<issue id: one line>"],
+     "open": [{"severity": "...", "issue": "...", "why_open": "needs user decision | recommended | deferred | could not resolve"}]
+   }
+   ```
+
+The reviewer is spawned like any helper, two levels below the main conversation:
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+```
+
+It owns no document and spawns nothing, so the guard's rule against one owner spawning another does not apply. When the Agent tool is unavailable, the author returns `"verdict": "not_run"` with the reason, and the orchestrator offers an independent review at the stop as the recommended option.
 
 ## Detailed Document Definitions
 
@@ -121,15 +148,14 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Success criteria — how, after release, the goal is seen to be reached
 - Constraints and risks at product level — constraints, the assumptions the decision rests on, product risks
 - **Delivery Parts** — the partition of the requirements into independently designable slices, each with the requirements it covers and the parts it depends on (see "Parts" below)
-- User journey diagram (full depth)
 - Part dependency diagram (three or more parts, at either depth)
 
 **PRD depth**:
 
 | Depth | When | Sections |
 |-------|------|----------|
-| `full` | Large scale | Every template section, including Constraints and Risks and the user journey diagram |
-| `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Constraints and Risks when the feature has any, Undetermined Items while any remain. The Appendix and the user journey diagram are omitted |
+| `full` | Large scale | Every template section, including Constraints and Risks |
+| `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Constraints and Risks when the feature has any, Undetermined Items while any remain |
 
 A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. `document-reviewer` receives the depth and applies Gate 0 accordingly. An existing PRD is updated rather than duplicated, at whatever depth it already has.
 
@@ -146,7 +172,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 **Purpose**: Specify what the user sees and does for the PRD's requirements that have a user-visible surface. Written when the work has a UI surface, after PRD approval.
 
 **Includes**:
-- AC coverage: each user-visible PRD acceptance criterion cited by ID in the flow or screen state that delivers it; one not delivered here is listed in the appendix with the reason
+- AC coverage: each user-visible PRD acceptance criterion cited by ID in the flow or screen state that delivers it
 - Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the PRD use cases it implements
 - Screens: wireframe, layout, and the screen's own states (loading, empty, error)
@@ -188,7 +214,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 - Principled implementation guidelines (e.g., "Use dependency injection")
 
 **Excludes**:
-- Implementation schedule, duration (→Work Plan)
+- Implementation schedule (→Work Plan)
 - Detailed implementation procedures (→Design Doc)
 - Specific code examples (→Design Doc)
 - Resource assignments (→Work Plan)
@@ -198,7 +224,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 **Purpose**: Describe, for a person reading top to bottom, how the part works and why it is built that way
 
 **Includes**:
-- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence)
+- **Existing codebase analysis** (required): the facts it yielded that the design transforms, removes, or puts out of scope, one row each in the Fact Disposition Table; preserved facts in one sentence
 - Key decisions, each with the options not taken — a breaking change to an existing contract, and a data migration, are decisions
 - Interface and contract definitions
 - Data flow and component design
@@ -210,7 +236,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
 - Test code, test file names, fixtures, test helpers, mock boundaries (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
-- Implementation order and approach, the files to change, integration points and how each is verified, the verification strategy, when to implement, duration (→Work Plan)
+- Implementation order and approach, the files to change, integration points and how each is verified, the verification strategy, when to implement (→Work Plan)
 - Who will implement (→Work Plan)
 
 ### Work Plan
@@ -219,7 +245,6 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 **Includes**:
 - Task breakdown and dependencies (maximum 2 levels)
-- Schedule and duration estimates
 - Implementation approach (vertical/horizontal/hybrid), and the integration points where new code joins existing code
 - Verification: what correctness means for the part and how it is proven, the early verification point and the task that runs it, and each phase's operational verification
 - **A final Quality Assurance phase (required)**
@@ -247,9 +272,9 @@ Each step names the evidence that must exist before the next step starts. A step
 - *Output evidence*: every mandatory template section filled (or answered in one line with the reason), every *when applicable* section that does not apply deleted; every acceptance criterion measurable
 - *Transition*: proceed when no section is silently empty — an unanswered question is not the same as an inapplicable one
 
-**4. Approval** — "Approved" after review enables implementation (an ADR's status becomes `Accepted`)
-- *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
-- *Transition*: implementation begins only on an approved verdict
+**4. Approval** — the user's approval at the stop enables implementation (an ADR's status becomes `Accepted`)
+- *Output evidence*: the draft check's verdict recorded; every blocking issue fixed or listed in `draftCheck.open` for the user
+- *Transition*: implementation begins only on the user's approval
 
 ## Storage Locations
 
@@ -337,7 +362,7 @@ Keep **one part** when the requirements share one layer and one domain and a sin
 - **Every Must Have requirement belongs to exactly one part.** Should Have and Could Have requirements belong to a part or are explicitly deferred. A requirement in no part is work that silently does not happen; one in two parts is designed twice.
 - **Dependencies are acyclic, and design order is dependency order.** A part is designed only after every part in its `dependsOn` has an approved design, so its designer reads a verified contract rather than a proposed one.
 - **PRD and UXRD sit at feature level.** They describe the feature as a whole; the parts list is a section of the PRD, not a reason to split the PRD. A UI part reads the feature's single `uxrd.md`.
-- **Changing the parts list is a PRD change.** It goes through `prd-creator` in `update` mode and back through PRD review and approval. Designs of parts the change does not touch stay approved, and an already implemented part is frozen — a change that would alter it is a new feature, not a revision.
+- **Changing the parts list is a PRD change.** It goes through `prd-creator` in `update` mode and back to the PRD approval stop. Designs of parts the change does not touch stay approved, and an already implemented part is frozen — a change that would alter it is a new feature, not a revision.
 
 ### Plans within a part
 
@@ -389,12 +414,12 @@ The frontmatter is the single source of truth for plan sequencing — there is n
 
 ### Small scale
 
-Small scale produces a lite PRD and a simplified work plan, and no Design Doc. The plan's `design:` frontmatter is therefore `none` with the note `small scale — the PRD is the specification`; `work-planner`'s rule that a plan needs an approved design is exempted at this scale only, and the plan's traceability table maps to PRD requirements instead of Design Doc items.
+Small scale produces a lite PRD and a simplified work plan, and no Design Doc. The plan's `design:` frontmatter is therefore `none` with the note `small scale — the PRD is the specification`; `work-planner`'s rule that a plan needs an approved design is exempted at this scale only, and the plan's task lines cite PRD requirements instead of Design Doc items.
 
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
 
-Check existing ADRs before design and implementation; the Design Doc lists them as Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test above is applied to the finished design.
+Check existing ADRs before design and implementation; the Design Doc lists them under Part, Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test above is applied to the finished design.
 
 ## Diagram Requirements
 
@@ -402,14 +427,14 @@ Required diagrams for each document. Every diagram follows the `mermaid-diagrams
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
-| PRD | User journey diagram (full depth); Part dependency diagram (three or more parts, either depth) | Clarify user experience, scope, and the order parts are designed in |
+| PRD | Part dependency diagram (three or more parts, either depth) | Clarify the order parts are designed in |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
-| Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
+| Design Doc | the C1–C4 levels the change touches, at least one (`mermaid-diagrams` `references/c4-levels.md`); a sequence diagram per AC that crosses a container boundary or has a failure path that changes state | Zoom from context to code as far as the change reaches; show each such flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |
 
 ## Common ADR Relationships
 1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.) and search `docs/adr/ADR-*.md` for decisions that already cover them
-2. **Design Doc**: Specify those ADRs in the "Prerequisite ADRs" section
+2. **Design Doc**: List those ADRs under Part, Prerequisite ADRs
 3. **Compliance check**: Verify the design aligns with them
 
 A missing common decision is not a reason to write an ADR on its own; it goes through the three-part test after the design like any other.

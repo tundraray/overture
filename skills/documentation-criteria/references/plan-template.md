@@ -19,9 +19,6 @@ Text inside these comments is guidance for the author; it is not copied into the
 
 Created Date: YYYY-MM-DD
 Type: feature|fix|refactor
-Estimated Duration: X days
-Estimated Impact: X files
-Related Issue/PR: #XXX (if any)
 
 ## Snapshot
 
@@ -32,24 +29,20 @@ Related Issue/PR: #XXX (if any)
 - **Does not change**: [what a reader would otherwise assume this plan touches]
 - **Biggest risk**: [one line, and the task that meets it first]
 - **Open questions**: [each question and who resolves it, or "none"]
-
-## Related Documents
-- PRD: [docs/features/{feature}/prd.md]
-- Design Doc: [docs/features/{feature}/design-{part}.md] (none at small scale)
-- ADR: [docs/adr/ADR-XXXX.md] (if any)
-- UXRD: [docs/features/{feature}/uxrd.md] (if any)
+- **Design items no task covers**: [each item, why it is left out, and that the user confirmed it — or "none"]
 
 ## Implementation Phases
 
 <!-- Phases follow the technical dependencies the Design Doc's components and contracts show, and the approach named in the Overview. Repeat the phase block per phase; the final phase is always Quality Assurance.
-A task opens with one line saying, in words, what it delivers; Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
+A task opens with one line saying, in words, what it delivers, ending with what it covers: the Design Doc section and AC IDs (the PRD's requirement IDs at small scale). Every Design Doc implementation target, connection or registration, contract change, verification requirement, and prerequisite is covered by some task line, or listed under "Design items no task covers" in the Snapshot.
+Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
 
 ### Phase 1: [Phase Name] (Estimated commits: X)
 **Purpose**: [what this phase delivers, in one or two sentences]
 
 #### Tasks
-- [ ] Task 1: [what it delivers]
-- [ ] Task 2: [what it delivers]
+- [ ] Task 1: [what it delivers] — covers DD §[Section] / AC-[n]
+- [ ] Task 2: [what it delivers] — covers DD §[Section] / AC-[n]
 - [ ] Quality check: staged quality checks (`ai-development-guide`)
 - [ ] Unit tests: all related tests pass
 
@@ -86,24 +79,9 @@ A task opens with one line saying, in words, what it delivers; Target Files, dep
 
 ## Risks and Countermeasures
 
-### Technical Risks
 - **Risk**: [Risk description]
   - **Impact**: [Impact assessment]
   - **Countermeasure**: [How to address it]
-
-### Schedule Risks
-- **Risk**: [Risk description]
-  - **Impact**: [Impact assessment]
-  - **Countermeasure**: [How to address it]
-
-## Completion Criteria
-- [ ] All phases completed
-- [ ] Each phase's operational verification procedures executed
-- [ ] Design Doc acceptance criteria satisfied
-- [ ] Staged quality checks completed (zero errors)
-- [ ] All tests pass
-- [ ] Necessary documentation updated
-- [ ] User review approval obtained
 
 ## Notes
 
@@ -111,65 +89,33 @@ A task opens with one line saying, in words, what it delivers; Target Files, dep
 
 ## Appendix: Traceability
 
-<!-- The record that the plan covers the design: the reviewer and the executors check it. A subsection marked "when applicable" is deleted when it does not apply. -->
-
-### Quality Assurance Mechanisms
-
-Adopted quality gates for the change area. Each task in this plan must satisfy these mechanisms.
-
-| Mechanism | Enforces | Config/Source | Covered Files | Type |
-|-----------|----------|---------------|---------------|------|
-| [Tool/check name] | [What quality aspect it enforces] | [path/to/config] | [literal paths, directory prefixes, or "project-wide"] | executable_check |
-| [Domain constraint] | [What it enforces] | [path/to/source] | [literal paths, directory prefixes, or "project-wide"] | passive_constraint |
-
-### Design-to-Plan Traceability
-
-Maps each Design Doc technical requirement to its covering task(s). One row per extracted item. Every row needs at least one covering task **or** an explicit gap justification — an item that appears in neither is how a requirement silently disappears between design and implementation.
-
-| Design Doc | DD Section | DD Item | Category | Covered By Task(s) | Gap Status | Notes |
-|---|---|---|---|---|---|---|
-| [docs/features/{feature}/design-{part}.md] | [Section name] | [Specific item] | impl-target / connection-switching / contract-change / verification / prerequisite | [Phase X Task Y] | covered | |
-| docs/features/{feature}/design-{part}.md | Security Considerations | Rate limiting on login | prerequisite | — | gap | Rate limiting on the login endpoint is left to the platform gateway (KD-4); confirmed by the user |
-
-**Category values**: `impl-target` (implementation target), `connection-switching` (connection/switching/registration), `contract-change` (contract change and propagation), `verification` (verification requirement), `prerequisite` (prerequisite work)
-
-**Gap Status values**: `covered` (task exists), `gap` (no task — requires justification in Notes and user confirmation before plan approval)
+<!-- The record that the plan carries the design's exact values and constraints: the reviewer and the executors check it. A subsection marked "when applicable" is deleted when it does not apply. -->
 
 ### Reference Contract Values
 
-<!-- When applicable: the Design Doc specifies a binding observable value the implementation must reproduce exactly — a column/label set and its order, a derived-display rule, or a state-lifecycle negative. Extract it from the Design Doc directly, not from the Traceability table's summarized DD Item. Serialized boundaries belong to the Connection Map; ADR-derived structural decisions to ADR Bindings. -->
+<!-- When applicable: the Design Doc specifies a binding observable value the implementation must reproduce exactly — an exact value from Contract Definitions (a limit, enum value, status code, timeout, setting name or default), a column/label set and its order, a derived-display rule, or a state-lifecycle negative. Extract it from the Design Doc directly, not from a task line's summary. Serialized boundaries belong to the Connection Map; ADR-derived structural decisions to ADR Bindings. -->
 
-The Traceability table records *that* a row is covered; this table carries the value **verbatim**, so the covering task is checked against the exact contract rather than a re-derived summary.
+A task line records *that* a design item is covered; this table carries the value **verbatim**, so the covering task is checked against the exact contract rather than a re-derived summary.
 
 | Design Doc (§ Section) | Contract Type | Required Observable Value (verbatim) | Covered By Task(s) |
 |---|---|---|---|
-| [docs/features/{feature}/design-{part}.md (§ Section)] | structure-order / derived-display / state-lifecycle-negative | [exact value copied from the Design Doc — e.g. "the listed fields in the specified order"; "the label shows the looked-up name in place of the raw code"; "persisted state is applied only when an explicit restore signal is present"] | [Phase X Task Y] |
+| [docs/features/{feature}/design-{part}.md (§ Section)] | exact-value / structure-order / derived-display / state-lifecycle-negative | [exact value copied from the Design Doc — e.g. "the listed fields in the specified order"; "the label shows the looked-up name in place of the raw code"; "persisted state is applied only when an explicit restore signal is present"] | [Phase X Task Y] |
 
 ### Failure Mode Checklist
 
-Domain-independent failure categories this implementation must guard against. Enumerate all nine, mark each yes/no, and list a covering task for each that applies. Keep entries free of project-specific names — these categories are what test suites most often omit precisely because they are unglamorous.
+<!-- The categories: same-value, no-op, empty input, invalid option, missing config, unavailable boundary, shared-state dependency, rollback-only visibility, missing-sort-key ordering. Test suites most often omit them precisely because they are unglamorous. List only the ones that apply here, each with one phrase on where; none applies → "none". -->
 
-| Category | Applies? | Covered By Task(s) |
+| Category | Where it applies | Covered By Task(s) |
 |---|---|---|
-| same-value | yes/no | [Phase X Task Y] |
-| no-op | yes/no | |
-| empty input | yes/no | |
-| invalid option | yes/no | |
-| missing config | yes/no | |
-| unavailable boundary | yes/no | |
-| shared-state dependency | yes/no | |
-| rollback-only visibility | yes/no | |
-| missing-sort-key ordering | yes/no | |
+| [category] | [one phrase] | [Phase X Task Y] |
 
 ### UXRD Component → Task Mapping
 
-<!-- When applicable: a UXRD is among the inputs. Downstream steps read this table to populate each task's Investigation Targets with the corresponding UXRD section. -->
+<!-- When applicable: a UXRD is among the inputs. Downstream steps read this table to populate each task's Investigation Targets with the UXRD elements it names. -->
 
-| UXRD Component (section heading) | States to Cover | Covered By Task(s) | Gap Status | Notes |
+| UXRD Element | States to Cover | Covered By Task(s) | Gap Status | Notes |
 |---|---|---|---|---|
-| [UXRD heading exactly as written, e.g. "§ Component: AlertCard"] | [default / loading / empty / error / partial] | [Phase X Task Y] | covered | |
-
-**Reference key rule**: column 1 is the UXRD section heading verbatim. Headings are unique, so the reference resolves to exactly one section.
+| [a UXRD element ID, or the Component Inventory name verbatim; never a section number] | [default / loading / empty / error / partial] | [Phase X Task Y] | covered | |
 
 **Gap Status values**: `covered`, `gap` (requires justification in Notes and user confirmation before plan approval)
 

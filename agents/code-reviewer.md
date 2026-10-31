@@ -95,7 +95,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - [ ] Data flow follows design
 - [ ] Component dependencies correct
 - [ ] Responsibilities properly separated
-- [ ] Existing codebase analysis section includes similar functionality investigation results
+- [ ] Key Decisions state the similar-functionality search outcome (found, or none with coverage)
 - [ ] No unnecessary duplicate implementations (Pattern 5 from ai-development-guide skill)
 
 ### Quality Validation

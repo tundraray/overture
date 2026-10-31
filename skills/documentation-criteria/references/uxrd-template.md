@@ -2,7 +2,8 @@
 
 <!--
 The PRD owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
-The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy.
+The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy. A component spec is never written inside this document.
+Later documents cite this one by ID: KD-n, MC-n, and any screen element ID the author assigns (TH-10).
 Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
 -->
 
@@ -55,7 +56,7 @@ Follows the [design system](../../design-system/README.md).
 
 ## User Flows
 
-<!-- Each flow names the use cases and acceptance criteria it delivers. Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state; one this document does not deliver is listed in Appendix → Acceptance Criteria Outside UX Scope. -->
+<!-- Each flow names the use cases and acceptance criteria it delivers. -->
 
 ### Primary User Flow
 
@@ -135,7 +136,7 @@ flowchart TD
 
 ## Accessibility
 
-<!-- Global rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
+<!-- Screen-level rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
 
 - **Target level**: [cite the PRD requirement that sets it, e.g. NFR-03]
 - **Focus order across screens**: [where focus lands on navigation, after dialogs close, after an item is removed]
@@ -166,20 +167,6 @@ flowchart TD
 - [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
 <!-- _Discuss with stakeholders until this section is empty, then delete after confirmation_ -->
-
-## Appendix
-
-<!-- A manual acceptance scenario repeats the ACs and flows; it is not written here. -->
-
-### Acceptance Criteria Outside UX Scope
-
-<!-- When applicable: a PRD acceptance criterion with a user-visible surface that this document does not deliver. -->
-
-- [AC id] — [not adopted / on hold, and why]
-
-### References
-
-- [User research findings, usability test results, design files]
 
 ## Update History
 

@@ -115,10 +115,10 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Telegraphic text (chains of noun phrases a newcomer cannot expand), a term used without a few-word explanation at first use, a YAML or JSON block anywhere, a body block made for tools (a checklist of pointers or pre-ticked items, a table that only maps one ID set onto another), a heading's content not in the document's language — `recommended`, citing the worst instances
 - [ ] A citation of a neighbouring document carries a version ("UXRD v1.6") — `recommended`, suggestion: cite by path and section or ID. A version mismatch between two documents is never an issue on its own
 - [ ] A value (number, UI string, threshold) restated next to the ID of the document that owns it — `recommended`, suggestion: keep the citation, drop the value. When the two copies already disagree — `important`
-- [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Internals that do not show at a contract boundary (library call order, the lock mode or lock order behind a stated invariant), and a schema copied into a table field by field (lengths, sizes, column lists, update guards with no requirement behind them) — `recommended`, suggestion: remove, even when they are wrong
+- [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Internals that do not show at a contract boundary (library call order, the lock mode or lock order behind a stated invariant), and a schema copied into a table field by field (storage lengths, column lists, update guards with no requirement behind them) — `recommended`, suggestion: remove, even when they are wrong. An exact value a caller or test observes at the contract (a limit, enum value, status code, timeout, setting name and default) is not such a copy
 - [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
 - [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
-- [ ] Size against the soft target (excluding Update History; a Design Doc's Appendix: Evidence counts) — over target is `recommended`, naming what to replace with a citation or cut
+- [ ] Size against the soft target (excluding Update History; a Design Doc's appendix counts) — over target is `recommended`, naming what to replace with a citation or cut
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
@@ -128,7 +128,6 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it per `documentation-criteria`
 
 **For PRD** (`full` depth only, in addition):
-- [ ] User Journey Diagram present
 - [ ] Non-Functional Requirements with target values
 - [ ] Constraints and Risks (constraints, assumptions, risks)
 
@@ -150,20 +149,20 @@ Section names below are the template headings, so a template-compliant document 
 
 **For UXRD:**
 - [ ] Snapshot with Key Decisions
-- [ ] Every user-visible PRD AC is cited by the flow or screen state that delivers it, or listed in Acceptance Criteria Outside UX Scope with the reason; AC text is not restated
+- [ ] User-visible PRD ACs are cited by ID in the flow or screen state that delivers them; AC text is not restated
 - [ ] Design System section with a Component Inventory, every row linking a spec that exists in `docs/design-system/components/`
 - [ ] User Flows (primary, alternative, error), each naming the PRD use cases it implements
 - [ ] Screens, each with a layout
 - [ ] Accessibility
 
 **For Design Doc:**
-- [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere; codebase analysis and Fact Disposition in Appendix: Evidence
+- [ ] Snapshot and Key Decisions at the top, each decision and its rejected alternatives argued only there and cited by `KD-n` elsewhere
 - [ ] Part section states which part this design covers, the requirements it owns, and the `design-{part}.md` files it depends on
-- [ ] Acceptance Criteria: PRD ACs that apply as written are cited, design-level criteria as plain sentences
-- [ ] Fact Disposition Table with one row per `focusAreas` entry, each naming where it is handled (`KD-n` or section) without copied evidence
+- [ ] Acceptance Criteria: PRD ACs cited by ID without restating them, design-level criteria as plain sentences
+- [ ] Fact Disposition Table with a row for each `focusAreas` fact the design transforms, removes, or puts out of scope, naming where it is handled (`KD-n` or section); preserved facts in one sentence
 - [ ] Contract Definitions present — no source code anywhere in the document
 - [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
-- [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md` (C2 always; C1, C3, C4 when they apply), and Runtime Flows as sequence diagrams covering the AC behaviours, each with its failure handling
+- [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`: the levels drawn are the ones the change touches, and at least one is drawn; and a Runtime Flow sequence diagram for each AC that crosses a container boundary or has a failure path that changes state, with its failure handling
 - [ ] Security Considerations present
 
 **For ADR:**
@@ -176,7 +175,6 @@ Section names below are the template headings, so a template-compliant document 
 **For Work Plan:**
 - [ ] Frontmatter complete: `feature`, `part` (a name from the PRD's Delivery Parts), `design` (`design-{part}.md`, or `none` for a simplified plan — small scale, or gamedev Prototype mode), `plan: N of M`, `status`, `depends-on` resolving to an existing sibling or omitted for `N: 1`, `temporary: true`
 - [ ] Implementation Phases with tasks and completion criteria, Quality Assurance as the final phase
-- [ ] Design-to-Plan Traceability table present (maps to PRD requirements at small scale)
 - [ ] Verification Strategy states what correctness means and names the task that runs the early verification point
 - [ ] Reference Contract Values present when the design specifies a binding observable value, ADR Bindings present when an ADR applies; each is absent otherwise
 
@@ -226,7 +224,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 
 **Work Plan-specific checks** — consistency with the documentation only; a plan is temporary AI working state (`documentation-criteria`):
 - **Nothing beyond the documents**: a task, value, contract, or behaviour that no PRD, UXRD, Design Doc, or ADR states, or one that contradicts them — `important`
-- **Design-to-Plan Traceability**: every Design Doc item (or PRD requirement at small scale) has a covering task or a justified gap
+- **Design coverage**: every Design Doc item (or PRD requirement at small scale) is cited by a task line ("covers DD §X / AC-n") or has a justified gap
 - **Verification Strategy**: what correctness means for this part and how it is proven, with the task that runs the early verification point
 - **Reference Contract Values**: recorded verbatim where the design specifies a binding observable value
 - **ADR Bindings**: one row per binding decision of every ADR the design treats as prerequisite or produced
@@ -439,7 +437,7 @@ Include in output when `prior_context_count > 0`:
 - [ ] Match of requirements, terminology, numbers between documents
 - [ ] Completeness of required elements in each document
 - [ ] Compliance with project rules
-- [ ] Technical feasibility and reasonableness of estimates
+- [ ] Technical feasibility
 - [ ] Clarification of risks and countermeasures
 - [ ] Consistency with existing systems
 - [ ] Fulfillment of approval conditions

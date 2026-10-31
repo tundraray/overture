@@ -18,7 +18,7 @@ Register execution steps to TodoWrite before any execution:
 3. Change clarification (STOP for user input)
 4. Document update via layer-appropriate agent
 5. Code verification via code-verifier (Design Doc only)
-6. Review via document-reviewer (STOP for approval)
+6. Approval, with review via document-reviewer on request or for a design-system change (STOP for approval)
 7. Consistency verification via design-sync (STOP if Design Doc)
 
 ## Requirements
@@ -50,13 +50,13 @@ If no documents found → report and exit.
 
 Determine the document type from path or content, then determine the layer to select the correct update agent:
 
-| Path Pattern | Document Type | Update Agent | Review Required |
+| Path Pattern | Document Type | Update Agent | Review |
 |---|---|---|---|
-| `docs/features/*/design-*.md` | Design Doc | technical-designer or technical-designer-frontend | document-reviewer + design-sync |
-| `docs/features/*/prd.md` | PRD | prd-creator | document-reviewer |
-| `docs/features/*/uxrd.md` | UXRD | ux-designer | document-reviewer |
+| `docs/features/*/design-*.md` | Design Doc | technical-designer or technical-designer-frontend | design-sync; document-reviewer on request |
+| `docs/features/*/prd.md` | PRD | prd-creator | document-reviewer on request |
+| `docs/features/*/uxrd.md` | UXRD | ux-designer | document-reviewer on request |
 | `docs/design-system/**` | Design System | ux-designer | document-reviewer, as part of a UXRD |
-| `docs/adr/*.md` | ADR | technical-designer or technical-designer-frontend | document-reviewer |
+| `docs/adr/*.md` | ADR | technical-designer or technical-designer-frontend | document-reviewer on request |
 
 **Layer detection** (Design Doc and ADR only):
 
@@ -78,7 +78,7 @@ Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 - Are there new requirements driving this change?
 
 Record the user's response for the update agent.
-Before Step 4, copy the document outside the repository — the review in Step 5 diffs against that copy. For a design-system change, copy the UXRD and the design-system files being changed.
+Before Step 4, copy the document outside the repository — a review in Step 5 diffs against that copy; the update agent's draft check uses its own. For a design-system change, copy the UXRD and the design-system files being changed.
 
 ### Step 4: Document Update
 
@@ -105,7 +105,7 @@ prompt: "Operation Mode: update. Update the UXRD at [path]. Required changes: [u
 **For Design System:**
 ```yaml
 subagent_type: ux-designer
-prompt: "Operation Mode: update. Update the design system at [path(s) under docs/design-system/]. Required changes: [user's changes from Step 3]. Record the change as a Key Decision in the UXRD at [uxrd path]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "Operation Mode: update. draft_check: skip. Update the design system at [path(s) under docs/design-system/]. Required changes: [user's changes from Step 3]. Record the change as a Key Decision in the UXRD at [uxrd path]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 **For ADR:**
@@ -124,7 +124,7 @@ prompt: "Operation Mode: update. Update the ADR at [path]. For minor changes: up
 
 ### Step 5: Document Review
 
-**For Design Doc updates only** — before `document-reviewer`, invoke `code-verifier`:
+**For Design Doc updates only** — before the stop, invoke `code-verifier`:
 
 ```yaml
 subagent_type: code-verifier
@@ -138,9 +138,9 @@ prompt: |
   [SYSTEM CONSTRAINT] This agent operates within update-doc command scope.
 ```
 
-Store output as `$CODE_VERIFICATION_OUTPUT` and pass it to `document-reviewer` below as evidence about the code (the one exception to cold reading — `workflow-orchestration`, "Reviewers Are Cold Readers").
+Store output as `$CODE_VERIFICATION_OUTPUT`; show it at the stop, and pass it to `document-reviewer` when a review runs, as evidence about the code (the one exception to cold reading — `workflow-orchestration`, "Reviewers Are Cold Readers").
 
-**STOP** — Submit updated document for review:
+**STOP** — Present the updated document at the stop per `workflow-orchestration`, "Explicit Stop Points", with `$CODE_VERIFICATION_OUTPUT` (Design Doc only). A design-system change is reviewed without asking: it touches several documents, and such a change gets one review round over the set. Review call:
 
 ```yaml
 subagent_type: document-reviewer
@@ -149,7 +149,7 @@ prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. depth: [PRD depth] 
 
 For a design-system change: `target: [uxrd path]; design-system files: [changed paths]`, `doc_type: UXRD`, and `diff_base` covers the copies of all of them.
 
-`approved_with_conditions` or `needs_revision` → call the update agent again with the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
+`approved_with_conditions` or `needs_revision` → call the update agent again with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
 A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
 
 ### Step 6: Consistency Verification (Design Doc only)
@@ -180,7 +180,7 @@ prompt: "source_design: [path]"
 Updated: [document path]
 Type: [Design Doc / PRD / UXRD / Design System / ADR]
 Changes: [summary of changes made]
-Review: [approved / approved with notes]
+Review: [draft check only / independent review approved / approved with notes]
 Consistency: [verified / N/A]
 ```
 

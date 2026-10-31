@@ -51,12 +51,6 @@ Text inside these comments is guidance for the author; it is not copied into the
 
 - [Negative impacts or trade-offs that need to be accepted]
 
-### Neutral Consequences
-
-<!-- When applicable. -->
-
-- [Changes that are neither good nor bad]
-
 ## Implementation Guidance
 
 [Principled direction only. Implementation procedures go to Design Doc]
@@ -64,4 +58,6 @@ Example: "Use dependency injection" ✓, "Implement in Phase 1" ✗
 
 ## Related Information
 
-- [Links to related ADRs, documents, issues, PRs, etc.]
+<!-- Links only, one per line; no prose. -->
+
+- [Link to a related ADR, document, issue, or PR]

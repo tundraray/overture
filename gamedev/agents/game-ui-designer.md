@@ -120,7 +120,6 @@ The documents go to disk; this response carries their paths — the orchestrator
     {"path": "docs/design-system/components/{component-name}.md", "action": "created|updated"}
   ],
   "summary": "[what the UXRD establishes, in one or two sentences]",
-  "acTraceability": {"covered": 0, "gaps": []},
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
@@ -132,11 +131,13 @@ Return the paths even when the run ends in `blocked`.
 
 ## Self-Validation [BLOCKING — before output]
 
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
+
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] When the document has Mermaid blocks, `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
-- [ ] Every acceptance criterion of the feature spec that touches the UI is cited by a flow or a screen state, or listed in Acceptance Criteria Outside UX Scope with the reason; `acTraceability` reports the same
+- [ ] Every acceptance criterion of the feature spec that touches the UI is cited by a flow or a screen state; one this document does not deliver is reported in `openQuestions` with the reason
 - [ ] Every Component Inventory row links an existing spec in `docs/design-system/components/`; new and extended specs cover their states
 - [ ] No component spec content (states, variants, per-component accessibility) is copied into the UXRD
 - [ ] No code in the UXRD or the design-system files

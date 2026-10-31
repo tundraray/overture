@@ -70,6 +70,7 @@ prompt: |
   Create Design Doc for the following frontend component based on existing code.
 
   Operation Mode: create
+  draft_check: skip (this command reviews the Design Doc in Step 4)
 
   Component: $COMPONENT_NAME (from $STEP_1_OUTPUT)
   Responsibility: $COMPONENT_RESPONSIBILITY
@@ -146,6 +147,7 @@ prompt: |
   Update Design Doc based on review feedback.
 
   Operation Mode: update
+  draft_check: skip (this command re-reviews the Design Doc)
   Existing Design Doc: $STEP_2_OUTPUT
 
   ## Review Feedback

@@ -50,7 +50,7 @@ A document is read far more often than it is written, and most readers stop afte
 
 **The reader is cold.** They know the product and the codebase in general, but not this feature, and they read without the author or the conversation that produced the document — a teammate, the user at an approval stop, the implementer months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
 
-**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
+**Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Fact Disposition** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
 **Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with three to seven **Key Decisions** — in a Design Doc a `KD-n` heading with a paragraph of why and the options not taken, in a UXRD a table — not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
 
@@ -68,26 +68,53 @@ A document is read far more often than it is written, and most readers stop afte
 
 **One language.** The document is written in the project's document language. Section headings keep the template's wording, because other documents and agents link to them by anchor; everything under a heading — labels, table headers, text — is in the document's language.
 
-**Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
+**Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". A list citing PRD requirements or criteria by ID only (Covers, From the PRD, a flow's "for") is allowed. Each ID is defined in exactly one place and cited everywhere else.
 
-**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
+**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6"; a UXRD element is cited by its ID (TH-10), not by its section number. A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
 
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
 - **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit. The one exception is a work plan's Reference Contract Values, which copy a binding value verbatim next to its source because the executor reads the task without the design open.
 - **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
-- **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Field lengths and sizes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. A limit is written only when a requirement sets it or another part relies on it.
-- **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
+- **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Storage lengths and sizes no caller observes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. An exact value a caller or test observes at the contract — a limit, an enum value, a status code, a timeout, a setting's name and default — is written as it is; the work plan's Reference Contract Values copy it.
+- **No references that go stale on their own.** No line numbers into another document or the codebase, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending.
 - **Undecided stays an open question.** An acceptance criterion whose outcome is not decided cites the open question and states nothing else — no list of acceptable alternatives, no "guarantee" the design rates as low certainty. The decision is written once, when it is made.
 
-**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (Appendix: Evidence included), ADR 10 000. Over the target, the author merges restated content into a citation — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
+**Size.** Soft targets for the document, in characters, excluding Update History: PRD or Feature Spec lite 15 000, PRD or Feature Spec full 30 000, UXRD 40 000, design-system component spec 6 000, Design Doc 45 000 per part (appendix included), ADR 10 000. Over the target, the author merges restated content into a citation — and `document-reviewer` raises a `recommended` issue naming what to move or cut. The target is a signal, not a cap.
 
 ## Revising a Document
 
 An edit is finished when nothing else still says the old thing. Most findings on a re-review sit not in the edited lines but in the places that relied on them.
 
+- **Bounds.** A revision edits only the finding's span and the passages that depend on it; every other passage stays byte-for-byte. A sound paragraph reworded in passing is how a revision breaks a section that already passed review.
+- **One write per region.** The change to a region — a section, a table, a diagram — is composed whole and written in one Write or Edit, not built up by a run of small edits.
 - **Dependents.** After an edit, find every place that cites, depends on, or restates what changed in this document, and make it agree. A dependent in another document — found by searching for the changed IDs — is named in the response (`nextSteps`), not edited; the orchestrator routes it to its owner.
 - **Cuts.** Removing or merging content leaves no reference pointing at what was removed. Passages that share words but make different claims are not duplicates, and both stay.
-- **Self-check scope.** A new document, or a change to sections, numbering, or IDs, runs the author's whole Self-Validation. A targeted edit runs the items whose subject it touched, plus the dependents check above; the diagram render check runs on every revision.
+- **Self-check scope.** A new document settles every item of the author's Self-Validation while it is composed, before the Write; after the Write the items are a check, not an edit pass. A change to sections, numbering, or IDs checks every item again, and a targeted edit checks the items whose subject it touched, plus the dependents check above. The diagram render check runs on every revision.
+
+## Draft Check
+
+Before it returns, the author has its written document read cold by `document-reviewer`. Most review findings are visible from the author's own inputs to a reader who did not write the text, so the author catches them before the stop instead of after it. This applies to the authors of a GDD, Feature Spec, Design Doc, ADR, and work plan; the UXRD (`game-ui-designer`) has none. Task files and the simplified plan (`design: none`, at small scale and in gamedev Prototype) have no draft check. Neither has a document whose caller reviews it itself — the reverse-engineering generation loops, or a change to several documents reviewed as one set: the caller's prompt says `draft_check: skip`, and the author returns `"verdict": "skipped"`.
+
+1. **Creation.** The author composes the whole document, writes it once to its path, and runs the checks it already runs on the written file, such as the diagram render check. It then spawns the reviewer with coordinates only: `target` (the document path, and for a UXRD the design-system files written with it), `doc_type`, `depth` for a PRD or Feature Spec, and `review_scope: full`. No summary, rationale, or self-assessment goes with them, because the reviewer reads cold.
+2. **Update or revision.** Before the first edit, the author copies the current version out of the repository with the shell — `cp docs/features/{feature}/prd.md <scratchpad>/prd.base.md`, where `<scratchpad>` is the session's scratchpad directory. The document guard allows a copy whose destination is outside the repository. After its edits the author spawns the reviewer with the same coordinates, `review_scope: changes`, `diff_base` set to the copy, and the issues the revision was asked to fix, if any.
+3. **One round.** The author fixes the `critical` and `important` issues its inputs resolve, one Edit per region within the bounds of "Revising a Document", and does not run the reviewer again. Issues that need a user decision (scope, product judgment), `recommended` issues, and `deferred` findings are returned, not acted on.
+4. **Return.** The author's JSON response gains a `draftCheck` field. Every finding the reviewer returned appears in `fixed` or in `open`; none is dropped.
+
+   ```json
+   "draftCheck": {
+     "verdict": "<reviewer status> | not_run | skipped",
+     "fixed": ["<issue id: one line>"],
+     "open": [{"severity": "...", "issue": "...", "why_open": "needs user decision | recommended | deferred | could not resolve"}]
+   }
+   ```
+
+The reviewer is spawned like any helper, two levels below the main conversation:
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+```
+
+It owns no document and spawns nothing, so the guard's rule against one owner spawning another does not apply. When the Agent tool is unavailable, the author returns `"verdict": "not_run"` with the reason, and the orchestrator offers an independent review at the stop as the recommended option.
 
 ## Detailed Document Definitions
 
@@ -107,7 +134,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Principled implementation guidelines (e.g., "Use dependency injection")
 
 **Excludes**:
-- Implementation schedule, duration (→Work Plan)
+- Implementation schedule (→Work Plan)
 - Detailed implementation procedures (→Design Doc)
 - Specific code examples (→Design Doc)
 - Resource assignments (→Work Plan)
@@ -117,7 +144,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 **Purpose**: Describe, for a person reading top to bottom, how the part works and why it is built that way
 
 **Includes**:
-- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence)
+- **Existing codebase analysis** (required): the facts it yielded that the design transforms, removes, or puts out of scope, one row each in the Fact Disposition Table; preserved facts in one sentence
 - Key decisions, each with the options not taken — a breaking change to an existing contract, and a data migration, are decisions
 - Interface and contract definitions
 - Data flow and component design
@@ -129,7 +156,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
 - Test code, test file names, fixtures, test helpers, mock boundaries (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
-- Implementation order and approach, the files to change, integration points and how each is verified, the verification strategy, when to implement, duration (→Work Plan)
+- Implementation order and approach, the files to change, integration points and how each is verified, the verification strategy, when to implement (→Work Plan)
 - Who will implement (→Work Plan)
 
 ### GDD (Game Design Document)
@@ -185,7 +212,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 **Purpose**: Specify what the player sees and does for the feature spec's acceptance criteria that have a UI surface — HUD, menus, dialogs. Written by `game-ui-designer` when the feature has a UI surface, after Feature Spec approval.
 
 **Includes**:
-- AC coverage: each user-visible feature-spec acceptance criterion cited by ID in the flow or screen state that delivers it; one not delivered here is listed in the appendix with the reason
+- AC coverage: each user-visible feature-spec acceptance criterion cited by ID in the flow or screen state that delivers it
 - Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the user stories it implements
 - Screens: wireframe, layout, and the screen's own states (loading, empty, error)
@@ -219,7 +246,6 @@ An edit is finished when nothing else still says the old thing. Most findings on
 
 **Includes**:
 - Task breakdown and dependencies (maximum 2 levels)
-- Schedule and duration estimates
 - Implementation approach (vertical/horizontal/hybrid), and the integration points where new code joins existing code
 - Verification: what correctness means for the part and how it is proven, the early verification point and the task that runs it, and each phase's operational verification
 - **A final Quality Assurance phase (required)**
@@ -251,9 +277,9 @@ Each step names the evidence that must exist before the next step starts. A step
 - *Output evidence*: every mandatory template section filled (or answered in one line with the reason), every *when applicable* section that does not apply deleted; every acceptance criterion measurable
 - *Transition*: proceed when no section is silently empty — an unanswered question is not the same as an inapplicable one
 
-**4. Approval** — "Approved" after review enables implementation (an ADR's status becomes `Accepted`)
-- *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
-- *Transition*: implementation begins only on an approved verdict
+**4. Approval** — the user's approval at the stop enables implementation (an ADR's status becomes `Accepted`)
+- *Output evidence*: the draft check's verdict recorded; every blocking issue fixed or listed in `draftCheck.open` for the user
+- *Transition*: implementation begins only on the user's approval
 
 ## Storage Locations
 
@@ -320,7 +346,7 @@ Exactly one plan per part may be `active`. Escalate rather than guess when two c
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
 
-Check existing ADRs before design and implementation; the Design Doc lists them as Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test is applied to the finished design.
+Check existing ADRs before design and implementation; the Design Doc lists them under Part, Prerequisite ADRs. No rule pre-decides that an ADR will be written — the three-part test is applied to the finished design.
 
 ## Diagram Requirements
 
@@ -330,12 +356,12 @@ Required diagrams for each document. Every diagram follows the `mermaid-diagrams
 |----------|------------------|---------|
 | Feature Spec | Part dependency diagram (three or more parts) | Show the order parts are designed and built in |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
-| Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
+| Design Doc | the C1–C4 levels the change touches, at least one (`mermaid-diagrams` `references/c4-levels.md`); a sequence diagram per AC that crosses a container boundary or has a failure path that changes state | Zoom from context to code as far as the change reaches; show each such flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |
 
 ## Common ADR Relationships
 1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.) and search `docs/adr/ADR-*.md` for decisions that already cover them
-2. **Design Doc**: Specify those ADRs in the "Prerequisite ADRs" section
+2. **Design Doc**: List those ADRs under Part, Prerequisite ADRs
 3. **Compliance check**: Verify the design aligns with them
 
 A missing common decision is not a reason to write an ADR on its own; it goes through the three-part test after the design like any other.

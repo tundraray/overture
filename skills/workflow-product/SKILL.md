@@ -34,10 +34,9 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 1. **requirement-analyzer** → requirement analysis + check for an existing PRD + preliminary part proposal
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: full`) → PRD creation (update when one exists; new creation with thorough investigation when not), including the **Delivery Parts** section that refines the proposal
-3. **document-reviewer** (`doc_type: PRD`, `depth: full`) → PRD review, including part coverage and dependencies
+2. **prd-creator** (`depth: full`) → PRD creation (update when one exists; new creation with thorough investigation when not), including the **Delivery Parts** section that refines the proposal, with its draft check
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+3. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it, with its draft check
    **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
@@ -46,10 +45,9 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 1. **requirement-analyzer** → requirement analysis + check for an existing PRD + part proposal (rarely more than two parts)
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: lite`, or `update` when a PRD already covers the feature) → PRD with Delivery Parts
-3. **document-reviewer** (`doc_type: PRD`, `depth: lite`) → PRD review
+2. **prd-creator** (`depth: lite`, or `update` when a PRD already covers the feature) → PRD with Delivery Parts, with its draft check
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+3. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it, with its draft check
    **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
@@ -58,13 +56,12 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 1. **requirement-analyzer** → requirement analysis + single-part proposal
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: lite`) → a short PRD: the requirement, its acceptance criterion, one part
-3. **document-reviewer** (`doc_type: PRD`, `depth: lite`) → PRD review
+2. **prd-creator** (`depth: lite`) → a short PRD: the requirement, its acceptance criterion, one part, with its draft check
    **[Stop: PRD approval]**
 
 No UXRD, no technical documents → `workflow-execution` for a simplified plan.
 
-A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's traceability table points at it.
+A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's task lines cite it.
 
 ## Parts
 
@@ -96,13 +93,13 @@ Scale comes from `task-analyzer`'s five-axis assessment, not from file count alo
 
 ## Stop Points
 
-Every stop in this phase is a genuine decision gate, not a status update. Use `AskUserQuestion` so the choice is structured.
+Every stop in this phase is a genuine decision gate, not a status update. Use `AskUserQuestion` so the choice is structured. A document stop shows the author's `draftCheck.open` items and offers independent review as an option — see `workflow-orchestration`, "Explicit Stop Points".
 
 | Stop | After | What the user decides |
 |------|-------|----------------------|
 | Requirement confirmation | requirement-analyzer | Whether the understood scope and scale match intent; answers to open questions; a first look at the proposed parts |
-| PRD approval | document-reviewer completes PRD review | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
-| UXRD approval | document-reviewer completes UXRD review | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
+| PRD approval | prd-creator returns the PRD with its draft check | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| UXRD approval | ux-designer returns the UXRD with its draft check | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
 
 Each stop happens **once per feature**. Per-part stops begin in the technical phase.
 
@@ -136,7 +133,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ UXRD exists and is approved, together with the `docs/design-system/` files it created or changed, **or** the work has no UI surface and that is recorded, **or** the scale is small
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
-☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
+☐ Every `critical` or `important` finding — open in the author's draft check or raised by an independent review — is resolved, or the user accepted it at the stop
 
 **Handoff payload** — concrete paths, not a summary:
 

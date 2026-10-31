@@ -35,7 +35,7 @@ Before any task processing, locate the work plan. This recipe is the **frontend*
 Resolve the plan as `workflow-execution`, "Resolving the Plan to Execute", describes; `$ARGUMENTS`, when given, is the plan path. Then **verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of backend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed frontend signal is required.
 
 **Frontend signals (need at least one)**:
-- `## Related Documents` references a UXRD (`docs/features/*/uxrd.md`), or the plan has a `UXRD Component → Task Mapping` section
+- The plan has a `UXRD Component → Task Mapping` section
 - Target Files match frontend markers exclusively: `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`, or the project's own equivalents of those directories
 - The governing design describes component hierarchy, screen states, or UI interactions
 - The part name identifies the layer (`ui`, `frontend`, `web`, or a screen name)

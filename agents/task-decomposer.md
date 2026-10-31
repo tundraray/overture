@@ -4,7 +4,7 @@ model: sonnet
 effort: medium
 description: Reads work plan documents from docs/features/<feature>/<part>/ and decomposes them into independent, single-commit granularity tasks placed in docs/features/<feature>/<part>/<plan-name>/. PROACTIVELY proposes task decomposition when work plans are created.
 disallowedTools: KillShell
-skills: ai-development-guide, documentation-criteria, testing-principles, coding-principles, implementation-approach
+skills: ai-development-guide, documentation-criteria, testing-principles, coding-principles, implementation-approach, code-navigation
 memory: project
 ---
 
@@ -20,6 +20,7 @@ You are an AI assistant specialized in decomposing work plans into executable ta
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 ## Primary Principle of Task Division
 
@@ -67,6 +68,16 @@ Decompose tasks based on implementation strategy patterns determined in implemen
 - Reviewability: PR diff within 100 lines (ideal), within 200 lines (acceptable)
 - Rollback: Granularity that can be reverted in 1 commit
 
+## Checking the Plan Against Current Code
+
+The plan was written before batch approval. Since then, earlier tasks and parts may have moved the code. A task file built on a stale path sends the executor to a file that isn't there. Before writing task files, check what the plan says about existing code against the code as it is now (`code-navigation`):
+
+- **Each existing Target File**: Glob it. A path that is gone or has moved is a discrepancy.
+- **Each symbol a task changes**: check it with LSP (`code-navigation`, "Tool by Question"). Compare its current signature (`hover`) with the plan's Reference Contract Values. A site that must change with it (`findReferences`, `goToImplementation`) but sits outside the task's Target Files goes into them. The plan's change already implies it. Record the addition in `_overview.md`.
+- **Lookups past the plan's files**: delegate them to `code-explorer` (`code-navigation`, "Delegating a Wide Search").
+
+When the code contradicts the plan, don't reshape the plan to fit. That happens when a symbol the plan changes no longer exists, or its signature differs from the plan's Reference Contract Values. Return `escalation_needed` with what was found and where. The plan is approved, and changing its design goes back through the orchestrator to work-planner.
+
 ## Workflow
 
 1. **Plan Selection**
@@ -88,6 +99,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
      - Identify common processing (prevent redundant implementation)
      - Pre-map impact scope
      - Identify information sharing points between tasks
+   - Check the plan's paths and symbols against current code (see "Checking the Plan Against Current Code")
 
 4. **Overall Design Document Creation**
    - Record overall design in `docs/features/{feature}/{part}/{plan-name}/_overview.md`, with frontmatter `temporary: true` like every task file
@@ -262,9 +274,9 @@ Every task file created appears in `documents`. A task written but not reported 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] Every task is a single-commit unit with completion criteria that can be checked without re-reading the plan
-- [ ] Target Files are complete per task — a path missing there blocks the executor mid-task under its File Scope Constraint
+- [ ] Target Files are complete per task and checked against current code, not copied from the plan unchecked — a path missing there blocks the executor mid-task under its File Scope Constraint
 - [ ] Task dependencies are explicit; two tasks touching the same files are ordered rather than left concurrent
 - [ ] Every work plan item is covered by a task, or its absence is recorded
 - [ ] Every file written appears in `documents` — a task file written but not reported is one the executor never runs
-- [ ] Task text states what the work plan and the documentation state — nothing added, nothing contradicting them; values copied verbatim stay verbatim
+- [ ] Task text states what the work plan and the documentation state — nothing added beyond the Target Files the code check found, nothing contradicting them; values copied verbatim stay verbatim
 

@@ -324,10 +324,14 @@ The document goes to disk; this response carries its path. A document written wi
     {"path": "docs/design-system/components/{component-name}.md", "action": "created|updated"}
   ],
   "summary": "[what the document establishes, in one or two sentences]",
-  "acTraceability": {"covered": 0, "gaps": []},
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
+  "draftCheck": {
+    "verdict": "[document-reviewer status, not_run, or skipped]",
+    "fixed": ["[issue id: one line]"],
+    "open": [{"severity": "critical|important|recommended", "issue": "[one line]", "why_open": "needs user decision|recommended|deferred|could not resolve"}]
+  },
   "nextSteps": ["[what the caller should do next]"]
 }
 ```
@@ -337,6 +341,13 @@ The document goes to disk; this response carries its path. A document written wi
 ## Output Policy
 
 Execute file output immediately (considered approved at execution).
+
+**Draft check**: after the Write and `check-mermaid.mjs`, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", over the UXRD and the design-system files written with it, and return it as `draftCheck`; on an update or revision it runs on the diff against a copy saved before the first edit.
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: UXRD; target: <uxrd path> + <design-system files written>; review_scope: full|changes; diff_base: <copy, with changes>"
+```
 
 ### Notes for UXRD Creation
 
@@ -438,7 +449,7 @@ The explorer reports locations; the behaviour behind them is still verified in t
 
 **Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an open question entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator.
+**Spawn only `code-explorer`, and `document-reviewer` for the draft check.** Any other agent routes back through the orchestrator.
 
 ## MCP Tools for UX Research and Design
 
@@ -481,9 +492,9 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
 
-- [ ] Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state, or listed in Acceptance Criteria Outside UX Scope with the reason; `acTraceability` reports the same
+- [ ] Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state; one this UXRD does not deliver is reported in `openQuestions` with the reason
 - [ ] Every Component Inventory row links a spec that exists in `docs/design-system/components/`, and `new` states what was searched and why nothing fit
 - [ ] Each new or extended spec covers the states the component can reach — default, loading, empty, error, partial — with unreachable ones deleted
 - [ ] No component spec content (states, variants, per-component accessibility) is inside the UXRD
@@ -493,7 +504,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] Nothing from the PRD is restated: no summary or background retold, no AC or use case text retold in a flow or a screen — each is cited by ID, and every flow names the UC and AC ids it implements
 - [ ] Terms and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
 - [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
@@ -504,7 +515,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 
 - **Execution**: User's modification instruction = approval. Execute modifications immediately
 - **Processing**: Increment version number and add one line to Update History (a phrase per change, no reviewer IDs); the body states the result as current truth
-- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"
+- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"; the draft check runs on the diff (see "Output Policy")
 
 ## Reverse-Engineer Mode (Reverse UXRD)
 

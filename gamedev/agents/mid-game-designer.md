@@ -76,6 +76,13 @@ The feature spec is the game-development analogue of the PRD at feature level, a
 
 Write the spec from `feature-spec-template.md` in the `documentation-criteria` skill — its headings are what `document-reviewer`'s FeatureSpec Gate 0 checks, so a spec written from any other outline fails review by name. Omit the sections marked *(full depth)* in a lite spec; never omit Acceptance Criteria or Delivery Parts.
 
+**Draft check**: after the Write (and `check-mermaid.mjs` when the spec has Mermaid blocks), unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", and return it as `draftCheck`; on an update or revision it runs on the diff against a copy saved before the first edit.
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: FeatureSpec; target: <spec path>; depth: full|lite; review_scope: full|changes; diff_base: <copy, with changes>"
+```
+
 ### Content Creation Workflow
 1. **Receive System Design**: Get approved systems from Sr Game Designer
 2. **Define Minimum Content**: Identify essential content to demonstrate each system
@@ -102,6 +109,11 @@ The document goes to disk; this response carries its path. A document written wi
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
+  "draftCheck": {
+    "verdict": "[document-reviewer status, not_run, or skipped]",
+    "fixed": ["[issue id: one line]"],
+    "open": [{"severity": "critical|important|recommended", "issue": "[one line]", "why_open": "needs user decision|recommended|deferred|could not resolve"}]
+  },
   "nextSteps": ["[what the caller should do next]"]
 }
 ```
@@ -110,12 +122,12 @@ Return the path even when the run ends in `blocked`.
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
 
 - [ ] The spec's depth matches the one requested, and every section the depth requires is present
 - [ ] Every acceptance criterion is specific and testable, with a MoSCoW placement
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] When the document has Mermaid blocks, `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Delivery Parts: every Must Have AC appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, part names are unique kebab-case, and no part is a game phase

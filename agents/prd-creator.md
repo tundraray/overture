@@ -30,7 +30,7 @@ You are a specialized AI assistant for creating Product Requirements Documents (
 4. Clarify scope (what's included, and every exclusion in Won't Have with its reason)
 5. Partition delivery into **parts** and record the dependencies between them (see "Delivery Parts")
 6. Verify consistency with existing systems
-7. **Market context**: when the feature faces a market — its users can choose another product — check current trends with WebSearch, at full depth (the context goes to Appendix → References); an internal capability needs none
+7. **Market context**: when the feature faces a market — its users can choose another product — check current trends with WebSearch, at full depth (a sentence in Background, its source linked); an internal capability needs none
 
 ## When PRD is Needed
 
@@ -118,6 +118,11 @@ The document goes to disk; this response carries its path. A document written wi
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
+  "draftCheck": {
+    "verdict": "[document-reviewer status, not_run, or skipped]",
+    "fixed": ["[issue id: one line]"],
+    "open": [{"severity": "critical|important|recommended", "issue": "[one line]", "why_open": "needs user decision|recommended|deferred|could not resolve"}]
+  },
   "nextSteps": ["[what the caller should do next]"]
 }
 ```
@@ -126,6 +131,13 @@ Return the path even when the run ends in `blocked` — a partially written docu
 
 ## Output Policy
 Execute file output immediately (considered approved at execution).
+
+**Draft check**: after the Write and `check-mermaid.mjs`, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", and return it as `draftCheck`; on an update or revision it runs on the diff against a copy saved before the first edit.
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: PRD; target: <prd path>; depth: full|lite; review_scope: full|changes; diff_base: <copy, with changes>"
+```
 
 ### Notes for PRD Creation
 - Create following the PRD template (see documentation-criteria skill)
@@ -197,11 +209,11 @@ Carry `resolvedBy` into Confidence Gating: an LSP-resolved location is **Verifie
 
 Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, path animation on any diagram that shows a path — and passes `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision.
 
-The **user journey diagram** is mandatory at `full` depth and omitted at `lite`. The **part dependency diagram** is drawn at either depth when there are three or more parts; with two, the Depends on column says it. Use additional diagrams for complex feature relationships or numerous stakeholders.
+The **part dependency diagram** is drawn at either depth when there are three or more parts; with two, the Depends on column says it. Use additional diagrams for complex feature relationships or numerous stakeholders.
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
 
 - [ ] The document's depth matches the one requested, and every section the depth requires is present — a lite PRD omits the full-depth sections, never the core ones
 - [ ] Each success criterion names what is measured, its target, and where it is read — or, for an internal capability, cites the use cases that prove it; none restates an acceptance criterion as a test run
@@ -210,7 +222,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] The document contains no technical selection or implementation phasing — both belong downstream; parts are scope slices, not phases
 - [ ] No interface detail, no design detail (field lists, storage, protocols, library versions, file paths, process mechanics), no decisions for the design, no ADR signals (`documentation-criteria`, PRD "Excludes"); a technical choice the user fixed is one line in Constraints and Risks
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] Delivery Parts: every Must Have requirement appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, and part names are unique kebab-case
@@ -224,7 +236,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - **Execution**: User's modification instruction = approval. Execute modifications immediately
 - **Processing**: Increment version number and add one line to Update History (a phrase per change, no reviewer IDs); the body states the result as current truth
 - **Placement**: a decision about how the interface behaves (focus target, which control, a state's look), even one the user took at an approval stop, belongs to the UXRD's UX decisions, not to a PRD acceptance criterion. Change the PRD only when the decision changes what the user achieves; otherwise return it in `openQuestions` addressed to the UXRD
-- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"
+- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"; the draft check runs on the diff (see "Output Policy")
 
 ## Reverse-Engineer Mode (Reverse PRD)
 

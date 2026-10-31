@@ -220,15 +220,17 @@ Autonomous execution MUST stop and wait for user input at these points.
 | Phase | Stop Point | Once per | User Action Required |
 |-------|------------|----------|---------------------|
 | Product | After requirement-analyzer completes | feature | Confirm requirements and scale / answer questions |
-| Product | After document-reviewer completes PRD review | feature | Approve PRD, including the Delivery Parts split — every scale |
-| Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
+| Product | After prd-creator returns the PRD (with its draft check) | feature | Approve PRD, including the Delivery Parts split — every scale |
+| Product | After ux-designer returns the UXRD (with its draft check; frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
 | Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
-| Technical | After document-reviewer completes ADR review (only when an ADR was written) | ADR | Approve ADR |
-| Execution | After document-reviewer completes the work plan review (small scale and gamedev Prototype: after the simplified plan, which is not reviewed) | part | Batch approval for that part's implementation |
+| Technical | After technical-designer(-frontend) returns the ADR (with its draft check; only when an ADR was written) | ADR | Approve ADR |
+| Execution | After the planner returns the work plan (with its draft check; small scale and gamedev Prototype: the simplified plan, which is not reviewed) | part | Batch approval for that part's implementation |
+
+**At a document stop** the orchestrator shows the document path and the author's `draftCheck.open` items in plain words, and asks: approve, request changes (one owner pass in `mode: update` with the user's instruction verbatim, then the same stop), or independent review — a cold `document-reviewer` run, after which "Revision Loop" applies. No option is preselected; independent review is marked recommended only when `draftCheck.verdict` is `not_run`. `design-sync` before the Design Doc stop stays automatic.
 
 The ADR stop follows the Design Doc stop: which decisions are architecture-binding is only visible once the design exists, and most features produce no ADR at all.
 
-**After batch approval**: Autonomous execution proceeds without stops until the current part's completion report or an escalation. The next part begins with its own plan review and batch approval.
+**After batch approval**: Autonomous execution proceeds without stops until the current part's completion report or an escalation. The next part begins with its own plan and batch approval.
 
 ## Scale Determination and Document Requirements
 | Scale | Typical file count※5 | PRD | UXRD | ADR | Design Doc | Work Plan |
@@ -282,9 +284,9 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 
 ### Revision Loop
 
-Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc, ADR, work plan). A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase, for the reviews the orchestrator runs: an independent review the user picked at a document stop (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc, ADR, work plan), and the review round over a set one change touched (below). The author's draft check is not part of this loop. A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
-**What each verdict sends to the owner** (`revision_agent`, `mode: update`):
+**What each verdict sends to the owner** (`revision_agent`, `mode: update`; a pass a re-review follows carries `draft_check: skip`, since the re-review is the check):
 
 | Verdict | Owner pass | Re-review |
 |---|---|---|
@@ -304,13 +306,13 @@ Shared by every phase and every reviewed document (PRD, GDD, Feature Spec, UXRD 
 
 **Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again. A new finding in unchanged text is reported as `deferred` and does not move the verdict, unless it is `critical` or the unchanged text still says what the change replaced or removed.
 
-**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs → ADR → work plan → task files). Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs → ADR → work plan → task files), with `draft_check: skip` in its prompt. Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
-The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. Only the user's explicit accept advances a gate past an open finding.
+The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. An author's `draftCheck.open` items are findings too: they go to the user at the stop, never dropped. Only the user's explicit accept advances a gate past an open finding.
 
 ## Structured Response Specification
 
-Each subagent responds in JSON format. A document-producing agent returns the paths it wrote in `documents[].path` — that path, not the response text, is what the orchestrator hands to the next agent. Key fields for orchestrator decisions:
+Each subagent responds in JSON format. A document-producing agent returns the paths it wrote in `documents[].path` — that path, not the response text, is what the orchestrator hands to the next agent. An author that runs a draft check (`documentation-criteria`, "Draft Check") also returns `draftCheck` (`verdict`, `fixed`, `open`). Key fields for orchestrator decisions:
 - **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
 - **quality-fixer**: status, checksPerformed, fixesApplied, approved, incompleteImplementations
@@ -352,10 +354,10 @@ Document generation agents (work-planner, technical-designer, technical-designer
 
 Criteria for timing when to call each agent:
 - **work-planner**: Request structural updates only before execution; the `status` flips (`active` after batch approval, `completed` in Final Cleanup) are requested in `update` mode at those two moments
-- **technical-designer(-frontend)**: Request updates according to design changes → Execute document-reviewer for consistency check
-- **prd-creator**: Request updates according to requirement changes → Execute document-reviewer for consistency check
-- **ux-designer**: Request updates according to UX/UI requirement changes → Execute document-reviewer for consistency check
-- **document-reviewer**: Always execute before user approval after PRD/ADR/UXRD/Design Doc creation/update
+- **technical-designer(-frontend)**: Request updates according to design changes → the designer's draft check covers the change
+- **prd-creator**: Request updates according to requirement changes → the author's draft check covers the change
+- **ux-designer**: Request updates according to UX/UI requirement changes → the author's draft check covers the change
+- **document-reviewer**: Run by the author as its draft check on every PRD/UXRD/Design Doc/ADR/work plan it creates or updates; by the orchestrator only when the user picks independent review at the stop, and in the review round over a set one change touched
 
 ## Workflow Phases
 
@@ -441,7 +443,7 @@ Load `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md` before entering 
 
 - **Quality check is mandatory**: quality-fixer approval needed before commit
 - **Structured response mandatory**: Information transmission between subagents in JSON format
-- **Approval management**: Document creation → Execute document-reviewer → Get user approval before proceeding
+- **Approval management**: Document creation with the author's draft check → user approval at the stop (independent review when the user picks it) before proceeding
 - **Flow confirmation**: After getting approval, take the next step from the current phase skill's flow
 
 ## Required Dialogue Points with Humans

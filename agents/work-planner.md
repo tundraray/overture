@@ -59,18 +59,20 @@ Please provide the following information in natural language:
   - Reason for changes
   - Tasks needing addition/modification
 
-## Delegating a Wide Search
+## Checking the Plan Against Current Code
 
 A plan states which files each task touches. Those paths become the executor's **File Scope Constraint** — a path missing from Target Files blocks the executor mid-task and costs an escalation round trip. Guessing the list is what produces that.
 
-Spawn `code-explorer` while planning, not after:
+The Design Doc was approved before earlier parts and plans changed the code. Before an existing path or symbol goes into a task, check it yourself: Glob for a path, LSP for a symbol (`code-navigation`, "Tool by Question"). Compare the symbol's current signature (`hover`) with the Design Doc contract. Every site that must change with it (`findReferences`, `goToImplementation`) goes into Target Files. When the code contradicts the Design Doc (a symbol is gone, or its signature differs from the contract), the sources disagree: record both sides in `openQuestions`. Don't build the plan around either one.
+
+## Delegating a Wide Search
+
+Spawn `code-explorer` for what reaches past the files the Design Doc names. Beyond it, spawn only `document-reviewer` for the draft check; sequencing the workflow belongs to the orchestrator.
 
 | Planning question | Ask code-explorer |
 |-------------------|-------------------|
-| Which files does this task actually touch? | `query: <the symbol or behavior the task changes>; breadth: medium` |
 | Does this change ripple past its own module? | `query: every consumer of <symbol>; breadth: thorough` |
 | Which producer and consumer sit on this boundary? | `query: where <value> is written and where it is read; breadth: medium` — fills the Connection Map's Owner columns, which require concrete paths |
-| Do these two tasks touch the same files? | Compare the `locations` of each — an overlap is a sequencing dependency, not two independent tasks |
 
 ```
 subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
@@ -80,8 +82,6 @@ prompt: "query: every writer and reader of the checkout session cookie; breadth:
 Use the result to populate **Target Files** per task, the **Connection Map** owners, and the phase ordering. Two tasks whose location sets overlap cannot run in either order — record the dependency.
 
 **Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
-
-Spawn only `code-explorer`. Sequencing the workflow belongs to the orchestrator.
 
 ## Work Plan Output Format
 
@@ -109,7 +109,7 @@ Rules when writing or updating a plan:
 - **Exactly one plan per part may be `active`.** When activating a plan, confirm no sibling already is.
 - **Set `M` in `plan: N of M` deliberately.** When the work genuinely needs a second pass, raise `M` on every plan in the part and add the new plan with the next `N` — do not drop an unannounced plan file into the directory.
 - **`depends-on` fixes the order**, so sequencing never relies on filename sort. Omit it only for `N: 1`.
-- **`design` points at the governing design** — `design-{part}.md` for this plan's part, where `part` is a name from the PRD's Delivery Parts section. A plan whose part has no approved design is a plan without a specification — stop and report instead of writing one. The single exemption is small scale: there is no Design Doc, `design: none`, and the traceability table maps to PRD requirements. A plan for a part whose `dependsOn` parts are not yet built is planned against their designs; say so in the plan's Connection Map.
+- **`design` points at the governing design** — `design-{part}.md` for this plan's part, where `part` is a name from the PRD's Delivery Parts section. A plan whose part has no approved design is a plan without a specification — stop and report instead of writing one. The single exemption is small scale: there is no Design Doc, `design: none`, and the task lines cite PRD requirements. A plan for a part whose `dependsOn` parts are not yet built is planned against their designs; say so in the plan's Connection Map.
 
 ## Work Plan Operational Flow
 
@@ -130,6 +130,7 @@ The document goes to disk; this response carries its path. A document written wi
   "planPosition": "N of M",
   "traceability": {"designItems": 0, "covered": 0, "gaps": []},
   "failureModes": {"applicable": 0, "covered": 0},
+  "draftCheck": {"verdict": "[reviewer status | not_run | skipped]", "fixed": ["[issue id: one line]"], "open": [{"severity": "", "issue": "", "why_open": "needs user decision | recommended | deferred | could not resolve"}]},
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
@@ -140,7 +141,16 @@ The document goes to disk; this response carries its path. A document written wi
 Return the path even when the run ends in `blocked` — a partially written document the caller cannot find is worse than none.
 
 ## Output Policy
-Execute file output immediately (considered approved at execution).
+Execute file output immediately (considered approved at execution). Compose the whole plan, then write it once.
+
+**Draft check.** After the Write, before Self-Validation and the response, unless the prompt says `draft_check: skip`, run the draft check on the written plan (`documentation-criteria`, "Draft Check"):
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: WorkPlan; target: docs/features/{feature}/{part}/{plan-name}.md; review_scope: full|changes; diff_base: <copy, with changes>"
+```
+
+On an update or revision it runs on the diff against a copy saved before the first edit. The simplified plan (`design: none`) and the `status` flip get no draft check — neither is reviewed.
 
 ## Important Task Design Principles
 
@@ -278,13 +288,13 @@ Identify each integration point — where new code joins existing code, found fr
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check: a failing item is fixed with one Edit per affected region, not a run of small edits.
 
-- [ ] Every Design Doc item appears in Design-to-Plan Traceability with a covering task or a justified gap
-- [ ] All nine Failure Mode categories are marked applicable or not, and every applicable one has a covering task
+- [ ] Every Design Doc item is cited by a task line's "covers", or listed under the Snapshot's "Design items no task covers" with its reason
+- [ ] Every Failure Mode category that applies is listed with a covering task
 - [ ] Reference Contract Values are copied verbatim from the Design Doc, not paraphrased
 - [ ] Frontmatter is complete and consistent: `plan: N of M` matches the part's plan count, and no sibling is already `active`
-- [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task
+- [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task; every existing path and symbol a task names was checked against current code
 - [ ] The returned `documents[].path` matches the file actually written
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Phases follow Phase Composition and Operational Verification above, and, when test design information was provided, Test Design Information Processing

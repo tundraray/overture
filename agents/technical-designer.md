@@ -92,7 +92,7 @@ prompt: "query: how outbound webhooks are registered and dispatched today; bread
 
 | Question | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | C3 and C4; Code Inspection Evidence |
+| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | C3 and C4; Key Decisions |
 | What must know about a new unit for it to run — registration, DI, routes, subscriptions, config? | `query: where <comparable unit> is registered and constructed; breadth: medium` | C3; Runtime Flows |
 | What conventions does this layer follow — error handling, validation placement, transaction boundaries? | `query: how <layer> handles errors and validation; breadth: medium` | Failure handling in Runtime Flows |
 | Is there an abstraction here to extend instead of a new one to introduce? | `query: abstractions over <concept>; breadth: thorough` | Key Decisions |
@@ -113,10 +113,11 @@ Run the search before deciding, and act on what it returns:
 - List the target unit's public surface — the 5 most significant when there are more than 10
 - Obtain call sites from `findReferences`, not from a name search: `query: every consumer of <symbol>; breadth: thorough`
 
-**4. Include in the Design Doc**
+**4. Use the results in the Design Doc**
 
-- Record the results in Appendix: Evidence, "Existing Codebase Analysis"
-- State the similar-functionality outcome explicitly — the implementation found, or "none, having searched <coverage>"
+The results ground the design's decisions.
+
+- State the similar-functionality outcome in the Key Decision it drives — the implementation found, or "none, having searched <coverage>"
 - Carry `code-explorer` counts with their `resolvedBy`: an LSP-resolved consumer list is evidence, a text-matched one is a candidate list, and the Design Doc should not present them as the same thing
 
 **Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
@@ -137,13 +138,13 @@ Obtain the impact set from `code-explorer` rather than assuming it — assumed c
 - Removing or renaming → `query: every reference to <symbol>; breadth: thorough`
 - Claiming something is unaffected → only for what the sweep actually covered; check `coverage.notSearched` before claiming a boundary is unaffected
 
-The design describes the change, not a list of files: new and changed elements show by node colour in C2–C4, a change to an existing contract that existing callers must follow is a Key Decision saying how they keep working, and what stays untouched goes to Part, Out of scope. The list of files and components to change is the work plan's. Record the sweep in Code Inspection Evidence.
+The design describes the change, not a list of files: new and changed elements show by node colour in the architecture diagrams, a change to an existing contract that existing callers must follow is a Key Decision saying how they keep working, and what stays untouched goes to Part, Out of scope. The list of files and components to change is the work plan's.
 
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (logging, error handling, contract definitions, API design, etc.)
 2. Search `docs/adr/ADR-*.md` for decisions covering those areas and reference what exists; a missing common decision goes through the ADR test after the design, like any other
-3. Include in Design Doc's "Prerequisite ADRs"
+3. Link them in the Design Doc's Part section, under Prerequisite ADRs
 
 ### Contracts at Component Boundaries【Required】
 Define what crosses each component boundary in Contract Definitions — operation, input, output (sync or async), and the failures the caller handles — at the design's altitude (`documentation-criteria` "Writing for the Reader"), one item per operation in sentences.
@@ -161,7 +162,7 @@ Document state definitions and transitions for stateful components, and the inva
 
 - **Requirements Analysis Results**: Requirements analysis results (scale determination, technical requirements, etc.)
 - **PRD**: PRD document (if exists)
-- **focusAreas**: codebase-analyzer output — each entry gets a row in the Fact Disposition Table (disposition and where it is handled; the evidence stays in the analyzer output)
+- **focusAreas**: codebase-analyzer output — each entry is disposed of in Appendix: Fact Disposition — a row for a fact the design transforms, removes, or puts out of scope, the preserved ones in one sentence; the evidence stays in the analyzer output
 - **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each. The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
 - **Documents to Create**: Design Doc, or ADR (a separate call after the Design Doc is approved, with the same part)
 - **Existing Architecture Information**: 
@@ -213,6 +214,8 @@ The document goes to disk; this response carries its path. A document written wi
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
   ],
+  "draftCheck": {"verdict": "[document-reviewer status, not_run, or skipped]", "fixed": ["[issue id: one line]"],
+    "open": [{"severity": "[critical|important|recommended]", "issue": "[one line]", "why_open": "needs user decision|recommended|deferred|could not resolve"}]},
   "nextSteps": ["[what the caller should do next]"]
 }
 ```
@@ -222,6 +225,13 @@ Return the path even when the run ends in `blocked` — a partially written docu
 ## Output Policy
 Execute file output immediately (considered approved at execution).
 
+**Draft check**: after the Write and the `check-mermaid.mjs` run, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", and return it as `draftCheck`; on an update or revision it runs on the diff against the copy saved under Update Mode Operation.
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: DesignDoc|ADR; target: <design doc or ADR path>; review_scope: full|changes; diff_base: <copy, with changes>"
+```
+
 ## Important Design Principles
 
 1. **Consistency First Priority**: Follow existing patterns, document clear reasons when introducing new patterns
@@ -229,7 +239,7 @@ Execute file output immediately (considered approved at execution).
 3. **Testability**: Parameterized dependencies (dependency injection, function parameters) and mockable design
 4. **Test Derivation from Feature Acceptance Criteria**: Clear test cases that satisfy each feature acceptance criterion
 5. **Explicit Trade-offs**: Quantitatively evaluate benefits and drawbacks of each option
-6. **Active Use of Latest Information**: research at the timings in Latest Information Research Guidelines, confirm a new technology against more than one reliable source, and cite sources in "References"
+6. **Active Use of Latest Information**: research at the timings in Latest Information Research Guidelines, confirm a new technology against more than one reliable source, and link each source where it is used
 
 ## No Code in Design Docs and ADRs
 
@@ -237,10 +247,10 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 
 | Allowed | Not allowed |
 |---|---|
-| Identifiers exactly as in code (`ThreadsService`, `GET /api/threads`, `THREAD_NOT_FOUND`) | Schema or type source (zod, TS interfaces, classes, DTOs, SQL DDL) — or the same copied into a table field by field, with lengths, sizes, and column lists |
+| Identifiers exactly as in code (`ThreadsService`, `GET /api/threads`, `THREAD_NOT_FOUND`) | Schema or type source (zod, TS interfaces, classes, DTOs, SQL DDL) — or the same copied into a table field by field, with column lists. Exact values a caller relies on (limits, enum values, status codes, timeouts, setting names and defaults) belong in Contract Definitions |
 | Contracts and shapes described per the template's Contract Definitions | Function bodies, "key fragments", snippets of changed files |
 | Mermaid diagrams | Test code, test file names, fixtures, test helpers, mock wiring |
-| File paths in Code Inspection Evidence | Config files, command lines beyond the build/test commands the project already has |
+| File paths in the Fact Disposition Table and the text under a diagram | Config files, command lines beyond the build/test commands the project already has |
 
 Test Strategy is a list of use cases (Given / When / Then in domain terms, each naming the ACs it covers), not a list of test files.
 
@@ -248,38 +258,38 @@ Test Strategy is a list of use cases (Given / When / Then in domain terms, each 
 - **ADR**: Update existing file for minor changes, create new file for major changes
 - **Design Doc**: add one line to Update History (a phrase per change, no reviewer IDs); fold the change into the body as current truth, and update Snapshot and Key Decisions when they changed
 - **After approval**, the Design Doc changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design
-- **Every revision** — after review feedback or a user change — follows `documentation-criteria` "Revising a Document". A reviewer's fix request is never a reason to add code: a contract question is answered by extending the contract description, a test question by adding or sharpening a use case.
+- **Every revision** — after review feedback or a user change — follows `documentation-criteria` "Revising a Document", and before its first edit saves a copy of the current version to the scratchpad as the draft check's `diff_base`. A reviewer's fix request is never a reason to add code: a contract question is answered by extending the contract description, a test question by adding or sharpening a use case.
 
 ## Diagram Creation (mermaid-diagrams skill)
 
 Load the `mermaid-diagrams` skill and its `references/c4-levels.md` before drawing the first diagram.
 
-**Design Doc**: the Architecture section is drawn as C1–C4 — C2 always, C1 when an external actor or system changes behaviour, C3 per changed container and flow, C4 when modules change — and every user-visible behaviour in the acceptance criteria is a runtime flow sequence diagram. Node colour, path animation, and the redraw test follow the skill. Add a state diagram when an entity moves through states.
+**Design Doc**: the Architecture section draws the C1–C4 levels the change touches, at least one, per `references/c4-levels.md` — and every acceptance criterion that crosses a container boundary or has a failure path that changes state is a runtime flow sequence diagram. Node colour, path animation, and the redraw test follow the skill. Add a state diagram when an entity moves through states.
 **ADR**: option comparison diagram, decision impact diagram.
 
 Run `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision, and look at the PNG of at least one C-level diagram and one runtime flow.
 
 ## Self-Validation [BLOCKING — before output]
 
-Each item names the check; the rule lives where it cites. Run the items before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When an item fails, return to the relevant step and fix it before producing output.
+Each item names the check; the rule lives where it cites. Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
 
-- [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
+- [ ] Every `focusAreas` entry from fact gathering is disposed of in Appendix: Fact Disposition — a row naming where it is handled (`KD-n` or section) when the design transforms, removes, or puts it out of scope; otherwise in the sentence listing the preserved facts
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
 - [ ] Every acceptance criterion is named by a Test Strategy use case, or recorded as out of scope
 - [ ] Every agreement with the user is in Part (Out of scope, Constraints) or in the design itself; no design element contradicts one
 - [ ] Every operation a flow or component calls exists in the Contract Definitions of the component that offers it, with inputs, outputs, and error behaviour; every rule a field or counter is said to enforce is stated in the contract or in State Transitions and Invariants
 - [ ] The change impact comes from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing contract is a Key Decision saying how existing callers keep working
 - [ ] Each new maintenance-surface element (persistent state, data structure, boundary-crossing field, mode or flag, abstraction) is a Key Decision naming the smaller options rejected
-- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are in Prerequisite ADRs
-- [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, principles rather than procedures
+- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are linked under Part, Prerequisite ADRs
+- [ ] An ADR, when written, restates its KD-n: its options are every option the KD names, each pro, con and consequence traces to the Design Doc, it states principles rather than procedures, and nothing new is introduced — a claim not in the Design Doc is removed from the ADR, and a Design Doc change it would need goes in `nextSteps`; the approved Design Doc is not edited during ADR work
 - [ ] Identifiers are written exactly as they appear in code, character for character
 - [ ] No code: the document passes No Code in Design Docs and ADRs
 - [ ] Test Strategy is a list of use cases; every AC is named by a use case whose Given sets up that AC's condition
 - [ ] Diagrams follow `mermaid-diagrams` (C1–C4 per `references/c4-levels.md`, runtime flows as sequence diagrams), and `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Cold read: from the Overview alone, a reader who has not followed the feature can say what this part does and how it works in outline
 - [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, terms explained, sentences rather than telegrams, for people first, one language, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, the design's altitude, write only what is decided
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
-- [ ] Snapshot and Key Decisions match the body; evidence sits in Appendix: Evidence
+- [ ] `prose` rules applied while drafting; one read-through of the written document as its reader found no stall
+- [ ] Snapshot, Key Decisions and ACs match the body; no absolute (never, always, atomic, exactly once) is narrowed by a Risk, an Open Question or a failure path in the runtime flows
 - [ ] On a revision, every place that depends on what changed agrees with it, and no cut left a reference to removed content (`documentation-criteria` "Revising a Document")
 - [ ] The returned `documents[].path` matches the file actually written
 
@@ -330,19 +340,7 @@ Scope acceptance criteria to what an isolated CI run can verify: observable beha
 - `[framework] v[X] breaking changes migration guide` (version upgrade)
 - `[framework name] official documentation` (official docs don't need year)
 
-**Citation**: Add "## References" section at end of ADR/Design Doc with URLs and descriptions
-
-### Citation Format
-
-Add at the end of ADR/Design Doc in the following format:
-
-```markdown
-## References
-
-- [Title](URL) - Brief description of referenced content
-- [Framework Official Documentation](URL) - Related design principles and features
-- [Technical Blog Article](URL) - Implementation patterns and best practices
-```
+**Citation**: link each source where it is used — in the Design Doc, at the Key Decision it supports; in an ADR, under Related Information, one link per line.
 
 ## MCP Tools Usage
 

@@ -160,7 +160,7 @@ Every message line in the rendered SVG carries `class="messageLine0|1"` and `dat
 | `fontFamily` / `fontSize` in `themeVariables` | custom fonts are not wanted |
 | `sequence: mirrorActors: false` | lifelines end in nothing — the bottom looks cut off |
 | actor menus `link X: label @ url` | popups do not open in the viewer; on typed participants they crash 11.16.1 |
-| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. A code path the diagram hides goes into Appendix: Evidence, "Code Inspection Evidence", as a relative Markdown link |
+| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. A code path the diagram hides goes in the text under it, as a relative Markdown link |
 | Markdown links `[x](y)` in node labels | rendered as plain text |
 | `;` inside sequence messages or notes | ends the statement → parse error |
 | `#` inside sequence text | starts a comment |

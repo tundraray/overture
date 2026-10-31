@@ -54,13 +54,15 @@ Progressive document creation based on complexity:
 
 Autonomous flow halts at (once per feature unless stated):
 - After requirement-analyzer (confirm requirements and scale)
-- After document-reviewer completes PRD review (including the Delivery Parts split; every scale)
-- After document-reviewer completes UXRD review (when the work has a UI surface)
+- After prd-creator returns the PRD with its draft check (including the Delivery Parts split; every scale)
+- After ux-designer returns the UXRD with its draft check (when the work has a UI surface)
 - After design-sync verifies a part's Design Doc (once per part)
-- After document-reviewer completes ADR review (only when an ADR was written, after that part's design)
-- After document-reviewer reviews a part's work plan (batch approval, once per part; at small scale and in gamedev Prototype the simplified plan is not reviewed and goes straight to batch approval)
+- After technical-designer returns the ADR with its draft check (only when an ADR was written, after that part's design)
+- After the planner returns a part's work plan with its draft check (batch approval, once per part; at small scale and in gamedev Prototype the simplified plan is not reviewed)
 
-After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
+At each document stop the orchestrator shows the author's `draftCheck.open` items and offers independent review (a cold `document-reviewer` run) as an option, never the default; it is the recommended option only when the draft check did not run.
+
+After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan and batch approval.
 
 ### Per-Task Quality Cycle
 
@@ -82,9 +84,9 @@ Ask user before implementation phase:
 
 ### Document Revision Flow
 
-When document-reviewer returns `needs_revision` or `approved_with_conditions`:
+When an orchestrator-run document-reviewer (independent review picked by the user, or the one review round over a multi-document change) returns `needs_revision` or `approved_with_conditions`:
 1. Orchestrator extracts the `critical` and `important` issues; `recommended` ones and `deferred` findings go to the user at the stop point, never back to the owner on their own
-2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field)
+2. Orchestrator calls the appropriate revision agent (specified in `revision_agent` field) with `draft_check: skip` — the re-review is the check
 3. Revision agent edits the document
 4. Orchestrator re-runs document-reviewer once with `review_scope: changes` — prior issues plus the diff, not a fresh full read
 5. A re-review that is not `approved` goes to the user (revise again / accept with rationale recorded / abort) — at most two reviews per document per gate; a change touching several documents gets one review round over the set — see `workflow-orchestration`, "Revision Loop"
@@ -139,10 +141,10 @@ Skills contain structured guidance used by agents:
 - **workflow-orchestration**: Shared mechanics — agent invocation, response contracts, delegation boundary, conflict precedence, file ownership, TodoWrite
 - **workflow-product**: Product phase — requirement analysis, PRD, UXRD, ending at UXRD approval
 - **workflow-technical**: Technical phase — codebase fact gathering, Design Doc, conditional ADR, test skeletons, ending at Design Doc approval
-- **workflow-execution**: Planning and execution — work plan, review, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
+- **workflow-execution**: Planning and execution — work plan, draft check, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
 - **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
 - **documentation-criteria**: PRD/ADR/Design Doc/Plan/Task templates and creation decision matrices
-- **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
+- **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels (drawn per task) and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards
 - **testing-principles**: Test Selection (which tests earn their place), TDD practices, test patterns
 - **ai-development-guide**: Anti-patterns, error handling principles, fail-fast design
@@ -178,11 +180,12 @@ Reviewers are the one exception to the `status` enum: `document-reviewer` return
   "documents": [{"path": "docs/features/auth/prd.md", "action": "created|updated"}],
   "summary": "...",
   "openQuestions": [...],
+  "draftCheck": {"verdict": "...", "fixed": [...], "open": [...]},
   "nextSteps": [...]
 }
 ```
 
-The document goes to disk; the response carries its **path**, not its contents. A caller that receives the document inline pays for it twice — once when the agent wrote it, again in its own context — and still has no path to hand to the next agent.
+`draftCheck` comes from each author that runs a draft check (see `documentation-criteria`, "Draft Check"). The document goes to disk; the response carries its **path**, not its contents. A caller that receives the document inline pays for it twice — once when the agent wrote it, again in its own context — and still has no path to hand to the next agent.
 
 **A document written without a returned path is invisible to the flow.** The orchestrator's revision loops key on `status`, and its handoffs key on `documents[].path`; an agent that writes a file and returns prose breaks both.
 

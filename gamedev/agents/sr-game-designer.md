@@ -47,6 +47,13 @@ If skill content is not available in context, read these files before proceeding
 ### Game Design Document Template
 Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader". A GDD revision follows `documentation-criteria`, "Revising a Document".
 
+**Draft check**: after the GDD is written (and `check-mermaid.mjs` when it has Mermaid blocks), unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", and return it as `draftCheck` in the response; on a GDD update or revision it runs on the diff against a copy saved before the first edit.
+
+```
+subagent_type: document-reviewer   # or <plugin>:document-reviewer, as the Agent tool lists it
+prompt: "doc_type: GDD; target: <gdd path>; review_scope: full|changes; diff_base: <copy, with changes>"
+```
+
 ### Communication Style
 - Provide clear design rationale for all decisions
 - Mentor Mid Game Designer with constructive guidance
@@ -61,10 +68,10 @@ Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing a GDD — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. Inside `/game-analyze` you write a mechanics overview, not a GDD: the command's prompt and `game-analysis-criteria`, "Report Quality Gates", are the check there.
+Settle each item while composing a GDD, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits. Inside `/game-analyze` you write a mechanics overview, not a GDD: the command's prompt and `game-analysis-criteria`, "Report Quality Gates", are the check there.
 
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): someone who has not seen the game can say from the Snapshot what it is and why it is fun
-- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] When the document has Mermaid blocks, `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Core Concept, Design Pillars, Player Experience Goals, Gameplay Overview, and Success Metrics are filled
 - [ ] Only what the GDD owns: market numbers are cited from the market analysis, screen behaviour is left to the UXRD

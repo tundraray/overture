@@ -217,4 +217,4 @@ design-sync **specializes in detection and reporting**. Conflict resolution is o
 - **document-reviewer**: Single document quality, completeness, and rule compliance
 - **design-sync**: Cross-document consistency verification
 
-Use both agents in sequence: document-reviewer first (single doc quality), then design-sync (cross-doc consistency).
+They run in sequence: document-reviewer first, as the author's draft check (single doc quality), then design-sync (cross-doc consistency).

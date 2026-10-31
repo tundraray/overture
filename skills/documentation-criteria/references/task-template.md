@@ -22,7 +22,7 @@ These paths define the executor's File Scope Constraint. A file absent here cann
 
 ## Investigation Targets
 Files to read before starting implementation (file path, with optional search hint):
-- [e.g., src/orders/checkout (processOrder function) — determined during task decomposition based on task nature]
+- [e.g., src/orders/checkout (processOrder function) — taken from the plan's Target Files and Connection Map owners, and the paths the Design Doc names in the Fact Disposition Table and the text under a diagram]
 
 ## Change Category
 (Include only when the task is a bug fix, regression, state change, or boundary change — populated during task decomposition. Omit otherwise.)
@@ -49,7 +49,7 @@ Each row is a Design-Doc-derived observable contract this task must reproduce **
 
 | Source | Contract Type | Required Observable Value | Compliance Check |
 |---|---|---|---|
-| [Design Doc path (§ Section), copied from the matching work plan row] | [structure-order / derived-display / state-lifecycle-negative] | [Required Observable Value copied verbatim from the work plan row] | [Y/N-answerable positive predicate evaluating whether the implementation reproduces the value] |
+| [Design Doc path (§ Section), copied from the matching work plan row] | [exact-value / structure-order / derived-display / state-lifecycle-negative] | [Required Observable Value copied verbatim from the work plan row] | [Y/N-answerable positive predicate evaluating whether the implementation reproduces the value] |
 
 ## Decisions and Unresolved Items
 (Include when task decomposition resolved an alternative, optional behavior, or placeholder, or when a required decision remains unresolved. Omit when the task carries neither.)
@@ -85,10 +85,6 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 ### 3. Refactor Phase
 - [ ] Improve code (maintain passing tests)
 - [ ] Confirm added tests still pass
-
-## Quality Assurance Mechanisms
-(From the work plan's Appendix: Traceability — mechanisms relevant to this task's target files)
-- [Tool/check name] — Enforces: [what] — Config/Source: [path] — Type: `executable_check` | `passive_constraint`
 
 ## Operation Verification Methods
 (Derived from the Verification Strategy in the work plan)
