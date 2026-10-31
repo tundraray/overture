@@ -203,7 +203,7 @@ function checkRedraw(b, body) {
     for (const m of ids.matchAll(/[A-Za-z_]\w*/g)) nodes.add(m[0]);
   }
   if (nodes.size > budget) {
-    warnings.push(`${b.label}: ${nodes.size} nodes, budget ${budget}${level ? ` for C${level}` : ''} — split it${level === '4' ? ' (one long C4 chain may exceed it if it stays readable)' : ''}`);
+    warnings.push(`${b.label}: ${nodes.size} nodes, budget ${budget}${level ? ` for C${level}` : ''} — split it`);
   }
 }
 

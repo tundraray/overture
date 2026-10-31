@@ -89,6 +89,7 @@ prompt: |
 
   Operation Mode: reverse-engineer
   Depth: full
+  draft_check: skip (this command reviews the PRD in Step 4)
   External Scope Provided: true
 
   Feature: $UNIT_NAME (from $STEP_1_OUTPUT)
@@ -135,7 +136,6 @@ prompt: |
   doc_type: PRD
   depth: full
   target: $STEP_2_OUTPUT
-  mode: composite
 
   ## Code Verification Results
   $STEP_3_OUTPUT
@@ -163,6 +163,7 @@ prompt: |
 
   Operation Mode: update
   Depth: full
+  draft_check: skip (this command re-reviews the PRD)
   Existing PRD: $STEP_2_OUTPUT
 
   ## Review Feedback
@@ -226,6 +227,7 @@ prompt: |
   Create Design Doc for the following component based on existing code.
 
   Operation Mode: create
+  draft_check: skip (this command reviews the Design Doc in Step 9)
 
   Component: $COMPONENT_NAME (from $STEP_6_OUTPUT)
   Responsibility: $COMPONENT_RESPONSIBILITY
@@ -268,7 +270,6 @@ prompt: |
 
   doc_type: DesignDoc
   target: $STEP_7_OUTPUT
-  mode: composite
 
   ## Code Verification Results
   $STEP_8_OUTPUT

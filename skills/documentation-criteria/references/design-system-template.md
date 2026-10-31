@@ -2,8 +2,7 @@
 
 <!--
 The design system lives in docs/design-system/ and is owned by ux-designer (gamedev: game-ui-designer).
-The first UXRD that needs a design system and finds none creates README.md, foundations.md, and the component specs that feature needs. Later UXRDs follow it and add or extend components.
-Changing an existing foundation or component is a Key Decision of the UXRD that changes it.
+Workflow (create, reuse, extend): `design-system`, "Workflow".
 No code anywhere: no CSS, tokens as source, props, or markup. Implementation decides those.
 Reader rules (current truth, delete don't stub, short units, one owner per value): documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the files.
 -->
@@ -64,7 +63,7 @@ docs/design-system/
 
 ## Color
 
-<!-- Roles, not raw palettes: what each color is for. Contrast targets come from the PRD's accessibility level. -->
+<!-- Roles, not raw palettes: what each color is for. -->
 
 | Role | Light | Dark | Used for |
 |---|---|---|---|

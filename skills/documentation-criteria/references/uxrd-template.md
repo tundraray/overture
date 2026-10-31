@@ -1,12 +1,13 @@
 # UXRD: [Feature Name]
 
 <!--
-The PRD owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
-The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy.
+The PRD (gamedev: feature spec) owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
+The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy. A component spec is never written inside this document.
+Later documents cite this one by ID: KD-n, MC-n, and any screen element ID the author assigns (TH-10).
 Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
 -->
 
-| Status | Date | PRD | Designs |
+| Status | Date | PRD (gamedev: feature spec) | Designs |
 |---|---|---|---|
 | Draft / Approved | YYYY-MM-DD | [prd.md](./prd.md) | [design-[part].md] or — |
 
@@ -22,8 +23,7 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 ### Key Decisions
 
-<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. The Why column is the rationale; no paragraph after the table repeats it.
-A change to an existing design-system foundation or component is a Key Decision here; the design-system file states the result. -->
+<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. The Why column is the rationale; no paragraph after the table repeats it. -->
 
 | ID | Decision | Why | Rejected alternative |
 |---|---|---|---|
@@ -37,11 +37,7 @@ A change to an existing design-system foundation or component is a Key Decision 
 
 ## Design System
 
-<!--
-When docs/design-system/ does not exist yet, this pass creates it (README, foundations, and the components below) from design-system-template.md.
-Decide reuse before specifying appearance: search the design system and the code before marking a component `new`. Skipping this is how a fourth almost-identical button enters a design system.
-`extended` and `new` specs are written into docs/design-system/components/ in the same pass. Their states, variants, and accessibility live there, not here.
--->
+<!-- Workflow (create, reuse, extend): `design-system`, "Workflow". -->
 
 Follows the [design system](../../design-system/README.md).
 
@@ -55,11 +51,11 @@ Follows the [design system](../../design-system/README.md).
 
 ## User Flows
 
-<!-- Each flow names the use cases and acceptance criteria it delivers. Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state; one this document does not deliver is listed in Appendix → Acceptance Criteria Outside UX Scope. -->
+<!-- Each flow names the use cases and acceptance criteria it delivers. -->
 
 ### Primary User Flow
 
-**Implements:** [UC and AC ids from the PRD]
+**Implements:** [UC and AC ids from the PRD (gamedev: AC ids from the feature spec)]
 
 [The path through the screens — what the user sees and does at each step. The use case's goal and outcome are in the PRD and are not repeated here.]
 
@@ -135,13 +131,12 @@ flowchart TD
 
 ## Accessibility
 
-<!-- Global rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
+<!-- Screen-level rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
 
-- **Target level**: [cite the PRD requirement that sets it, e.g. NFR-03]
+- **Target level**: [cite the PRD (gamedev: feature spec) requirement that sets it, e.g. NFR-03]
 - **Focus order across screens**: [where focus lands on navigation, after dialogs close, after an item is removed]
 - **Announcements**: [route changes and live updates the screen reader hears]
-- **Contrast**: [the target; color roles cite foundations]
-- **Reduced motion**: [feature-specific behaviour beyond the foundations rule, or "foundations rule applies"]
+- **Reduced motion**: [feature-specific behaviour beyond the foundations rule — delete the line when there is none]
 
 ## Responsive Behavior
 
@@ -166,20 +161,6 @@ flowchart TD
 - [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
 <!-- _Discuss with stakeholders until this section is empty, then delete after confirmation_ -->
-
-## Appendix
-
-<!-- A manual acceptance scenario repeats the ACs and flows; it is not written here. -->
-
-### Acceptance Criteria Outside UX Scope
-
-<!-- When applicable: a PRD acceptance criterion with a user-visible surface that this document does not deliver. -->
-
-- [AC id] — [not adopted / on hold, and why]
-
-### References
-
-- [User research findings, usability test results, design files]
 
 ## Update History
 

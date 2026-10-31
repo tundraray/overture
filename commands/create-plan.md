@@ -31,7 +31,7 @@ Before executing, load these skill files for guidance:
 - Design document selection
 - Test skeleton lookup for the part (generation only when none exist)
 - Work plan creation with work-planner
-- Work plan review with document-reviewer (traceability to Design Doc)
+- Work plan review with document-reviewer (traceability to Design Doc), when the user asks for it at plan approval
 - Plan approval obtainment
 
 **Responsibility Boundary**: This command completes with work plan approval.
@@ -52,15 +52,15 @@ Follow the planning process below:
 
 3. **Work Plan Creation**
    - Create work plan with work-planner
-   - Pass the Design Doc path, the part's test skeleton paths, and its ADR paths
+   - Pass the PRD path, the part name (from the PRD's Delivery Parts), the Design Doc path, the part's test skeleton paths, and its ADR paths
 
-4. **Work Plan Review**
-   - Submit the plan to `document-reviewer` before presenting it to the user. A plan that omits a Design Doc requirement looks complete — only a traceability check finds the gap.
+4. **Work Plan Check**
+   - work-planner runs its own draft check before it returns. Present the plan at the stop per `workflow-orchestration`, "Explicit Stop Points". An independent review:
    ```yaml
    subagent_type: document-reviewer
-   prompt: "doc_type: WorkPlan. Review the work plan at [path] against its Design Doc. Verify: 1) Design-to-Plan Traceability — every Design Doc item has a covering task or a justified gap, 2) Verification Strategy stating what correctness means, with the task that runs the early verification point, 3) Failure Mode Checklist — all nine categories marked, applicable ones assigned a covering task, 4) Reference Contract Values recorded verbatim where the Design Doc specifies a binding observable value, 5) ADR Bindings present for every ADR the design treats as prerequisite or produced, 6) frontmatter valid — part is in the PRD's Delivery Parts, plan: N of M consistent with siblings. [SYSTEM CONSTRAINT] This agent operates within create-plan command scope."
+   prompt: "doc_type: WorkPlan; target: [path]. [SYSTEM CONSTRAINT] This agent operates within create-plan command scope."
    ```
-   - `approved_with_conditions` or `needs_revision` → re-invoke `work-planner` with the `critical` and `important` issues, then one re-review with `review_scope: changes`
+   - `approved_with_conditions` or `needs_revision` → re-invoke `work-planner` with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`
    - A re-review that is not `approved` → **STOP** and present the issues to the user; `recommended` issues are listed at plan approval for the user to pick; `rejected` goes straight to the user (`workflow-orchestration`, "Revision Loop")
 
 5. **Plan Approval**

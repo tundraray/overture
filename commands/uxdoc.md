@@ -13,11 +13,11 @@ argument-hint: <UX feature or interaction description>
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER investigate/analyze yourself)
 2. **Follow the flow below exactly**:
-   - Execute: requirement-analyzer → ux-designer → document-reviewer
+   - Execute: requirement-analyzer → ux-designer
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Scope**: Complete when UXRD receives approval
 
-**CRITICAL**: NEVER skip document-reviewer or a stopping point in the flow below.
+**CRITICAL**: NEVER skip a stopping point in the flow below.
 
 ## Required Skills
 
@@ -30,7 +30,7 @@ Before executing, load these skill files for guidance:
 ```
 Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirmation]
                                             ↓
-                                      ux-designer → document-reviewer → [Stop: UXRD approval]
+                                      ux-designer → [Stop: UXRD approval]
 ```
 
 ## Scope Boundaries
@@ -38,7 +38,7 @@ Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirm
 **Included in this command**:
 - Requirement analysis with requirement-analyzer (focused on UX scope)
 - UXRD creation with ux-designer
-- Document review with document-reviewer
+- Independent review with document-reviewer, when the user asks for it at the UXRD stop
 
 **Excluded from this command**:
 - PRD creation — the UXRD cites the PRD, so an approved `prd.md` must exist; if it does not, use `/design` or `/implement`
@@ -91,7 +91,9 @@ prompt: "Create UXRD based on the following confirmed requirements: [requirement
 
 ### 3. Document Review Phase
 
-After ux-designer produces the UXRD, submit it for review together with the `docs/design-system/` files it reported in `documents[]`:
+ux-designer runs its own draft check before it returns. Present the UXRD, with the design-system files it reported in `documents[]`, at the stop per `workflow-orchestration`, "Explicit Stop Points".
+
+When the user picks independent review, submit the UXRD together with those design-system files:
 
 ```yaml
 subagent_type: document-reviewer
@@ -106,12 +108,12 @@ prompt: "target: [document path]; design-system files: [paths from documents[], 
      ```yaml
      subagent_type: ux-designer
      description: "UXRD revision"
-     prompt: "Update UXRD at [path] to address the following review issues: [issues from document-reviewer]. Operation mode: update. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Revise UXRD to address reviewer feedback."
+     prompt: "Update UXRD at [path] to address the following review issues: [issues from document-reviewer]. Operation mode: update. draft_check: skip. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Revise UXRD to address reviewer feedback."
      ```
   3. Re-run document-reviewer once with `review_scope: changes`, the `diff_base`, and the prior issues verbatim
   4. A re-review that is not `approved` goes to the user (revise again / accept with rationale recorded / abort) — see `workflow-orchestration`, "Revision Loop"
 
-**[STOP]**: Present approved UXRD, with the design-system files it created or changed, to user for final approval.
+**[STOP]**: Present the UXRD, with the design-system files it created or changed, to user for final approval.
 
 An existing Design Doc of the feature is updated through `/update-doc` after UXRD approval.
 
@@ -119,7 +121,7 @@ An existing Design Doc of the feature is updated through `/update-doc` after UXR
 
 - [ ] Executed requirement-analyzer and confirmed UX scope
 - [ ] Created UXRD with ux-designer (appropriate operation mode)
-- [ ] Executed document-reviewer; `critical` and `important` issues resolved or accepted by the user, `recommended` ones shown to the user
+- [ ] Presented the draft check's `open` items; an independent review, when chosen, had its `critical` and `important` issues resolved or accepted by the user, `recommended` ones shown to the user
 - [ ] Obtained user approval for UXRD
 
 ## Output Example

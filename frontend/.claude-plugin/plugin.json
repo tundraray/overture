@@ -1,6 +1,6 @@
 {
   "name": "frontend-overture",
-  "version": "0.18.17",
+  "version": "0.18.18",
   "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -98,7 +98,9 @@
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
     "./skills/mermaid-diagrams",
-    "./skills/prose"
+    "./skills/prose",
+    "./skills/technical-design",
+    "./skills/work-planning"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

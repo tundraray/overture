@@ -9,7 +9,6 @@ temporary: true
 Metadata:
 - Dependencies: task-01 → Deliverable: {plan-dir}/analysis/research-results.md
 - Provides: {plan-dir}/analysis/api-spec.md (for research/design tasks)
-- Size: Small (1-2 files)
 
 ## Implementation Content
 [Two or three sentences: what this task delivers and why, citing dependency deliverables when it builds on them]
@@ -18,53 +17,30 @@ Metadata:
 - [ ] [Implementation file path]
 - [ ] [Test file path]
 
-These paths define the executor's File Scope Constraint. A file absent here cannot be modified without escalation, so list every file the task touches — implementation and test alike.
+<!-- Every file the task touches, implementation and test alike: this list is the executor's File Scope Constraint. -->
 
 ## Investigation Targets
 Files to read before starting implementation (file path, with optional search hint):
-- [e.g., src/orders/checkout (processOrder function) — determined during task decomposition based on task nature]
+- [e.g., src/orders/checkout (processOrder function) — taken from the plan's Target Files and Connection Map owners, and the paths the Design Doc names in its Appendix: Fact Disposition and the text under a diagram]
 
 ## Change Category
 (Include only when the task is a bug fix, regression, state change, or boundary change — populated during task decomposition. Omit otherwise.)
 
 `Change Category: <one or more of bug-fix, regression, state-change, boundary-change — comma-separated>`
 
-When present, the executor sweeps cases sharing the same path, contract, persisted state, or external boundary for the same class of defect. A defect rarely occurs alone; this field is what triggers the search for its siblings.
-
 ## Binding Decisions
 (Include when the work plan's ADR Bindings table covers this task. Omit otherwise.)
-
-Each row is an ADR decision this task's implementation must comply with.
 
 | Source | Axis | Decision | Compliance Check |
 |---|---|---|---|
 | [docs/adr/ADR-XXXX.md (§ Decision or § Implementation Guidance), matching the work plan row] | [Axis copied verbatim from the work plan's ADR Bindings row] | [Binding decision copied from the work plan row] | [Y/N-answerable positive predicate evaluating whether the implementation satisfies the decision] |
 
-The Compliance Check must be answerable `Y` or `N` against a concrete implementation. "Follows the ADR" is not a check; "persists the order total in minor units as an integer" is.
-
 ## Reference Contracts
 (Include when the work plan's Reference Contract Values table covers this task. Omit otherwise.)
 
-Each row is a Design-Doc-derived observable contract this task must reproduce **exactly**. Paraphrase loses the contract — copy the required value verbatim.
-
 | Source | Contract Type | Required Observable Value | Compliance Check |
 |---|---|---|---|
-| [Design Doc path (§ Section), copied from the matching work plan row] | [structure-order / derived-display / state-lifecycle-negative] | [Required Observable Value copied verbatim from the work plan row] | [Y/N-answerable positive predicate evaluating whether the implementation reproduces the value] |
-
-## Decisions and Unresolved Items
-(Include when task decomposition resolved an alternative, optional behavior, or placeholder, or when a required decision remains unresolved. Omit when the task carries neither.)
-
-Resolved decisions — each alternative or placeholder the decomposition fixed to an explicit choice:
-
-| Item | Decision | Source / Rule |
-|---|---|---|
-| [the alternative, optional behavior, or placeholder] | [the selected choice, or the deterministic rule that selects it; for a placeholder, the exact temporary output, allowed dependencies, and verification expectation] | [work plan / Design Doc / UXRD / ADR section, or the basis of the decision rule] |
-
-Blocking unresolved items — decisions that cannot be made at decomposition time and block execution:
-
-| Item | Required Input | Escalation Condition |
-|---|---|---|
-| [the unresolved decision] | [the input needed to resolve it] | [who or what to escalate to, and the point at which the executor must stop rather than guess] |
+| [Design Doc path (§ Section), copied from the matching work plan row] | [exact-value / structure-order / derived-display / state-lifecycle-negative] | [Required Observable Value copied verbatim from the work plan row] | [Y/N-answerable positive predicate evaluating whether the implementation reproduces the value] |
 
 ## Investigation Notes
 (Implementation observations are appended here before implementation begins. When Binding Decisions or Reference Contracts exist, record the planned approach and each Compliance Check result here — the Exit Gate re-reads them against the final implementation.)
@@ -72,7 +48,6 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 ## Implementation Steps (TDD: Red-Green-Refactor)
 ### 1. Red Phase
 - [ ] Read all Investigation Targets and record key observations
-- [ ] (When Change Category is set) Sweep adjacent cases sharing the same path/contract/state/boundary for the same class of defect; fold any found within Target Files scope into the failing tests
 - [ ] Review dependency deliverables (if any)
 - [ ] Verify/create contract definitions
 - [ ] Write failing tests — only for obligations whose **Proven by** is `new`; a step that adds no behaviour of its own (constant, schema declaration, wiring) gets no test
@@ -85,10 +60,6 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 ### 3. Refactor Phase
 - [ ] Improve code (maintain passing tests)
 - [ ] Confirm added tests still pass
-
-## Quality Assurance Mechanisms
-(From the work plan's Appendix: Traceability — mechanisms relevant to this task's target files)
-- [Tool/check name] — Enforces: [what] — Config/Source: [path] — Type: `executable_check` | `passive_constraint`
 
 ## Operation Verification Methods
 (Derived from the Verification Strategy in the work plan)
@@ -115,9 +86,6 @@ An obligation is not a test. It is discharged by the one lowest-level test that 
 - [ ] Operation verified per Operation Verification Methods above
 - [ ] Each Proof Obligation is met: the test turns red under its primary failure mode and exercises the stated boundary
 - [ ] Deliverables created (for research/design tasks)
-- [ ] (When Binding Decisions exist) Every Compliance Check evaluates to `Y` against the **final** implementation, with evidence recorded in Investigation Notes (file:line, test result, or command output)
-- [ ] (When Reference Contracts exist) Every Compliance Check evaluates to `Y` against the **final** implementation, with evidence in Investigation Notes
-- [ ] (When Decisions and Unresolved Items exist) Every resolved decision is applied as recorded, and no blocking unresolved item remains open — if one does, execution halts and escalates per its Escalation Condition
 
 ## Notes
 - Impact scope: [Areas where changes may propagate]

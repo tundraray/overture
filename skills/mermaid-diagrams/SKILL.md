@@ -21,13 +21,13 @@ A diagram in a design document is read twice: by a human who must understand the
 - **Lead with the visual.** A section that describes a structure, a flow, or a state change opens with its diagram; a sentence that only retells the diagram is deleted.
 - **Diagrams restate facts already established** — in the code, the PRD, or the document's own tables. Invent no step, edge, or participant; when a flow needs a leg nobody has described, record it as an open question instead of drawing it.
 - **Every identifier in a diagram is verified** in code or in the upstream document before it is drawn. A step the code does not support is dropped, not invented.
-- **One `> **Why** — …` callout per diagram at most.** No legends that explain colours, shapes, or "lights up in order". A line under a diagram is allowed only when it says something the diagram cannot (a unit, an abbreviation).
+- **One `> **Why** — …` callout per diagram at most.** No legends that explain colours, shapes, or "lights up in order". A line under a diagram says something the diagram cannot.
 
 ## 3. Redraw test
 
 A diagram is good when it can be redrawn from memory at a whiteboard in two minutes and still say the same thing.
 
-- **Node budget.** C1 ≤ 6, C2 ≤ 8, C3 and C4 ≤ 10, any other flowchart ≤ 10 nodes. Over the limit → split into two diagrams (write side / read side), never shrink the font.
+- **Node budget.** A C-level diagram keeps its level's budget in `references/c4-levels.md`; any other flowchart ≤ 10 nodes. Over the limit → split into two diagrams (write side / read side), never shrink the font.
 - **Label length.** A node is a name plus at most one short role line (`threads<br/>owns the thread list`). Field lists, file paths, method names, and sentences go into tables or prose. Edge labels are 1–4 domain words.
 - **No step codes** (`W1`, `R1`, `S3`) anywhere — not on edges, not in prose. When order matters, the step number sits in the node: `1 · ThreadsController`.
 - **Single flow direction** per diagram, the main path on a straight line, side effects off to the side, no crossing edges on the main path. If the layout engine crosses them, reorder the nodes in the source (section 7).
@@ -160,7 +160,7 @@ Every message line in the rendered SVG carries `class="messageLine0|1"` and `dat
 | `fontFamily` / `fontSize` in `themeVariables` | custom fonts are not wanted |
 | `sequence: mirrorActors: false` | lifelines end in nothing — the bottom looks cut off |
 | actor menus `link X: label @ url` | popups do not open in the viewer; on typed participants they crash 11.16.1 |
-| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. A code path the diagram hides goes into Appendix: Evidence, "Code Inspection Evidence", as a relative Markdown link |
+| links inside diagrams (`click … href`, `<a href>` in labels) | diagrams render in a sandbox; links resolve against it and die. A code path the diagram hides goes in the text under it, as a relative Markdown link |
 | Markdown links `[x](y)` in node labels | rendered as plain text |
 | `;` inside sequence messages or notes | ends the statement → parse error |
 | `#` inside sequence text | starts a comment |
@@ -192,4 +192,4 @@ node check-mermaid.mjs <doc.md> <outdir>
 
 ## 9. Revisions
 
-A revision — after review or a user change — re-runs the render check on the whole document, not only on the diagrams that were touched: a renamed component changes C2, C3, C4 when the document has one, and every runtime flow it appears in. The same system keeps its place across C1, C2, and C3 after the edit.
+A revision — after review or a user change — re-runs the render check on the whole document, not only on the diagrams that were touched: a renamed component changes C2, C3, C4 when the document has one, and every runtime flow it appears in.

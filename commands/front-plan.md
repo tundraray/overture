@@ -27,6 +27,7 @@ Before executing, load these skill files for guidance:
 - Design document selection
 - Test skeleton lookup for the part (generation only when none exist)
 - Work plan creation with work-planner
+- Work plan review with document-reviewer, when the user asks for it at plan approval
 - Plan approval obtainment
 
 **Responsibility Boundary**: This command completes with work plan approval.
@@ -49,13 +50,13 @@ Create frontend work plan with the following process:
 Invoke **work-planner** using Task tool:
 - `subagent_type: "work-planner"`
 - `description: "Work plan creation"`
-- `prompt: "Create work plan from Design Doc at [path] for part [part]; test skeletons: [paths]"`
+- `prompt: "Create work plan for part [part]. PRD: docs/features/[feature]/prd.md; UXRD: [docs/features/[feature]/uxrd.md, if it exists]; Design Doc: [path]; ADRs: [paths, or none]; test skeletons: [paths]. [SYSTEM CONSTRAINT] This agent operates within front-plan command scope."`
 
-### 4. Work Plan Review
-Submit the plan to **document-reviewer** before presenting it to the user — a plan that omits a Design Doc requirement looks complete, and only a traceability check finds the gap:
+### 4. Work Plan Check
+work-planner runs its own draft check before it returns. Present the plan at the stop per `workflow-orchestration`, "Explicit Stop Points". An independent review:
 - `subagent_type: "document-reviewer"`
-- `prompt: "doc_type: WorkPlan. Review the work plan at [path] against its Design Doc. Verify: 1) Design-to-Plan Traceability — every Design Doc item has a covering task or a justified gap, 2) Verification Strategy stating what correctness means, with the task that runs the early verification point, 3) Failure Mode Checklist — all nine categories marked, applicable ones assigned a covering task, 4) Reference Contract Values recorded verbatim where the Design Doc specifies a binding observable value, 5) ADR Bindings present for every ADR the design treats as prerequisite or produced, 6) frontmatter valid — part is in the PRD's Delivery Parts, plan: N of M consistent with siblings. [SYSTEM CONSTRAINT] This agent operates within front-plan command scope."`
-- `approved_with_conditions` or `needs_revision` → re-invoke work-planner with the `critical` and `important` issues, then one re-review with `review_scope: changes`, the `diff_base`, and the prior issues verbatim; a re-review that is not `approved`, or `rejected`, goes to the user (`workflow-orchestration`, "Revision Loop")
+- `prompt: "doc_type: WorkPlan; target: [path]. [SYSTEM CONSTRAINT] This agent operates within front-plan command scope."`
+- `approved_with_conditions` or `needs_revision` → re-invoke work-planner with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`, the `diff_base`, and the prior issues verbatim; a re-review that is not `approved`, or `rejected`, goes to the user (`workflow-orchestration`, "Revision Loop")
 - Then interact with user to obtain approval for plan content
 - After approval, invoke **work-planner** in `update` mode to set the plan's `status: active` — `/front-build` runs only the active plan
 

@@ -46,7 +46,6 @@ Resolve the plan as `workflow-execution`, "Resolving the Plan to Execute", descr
 - Plan title or Snapshot explicitly identifies the work as backend
 
 **Frontend signals (any one disqualifies, even alongside a backend signal)**:
-- `## Related Documents` pointing to a UXRD (`docs/features/*/uxrd.md`)
 - A `UXRD Component → Task Mapping` section
 - Target Files exclusively under `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`
 - The governing design describes component hierarchy, screen states, or UI interactions

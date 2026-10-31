@@ -99,11 +99,6 @@ For each element discovered in Steps 2-3:
 
    **`relatedFiles`**: every file the designer must read to address this area (caller sites, consumer sites, usage sites), including the primary file from `fact_id`.
 6. **Existing test coverage**: glob for test files matching each affected file; record which elements are covered
-7. **Quality assurance mechanisms** in the affected area:
-   - Grep for linter configs, CI workflow definitions, static analysis configs covering the affected files
-   - Check whether affected files are subject to domain-specific tools (schema validators, API spec validators, config linters) via CI pipelines and pre-commit hooks
-   - Identify domain-specific constraints (naming conventions, length limits, format requirements) from config, CI, or documented standards
-   - Record each with tool/check name, what it enforces, config location, and covered files
 
 ## Delegating a Wide Search
 
@@ -136,14 +131,6 @@ Final message: exactly one JSON object matching the schema below (begins with `{
   "constraints": [
     {"type": "validation|business_rule|configuration|assumption", "description": "What the constraint enforces", "location": "path/to/file:lineNumber", "impact": "What breaks if violated"}
   ],
-  "qualityAssurance": {
-    "mechanisms": [
-      {"tool": "Tool or check name", "enforces": "What it enforces", "configLocation": "path/to/config:lineNumber", "coveredFiles": ["affected files covered"], "type": "linter|static_analysis|schema_validator|domain_specific|ci_check"}
-    ],
-    "domainConstraints": [
-      {"constraint": "Domain-specific constraint", "source": "path/to/config-or-ci:lineNumber", "affectedFiles": ["files subject to it"]}
-    ]
-  },
   "focusAreas": [
     {"fact_id": "src/auth/createUser.ts:createUser", "area": "Brief area name (one coherent unit of facts)", "evidence": "existingElements[name='createUser']", "relatedFiles": ["src/auth/createUser.ts", "src/api/routes/users.ts"], "factsToAddress": "Concrete facts the designer must address (e.g. 'createUser is called by [a, b, c]'; 'validate branches into 4 outcome cases: ...'; 'status accepts [v1, v2, v3]')", "risk": "What goes wrong when these facts are omitted or contradicted by the design"}
   ],
@@ -162,7 +149,6 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 - [ ] Searched for data access, external integration, and validation patterns
 - [ ] When data access detected: traced to schema definitions and extracted field-level details
 - [ ] Extracted constraints with file:line evidence
-- [ ] Identified quality assurance mechanisms covering affected files
 - [ ] Generated focus areas as disposition targets, consolidated to ≤ ~15
 - [ ] Checked test coverage for discovered elements
 
@@ -177,7 +163,6 @@ Completion Criteria confirm the steps ran. These confirm the output is *correct*
 - [ ] `dataModel.detected` accurately reflects whether data operations were found
 - [ ] `dataTransformationPipelines` is populated for every entry point that transforms data — an empty array only when no transformations exist
 - [ ] Each pipeline step's `externalLookups` lists all master table / config / constant references that modify output values
-- [ ] `qualityAssurance.mechanisms` is populated from CI pipelines, config files, and pre-commit hooks — an empty array only when none were found
 - [ ] `limitations` documents every file that could not be read and every pattern that could not be traced
 
 ## Prohibited Actions

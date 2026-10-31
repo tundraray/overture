@@ -14,7 +14,7 @@ argument-hint: <feature description>
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
 2. **Follow the phase skills' flows exactly** (`workflow-product` → `workflow-technical` → `workflow-execution`):
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
-   - When flow specifies "Execute document-reviewer" → Execute it immediately
+   - At a document stop → `workflow-orchestration`, "Explicit Stop Points"
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Enter autonomous mode** only after the batch approval of the current part's plan
 4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
@@ -148,7 +148,7 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 The parts list confirmed in the product phase — the PRD's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
 
 1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
-2. **Execution phase**: for each part, plan → review → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+2. **Execution phase**: for each part, plan → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
 
 Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`prd-creator` in `update` mode and PRD re-approval).
 

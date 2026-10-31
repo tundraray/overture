@@ -1,6 +1,6 @@
 {
   "name": "gamedev-overture",
-  "version": "0.20.13",
+  "version": "0.20.14",
   "description": "Game development orchestration with specialized agents for design, engineering, art, QA, analytics, and production — built on the overture framework",
   "author": {
     "name": "Mikhail Andreev",
@@ -99,7 +99,9 @@
     "./skills/workflow-execution",
     "./skills/workflow-orchestration",
     "./skills/workflow-technical",
-    "./skills/game-analysis-criteria"
+    "./skills/game-analysis-criteria",
+    "./skills/technical-design",
+    "./skills/work-planning"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

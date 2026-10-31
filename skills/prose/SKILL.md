@@ -18,6 +18,8 @@ description: This skill governs how a PRD, UXRD, design system, Design Doc, ADR,
 
 The pass starts and ends with the whole document as its reader meets it (1.0). In between, sentences are edited until they clear the exit checks (1.3) and no `R1`–`R25` tell from [references/ai-tells.md](references/ai-tells.md) survives. Clean sentences in a document nobody can read through are still a failed pass.
 
+An author writing a document does not run this as a pass over a finished draft. 1.1–1.3 shape each sentence as it is drafted, and 1.0 runs once on the written document as a check. The pass as described here is for reviewing and revising text already written.
+
 ### 1.0 Read it as its reader
 
 A document is a product, and its user is the person who opens it. Before editing a sentence, and again when done, read the whole document top to bottom as that person: without the conversation that produced it, without opening the code, in the document's language.
@@ -54,7 +56,7 @@ A stall is a finding at the place it happens. The fix is usually a cut or a move
 
 ### 1.3 Exit checks
 
-Count these on the edited text; nothing else gates the pass.
+Count these on the written or edited text; nothing else gates the pass.
 
 - [ ] Every sentence carries one assertion and stays within the `T1` ceiling.
 - [ ] Every sentence with an actor names it as the subject, in the active voice (`T2`).
@@ -98,7 +100,7 @@ A term that names a real artifact is reproduced character for character in prose
 | **P2** | **Facts, not evaluations.** An adjective the reader cannot verify ("robust", «надёжный», «эффективный») is replaced by the fact that earns it, or deleted. |
 | **P3** | **No qualifiers or hedges.** Intensifiers and hedges add length and no force. Genuine uncertainty is an open question, never hedging prose. |
 | **P4** | **Explain the new through the known.** Anchor an unfamiliar concept to one the reader already holds; chain reasoning step by step. |
-| **P5** | **The shorter version ships.** Of two versions that state the same facts and both pass 1.3, the one with fewer words is the output. |
+| **P5** | **Fewest words.** A sentence states its facts in the fewest words that still pass 1.3. |
 
 ### 3.2 T1–T5: plain sentences
 

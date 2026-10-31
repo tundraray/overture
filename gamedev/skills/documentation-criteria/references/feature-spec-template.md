@@ -46,22 +46,18 @@ Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot f
 
 ## Delivery Parts
 
-Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here from `requirement-analyzer`'s `parts[]` and confirmed by the user at Feature Spec approval; criteria are in the `documentation-criteria` skill, "Parts and plans".
+<!-- Criteria: `documentation-criteria`, "Parts and plans". -->
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
 | `[part-name]` | [AC-1, AC-3] | [one key: `engine-systems`, `ui`, `hud`, `menu`, `domain`, `release-unit`] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [AC-2] | [...] | `[part-name]` | [...] |
 
-**Coverage**: every Must Have acceptance criterion above appears in exactly one row. Should Have and Could Have items appear in a row or are deferred here:
-
 - Deferred: [item assigned to no part, with reason]
-
-**Single part**: when the whole feature is one slice, write one row and say why in its rationale. One part is the common case.
 
 ### Part Dependency Diagram
 
-[When applicable: three or more parts (with two, the Depends on column already says it). An arrow points from a part to the part whose approved design it consumes.]
+<!-- When applicable: three or more parts (with two, the Depends on column already says it). An arrow points from a part to the part whose approved design it consumes. -->
 
 ```mermaid
 ---
@@ -103,7 +99,7 @@ graph LR
 - **Memory ceiling**: [MB]
 - **Rendering cost**: [draw call or GPU budget]
 
-### Game Data
+### Game Data *(full depth)*
 [The game data this feature reads or writes, in words — schemas and structures belong to the Design Doc]
 
 ### Integration Points
@@ -138,19 +134,6 @@ graph LR
 
 ### Player Feedback
 - [How players know the feature is working]
-
-## Analytics Integration *(full depth)*
-### Telemetry Events
-- **Feature Activation**: [When/how to track usage]
-- **Player Actions**: [Specific interactions to measure]
-- **Performance Impact**: [System metrics to monitor]
-
-### A/B Testing Framework
-<!-- Delete when no experiment is planned. -->
-- **Test Variants**: [Different versions to test]
-- **Success Metrics**: [How to measure which version wins]
-- **Sample Size**: [How many players needed for significance]
-- **Duration**: [How long to run the test]
 
 ## Engine Constraints *(full depth)*
 <!-- Constraints the engine or platform imposes on this feature. The implementation approach is designed in the Design Doc. -->

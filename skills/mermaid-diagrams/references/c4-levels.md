@@ -1,13 +1,13 @@
 # C1–C4 Levels in the Design Doc
 
-The Design Doc zooms in four steps, after the C4 model (Simon Brown, c4model.com). Each level answers one question and draws only what that question needs; the same system stays in the same place from level to level, so the reader — and a hand-drawn copy — zooms in instead of starting over.
+The Design Doc zooms in up to four steps, after the C4 model (Simon Brown, c4model.com). Which levels it draws depends on the change: a level is drawn only when the change touches it (the When column), and at least one is drawn. Each level answers one question and draws only what that question needs.
 
 | Level | Question | Draws | Direction | Max nodes | When |
 |---|---|---|---|---|---|
-| C1 · Context | Who uses the change, and what outside systems does it touch? | the product as **one box**, people and external systems | `flowchart LR` | 6 | omit when the part has no external actor or system that changes behaviour |
-| C2 · Containers | Which deployable units and stores take part? | apps, services, workers, databases, queues, browser storage; calls between them | `flowchart LR` | 8 | always |
-| C3 · Components | What inside one container does the work? | components of **one** container in call order | `flowchart TB` | 10 | one diagram per container the part changes, per flow it touches |
-| C4 · Code flow | How does data pass through the modules, step by step? | classes / functions / components as a vertical step chain | `flowchart TB` | 10 (one long chain may exceed it if it stays readable) | omit when the order of steps inside a module is not itself a decision |
+| C1 · Context | Who uses the change, and what outside systems does it touch? | the product as **one box**, people and external systems | `flowchart LR` | 6 | the change alters actors, external systems, or the system boundary |
+| C2 · Containers | Which deployable units and stores take part? | apps, services, workers, databases, queues, browser storage; calls between them | `flowchart LR` | 8 | containers or their connections change |
+| C3 · Components | What inside one container does the work? | components of **one** container in call order | `flowchart TB` | 10 | one subsection per container whose components change; inside it one diagram per flow the part touches |
+| C4 · Code flow | How does data pass through the modules, step by step? | classes / functions / components as a vertical step chain | `flowchart TB` | 10 | a component's internals are the point of the change |
 
 Every level carries a frontmatter `title:` of the form `"C2 · Containers — <scope>"`, the shared `config:` block, and path animation (SKILL.md sections 4–5).
 
@@ -33,11 +33,11 @@ Every level carries a frontmatter `title:` of the form `"C2 · Containers — <s
 
 ## C3 · Components
 
-- One `###` subsection per C2 container the part adds or changes; inside it one diagram per flow, titled `**<container> — <flow>**`.
+- Each diagram is titled `**<container> — <flow>**`.
 - Top to bottom: caller and entry node on top, the container's components inside a boundary subgraph named after the container in call order, stores and external systems in the bottom row with nothing below them.
 - Another container is one black node; its inside is drawn in its own subsection.
 - A component the flow does not touch is not drawn.
-- Under the diagram, a sentence per component whose job is not obvious from its name — "`ThreadsService` checks that the user owns the thread before listing, renaming, or deleting it".
+- Under the diagram, a sentence per component whose job is not obvious from its name — "`ThreadsService` checks that the user owns the thread before listing, renaming, or deleting it". No field tables and no per-component interface or dependency lists: what a component offers is in Contract Definitions.
 
 ## C4 · Code flow
 
@@ -94,7 +94,7 @@ flowchart TB
 
 (Path animation omitted for brevity; a real C4 diagram carries it.)
 
-Under the chain, at most a few sentences on what the picture does not show. The files to change are the work plan's; the files examined are in Code Inspection Evidence.
+Under the chain, at most a few sentences on what the picture does not show. The files to change are the work plan's.
 
 ## Consistency across levels
 

@@ -195,7 +195,7 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 ## Test Meta Information Assignment
 
-Each skeleton carries the annotations in `integration-e2e-testing`, "Required Comment Patterns" (`Catches`, `@category`, `@dependency`, `@complexity`); the planner reads them when sizing tasks, and `Catches` shows why the test was selected.
+Each skeleton carries the annotations in `integration-e2e-testing`, "Required Comment Patterns" (`Catches`, `@category`, `@dependency`, `@complexity`); the planner reads them when placing tasks, and `Catches` shows why the test was selected.
 
 ## Constraints and Quality Standards
 

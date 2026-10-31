@@ -14,7 +14,7 @@ argument-hint: <game feature or project description>
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
 2. **Follow the phase skills' flows exactly** (`workflow-gamedev` → `workflow-technical` → `workflow-execution`):
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
-   - When flow specifies "Execute document-reviewer" → Execute it immediately
+   - At a document stop → `workflow-orchestration`, "Explicit Stop Points"
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Enter autonomous mode** only after the batch approval of the current part's plan
 4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
@@ -82,23 +82,24 @@ prompt_includes:
 Sequential agent invocations after market analysis (or directly after requirements for Scenario B):
 
 1. **sr-game-designer** → GDD creation (core loop, pillars, systems overview)
-2. **document-reviewer** (`doc_type: GDD`) → GDD review **[Stop: GDD Approval]**
+2. **[Stop: GDD Approval]** — a document stop (`workflow-orchestration`, "Explicit Stop Points"); an independent review uses `doc_type: GDD`
 3. **mid-game-designer** → feature specification from the approved GDD, with `depth` (`full` at large scale, `lite` at medium and small) and the `parts[]` proposal from requirement-analyzer, producing the spec's **Delivery Parts** section
-4. **document-reviewer** (`doc_type: FeatureSpec`, same `depth`) → feature spec review **[Stop: Feature Spec Approval — includes the parts split]**. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
+4. **[Stop: Feature Spec Approval — includes the parts split]** — a document stop; an independent review uses `doc_type: FeatureSpec` and the same `depth`. The approved Delivery Parts are the parts list for every later phase; Scenario A repeats steps 3-4 per feature the GDD defines
 5. **mechanics-developer** → Game mechanics architecture (state machines, event systems, balance framework)
 6. **game-feel-developer** → Game feel specification (juice, feedback loops, input responsiveness)
 
-**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a game design spec; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
+**Medium and small scale**: skip the GDD steps (1-2) unless new mechanics need a GDD update; run steps 3-4 with `depth: lite`, then continue per `workflow-gamedev`. At small scale the approved lite spec goes straight to a simplified plan.
 
 ### Art & Visual Phase
 
 7. **sr-game-artist** → Art direction, style guide, asset requirements
 8. **technical-artist** → Pipeline specs, atlas optimization, rendering constraints
-9. **game-ui-designer** → Game UI/UX design (HUD, menus, interaction patterns)
+9. **game-ui-designer** → UXRD for the game UI (HUD, menus, interaction patterns) and the design-system files it touches, with its draft check
+10. **[Stop: UXRD Approval]** — a document stop; an independent review uses `doc_type: UXRD`
 
 ### Analytics Phase
 
-10. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
+11. **data-scientist** → Analytics/telemetry design (events, funnels, KPIs)
 
 ### Game-Specific Information Flow
 
@@ -217,7 +218,7 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 The parts list confirmed in the product phase — the feature spec's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
 
 1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
-2. **Execution phase**: for each part, plan → review → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+2. **Execution phase**: for each part, plan → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
 
 Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`mid-game-designer` in `update` mode and feature spec re-approval).
 

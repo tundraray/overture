@@ -17,7 +17,15 @@ The project's visual language lives in `docs/design-system/` and is owned by `ux
 
 Read the README first. When the Source is a brand book or an external system (shadcn/ui, Material, an internal library), that source decides what it covers, and the files fill only its gaps. A UXRD links component specs; it never restates them.
 
-## Part A — Designing (ux-designer)
+## Part A — Designing (ux-designer; gamedev: game-ui-designer)
+
+### Workflow
+
+Run before writing the UXRD body.
+
+1. **Read first**: `docs/design-system/` (README, foundations, the specs of components the feature may use), the source its README cites, and `ui-analyzer` facts when the caller passes them.
+2. **None exists** → create `README.md` (Source, Direction) and `foundations.md`, then a spec for each component the feature needs. In gamedev the source is usually the art direction in `docs/art/` or the GDD.
+3. **One exists** → follow it. For each component the feature uses, decide reused / extended / new, searching the design system and the code before choosing `new` — extending one is usually better. Write extended and new specs into `docs/design-system/components/`, add new ones to the README index, and add the UXRD to each spec's "Used In". A change to an existing foundation or component is a Key Decision in the UXRD.
 
 ### Source
 
@@ -36,7 +44,7 @@ One phrase of character ("calm, dense tool for long sessions") and two or three 
 ### Foundations
 
 - **Typography** — a scale with a clear hierarchy: few sizes, each role distinct at a glance. Body size and line height fit the reading the product demands. Name the family and its fallback, and confirm it covers the product's languages and scripts.
-- **Color** — roles, not palettes: surface, text, muted, border, accent, danger (success and warning when used). Each role has a light and a dark value when the product is themed. Contrast targets come from the PRD's WCAG level (AA: 4.5:1 for body text, 3:1 for large text and UI parts); check each text/surface pair in both modes.
+- **Color** — roles, not palettes: surface, text, muted, border, accent, danger (success and warning when used). Each role has a light and a dark value when the product is themed. Contrast targets come from the WCAG level the PRD (gamedev: feature spec) sets (AA: 4.5:1 for body text, 3:1 for large text and UI parts); check each text/surface pair in both modes.
 - **Spacing & density** — one base unit and a short scale; say where compact and comfortable density apply.
 - **Shape & elevation** — radius, border, and shadow per element class; elevation signals layering, not decoration.
 - **Motion** — a character (quick and quiet, or expressive) and a duration per kind; what replaces movement under reduced motion.
@@ -51,8 +59,6 @@ A spec is precise enough to build without guessing, and still contains no code.
 - **States** — every state the component can reach: default, hover, focus, active, disabled, loading, empty, error, partial. Each row says how it looks (citing foundation roles, not raw values) and how it behaves. Delete unreachable states; never leave a reachable one undecided.
 - **Content rules** — length, casing, truncation, tone.
 - **Accessibility** — role, accessible name, keyboard, focus movement.
-
-Search the system and the code before creating a component; extending one is usually better.
 
 ## Part B — Implementing (frontend designer, executor, quality-fixer)
 

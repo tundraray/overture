@@ -28,16 +28,15 @@ This is the first phase, so its entry gate checks the session rather than a pred
 
 ## Flow
 
-The flow is the same shape at every scale — a PRD is always written — and differs in the PRD's depth and in whether a UXRD follows.
+The flow is the same shape at every scale — a PRD is always written — and differs in the PRD's depth (`documentation-criteria`, "PRD depth") and in whether a UXRD follows. Scale comes from `task-analyzer`'s five-axis assessment, not from file count alone — see `workflow-orchestration`, "Scale Determination".
 
 ### Large scale
 
 1. **requirement-analyzer** → requirement analysis + check for an existing PRD + preliminary part proposal
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: full`) → PRD creation (update when one exists; new creation with thorough investigation when not), including the **Delivery Parts** section that refines the proposal
-3. **document-reviewer** (`doc_type: PRD`, `depth: full`) → PRD review, including part coverage and dependencies
+2. **prd-creator** (`depth: full`) → PRD creation (update when one exists; new creation with thorough investigation when not), including the **Delivery Parts** section that refines the proposal, with its draft check
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+3. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it, with its draft check
    **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
@@ -46,10 +45,9 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 1. **requirement-analyzer** → requirement analysis + check for an existing PRD + part proposal (rarely more than two parts)
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: lite`, or `update` when a PRD already covers the feature) → PRD with Delivery Parts
-3. **document-reviewer** (`doc_type: PRD`, `depth: lite`) → PRD review
+2. **prd-creator** (`depth: lite`, or `update` when a PRD already covers the feature) → PRD with Delivery Parts, with its draft check
    **[Stop: PRD approval — includes the parts split]**
-4. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it → **document-reviewer**
+3. **ux-designer** → UXRD creation (when the work has a UI surface), creating or extending the project design system in `docs/design-system/` with it, with its draft check
    **[Stop: UXRD approval — includes the design-system files it touched]**
 
 → hand off to `workflow-technical`
@@ -58,51 +56,28 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 1. **requirement-analyzer** → requirement analysis + single-part proposal
    **[Stop: requirement confirmation / question handling]**
-2. **prd-creator** (`depth: lite`) → a short PRD: the requirement, its acceptance criterion, one part
-3. **document-reviewer** (`doc_type: PRD`, `depth: lite`) → PRD review
+2. **prd-creator** (`depth: lite`) → a short PRD: the requirement, its acceptance criterion, one part, with its draft check
    **[Stop: PRD approval]**
 
 No UXRD, no technical documents → `workflow-execution` for a simplified plan.
 
-A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's traceability table points at it.
+A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's task lines cite it.
 
 ## Parts
 
-A **part** is one independently designable slice of the feature; each gets its own Design Doc in the technical phase and its own plans in execution. The split is a product decision made here, because whoever splits the work also fixes where the contracts between the halves fall — and that is agreed with the user, not chosen by the first designer to open a file. Criteria and the record format are in `documentation-criteria`, "Parts".
-
-The path is the same at every scale, because the PRD is:
-
-| Step | Agent | Record |
-|------|-------|--------|
-| Propose | `requirement-analyzer` | `parts[]` — shown at the requirement confirmation stop as a preliminary split |
-| Refine | `prd-creator` | PRD, "Delivery Parts" section — the authoritative parts list |
-| Confirm | user | PRD approval stop |
+Criteria, the record format, and who proposes, refines, and confirms the split: `documentation-criteria`, "Parts".
 
 Present the split as a decision at the PRD stop, not as a line in a summary: name each part, what it covers, and what it depends on, and offer the alternative — fewer parts, or a different seam. One part is a legitimate answer and the common one; the question put to the user is whether the proposed seam is real.
 
-After confirmation, a change to the parts list re-enters this phase through `prd-creator` in `update` mode and PRD re-approval. Designs of parts the change does not touch stay approved; an already implemented part is frozen.
-
-## Document Requirements by Scale
-
-| Scale | PRD | UXRD |
-|-------|-----|------|
-| Small | **Required**, `lite` depth | Not needed |
-| Medium | **Required**, `lite` depth (update when one exists) | When frontend/UI work is involved |
-| Large | **Required**, `full` depth (new, updated, or reverse-engineered) | When frontend/UI work is involved |
-
-Depth is defined in `documentation-criteria`, "PRD depth". An existing PRD keeps its depth when updated.
-
-Scale comes from `task-analyzer`'s five-axis assessment, not from file count alone — see `workflow-orchestration`, "Scale Determination".
-
 ## Stop Points
 
-Every stop in this phase is a genuine decision gate, not a status update. Use `AskUserQuestion` so the choice is structured.
+Every stop in this phase is a genuine decision gate, not a status update. Use `AskUserQuestion` so the choice is structured. A document stop shows the author's `draftCheck.open` items and offers independent review as an option — see `workflow-orchestration`, "Explicit Stop Points".
 
 | Stop | After | What the user decides |
 |------|-------|----------------------|
 | Requirement confirmation | requirement-analyzer | Whether the understood scope and scale match intent; answers to open questions; a first look at the proposed parts |
-| PRD approval | document-reviewer completes PRD review | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
-| UXRD approval | document-reviewer completes UXRD review | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
+| PRD approval | prd-creator returns the PRD with its draft check | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| UXRD approval | ux-designer returns the UXRD with its draft check | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
 
 Each stop happens **once per feature**. Per-part stops begin in the technical phase.
 
@@ -136,7 +111,7 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 ☐ UXRD exists and is approved, together with the `docs/design-system/` files it created or changed, **or** the work has no UI surface and that is recorded, **or** the scale is small
 ☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
-☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
+☐ Every `critical` or `important` finding — open in the author's draft check or raised by an independent review — is resolved, or the user accepted it at the stop
 
 **Handoff payload** — concrete paths, not a summary:
 

@@ -18,7 +18,7 @@ Run before planning begins.
 ☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale or in gamedev Prototype mode, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
 ☐ ADR paths received per part, or an explicit "none passed the test" (small scale and Prototype: none)
 ☐ Test skeleton paths received per part (small scale and Prototype: none)
-☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `game-ui-designer` output on the gamedev path); a small-scale plan's traceability table maps to the PRD's or feature spec's acceptance criteria
+☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `game-ui-designer` output on the gamedev path); a small-scale plan's task lines cite the PRD's or feature spec's acceptance criteria
 ☐ The plan state of every part is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
 
 **ENFORCEMENT**: when an item is unchecked, stop and name the missing input and the phase that produces it. An ambiguous plan state in particular must never be resolved by picking one — see "Planning" below.
@@ -47,16 +47,10 @@ Commit strategy is asked once, before the first part's batch approval, and holds
 Run for the current part, then repeat for the next part in the list:
 
 1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying the frontmatter that positions it within its part (`plan: N of M`, `status`, `depends-on`) and incorporating the part's test skeleton paths
-2. **document-reviewer** → work plan review, checking:
-   - **Design-to-Plan Traceability** — every Design Doc item has a covering task or a justified gap
-   - **Failure Mode Checklist** — all nine categories marked, applicable ones assigned a covering task
-   - **Verification Strategy**: what correctness means and how it is proven, with the task that runs the early verification point
-   - **Reference Contract Values** recorded verbatim where the design specifies a binding observable value
-   - **ADR Bindings** present for every ADR the design treats as prerequisite or produced
-   `approved_with_conditions` or `needs_revision` → `{planner}` addresses the `critical` and `important` issues, then one re-review with `review_scope: changes`; a re-review that is not `approved`, or `rejected`, goes to the user — see `workflow-orchestration`, "Revision Loop"
+2. **`{planner}`'s draft check** — `document-reviewer`, run by the planner on the plan it wrote (`documentation-criteria`, "Draft Check"); the orchestrator runs no plan review of its own
 3. **Commit strategy selection** — ask the user, first part only (see below)
 
-   **[Stop: batch approval — part `{part}`]**
+   **[Stop: batch approval — part `{part}`]** — shows the plan path and the planner's `draftCheck.open` items, and offers independent review as an option; when the user picks it, `workflow-orchestration`, "Revision Loop" applies before approval
 
 4. **`{planner}`** (`update` mode) → set the approved plan's frontmatter `status: active`. The orchestrator never edits the file itself; the planner owns it and checks no sibling is already active
 5. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md`
@@ -68,7 +62,7 @@ Decomposition runs **after** batch approval: it produces working state, not a do
 
 Everything before it is reviewed by a human; everything after runs autonomously until completion or escalation. Do not reach it with an unresolved question — after it, no one is asked again.
 
-Small scale, and gamedev Prototype mode at any scale, skips the plan review: `{planner}` writes a simplified plan with `design: none` whose traceability table maps to the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
+Small scale, and gamedev Prototype mode at any scale, skips step 2: `{planner}` writes a simplified plan with `design: none` whose task lines cite the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
 
 ## Resolving the Plan to Execute
 
@@ -276,12 +270,11 @@ Run before the completion report.
 ```mermaid
 graph TD
     DESIGN[Approved Design Docs, one per part] --> PART[Next part in dependency order]
-    PART --> PLAN[planner: work plan for this part]
-    PLAN --> PREVIEW[document-reviewer: plan review]
-    PREVIEW -->|conditions or needs_revision, first review| PLAN
-    PREVIEW -->|re-review not approved, or rejected| USERPLAN[User: revise / accept / abort]
-    PREVIEW -->|approved| STRATEGY[Ask commit strategy, first part only]
-    STRATEGY --> START[Batch approval for this part]
+    PART --> PLAN[planner: work plan for this part, with its draft check]
+    PLAN --> STRATEGY[Ask commit strategy, first part only]
+    STRATEGY --> START[Batch approval for this part, with the draft check's open items]
+    START -->|user picks independent review| PREVIEW[document-reviewer: Revision Loop]
+    PREVIEW --> START
     START --> ACTIVATE[planner update: status active]
     ACTIVATE --> DECOMP[task-decomposer]
     DECOMP --> ENV{Environment check}

@@ -1,0 +1,1 @@
+../../../../skills/documentation-criteria/references/authoring-rules.md

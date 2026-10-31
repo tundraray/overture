@@ -95,14 +95,9 @@ skills:
       - "Templates"
       - "Creation Decision Matrix"
       - "ADR Creation Conditions"
-      - "Writing for the Reader"
-      - "Revising a Document"
       - "Detailed Document Definitions"
-      - "Creation Process"
       - "Storage Locations"
-      - "ADR Status"
       - "Diagram Requirements"
-      - "Common ADR Relationships"
 
   mermaid-diagrams:
     skill: "mermaid-diagrams"
@@ -348,7 +343,8 @@ skills:
       - "Design Tokens"
     sections:
       - "Reading the System"
-      - "Part A — Designing (ux-designer)"
+      - "Part A — Designing (ux-designer; gamedev: game-ui-designer)"
+      - "Workflow"
       - "Part B — Implementing (frontend designer, executor, quality-fixer)"
 
   llm-friendly-context:
@@ -461,7 +457,6 @@ skills:
       - "Entry Gate [BLOCKING]"
       - "Flow"
       - "Parts"
-      - "Document Requirements by Scale"
       - "Stop Points"
       - "Requirement Changes"
       - "Revision Loop"
@@ -479,13 +474,55 @@ skills:
       - "Domain Independence"
       - "Entry Gate [BLOCKING]"
       - "Flow"
-      - "Why the ADR Comes After the Design"
       - "Why Fact Gathering Precedes Design"
-      - "Document Requirements by Scale"
       - "Stop Points"
       - "Revision Loop"
       - "Part Sequencing"
       - "Exit Gate [BLOCKING]"
+
+  technical-design:
+    skill: "technical-design"
+    tags: [technical-design, design-doc, adr, change-impact, contracts, no-code, acceptance-criteria-scoping, update-mode, draft-check, self-validation]
+    typical-use: "Authoring or revising a Design Doc or an ADR: inputs, code investigation, scope agreement, change impact, contracts, the no-code rule, draft check, response to the caller"
+    size: medium
+    key-references:
+      - "ADR Method - Michael Nygard"
+      - "Design Doc Culture - Google Engineering Practices"
+    sections:
+      - "Responsibilities"
+      - "Documents"
+      - "Required Information"
+      - "Existing Code Investigation【Required】"
+      - "Scope Agreement【Most Important】"
+      - "Change Impact【Required】"
+      - "Contracts at Component Boundaries【Required】"
+      - "Design Principles"
+      - "Acceptance Criteria Scoping"
+      - "No Code in Design Docs and ADRs"
+      - "Diagrams"
+      - "Update Mode"
+      - "Draft Check"
+      - "Response to Caller"
+      - "Self-Validation [BLOCKING — before output]"
+      - "Latest Information Research"
+
+  work-planning:
+    skill: "work-planning"
+    tags: [work-plan, phase-breakdown, task-breakdown, test-placement, plan-frontmatter, update-mode, draft-check, self-validation]
+    typical-use: "Writing or updating a work plan: checking it against current code, the plan file and its frontmatter, task design, test placement, draft check, response to the caller"
+    size: medium
+    key-references:
+      - "Vertical Slice - Implementation Strategy"
+    sections:
+      - "Checking the Plan Against Current Code"
+      - "Delegating a Wide Search"
+      - "The Plan File"
+      - "Task Design"
+      - "Placing Tests"
+      - "Writing and the Draft Check"
+      - "Response to Caller"
+      - "Self-Validation [BLOCKING — before output]"
+      - "Update Mode"
 
   code-navigation:
     skill: "code-navigation"

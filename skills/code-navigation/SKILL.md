@@ -99,7 +99,7 @@ prompt: "query: <what to locate>; breadth: focused|medium|thorough"
 
 Pass its JSON through to whatever consumes the agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
 
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within the agent's own scope, navigate directly per the rules above — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+**Spawn only `code-explorer`** — and, for a document author, `document-reviewer` for its draft check (`documentation-criteria`, "Draft Check"). Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within the agent's own scope, navigate directly per the rules above — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
 
 ## Escalation
 

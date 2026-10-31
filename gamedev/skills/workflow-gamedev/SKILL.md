@@ -32,7 +32,7 @@ A game feature and a service endpoint need the same design rigour, the same code
 
 ### Principles
 
-- **GDD is a first-class artifact** and the single source of truth for game design. Every agent references it for design decisions; changes to it require `document-reviewer` approval. Feature specs derive from GDD systems rather than restating them.
+- **GDD is a first-class artifact** and the single source of truth for game design. Every agent references it for design decisions; changes to it require the user's approval at the GDD stop. Feature specs derive from GDD systems rather than restating them.
 - **Art has two owners.** `sr-game-artist` defines what it looks like; `technical-artist` defines how it ships. Consult both before any art-related implementation task — a style decision with no pipeline behind it produces assets the build cannot use.
 - **producer-agent holds scope authority.** When a design decision expands scope or timeline, it routes there rather than being absorbed silently.
 
@@ -69,7 +69,7 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 |------|-------------|-------------------|
 | **Full Development** | Standard scale-based flow | None |
 | **Design Only** | Run the product phase to completion, stop before technical design | Deliver the design package; no implementation |
-| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part) → document-reviewer → [Stop: Feature Spec approval] → simplified plan with `design: none`, at any scale | Skip market analysis, art direction, UI, analytics, and the technical phase; the lite spec still exists, so the execution entry gate and the parts list hold, and the plan's traceability maps to the spec's acceptance criteria |
+| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part, with its draft check) → [Stop: Feature Spec approval] → simplified plan with `design: none`, at any scale | Skip market analysis, art direction, UI, analytics, and the technical phase; the lite spec still exists, so the execution entry gate and the parts list hold, and the plan's traceability maps to the spec's acceptance criteria |
 
 ## Flow
 
@@ -80,17 +80,17 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 2. **market-analyst** → market analysis, competitor research, Go/No-Go
    **[Stop: Go/No-Go]**
 3. **producer-agent** → project config, team selection, resource plan
-4. **sr-game-designer** → GDD (vision, pillars, core loop, progression)
-5. **document-reviewer** (`doc_type: GDD`) → GDD review
+4. **sr-game-designer** → GDD (vision, pillars, core loop, progression), with its draft check
    **[Stop: GDD approval]**
-6. **mid-game-designer** (`depth: full`) → one feature spec per feature the GDD defines, each with its **Delivery Parts** section refining the part proposal → **document-reviewer** (`doc_type: FeatureSpec`)
+5. **mid-game-designer** (`depth: full`) → one feature spec per feature the GDD defines, each with its **Delivery Parts** section refining the part proposal, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]** — once per feature
-7. **mechanics-developer** → game mechanics architecture
-8. **game-feel-developer** → game feel specification
-9. **sr-game-artist** → art direction, style guide, palette
+6. **mechanics-developer** → game mechanics architecture
+7. **game-feel-developer** → game feel specification
+8. **sr-game-artist** → art direction, style guide, palette
    **technical-artist** → pipeline specs, atlas optimization, shader requirements
-10. **game-ui-designer** → game UI/UX: HUD, menus, interaction, accessibility
-11. **data-scientist** → analytics and telemetry design, KPIs, A/B tests
+9. **game-ui-designer** → UXRD for the game UI (HUD, menus, interaction, accessibility) and the `docs/design-system/` files it touches, with its draft check
+   **[Stop: UXRD approval]**
+10. **data-scientist** → analytics and telemetry design, KPIs, A/B tests
 
 **Design Only mode stops here** — deliver the design package.
 
@@ -100,13 +100,12 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 
 1. **requirement-analyzer** → requirements analysis + preliminary part proposal
    **[Stop: requirements confirmation]**
-2. **sr-game-designer** → GDD update for the new feature
-3. **document-reviewer** (`doc_type: GDD`) → GDD review
+2. **sr-game-designer** → GDD update for the new feature, with its draft check
    **[Stop: GDD approval]**
-4. **mid-game-designer** (`depth: full`) → feature spec with Delivery Parts → **document-reviewer** (`doc_type: FeatureSpec`)
+3. **mid-game-designer** (`depth: full`) → feature spec with Delivery Parts, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]**
-5. **mechanics-developer** → mechanics architecture for the feature
-6. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **game-ui-designer**, **data-scientist**
+4. **mechanics-developer** → mechanics architecture for the feature
+5. *[Conditional, by feature type]* **game-feel-developer**, **sr-game-artist**, **game-ui-designer** (UXRD with its draft check, then **[Stop: UXRD approval]**), **data-scientist**
 
 → hand off to `workflow-technical`
 
@@ -114,11 +113,11 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 
 1. **requirement-analyzer** → requirement analysis + preliminary part proposal
    **[Stop: requirements confirmation]**
-2. *[Conditional]* **sr-game-designer** → game design spec (when new mechanics are involved)
-3. **mid-game-designer** (`depth: lite`, or `update` when a spec already covers the feature) → feature spec with Delivery Parts → **document-reviewer** (`doc_type: FeatureSpec`, `depth: lite`)
+2. *[Conditional]* **sr-game-designer** → GDD update (when new mechanics are involved), with its draft check
+3. **mid-game-designer** (`depth: lite`, or `update` when a spec already covers the feature) → feature spec with Delivery Parts, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]**
 4. **mechanics-developer** → mechanics architecture (when new systems are involved)
-5. *[Conditional]* **game-ui-designer** (UI work), **game-feel-developer** (polish work)
+5. *[Conditional]* **game-ui-designer** (UI work; UXRD with its draft check, then **[Stop: UXRD approval]**), **game-feel-developer** (polish work)
 
 → hand off to `workflow-technical`
 
@@ -126,12 +125,10 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 
 1. **requirement-analyzer** → requirement analysis + single-part proposal
    **[Stop: requirements confirmation]**
-2. **mid-game-designer** (`depth: lite`) → a short feature spec: the change, its acceptance criteria, one part → **document-reviewer**
+2. **mid-game-designer** (`depth: lite`) → a short feature spec: the change, its acceptance criteria, one part, with its draft check
    **[Stop: Feature Spec approval]**
 
 No technical documents → `workflow-execution` for a simplified plan whose traceability maps to the spec's acceptance criteria.
-
-The feature spec plays the role the PRD plays in `workflow-product`: it exists at every scale, its depth follows the scale, and its Delivery Parts section is the only source of part names. The GDD stays at project level and does not carry parts.
 
 ## Stop Points
 
@@ -139,8 +136,11 @@ The feature spec plays the role the PRD plays in `workflow-product`: it exists a
 |------|-------|----------------------|
 | Requirements + mode | requirement-analyzer | Scope, scale, which development mode applies; a first look at the proposed parts |
 | Go/No-Go | market-analyst | Whether the project proceeds at all (Scenario A) |
-| GDD approval | document-reviewer completes GDD review | Whether the vision, pillars, and core loop are right (Scenario A and B) |
-| Feature Spec approval | document-reviewer completes feature spec review | Whether the acceptance criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| GDD approval | sr-game-designer returns the GDD with its draft check | Whether the vision, pillars, and core loop are right (Scenario A and B) |
+| Feature Spec approval | mid-game-designer returns the feature spec with its draft check | Whether the acceptance criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| UXRD approval | game-ui-designer returns the UXRD with its draft check | Whether the flows, screen states, and accessibility are right, and the design-system files the UXRD created or changed — only when the feature has a UI surface |
+
+A document stop shows the author's `draftCheck.open` items and offers independent review as an option — see `workflow-orchestration`, "Explicit Stop Points".
 
 Each stop happens once per feature (Scenario A: once per feature the GDD defines). Per-part stops begin in `workflow-technical`.
 
@@ -158,7 +158,7 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 ☐ Conditional disciplines are either produced or explicitly marked not applicable — game feel, art direction, UI/UX, analytics
 ☐ The parts list is confirmed — the approved feature spec's Delivery Parts section. Every part has a name, what it covers, a `cutAlong` seam, and `dependsOn` entries naming other parts in the list, with no cycle
 ☐ Every open question is written down with the decision it blocks and who resolves it
-☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document
+☐ Every `critical` or `important` finding — open in the author's draft check or raised by an independent review — is resolved, or the user accepted it at the stop
 
 **Handoff payload**:
 

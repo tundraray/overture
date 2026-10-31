@@ -1,22 +1,12 @@
 # [Feature Name] Design Document — [part-name]
 
-<!--
-A person reads this document top to bottom. The sections follow the questions they ask, in order:
-what is this and why is it built this way (Snapshot, Key Decisions) → which words need explaining (Terms) → what it covers and leaves alone (Part) → what must be true when it is done (Acceptance Criteria)
-→ how it works (Design) → how we will know it works (Test Strategy) → what could go wrong (Security Considerations, Risks and Mitigation, Open Questions)
-→ the evidence behind it (Appendix: Evidence) → when it changed (Update History).
-Text inside these comments is guidance for the author; it is not copied into the document.
-Every section follows "Writing for the Reader" in documentation-criteria: written for a cold reader, in sentences and short lists rather than tables or shorthand,
-at the design's altitude rather than the code's; a section marked "when applicable" is deleted when it does not apply.
-A table appears only where the reader compares several rows across the same columns. A cell is never just an ID: the words come first, the ID follows in parentheses.
-Which files and components change, in what order, and how each step is verified belong to the work plan, not here.
--->
+<!-- Guidance for the author sits in comments like this one; every section follows "Writing for the Reader" in documentation-criteria. -->
 
 **Status:** Draft / Approved · **Date:** YYYY-MM-DD · **PRD:** [prd.md](./prd.md) · **UXRD:** [uxrd.md](./uxrd.md) or none · **Depends on:** [`design-[part].md`] or nothing
 
 ## Snapshot
 
-<!-- Answers: what is this, and what could go wrong? At most ten lines. A cold reader who stops here can say what this part does, how it works in outline, and what could go wrong. -->
+<!-- Answers: what is this, and what could go wrong? At most ten lines. -->
 
 **Overview.** [Three to five plain sentences: the problem this part solves, what it adds or changes, and how it works in outline — as you would explain it to a colleague who has not followed the feature. No IDs, no code names the reader has not met.]
 
@@ -44,8 +34,9 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 <!-- Answers: what does this part cover, and what does it leave alone? Scope as agreed with the user: what this part leaves as it is, and what the design must respect. -->
 
 - **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
-- **Covers**: [each requirement this part owns, in a few words with its ID in parentheses — the PRD holds the full text]
+- **Covers**: [the ID of each requirement this part owns — the PRD holds the full text]
 - **Depends on**: [link to the contract section of each approved upstream design, e.g. `design-[other-part].md#contract-definitions` — cited, never restated: a copy forces a revision every time upstream changes], or "none — first part"
+- **Prerequisite ADRs**: [a link to each existing ADR this design follows], or "none"
 - **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
 **Out of scope**
@@ -60,14 +51,14 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 <!--
 Answers: what must be true when this part is done?
-A PRD criterion that already states testable behaviour applies as written: cite its ID under its requirement, do not restate it.
+A PRD criterion that already states testable behaviour is cited by its ID under its requirement, never restated in words.
 Write a criterion of your own only where the design refines a PRD criterion into system behaviour the PRD does not spell out — a trigger, a state, an error case. Give it an ID (`DC-1`, `DC-2`) so flows and use cases can cite it.
 Each is one plain sentence a person reads: what happens, and when. No table mapping criteria to sections or use cases, and no prose saying where each one is handled: each use case in Test Strategy names the criteria it covers.
 -->
 
 ### [Requirement ID]: [short name]
 
-- Applies as written: [each PRD criterion in a few words, its ID in parentheses — "the list shows the newest thread first (AC-01.1)"]
+- From the PRD: [the IDs of the criteria that hold as written — AC-01.1, AC-01.2]
 - When a user signs in with valid credentials, they land on the dashboard (DC-1).
 - When the credentials are wrong, the sign-in form shows the invalid-credentials message (`uxrd.md` MC-2) and the user stays on it (DC-2).
 
@@ -75,31 +66,31 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ### Architecture (C1–C4)
 
-<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows what is new and what changes. -->
+<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill; which levels are drawn, and how, is in its `references/c4-levels.md`. Delete the subsection of a level not drawn. -->
 
 #### C1 · Context
 
-<!-- When applicable: an external actor or system changes behaviour. `flowchart LR`, ≤ 6 nodes: the product as one box, the people and external systems that use the running change. -->
+<!-- `references/c4-levels.md`, "C1 · Context". -->
 
 #### C2 · Containers
 
-<!-- `flowchart LR`, ≤ 8 nodes: apps, services, stores, and the calls between them inside a dashed product boundary. Under the diagram, a sentence per container the part touches: what it does in this part. -->
+<!-- `references/c4-levels.md`, "C2 · Containers". -->
 
 #### C3 · Components: [container]
 
-<!-- One subsection per container the part adds or changes. One `flowchart TB` per flow the part touches, titled **[container] — [flow]**, ≤ 10 nodes: caller on top, the container's components in call order inside its boundary, stores and external systems at the bottom. Under the diagram, a sentence per component that is not obvious from its name. -->
+<!-- `references/c4-levels.md`, "C3 · Components". -->
 
 #### C4 · Code flow: [scope]
 
-<!-- When applicable: the order of steps inside a module is itself a decision. One vertical `flowchart TB` chain per entry point: classes, functions, or components as frames, step nodes `N · Name<br/>what it does`, arrows step to step, the return leg as its own steps. -->
+<!-- `references/c4-levels.md`, "C4 · Code flow". -->
 
 ### Runtime Flows
 
-<!-- One flow per user-visible behaviour in the acceptance criteria. The sequence diagram is the flow: drawn at C2 (participants are C2 nodes, under the same names), one journey shape across all flows, path animation per the `mermaid-diagrams` skill. -->
+<!-- One flow per acceptance criterion that crosses a container boundary or has a failure path that changes state; every other criterion is covered by its use cases in Test Strategy. The sequence diagram is the flow: drawn at container level (participants are containers, under their C2 names), one journey shape across all flows, path animation per the `mermaid-diagrams` skill. -->
 
 #### Flow 1: [name]
 
-**Starts when:** [user action / request / event / schedule], for [the criteria this flow delivers, in words with IDs]
+**Starts when:** [user action / request / event / schedule], for [the IDs of the criteria this flow delivers]
 
 [`sequenceDiagram`]
 
@@ -111,15 +102,27 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ### Contract Definitions
 
-<!-- Answers: what can a caller — another part, the UI — rely on? What each operation offers its caller, at the design's altitude ("Writing for the Reader"). Sibling parts cite this section. No source code and no field-by-field copy of a schema — the schema or type is written at implementation. -->
+<!-- Answers: what can a caller — another part, the UI — rely on? What each operation offers its caller, at the design's altitude ("Writing for the Reader"). Sibling parts cite this section. No source code and no full copy of a schema — the schema or type is written at implementation. An exact value a caller or the work plan relies on is written exactly: limits, enum values, status codes, timeouts, setting names and defaults. -->
 
 - **[route / method / event name]** — [what it does for the caller, naming its input, in a sentence]. Returns [result, by name]. [Each failure the caller handles, and what it sees.]
 
-<!-- Only for a shape another part or the UI uses: the fields a caller must understand, as a list. A length, size, or format limit is written only when a requirement sets it or another part relies on it. -->
+<!-- Only for a shape another part or the UI uses: the fields a caller must understand, as a list, with the exact limits and allowed values it relies on. -->
 
 **[Shape name]**
 
-- `[field]` — [what it is for the caller; optional or nullable when it is]
+- `[field]` — [what it is for the caller; optional or nullable when it is; its limit or allowed values when a caller relies on them]
+
+**Error handling**
+
+<!-- When applicable: errors several operations share. -->
+
+- `[ERROR_CODE]` — [status code, when it happens, what the caller sees]
+
+**Runtime settings**
+
+<!-- When applicable: each setting the part reads. -->
+
+- `[SETTING_NAME]` — default `[value]`; [what it changes]
 
 ### Data Model
 
@@ -180,34 +183,15 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 - [The question, in a sentence] It blocks [which decision]; [who] resolves it.
 
-## Appendix: Evidence
+## Appendix: Fact Disposition
 
-<!-- The record that the design was grounded: the reviewer checks it, the reader reaches it by link. Nothing here restates the body; the body cites rows here by ID (fact_id). -->
-
-### Prerequisite ADRs
-
-<!-- When applicable: an ADR exists that this design follows. -->
-
-- [ADR File Name]: [Related decision items]
-
-### Existing Codebase Analysis
-
-#### Code Inspection Evidence
-
-- **Examined**: [path:function] — [relevance]
-- **Finding**: [finding, and how it was established — followed through the code's references, or matched by text only] → [KD-n or section it drives]
-
-#### Fact Disposition Table
-
-<!-- One row per `focusAreas` entry from codebase analysis, one phrase per cell. The analyzer output already holds the evidence and files; this table records only what happened to each fact and where. A row per fact with an explicit disposition makes deliberate removal distinguishable from oversight. -->
+<!-- What the design does with the existing behaviour codebase analysis found (`focusAreas`). A row only for a fact the design transforms, removes, or puts out of scope, one phrase per cell; the facts it preserves go in one sentence under the table. Every fact appears once, so a deliberate removal is distinguishable from an oversight. The analyzer output holds the evidence; this records only what happened to each fact, the file it lives in, and where the design handles it. -->
 
 | Fact | Disposition | Handled in |
 |------|-------------|------------|
-| [the fact in a few words (fact_id)] | preserve / transform / remove / out-of-scope | [the decision or section, in words with its ID] |
+| [the fact in a few words, the file it lives in (fact_id)] | transform / remove / out-of-scope | [the decision or section, in words with its ID] |
 
-### References
-
-- [Related documentation and links]
+The design preserves [each remaining fact in a few words, with its fact_id].
 
 ## Update History
 

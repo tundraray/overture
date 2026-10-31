@@ -1,7 +1,7 @@
 # PRD: [Feature Name]
 
 <!--
-Depth: `full` | `lite` — set by scale (documentation-criteria, "PRD depth"). Sections marked (full depth) are omitted in a lite PRD.
+Depth: `full` | `lite` — set by scale (documentation-criteria, "PRD depth").
 The PRD says what the user achieves, not what the screen looks like or how the system does it. Screen states, microcopy, ARIA and focus behaviour,
 breakpoints, tokens, and animation belong to the UXRD; field lists, storage, protocols, libraries and their versions, file paths, and process
 mechanics belong to the Design Doc. A technical choice the user fixed as a product decision is one line in Constraints and Risks.
@@ -33,7 +33,7 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 ## Background
 
-<!-- At most three short paragraphs: what exists today, why now, and the context a reader needs to judge the problem. The Overview already states the problem; do not restate it. Market context, when needed, goes to Appendix → References. -->
+<!-- At most three short paragraphs: what exists today, why now, and the context a reader needs to judge the problem. The Overview already states the problem; do not restate it. Market context, when needed, is a sentence here with its source linked. -->
 
 [What exists today and why this is needed now]
 
@@ -49,27 +49,6 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 - **UC-1**: [user] [achieves what] → [outcome], so that [value]
 - **UC-2**: [user] [achieves what] → [outcome], so that [value]
-
-### User Journey Diagram *(full depth)*
-
-```mermaid
----
-config:
-  theme: base
-  look: classic
-  themeVariables:
-    primaryColor: "#eef1f5"
-    primaryBorderColor: "#4b5563"
-    primaryTextColor: "#1a1a1a"
-    lineColor: "#6b7280"
----
-journey
-    title [Primary user journey]
-    section [Stage 1]
-      [Step]: 5: [User]
-    section [Stage 2]
-      [Step]: 3: [User]
-```
 
 ## Functional Requirements
 
@@ -111,18 +90,14 @@ Each requirement has an ID (`NFR-01`) and states a target and how it is measured
 
 ## Delivery Parts
 
-<!-- Parts split the feature into independently designable slices. Each part receives its own Design Doc (`design-{part}.md`) and its own work plans, designed and built in the dependency order below. The split is proposed here and confirmed by the user at PRD approval; criteria are in the `documentation-criteria` skill, "Parts". -->
+<!-- Criteria: `documentation-criteria`, "Parts". -->
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
 | `[part-name]` | [FR-01, FR-03] | [backend / frontend / domain / release-unit] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [FR-02] | [...] | `[part-name]` | [...] |
 
-<!-- **Coverage**: every Must Have requirement above appears in exactly one row. Should Have and Could Have requirements appear in a row or are deferred here: -->
-
 - Deferred: [FR-nn assigned to no part] — [why]
-
-<!-- **Single part**: when the whole feature is one slice, write one row and say why in its rationale ("one layer, one domain, one design holds it"). One part is the common case. -->
 
 ### Part Dependency Diagram
 
@@ -176,12 +151,6 @@ When the feature is an internal capability with no measure beyond its acceptance
 - [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
 <!-- *Discuss with user until this section is empty, then delete after confirmation* -->
-
-## Appendix *(full depth)*
-
-### References
-
-- [Related document 1]
 
 ## Update History
 

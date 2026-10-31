@@ -152,7 +152,7 @@ validateEmail(email, context) { /* ... */ }
 - Similar functionality found → Use that implementation (do not create new implementation)
 - Similar functionality is technical debt → escalate; whether to reuse or replace it is a design decision
 - No similar functionality exists → Implement new functionality following existing design philosophy
-- At design time these decisions are recorded in the Design Doc's Appendix: Evidence, "Existing Codebase Analysis"
+- At design time these decisions are recorded in the Design Doc's Key Decisions
 
 ## Debugging Techniques
 

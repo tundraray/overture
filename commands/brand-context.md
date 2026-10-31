@@ -74,7 +74,7 @@ Map the answers onto the design system, then call `ux-designer`:
 
 ```
 subagent_type: ux-designer
-prompt: "Task: run only the Design System Workflow — no UXRD this run. Record the project's brand in docs/design-system/: README.md (Source, Direction, Index) and foundations.md, following design-system-template.md and the design-system skill. Brand answers: [collected answers]. The user's answers are decisions: record them; where a linked brand book or component library decides something, cite it instead of restating it; fill the remaining gaps per <ux_aesthetics>, traceable to the Direction. If the files exist, update them and keep what the answers do not change. Return documents[] with every file written. [SYSTEM CONSTRAINT] This agent operates within /brand-context command scope. Write only docs/design-system/README.md and docs/design-system/foundations.md; no component specs, no code."
+prompt: "Task: run only the `design-system` skill's Workflow — no UXRD this run. Record the project's brand in docs/design-system/: README.md (Source, Direction, Index) and foundations.md, following design-system-template.md and the design-system skill. Brand answers: [collected answers]. The user's answers are decisions: record them; where a linked brand book or component library decides something, cite it instead of restating it; fill the remaining gaps per <ux_aesthetics>, traceable to the Direction. If the files exist, update them and keep what the answers do not change. Return documents[] with every file written. [SYSTEM CONSTRAINT] This agent operates within /brand-context command scope. Write only docs/design-system/README.md and docs/design-system/foundations.md; no component specs, no code."
 ```
 
 ### 4. Verify and Report

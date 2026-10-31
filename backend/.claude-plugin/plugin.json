@@ -1,6 +1,6 @@
 {
   "name": "backend-overture",
-  "version": "0.18.17",
+  "version": "0.18.18",
   "description": "Backend development with orchestrated agents, coding best-practices skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -84,7 +84,9 @@
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
     "./skills/mermaid-diagrams",
-    "./skills/prose"
+    "./skills/prose",
+    "./skills/technical-design",
+    "./skills/work-planning"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"

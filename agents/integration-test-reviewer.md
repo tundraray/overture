@@ -32,7 +32,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 ## Input Parameters
 
 - **testFiles**: Paths to the test files to review
-- **designDoc** (optional): Design Doc path, for checking mock boundaries against the external systems its C2 diagram and Contract Definitions name
+- **designDoc** (optional): Design Doc path, for checking mock boundaries against the external systems its architecture diagrams and Contract Definitions name
 
 ## Review Criteria
 
