@@ -45,7 +45,7 @@
  */
 
 import { readFileSync, readdirSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -309,48 +309,6 @@ function pluginAgents() {
   });
 }
 
-/**
- * A fork reports `agent_type: "fork"` but carries its parent's context and
- * task, so it acts as the parent. The session's `subagents/agent-<id>.meta.json`
- * records `parentAgentId`; a fork without one was forked from the main
- * conversation. Returns the parent's type, '' for the main conversation, or
- * null when the lineage cannot be read (the caller then stays "fork").
- */
-function forkParentType(input) {
-  const tp = typeof input.transcript_path === 'string' ? input.transcript_path : '';
-  if (!tp) return null;
-  const base = dirname(tp);
-  const dirs = basename(base) === 'subagents'
-    ? [base]
-    : [input.session_id, basename(tp, '.jsonl')].filter((s) => typeof s === 'string' && s)
-      .map((s) => join(base, s, 'subagents'));
-  const read = (id) => {
-    if (typeof id !== 'string' || !/^[\w-]+$/.test(id)) return null;
-    for (const dir of dirs) {
-      try {
-        return JSON.parse(readFileSync(join(dir, `agent-${id}.meta.json`), 'utf8'));
-      } catch { /* try the next location */ }
-    }
-    return null;
-  };
-  let id = input.agent_id;
-  for (let depth = 0; depth < 8; depth++) {
-    const meta = read(id);
-    if (!meta) return null;
-    const isFork = meta.isFork === true || normalise(meta.agentType ?? '') === 'fork';
-    if (!isFork) return typeof meta.agentType === 'string' ? meta.agentType : null;
-    if (!meta.parentAgentId) return '';
-    id = meta.parentAgentId;
-  }
-  return null;
-}
-
-function effectiveAgentType(input) {
-  const type = typeof input.agent_type === 'string' ? input.agent_type : '';
-  if (normalise(type) !== 'fork') return type;
-  return forkParentType(input) ?? type;
-}
-
 /** Every agent named in the table or shipped by the plugin — used to tell "wrong agent" from "unknown name". */
 const KNOWN_AGENTS = new Set(
   [...RULES.flatMap((r) => [...r.authors, ...r.updaters]), ...pluginAgents()].map(normalise),
@@ -414,6 +372,18 @@ function decide(kind, toolName, agentType) {
     };
   }
 
+  // A fork reports no identity of its own, so ownership cannot be checked. An
+  // owner that splits its work spawns itself instead, which reports its type.
+  if (bare === 'fork') {
+    return {
+      decision: 'deny',
+      reason: `${rule.name} is owned by ${rule.authors.join(' or ')}. A fork reports agent_type "fork", `
+        + `so the guard cannot tell whose work it is. To split the work, spawn yourself as a subagent `
+        + `(subagent_type "<plugin>:<your agent name>", e.g. "fullstack-overture:${rule.authors[0]}") `
+        + `instead of a fork; otherwise return the change to the orchestrator.`,
+    };
+  }
+
   // An agent this guard has never heard of is not evidence of a violation — it
   // is more likely a name arriving in a shape the table does not list. Denying
   // here would block the legitimate owner over a labelling mismatch, so ask and
@@ -452,7 +422,7 @@ function main() {
 
   if (!input || typeof input !== 'object') process.exit(0);
   const toolName = input.tool_name || '';
-  const agentType = effectiveAgentType(input);
+  const agentType = typeof input.agent_type === 'string' ? input.agent_type : '';
 
   let verdict = null;
   if (SPAWN_TOOLS.has(toolName)) {
