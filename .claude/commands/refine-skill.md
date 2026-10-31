@@ -9,8 +9,8 @@ Change request: $ARGUMENTS
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `skills/rule-editing-guide/SKILL.md`
 - `skills/skill-optimization/SKILL.md`
+- `skills/llm-friendly-context/SKILL.md`
 
 **Think deeply** Extract the TRUE INTENT behind user's change request and implement with MAXIMUM PRECISION to eliminate ALL ambiguity:
 

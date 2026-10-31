@@ -14,7 +14,7 @@
 |-------|-------|
 | **Assumption** | [specific testable statement with numbers/conditions, e.g., "At least 30% of SMB owners spend >2h/week on invoicing"] |
 | **Risk** | [business consequence if assumption is wrong, e.g., "Core value proposition collapses — no willingness to pay for automation"] |
-| **Risk Category** | [market / segment / value / unit economics / acquisition / operational] |
+| **Risk Category** | [market / segment / value / unit economics / acquisition] |
 | **Probability (P)** | [1-5] — [justification: why this score, what evidence exists or is missing] |
 | **Impact (I)** | [1-5] — [justification: monetary estimate if possible, e.g., "Would invalidate $2M ARR projection"] |
 | **Score (P x I)** | **[X]** |
@@ -32,7 +32,7 @@
 |-------|-------|
 | **Assumption** | [specific testable statement with numbers/conditions] |
 | **Risk** | [business consequence if assumption is wrong] |
-| **Risk Category** | [market / segment / value / unit economics / acquisition / operational] |
+| **Risk Category** | [market / segment / value / unit economics / acquisition] |
 | **Probability (P)** | [1-5] — [justification] |
 | **Impact (I)** | [1-5] — [justification with monetary estimate if possible] |
 | **Score (P x I)** | **[X]** |
@@ -49,7 +49,7 @@
 |-------|-------|
 | **Assumption** | [specific testable statement with numbers/conditions] |
 | **Risk** | [business consequence if assumption is wrong] |
-| **Risk Category** | [market / segment / value / unit economics / acquisition / operational] |
+| **Risk Category** | [market / segment / value / unit economics / acquisition] |
 | **Probability (P)** | [1-5] — [justification] |
 | **Impact (I)** | [1-5] — [justification with monetary estimate if possible] |
 | **Score (P x I)** | **[X]** |
@@ -66,7 +66,7 @@
 |-------|-------|
 | **Assumption** | [specific testable statement with numbers/conditions] |
 | **Risk** | [business consequence if assumption is wrong] |
-| **Risk Category** | [market / segment / value / unit economics / acquisition / operational] |
+| **Risk Category** | [market / segment / value / unit economics / acquisition] |
 | **Probability (P)** | [1-5] — [justification] |
 | **Impact (I)** | [1-5] — [justification with monetary estimate if possible] |
 | **Score (P x I)** | **[X]** |
@@ -83,7 +83,7 @@
 |-------|-------|
 | **Assumption** | [specific testable statement with numbers/conditions] |
 | **Risk** | [business consequence if assumption is wrong] |
-| **Risk Category** | [market / segment / value / unit economics / acquisition / operational] |
+| **Risk Category** | [market / segment / value / unit economics / acquisition] |
 | **Probability (P)** | [1-5] — [justification] |
 | **Impact (I)** | [1-5] — [justification with monetary estimate if possible] |
 | **Score (P x I)** | **[X]** |

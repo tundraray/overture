@@ -22,7 +22,6 @@ Keeping the phases separate is what stops a solution from being chosen before th
 This is the first phase, so its entry gate checks the session rather than a predecessor.
 
 ☐ The request is stated in the user's own terms, not already restated as a solution
-☐ `rule-advisor` has run and its selected rules are registered in TodoWrite
 ☐ Any existing PRD or UXRD for this feature has been located (glob `docs/features/*/prd.md`, `docs/features/*/uxrd.md`) — an existing document is updated, not silently duplicated
 
 **ENFORCEMENT**: when an item is unchecked, complete it before invoking any agent. Starting on an unlocated existing PRD produces a second one, and neither is then authoritative.
@@ -102,12 +101,12 @@ Every stop in this phase is a genuine decision gate, not a status update. Use `A
 | Stop | After | What the user decides |
 |------|-------|----------------------|
 | Requirement confirmation | requirement-analyzer | Whether the understood scope and scale match intent; answers to open questions; a first look at the proposed parts |
-| PRD approval | document-reviewer completes PRD review | Whether the requirements and success metrics are right, and whether the Delivery Parts split is the right one — every scale |
+| PRD approval | document-reviewer completes PRD review | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
 | UXRD approval | document-reviewer completes UXRD review | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
 
 Each stop happens **once per feature**. Per-part stops begin in the technical phase.
 
-When `requirement-analyzer` reports a `decidingAxis` other than `files`, state it at the confirmation stop: "6 files but routed as Large because this is a breaking contract change" is information the user needs in order to approve or override the routing.
+When `requirement-analyzer` reports a `decidingAxis` other than `files`, state it at the confirmation stop: "2 files but routed as Large because this is a breaking contract change" is information the user needs in order to approve or override the routing.
 
 ## Requirement Changes
 
@@ -119,7 +118,7 @@ Requirements change mid-flow. Detecting that early is cheaper than discovering i
 - Changed technical requirements (processing method, output format)
 - A change to which parts exist or what they cover — a PRD change, through `prd-creator` in `update` mode and PRD re-approval
 
-Restart from `requirement-analyzer` with the integrated requirements rather than patching the current document. Once `task-decomposer` has started, a requirement change requires overall redesign — restart the whole flow for the parts it touches. Two things survive a restart: a part whose plan is `completed` is **frozen** (its code is committed; a change to it is a new feature), and a part whose requirements the change does not touch keeps its approved design.
+Restart from `requirement-analyzer` with the integrated requirements rather than patching the current document. A change that arrives during execution is applied as `workflow-execution`, "Resuming after a stop that changes documents", describes. Two things survive a restart: a part whose plan is `completed` is **frozen** (its code is committed; a change to it is a new feature), and a part whose requirements the change does not touch keeps its approved design.
 
 ## Revision Loop
 

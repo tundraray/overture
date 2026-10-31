@@ -70,8 +70,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 ### 3. Code Quality Check
 ```
 3. Check key quality metrics:
-   - Function length (ideal: <50 lines, max: 200 lines)
-   - Nesting depth (ideal: ≤3 levels, max: 4 levels)
+   - Function length and nesting depth — signals per `coding-principles`, a finding only where they hurt readability
    - Single responsibility principle
    - Appropriate error handling
 ```
@@ -106,8 +105,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - [ ] Contract definitions match Design Doc
 
 ### Code Quality Items
-- [ ] **Function length**: Appropriate (ideal: <50 lines, max: 200)
-- [ ] **Nesting depth**: Not too deep (ideal: ≤3 levels)
+- [ ] **Function length and nesting**: readable; past the `coding-principles` signals, the finding says what a split would make clearer
 - [ ] **Single responsibility**: One function/class = one responsibility
 - [ ] **Error handling**: Properly implemented
 - [ ] **Test coverage**: Tests exist for acceptance criteria

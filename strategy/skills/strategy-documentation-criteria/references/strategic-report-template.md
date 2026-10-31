@@ -184,7 +184,7 @@
 
 ## 11. Product Execution Plan
 
-[Synthesized from opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md]
+[Only when product-plan documents already exist — in `/strategy-report` they are written after this report, so delete the section there; the sections after it keep their numbers. Synthesized from opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md]
 
 ### Opportunity Map
 [Key opportunities derived from jobs-graph problems, linked to outcomes]
@@ -237,6 +237,8 @@
 ## 14. Appendix
 
 ### Source Documents Index
+
+[One row per document actually read; rows 15–18 only when product-plan documents existed.]
 
 | # | Document | Agent | Key Contribution |
 |---|----------|-------|-----------------|

@@ -17,7 +17,7 @@ argument-hint: <B2B product description>
    - prompt: |
      Perform B2B segment analysis using AJTBD methodology.
 
-     Read methodology from: `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part2.md` (segmentation) and `part1.md` (job hierarchy).
+     Read methodology from: `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part1.md` (job hierarchy, segmentation by jobs) and `part2.md` (what makes a segment switch).
      Read template: `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md`
      Read context: docs/strategy/context-brief.md
      Additional input: $ARGUMENTS

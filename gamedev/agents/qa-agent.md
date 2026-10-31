@@ -22,6 +22,10 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/integration-e2e-testing/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
+## Initial Required Tasks
+
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+
 ### Core Responsibilities
 - **Functional Testing**: Verify all features work as specified
 - **Performance Testing**: Ensure 60 FPS targets are met across platforms

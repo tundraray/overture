@@ -17,9 +17,7 @@ description: This skill provides project-specific context including project natu
 
 ### Technology Stack
 
-- **Foundation Technologies**: TypeScript, Node.js
-- **Test Framework**: Vitest
-- **Quality Management**: Biome, TypeScript strict mode
+Not recorded here. Stack facts — language, test framework, linter, scripts — come from the project's own manifests and config files.
 
 ## Implementation Principles
 

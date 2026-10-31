@@ -25,6 +25,8 @@ Before executing, load these skill files for guidance:
 - `${CLAUDE_PLUGIN_ROOT}/skills/workflow-product/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/workflow-technical/SKILL.md`
 
+**gamedev-overture**: read every agent, skill, and document name in this command as `workflow-orchestration`, "Gamedev Substitutions", maps it: the product phase is `workflow-gamedev`'s flow (GDD, then the feature spec with its Delivery Parts, written by `mid-game-designer`), and a `ui`, `hud`, or `menu` part takes `technical-designer` with `ui-analyzer`.
+
 ## Workflow Overview
 
 ```

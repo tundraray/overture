@@ -90,35 +90,3 @@ Rate each segment on:
 | Strategic fit | 15% | [alignment with our capabilities] |
 
 **Total score = weighted average. Rank segments. Focus on top 2-3.**
-
-## Output Template
-
-```markdown
-# Customer Segmentation Analysis
-
-## Primary Segmentation Approach: [Behavioral / Value-Based / AJTBD]
-**Rationale**: [why this approach for this business]
-
-## Identified Segments
-
-### Segment 1: "[Name]" (Priority: HIGH)
-- **Size**: [X]% of addressable market
-- **Profile**: [behavioral/psychographic description]
-- **Willingness to pay**: $[X]/month
-> See segments.md for full AJTBD job analysis if available
-- **Acquisition channel**: [where to find them]
-- **Attractiveness score**: [X/5]
-- **Key insight**: [non-obvious finding]
-
-### Segment 2: "[Name]" (Priority: MEDIUM)
-[same structure]
-
-## Segment Prioritization Matrix
-| Segment | Size | Growth | Profit | Access | Competition | Fit | Total |
-|---------|------|--------|--------|--------|-------------|-----|-------|
-
-## Recommended Focus
-**Primary**: [segment] — [why]
-**Secondary**: [segment] — [why]
-**Avoid**: [segment] — [why]
-```

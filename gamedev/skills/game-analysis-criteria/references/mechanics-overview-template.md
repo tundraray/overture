@@ -13,7 +13,7 @@ graph LR
     A[Action] --> B[Challenge] --> C[Reward] --> D[Progression] --> A
 ```
 
-*Replace with actual core loop structure*
+<!-- Replace with actual core loop structure -->
 
 ### Loop Metrics
 
@@ -54,7 +54,7 @@ graph TD
     M1 -->|resource| M4[Mechanic 4]
 ```
 
-*Replace with actual dependencies*
+<!-- Replace with actual dependencies -->
 
 ### Interconnection Matrix
 
@@ -115,10 +115,12 @@ graph TD
 3. [Player frustration sources]
 
 ### Lessons for Our Game
+
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
 1. [Actionable insight 1]
 2. [Actionable insight 2]
 3. [Actionable insight 3]
 
 ---
-*Confidence Level: [X]% based on available data*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Individual mechanic files: mechanics/{mechanic-slug}.md*

@@ -1,6 +1,6 @@
 ---
 name: task-analyzer
-description: This skill should be used when the user asks to "analyze this task", "determine task complexity", "select skills for task", "estimate work scale", or needs guidance on metacognitive task analysis. Returns skills with confidence scores and metadata.
+description: This skill should be used when the user asks to "analyze this task", "determine task complexity", "select skills for task", "estimate work scale", or needs guidance on metacognitive task analysis. Returns the task's type and scale and the selected skills with their index metadata.
 ---
 
 # Task Analyzer
@@ -11,7 +11,7 @@ Provides metacognitive task analysis and skill selection guidance.
 
 ### Skills Index Reference
 
-Load skills metadata from the project-local `skills-index.yaml` for tag-based matching. Use the `tags` field to match against task keywords and the `typical_use` field to validate relevance.
+Load skills metadata from the project-local `skills-index.yaml` for tag-based matching. Use the `tags` field to match against task keywords and the `typical-use` field to validate relevance.
 
 The skills-index.yaml is a **project-local file** maintained by the `/sync-skills` command at `.claude/skills/task-analyzer/references/skills-index.yaml`. It is NOT inside the plugin — each project maintains its own copy.
 
@@ -43,9 +43,9 @@ File count is one signal, not the deciding rule — a two-file change that break
 |------|-------|--------|-------|
 | Estimated files | 1-2 | 3-5 | 6+ |
 | Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
-| Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
+| Contracts/data (`contracts`) | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
 | Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
+| Decision risk (`decisionRisk`) | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
 
 Record which axis determined the final scale in `scaleRationale.decidingAxis`. A high file count caused only by mechanical generated-file updates may be reduced when repository evidence proves the change has one behavior and one verification path — record that evidence.
 
@@ -108,7 +108,7 @@ taskAnalysis:
   scale: <small|medium|large>
   estimatedFiles: <number>
   scaleRationale:
-    decidingAxis: <files|outcomes|contracts-data|boundaries|decision-risk>
+    decidingAxis: <files|outcomes|contracts|boundaries|decisionRisk>
     evidence: <string>  # What was observed that set this scale
   tags: [<string>, ...]  # Extracted from task description
 

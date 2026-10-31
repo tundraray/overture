@@ -103,7 +103,9 @@
 |----------|-----------------|------------------------|-----------|
 | [risk from RAT] | [score] | [matching assumption above] | Aligned / Gap |
 
-## Financial Scenarios (12-month)
+## Financial Scenarios (12- and 36-month)
+
+<!-- One table per horizon: 12 months, then 36 months. -->
 
 | Metric | Pessimistic | Base | Optimistic |
 |--------|------------|------|-----------|

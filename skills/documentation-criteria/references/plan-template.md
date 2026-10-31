@@ -171,7 +171,7 @@ Maps each Design Doc technical requirement to its covering task(s). One row per 
 | Design Doc | DD Section | DD Item | Category | Covered By Task(s) | Gap Status | Notes |
 |---|---|---|---|---|---|---|
 | [docs/features/{feature}/design-{part}.md] | [Section name] | [Specific item] | impl-target / connection-switching / contract-change / verification / prerequisite | [Phase X Task Y] | covered | |
-| docs/features/{feature}/design-{part}.md | Security Considerations | Input validation for API | prerequisite | — | gap | Deferred to Phase 2 |
+| docs/features/{feature}/design-{part}.md | Security Considerations | Rate limiting on login | prerequisite | — | gap | Rate limiting on the login endpoint is left to the platform gateway (KD-4); confirmed by the user |
 
 **Category values**: `impl-target` (implementation target), `connection-switching` (connection/switching/registration), `contract-change` (contract change and propagation), `verification` (verification requirement), `prerequisite` (prerequisite work)
 

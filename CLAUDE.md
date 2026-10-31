@@ -26,7 +26,7 @@ Commands like `/implement` act as orchestrators:
 ### Scale-Based Workflow Routing
 
 Scale is the highest level any of five axes triggers in `requirement-analyzer` (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides it. A PRD is written at every scale.
-- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Tasks → Implementation → quality-fixer → commit
+- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Tasks → Implementation → quality-fixer → commit → post-implementation verification
 - **Medium (typically 3-5 files)**: PRD (lite) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
 - **Large (typically 6+ files)**: PRD (full) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
 
@@ -44,7 +44,7 @@ A **part** is an independently designable slice of a feature (`api`, `web`, `bil
 ### Document-Driven Development
 
 Progressive document creation based on complexity:
-- **PRD** (every scale; `full` at large, `lite` at medium and small): Business requirements, user value, success metrics, Delivery Parts
+- **PRD** (every scale; `full` at large, `lite` at medium and small): Business requirements, user value, success criteria, Delivery Parts
 - **ADR** (rare, after the Design Doc): Only when a decision the design made is costly to reverse, binds beyond the feature, and was taken against real alternatives
 - **Design Doc** (medium and large, one per part): Technical specifications, interfaces, acceptance criteria
 - **Work Plan** (every scale, per part; simplified at small): Phased task breakdown with dependencies
@@ -58,7 +58,7 @@ Autonomous flow halts at (once per feature unless stated):
 - After document-reviewer completes UXRD review (when the work has a UI surface)
 - After design-sync verifies a part's Design Doc (once per part)
 - After document-reviewer completes ADR review (only when an ADR was written, after that part's design)
-- After document-reviewer reviews a part's work plan (batch approval, once per part)
+- After document-reviewer reviews a part's work plan (batch approval, once per part; at small scale and in gamedev Prototype the simplified plan is not reviewed and goes straight to batch approval)
 
 After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
 

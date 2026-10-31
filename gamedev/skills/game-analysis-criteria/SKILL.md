@@ -47,96 +47,37 @@ docs/game-research/
     source-code/                 # Source code notes (if available)
       architecture.md
       patterns.md
+  comparison-matrix.md           # Cross-game comparison (Phase 5 of /game-analyze)
 ```
 
 **Naming**: `{game-slug}` = lowercase, hyphenated game name (e.g., `hollow-knight`, `stardew-valley`, `clash-royale`)
-
-## Analysis Framework
-
-### Seven Pillars of Game Analysis
-
-Each game should be analyzed across these dimensions:
-
-| Pillar | Key Questions | Primary Agent |
-|--------|--------------|---------------|
-| **1. Core Loop** | What is the fundamental gameplay cycle? How long is one loop? What drives repetition? | sr-game-designer |
-| **2. Progression** | How does the player advance? What are the unlock gates? What creates the "one more turn" feeling? | sr-game-designer |
-| **3. Retention Mechanics** | What brings players back? Daily hooks? Social obligations? FOMO? Loss aversion? | data-scientist |
-| **4. Monetization** | What is the revenue model? What are the conversion triggers? How does spending enhance experience? | market-analyst |
-| **5. Technology** | What engine/framework? How do they handle performance? What are technical differentiators? | mechanics-developer |
-| **6. Marketing & Community** | How was the game marketed? What communities exist? How is content distributed? | market-analyst |
-| **7. Game Feel** | What makes the game "feel good"? Audio design, visual feedback, input responsiveness? | game-feel-developer |
-
-### Retention Analysis Deep Dive
-
-Special focus area — what keeps players engaged:
-
-#### Short-Term Retention (D1-D7)
-- First-time user experience (FTUE) quality
-- Tutorial effectiveness
-- Time-to-fun measurement
-- Initial content variety
-- Early reward pacing
-
-#### Mid-Term Retention (D7-D30)
-- Content depth discovery
-- Social features activation
-- Habit loop formation
-- Difficulty curve management
-- Second-session hooks
-
-#### Long-Term Retention (D30+)
-- Endgame content systems
-- Community integration
-- Competitive/cooperative hooks
-- Content update cadence
-- Sunk cost and identity investment
-
-### Source Code Analysis (when available)
-
-For open-source games or games with accessible source code:
-
-| Analysis Area | What to Extract |
-|--------------|----------------|
-| **Architecture** | Module structure, dependency graph, entry points |
-| **State Management** | How game state is stored, updated, persisted |
-| **Event System** | Communication patterns, decoupling strategy |
-| **Networking** | Client-server model, sync strategy, lag compensation |
-| **Performance** | Object pooling, rendering pipeline, memory management |
-| **AI Systems** | Decision trees, state machines, behavior patterns |
-| **Content Pipeline** | How content is loaded, cached, hot-swapped |
 
 ## Quality Criteria for Research
 
 ### Data Quality Tiers
 
-| Tier | Source Type | Confidence | Usage |
-|------|-----------|------------|-------|
-| **Verified** | Official developer data, store APIs, public financials | 90%+ | Direct citation |
-| **Inferred** | Review aggregation, community data, tool analysis | 60-89% | Cite with confidence level |
-| **Estimated** | Industry benchmarks, comparable titles, analyst reports | 30-59% | Mark as estimate |
-| **Speculative** | Educated guesses based on patterns | <30% | Mark as hypothesis |
+| Tier | Source Type | Usage |
+|------|-----------|-------|
+| **Verified** | Official developer data, store APIs, public financials | Direct citation |
+| **Inferred** | Review aggregation, community data, tool analysis | Cite with its tier |
+| **Estimated** | Industry benchmarks, comparable titles, analyst reports | Mark as estimate |
+| **Speculative** | Educated guesses based on patterns | Mark as hypothesis |
 
-### Minimum Research Requirements
-
-| Depth Level | Sources Required | Reports Generated | Estimated Duration |
-|------------|-----------------|-------------------|-------------------|
-| **Quick** | Store page + 3 reviews + 1 article | Executive Summary only | ~10 min |
-| **Standard** | Store page + 10 reviews + 3 articles + community scan | All 8 reports | ~30 min |
-| **Deep** | Standard + source code + gameplay analysis + developer interviews | All 8 reports + source code analysis | ~60 min |
+Confidence is always one of these tier names, never a percentage. Depth (quick / standard / deep) sets how many sources `game-researcher` collects (its STEP 3); which reports exist follows the focus areas chosen in `/game-analyze`.
 
 ### Report Quality Gates
 
 Before a report is considered complete:
-- [ ] All template sections filled or explicitly marked N/A with reason
-- [ ] Data sources cited for each major claim
-- [ ] Confidence level stated for numerical estimates
-- [ ] At least 3 actionable insights per report
-- [ ] Cross-references to other reports where relevant
+- A row, metric, or section the sources do not support is deleted — not filled with "N/A" or a guess. What could not be found is listed once at the end of the report — under its Sources when it has that section.
+- Each major claim cites a source; each number carries its tier.
+- Insights, lessons, and "top N" lists hold as many items as the sources support, up to the number the template names; fewer is a valid answer.
+- Lines and columns about our game — the framing in "Lessons for Our Game", "Our Opportunity", "Fit with Our Game", timing — are written only when `/game-analyze` passed a project context; without one, lessons are observations that transfer to any game, and the our-game lines are deleted.
+- Cross-references to other reports where relevant.
+- Template guidance in `<!-- -->` comments is not copied into the report.
 
 ## Cross-Game Comparison
 
-When analyzing multiple games, generate a comparison matrix:
+When analyzing multiple games, generate a comparison matrix from each game's reports (`executive-summary.md`, `mechanics/overview.md`, `retention-analysis.md`, `marketing-analysis.md`, `market-position.md`, where they exist). A row no report supports is dropped; the "Our Opportunity" column is written only with a project context.
 
 ```markdown
 ## Comparison Matrix: [Game A] vs [Game B] vs [Game C]

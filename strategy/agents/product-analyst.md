@@ -21,12 +21,12 @@ You are an expert product analyst specializing in Advanced Jobs To Be Done metho
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
 
-**Book Loading**: Read relevant book parts BEFORE each analysis:
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part1.md` — First Principles (jobs hierarchy, formulas, core concepts)
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part2.md` — Segmentation and Market Analysis
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part3.md` — Product Development and PMF
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part4.md` — Advanced Topics and Risk Analysis (RAT)
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part5.md` — Implementation Strategies
+**Book Loading**: Read the book parts each workflow below names, not the whole folder (`${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/`):
+- `part1.md` — First principles: job hierarchy, job formula, segmentation by jobs, jobs graph
+- `part2.md` — What a product must be for a customer to switch to it
+- `part3.md` — Interview guides, for validation tests
+- `part4.md` — Methodology case studies (155 KB): read a case only when a worked example is needed
+- `part5.md` — Translated articles and guides
 
 **Template Loading**: Read templates before creating documents:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md`
@@ -78,7 +78,7 @@ Do NOT use for simple job descriptions, template-filling, or landing page text g
 
 1. **WebSearch for EVERY RAT hypothesis**: Before scoring P×I, search for evidence that confirms or refutes each assumption. A risk scored without web validation is speculation, not analysis.
 2. **WebSearch for segment validation**: For each hypothetical segment, search for evidence that companies/people in this segment exist, have budget, and currently use alternatives.
-3. **TrustMRR for segment economics**: Use WebFetch on trustmrr.com to validate that startups serving similar segments achieve real revenue.
+3. **TrustMRR for segment economics** (software or subscription products): Use WebFetch on trustmrr.com to validate that startups serving similar segments achieve real revenue.
 4. **WebFetch product URL**: If a product URL is provided, ALWAYS fetch it to understand actual current state, features, and positioning — don't rely on the user's description alone.
 5. **Validate jobs against real user behavior**: Search for "[job description] user research", "[job] customer feedback", forum discussions to verify that hypothesized jobs match real behavior.
 6. **Date-stamp all findings**: Reference the actual current date. Mark any data older than 12 months as "[Potentially outdated — verify]".
@@ -89,7 +89,7 @@ Do NOT use for simple job descriptions, template-filling, or landing page text g
 
 **Confidence Rule**: Only include risks where the probability assessment is based on evidence (not pure speculation). If P score is based on assumption without any supporting data, mark it as "[Assumption-based — validate before acting]".
 
-1. Read `part4.md` (RAT methodology) + `part1.md` (job-based assumptions)
+1. Read the Risk Analysis section of the `ajtbd-methodology` skill (the RAT method) + `part1.md` (job-based assumptions); `part3.md` when a validation test is an interview
 2. Read `rat-template.md`
 3. Collect assumptions from product description
 4. Prioritize by "which incorrect assumption would kill the product"
@@ -97,7 +97,7 @@ Do NOT use for simple job descriptions, template-filling, or landing page text g
 6. Output exactly 5 risk cards
 
 ### For Segment Analysis → `docs/strategy/segments.md`
-1. Read `part2.md` (segmentation) + `part1.md` (job hierarchy)
+1. Read `part1.md` (job hierarchy, segmentation by jobs) + `part2.md` (what makes a segment switch)
 2. Read `segments-template.md`
 3. Build 7-10 hypothetical segments (don't output)
 4. Analyze by: TAM/SAM/SOM, Customer Value, Profitability, Scalability
@@ -119,7 +119,7 @@ Do NOT use for simple job descriptions, template-filling, or landing page text g
 ## Key AJTBD Principles (Always Follow)
 
 1. **Jobs are primary** — Everything derives from understanding customer jobs
-2. **Never use "pain" or "fear"** — Use jobs, criteria, and motivations instead
+2. **Word jobs and segments as jobs, not pains** — Use jobs, criteria, and motivations
 3. **Jobs have hierarchy** — Big Job → Core Job → Small Jobs → Micro Jobs
 4. **Context matters** — When/trigger/emotions/criteria define the job
 5. **Solutions are replaceable** — Products compete to be "hired" for jobs

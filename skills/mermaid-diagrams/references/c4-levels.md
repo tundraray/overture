@@ -55,7 +55,7 @@ Every level carries a frontmatter `title:` of the form `"C2 · Containers — <s
 - The return leg (result, error, response) is its own steps further down the column. Branches split off to the side.
 - Collaborators and stores sit beside the column with an arrow from the exact step that uses them; an unchanged collaborator stays black even when the step that calls it changed.
 - Two independent entry points (an event that writes, a request that reads) → two diagrams, `C4 · Code flow — write path` and `C4 · Code flow — read path`, with the shared store in both.
-- Method names, decorators, and wiring details go in the module table's Notes column, never in the picture.
+- Method names, decorators, and wiring details stay in the code — neither the picture nor the module table carries them; the table's Notes column says in words what a module adds (a route, a rule, a constraint).
 - A decision rule that needs its own flowchart goes in a `#### How <rule> works` subsection after the chain; it is not a C-level diagram.
 
 ```mermaid
@@ -84,12 +84,10 @@ flowchart TB
     subgraph ctl_back["ThreadsController"]
         s4["4 · ThreadsController<br/>returns the summary"]
     end
-    lock["ThreadWriteLock<br/>one writer per thread"]
     mem[("Postgres<br/>threads")]
     entry --> s1
     s1 -->|"title"| s2
     s2 -->|"owned thread"| s3
-    s3 -->|"serialize"| lock
     s3 -->|"update"| mem
     s3 -->|"summary"| s4
     classDef entry fill:#ffffff,stroke:#1f2937,stroke-width:1.5px,color:#1a1a1a
@@ -97,7 +95,7 @@ flowchart TB
     classDef unchanged fill:#eef1f5,stroke:#4b5563,stroke-width:1.5px,color:#1a1a1a
     classDef frame fill:none,stroke:#4b5563,stroke-width:1px
     class entry entry
-    class s1,s2,s3,s4,lock new
+    class s1,s2,s3,s4 new
     class mem unchanged
     class ctl,svc,ctl_back frame
 ```
@@ -113,7 +111,7 @@ Under the chain, two things and nothing else:
 | Type | Name | Change | Notes |
 |---|---|---|---|
 | Controller | `ThreadsController` | `[NEW]` | `PATCH /api/threads/:threadId` |
-| Service | `ThreadsService` | `[NEW]` | `rename` runs under `ThreadWriteLock` |
+| Service | `ThreadsService` | `[NEW]` | renames a thread while no other write to it runs |
 
 ## Consistency across levels
 

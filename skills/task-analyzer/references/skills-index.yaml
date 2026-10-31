@@ -43,6 +43,7 @@ skills:
       - "Test Pyramid - Mike Cohn"
     sections:
       - "Core Testing Philosophy"
+      - "Test Selection"
       - "Test-Driven Development (TDD)"
       - "Quality Requirements"
       - "Test Types"
@@ -55,14 +56,16 @@ skills:
       - "Verification Requirements"
       - "Test Organization"
       - "Performance Considerations"
-      - "Continuous Integration"
       - "Common Anti-Patterns to Avoid"
       - "Regression Testing"
+      - "Testing Best Practices by Language Paradigm"
+      - "Documentation and Communication"
+      - "Expert References (Reasoning Calibration)"
 
   ai-development-guide:
     skill: "ai-development-guide"
-    tags: [anti-patterns, debugging, quality-check, fail-fast, technical-decisions, rule-of-three, impact-analysis, error-handling, complexity-metrics]
-    typical-use: "Technical decision criteria, anti-pattern detection, debugging techniques, quality check workflows, impact analysis procedures, complexity management"
+    tags: [anti-patterns, debugging, quality-check, fail-fast, technical-decisions, rule-of-three, error-handling]
+    typical-use: "Technical decision criteria, anti-pattern detection, debugging techniques, quality check workflows, implementation completeness"
     size: large
     key-references:
       - "Rule of Three - Martin Fowler"
@@ -77,14 +80,12 @@ skills:
       - "Debugging Techniques"
       - "Quality Check Workflow"
       - "Situations Requiring Technical Decisions"
-      - "Continuous Improvement Mindset"
       - "Implementation Completeness Assurance"
-      - "Complexity Management Metrics"
 
   documentation-criteria:
     skill: "documentation-criteria"
-    tags: [documentation, prd, adr, design-doc, work-plan, task-files, decision-matrix, templates]
-    typical-use: "Scale assessment at implementation start, document creation criteria, ADR/PRD/Design Doc/Work Plan creation standards"
+    tags: [documentation, prd, uxrd, adr, design-doc, work-plan, task-files, decision-matrix, templates, cold-reader, document-revision]
+    typical-use: "Document creation criteria and templates, writing for a cold reader, revising a document, ADR/PRD/UXRD/Design Doc/Work Plan standards"
     size: large
     key-references:
       - "ADR Method - Michael Nygard"
@@ -93,15 +94,33 @@ skills:
     sections:
       - "Templates"
       - "Creation Decision Matrix"
-      - "ADR Creation Conditions (Required if Any Apply)"
+      - "ADR Creation Conditions"
+      - "Writing for the Reader"
       - "Revising a Document"
       - "Detailed Document Definitions"
       - "Creation Process"
       - "Storage Locations"
       - "ADR Status"
-      - "AI Automation Rules"
       - "Diagram Requirements"
       - "Common ADR Relationships"
+
+  mermaid-diagrams:
+    skill: "mermaid-diagrams"
+    tags: [mermaid, diagrams, c4-model, sequence-diagram, runtime-flow, palette, path-animation, render-check, documentation]
+    typical-use: "Drawing, animating, and render-checking the Mermaid diagrams in PRD, UXRD, Design Doc, ADR, and work plans"
+    size: medium
+    key-references:
+      - "C4 Model - Simon Brown"
+    sections:
+      - "Rendering target"
+      - "Diagram first"
+      - "Redraw test"
+      - "Palette and frontmatter"
+      - "Path animation"
+      - "Runtime flow diagrams"
+      - "Do not use"
+      - "Render check"
+      - "Revisions"
 
   implementation-approach:
     skill: "implementation-approach"
@@ -121,8 +140,8 @@ skills:
 
   integration-e2e-testing:
     skill: "integration-e2e-testing"
-    tags: [integration-testing, e2e-testing, test-skeleton, test-review, roi, behavior-first, acceptance-testing]
-    typical-use: "Integration and E2E test design principles, ROI-based test selection, behavior-first approach, test skeleton specification"
+    tags: [integration-testing, e2e-testing, test-skeleton, test-review, behavior-first, acceptance-testing]
+    typical-use: "Integration and E2E test design principles, behavior-first test selection, test skeleton specification"
     size: medium
     key-references:
       - "Test Pyramid - Mike Cohn"
@@ -131,17 +150,17 @@ skills:
     sections:
       - "Test Type Definition and Limits"
       - "Behavior-First Principle"
-      - "ROI Calculation"
       - "Test Skeleton Specification"
       - "EARS Format Mapping"
       - "Test File Naming Convention"
       - "Review Criteria"
       - "Quality Standards"
+      - "Property-Based Testing"
 
   workflow-orchestration:
     skill: "workflow-orchestration"
-    tags: [orchestration, workflow, subagents, autonomous-execution, scale-determination, stop-points, commit-strategy]
-    typical-use: "Orchestrating subagents through implementation workflows, scale determination, stop points, autonomous execution mode"
+    tags: [orchestration, workflow, subagents, delegation, response-contracts, stop-points, file-ownership]
+    typical-use: "Shared orchestration mechanics: agent invocation, response contracts, delegation boundary, conflict precedence, file ownership, stop points"
     size: large
     key-references:
       - "Orchestrator Pattern"
@@ -157,11 +176,13 @@ skills:
       - "How to Call Subagents"
       - "Structured Response Specification"
       - "Handling Requirement Changes"
-      - "Basic Flow for Work Planning"
+      - "Workflow Phases"
       - "Autonomous Execution Mode"
-      - "Quantitative Auto-Stop Triggers"
-      - "Error-Fixing Impulse Control Protocol"
-      - "Metacognitive TodoWrite Integration"
+      - "TodoWrite Management"
+      - "Main Orchestrator Roles"
+      - "Important Constraints"
+      - "Required Dialogue Points with Humans"
+      - "Action Checklist"
 
   project-context:
     skill: "project-context"
@@ -199,29 +220,11 @@ skills:
     sections:
       - "Skills Index"
       - "Task Analysis Process"
+      - "Output Format"
+      - "Process Gates"
       - "Skill Selection Priority"
       - "Metacognitive Question Design"
       - "Warning Patterns"
-
-  rule-editing-guide:
-    skill: "rule-editing-guide"
-    tags: [rule-writing, skill-editing, prompt-engineering, best-practices, documentation-quality, llm-optimization]
-    typical-use: "Creating new skills, editing agent prompts, writing command instructions, improving rule quality"
-    size: medium
-    key-references:
-      - "RFC 2119 - Key Words for Use in RFCs"
-      - "Context Window Optimization"
-    sections:
-      - "Context Efficiency"
-      - "Unified Notation"
-      - "Eliminate Duplication"
-      - "Aggregate Responsibilities"
-      - "Measurable Criteria"
-      - "NG Patterns as Recommendations"
-      - "Verbalize Implicit Assumptions"
-      - "Arrange by Importance"
-      - "Clarify Scope Boundaries"
-      - "Quality Checklist"
 
   # Backend-Specific Skills
   typescript-rules-backend:
@@ -236,6 +239,7 @@ skills:
       - "YAGNI Principle - Kent Beck"
     sections:
       - "Basic Principles"
+      - "Comment Writing Rules"
       - "Type Safety"
       - "Coding Conventions"
       - "Error Handling"
@@ -245,7 +249,7 @@ skills:
 
   typescript-testing-backend:
     skill: "typescript-testing-backend"
-    tags: [backend, testing, vitest, supertest, fast-check, tdd, coverage, integration-testing, database-testing]
+    tags: [backend, testing, vitest, jest, supertest, fast-check, tdd, coverage, integration-testing, database-testing]
     typical-use: "Backend testing rules, service testing patterns, Supertest API tests, fast-check property tests, database testing"
     size: large
     key-references:
@@ -255,7 +259,7 @@ skills:
     sections:
       - "Test Framework"
       - "Basic Testing Policy"
-      - "Red-Green-Refactor Process"
+      - "Red-Green-Refactor Process (Test-First Development)"
       - "Test Design Principles"
       - "Test Implementation Conventions"
       - "Service Testing Patterns"
@@ -275,16 +279,16 @@ skills:
       - "YAGNI Principle - Kent Beck"
     sections:
       - "Basic Principles"
+      - "Comment Writing Rules"
       - "Type Safety"
       - "Coding Conventions"
       - "Error Handling"
       - "Refactoring Techniques"
       - "Performance Optimization"
-      - "Non-functional Requirements"
 
   typescript-testing:
     skill: "typescript-testing"
-    tags: [frontend, react, testing, vitest, react-testing-library, msw, tdd, coverage, component-testing]
+    tags: [frontend, react, testing, vitest, jest, react-testing-library, msw, tdd, coverage, component-testing]
     typical-use: "Frontend testing rules, React Testing Library patterns, MSW for API mocking, coverage targets"
     size: large
     key-references:
@@ -315,13 +319,10 @@ skills:
     sections:
       - "Technical Anti-patterns (Red Flag Patterns)"
       - "Fallback Design Principles"
-      - "Rule of Three - Criteria for Code Duplication"
       - "Common Failure Patterns and Avoidance Methods"
       - "Debugging Techniques"
       - "Quality Check Workflow"
       - "Situations Requiring Technical Decisions"
-      - "Continuous Improvement Mindset"
-      - "Implementation Completeness Assurance"
 
   design-system:
     skill: "design-system"
@@ -334,22 +335,12 @@ skills:
     sections:
       - "Reading the System"
       - "Part A — Designing (ux-designer)"
-      - "Source"
-      - "Direction"
-      - "Foundations"
-      - "Components"
       - "Part B — Implementing (frontend designer, executor, quality-fixer)"
-      - "Foundations Become Tokens"
-      - "Verify the Token Chain Resolves"
-      - "States, Accessibility, Motion"
-      - "Language and Fonts"
-      - "Visual Verification"
-      - "Mismatch or Gap"
 
   llm-friendly-context:
     skill: "llm-friendly-context"
-    tags: [prompt-quality, handoff, delegation, ambiguity, output-shape, escalation, generated-artifacts, subagent-prompts]
-    typical-use: "Writing subagent prompts, agent handoffs, planning artifacts, reviews, reports, or generated instructions"
+    tags: [prompt-quality, handoff, delegation, ambiguity, output-shape, escalation, subagent-prompts]
+    typical-use: "Writing subagent prompts, agent handoffs, or generated instructions"
     size: small
     key-references:
       - "Positive Instruction Framing"
@@ -358,7 +349,6 @@ skills:
       - "Core Rules"
       - "Rewrite Patterns"
       - "Handoff Checklist"
-      - "Generated Artifact Checklist"
 
   expert-analysis-guide:
     skill: "expert-analysis-guide"
@@ -388,7 +378,6 @@ skills:
       - "Stable Detection Patterns"
       - "Trend-Sensitive Patterns"
       - "Severity Classification Guide"
-      - "Expert References (Reasoning Calibration)"
 
   skill-optimization:
     skill: "skill-optimization"
@@ -433,8 +422,9 @@ skills:
       - "Delegated Authority"
       - "5 Whys - Toyota Production System"
     sections:
-      - "Entry Gate"
+      - "Entry Gate [BLOCKING]"
       - "Planning"
+      - "Resolving the Plan to Execute"
       - "Entry Conditions"
       - "Commit Strategy Selection"
       - "The Per-Task Cycle"
@@ -442,25 +432,26 @@ skills:
       - "Final Cleanup"
       - "Stopping Autonomous Execution"
       - "Error-Fixing Impulse Control Protocol"
-      - "Exit Gate"
+      - "Exit Gate [BLOCKING]"
       - "Execution Flow"
 
   workflow-product:
     skill: "workflow-product"
-    tags: [requirements, prd, uxrd, product-scope, user-value, scale-determination, stop-points]
+    tags: [requirements, prd, uxrd, product-scope, user-value, parts, stop-points]
     typical-use: "Requirement analysis, PRD creation and review, UXRD creation and review, product-phase stop points"
     size: small
     key-references:
       - "Problem Before Solution"
     sections:
       - "Scope"
-      - "Entry Gate"
+      - "Entry Gate [BLOCKING]"
       - "Flow"
+      - "Parts"
       - "Document Requirements by Scale"
       - "Stop Points"
       - "Requirement Changes"
       - "Revision Loop"
-      - "Exit Gate"
+      - "Exit Gate [BLOCKING]"
 
   workflow-technical:
     skill: "workflow-technical"
@@ -472,15 +463,15 @@ skills:
       - "Authority Boundary"
     sections:
       - "Domain Independence"
-      - "Entry Gate"
+      - "Entry Gate [BLOCKING]"
       - "Flow"
       - "Why the ADR Comes After the Design"
       - "Why Fact Gathering Precedes Design"
       - "Document Requirements by Scale"
       - "Stop Points"
       - "Revision Loop"
-      - "Cross-Layer Sequencing"
-      - "Exit Gate"
+      - "Part Sequencing"
+      - "Exit Gate [BLOCKING]"
 
   code-navigation:
     skill: "code-navigation"
@@ -496,5 +487,5 @@ skills:
       - "Legitimate Fallback"
       - "Worked Examples"
       - "Sequencing Rules"
-      - "Escalation"
       - "Delegating a Wide Search"
+      - "Escalation"

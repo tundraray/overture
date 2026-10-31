@@ -1,13 +1,13 @@
 ---
 name: product-execution
-description: Product execution frameworks for converting strategy analysis into actionable product plans. Use when creating feature specifications, product roadmaps, MVP definitions, opportunity maps, or when "feature spec", "roadmap", "MVP", "product plan", "opportunity map", "WSJF", "Kano", "Shape Up", or "story mapping" is mentioned.
+description: Product execution frameworks for converting strategy analysis into actionable product plans. Use when creating feature specifications, product roadmaps, MVP definitions, opportunity maps, or when "feature spec", "roadmap", "MVP", "product plan", "opportunity map", "WSJF", "Kano", or "Shape Up" is mentioned.
 ---
 
 # Product Execution — Strategy-to-Product Bridge
 
 ## Purpose
 
-This skill bridges the gap between strategic analysis (market research, competitive landscape, AJTBD) and actionable product development. It converts strategy documents into opportunity trees, feature specifications, prioritized roadmaps, MVP definitions, and story maps.
+This skill bridges the gap between strategic analysis (market research, competitive landscape, AJTBD) and actionable product development. It converts strategy documents into opportunity trees, feature specifications, prioritized roadmaps, and MVP definitions.
 
 ## When This Skill Applies
 
@@ -15,7 +15,6 @@ This skill bridges the gap between strategic analysis (market research, competit
 - Creating feature specifications from identified opportunities
 - Building or updating product roadmaps
 - Defining MVP scope and success criteria
-- Mapping user stories from jobs-to-be-done analysis
 - Prioritizing features using WSJF, Kano, or MoSCoW
 - Designing opportunity solution trees from strategy insights
 
@@ -76,13 +75,13 @@ Strategy documents feed into product execution in a specific order:
 Strategy Docs          Product Execution
 ─────────────          ─────────────────
 strategy-canvas.md ──→ Desired Outcomes
-jobs-graph.md ───────→ Opportunities (problems with severity >7)
+jobs-graph.md ───────→ Opportunities (problems at or above the severity threshold, references/opportunity-trees.md)
 rat.md ──────────────→ Assumption Tests (map risks to solutions)
 customer-segments.md → Target Users (who gets the feature first)
 growth-plan.md ──────→ Success Metrics (North Star, AARRR)
 business-model.md ───→ Revenue Constraints (pricing, unit economics)
                        ↓
-                   Opportunity Tree → Feature Specs → Roadmap → MVP → Story Map
+                   Opportunity Tree → Feature Specs → Roadmap → MVP
 ```
 
 ## Reference Map
@@ -93,7 +92,6 @@ business-model.md ───→ Revenue Constraints (pricing, unit economics)
 | `references/feature-specification.md` | Shape Up pitch + Amazon PR/FAQ + Cagan lightweight spec | When writing feature specifications |
 | `references/roadmap-methods.md` | Now/Next/Later, Kano Model, WSJF scoring | When prioritizing and sequencing features |
 | `references/mvp-definition.md` | MoSCoW prioritization, lean MVP, validation planning | When scoping an MVP or defining launch criteria |
-| `references/story-mapping.md` | Jeff Patton story mapping, job stories | When breaking features into implementable stories |
 
 ## Key Distinction: ICE/RICE vs WSJF
 
@@ -106,7 +104,7 @@ Do not use ICE/RICE to prioritize features. Do not use WSJF to prioritize experi
 
 ## Cross-Reference Rules
 
-Every feature specification must include a traceability table:
+Every feature specification carries a traceability table in its appendix (the template's Cross-References):
 
 | Field | Source Document | Specific Reference |
 |-------|----------------|-------------------|
@@ -117,7 +115,7 @@ Every feature specification must include a traceability table:
 | **Strategy** | `strategy-canvas.md` | [ERRC action]: [factor] |
 | **Initiative** | `prioritized-initiatives.md` | Initiative [N]: [name] |
 
-If any cell is empty, the feature lacks strategic grounding. Either find the linkage or question whether the feature should exist.
+A cell whose source document has no matching entry says "no source" — never an invented link. A feature with neither a Job nor a Problem lacks strategic grounding; question whether it should exist.
 
 ## Anti-Patterns
 
@@ -128,6 +126,5 @@ If any cell is empty, the feature lacks strategic grounding. Either find the lin
 | MVP without success metrics | Cannot determine if MVP succeeded — endless iteration | Define kill criteria before writing a single line of code |
 | Skipping Opportunity Tree | Jumping from outcome to solution misses better alternatives | Always generate 3+ solutions per opportunity, then pick |
 | Appetite as estimate | Teams gold-plate because scope is unbounded | Set appetite first, shape solution to fit within it |
-| Story map without backbone | Disconnected stories with no user journey context | Build the backbone (activities) first, then slice releases |
 | All features as Must-Have | MoSCoW becomes meaningless — everything is critical | Must-Haves should be ~60% of effort; if more, re-evaluate |
 | Roadmap as commitment | Dates on Later items create false expectations | Now/Next/Later format — only Now has dates |

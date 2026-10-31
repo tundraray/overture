@@ -142,27 +142,3 @@ Net New MRR: "$[New + Expansion - Contraction - Churn]"
 Quick Ratio: (New + Expansion) / (Contraction + Churn)
   # > 4 = excellent, 2-4 = good, 1-2 = concerning, < 1 = shrinking
 ```
-
-## Output Template
-
-```markdown
-# Growth Experiment Plan
-
-## Current Growth Health
-- **Quick Ratio**: [X]
-- **Net New MRR trend**: [growing/flat/declining]
-- **Biggest funnel gap**: [AARRR stage]
-
-## Prioritized Experiments (Top 5)
-[Experiment design for each]
-
-## Resource Allocation
-- **Experiments per sprint**: [X]
-- **Team capacity**: [X person-days/sprint]
-- **Experiment budget**: $[X]/month
-
-## 90-Day Target
-- **Experiments to run**: [X]
-- **Expected win rate**: [X]%
-- **Target metric improvement**: [X]% in [metric]
-```

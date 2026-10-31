@@ -91,39 +91,3 @@ Interpretation:
   Score < 10: Under-served (opportunity!)
   Importance high + Satisfaction low = Best opportunity
 ```
-
-## Output Template
-
-```markdown
-# Innovation Accounting Report
-
-## Current Stage: [Problem Validation / Solution Validation / MVP / PMF / Scale]
-
-## Key Metrics
-| Metric | Current | Target | Trend |
-|--------|---------|--------|-------|
-| [stage-appropriate metric 1] | [X] | [X] | [↑↓→] |
-| [stage-appropriate metric 2] | [X] | [X] | [↑↓→] |
-
-## Product-Market Fit Assessment
-- **Sean Ellis Score**: [X]% very disappointed
-- **PMF Status**: [Not yet / Approaching / Achieved]
-- **Key gap**: [what's missing]
-
-## Validated Learning Log
-| Week | Assumption Tested | Method | Result | Action |
-|------|------------------|--------|--------|--------|
-| [date] | [assumption] | [method] | [validated/invalidated] | [next step] |
-
-## Innovation Portfolio
-| Initiative | Horizon | Stage | Confidence | Next Milestone |
-|-----------|---------|-------|-----------|---------------|
-
-## Opportunity Scoring
-| Outcome | Importance | Satisfaction | Score | Priority |
-|---------|-----------|-------------|-------|----------|
-
-## Recommendations
-1. [action] — Impact: [X], Urgency: [X]
-2. [action] — Impact: [X], Urgency: [X]
-```

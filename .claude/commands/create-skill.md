@@ -15,7 +15,7 @@ argument-hint: <skill topic or domain>
 ## Execution Method
 
 - Knowledge collection → performed by orchestrator via interactive dialog
-- Skill composition → performed by orchestrator applying rule-editing-guide and skill-optimization principles
+- Skill composition → performed by orchestrator applying skill-optimization principles
 - Quality review → performed by orchestrator applying skill-optimization grading
 
 Orchestrator manages the entire lifecycle with user approval gates.
@@ -23,8 +23,8 @@ Orchestrator manages the entire lifecycle with user approval gates.
 ## Required Skills
 
 Before executing, load these skill files for guidance:
-- `skills/rule-editing-guide/SKILL.md`
 - `skills/skill-optimization/SKILL.md`
+- `skills/llm-friendly-context/SKILL.md`
 
 Skill topic: $ARGUMENTS
 
@@ -84,18 +84,17 @@ Final details for integration:
 
 1. **Related skills**: Which existing skills does this complement? (I'll add cross-references)
 2. **Escalation patterns**: When should agents STOP and ask the user instead of following this skill?
-3. **Expert references**: Any domain experts or authoritative sources to calibrate reasoning?
-4. **Tags for discovery**: Suggest 5-10 tags for skills-index.yaml
+3. **Tags for discovery**: Suggest 5-10 tags for skills-index.yaml
 ```
 
 Wait for user response before proceeding.
 
 ### Step 4: Compose Skill Content
 
-Apply the following principles from rule-editing-guide and skill-optimization:
+Apply the following principles from skill-optimization and llm-friendly-context:
 
 **Composition rules**:
-1. Start with frontmatter (name, description with "Automatically loaded when..." clause)
+1. Start with frontmatter (name, and a description naming the situations and phrases that should load it)
 2. Opening paragraph: scope statement (what IS and IS NOT covered)
 3. Organize sections general → specific (BP-4)
 4. Convert all negatives to positives (BP-1)
@@ -105,8 +104,7 @@ Apply the following principles from rule-editing-guide and skill-optimization:
 8. Decompose complex rules (BP-6)
 9. Include success AND failure examples (BP-7)
 10. Define escalation criteria (BP-8)
-11. End with Expert References (Reasoning Calibration) table
-12. Cross-reference related skills by name, never duplicate content
+11. Cross-reference related skills by name, never duplicate content
 
 **Size guidelines**:
 - Target: 100-300 lines for SKILL.md

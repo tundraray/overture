@@ -148,7 +148,7 @@ Every message line in the rendered SVG carries `class="messageLine0|1"` and `dat
 - **The sequence diagram is the flow.** Each runtime flow has a **Starts when** line, its diagram, an **Outcome** line (result and persisted state the picture does not show), and **Failure handling** as a list.
 - **One message per step.** Every `alt` / `else` branch ends with its own return; no return follows the `end`.
 - **A store never replies.** Row state is a `Note over Writer,Store: …`, not `DB-->>Service`.
-- **One journey shape per document.** All runtime flows of one document follow the same journey (client → api → store, note, api → client). A flow that skips a leg — no store access, a reply without a request — is a defect.
+- **One journey shape per document.** All runtime flows of one document follow the same journey (client → api → store, note, api → client); a flow whose behaviour never reaches the store (a validation rejection, a cache hit) ends where the behaviour ends rather than drawing an access that does not happen. A reply without a request is a defect.
 - **Platform participants in a `box`**; an external system's message goes before a coloured `rect` block, never inside it (the rect stretches out of the box).
 
 ## 7. Do not use

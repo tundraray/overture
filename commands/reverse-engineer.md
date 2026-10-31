@@ -15,6 +15,8 @@ Target: $ARGUMENTS
 Before executing, load these skill files for guidance:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 
+**gamedev-overture**: Phase 1 is not available — no PRD is written on the gamedev path, and no gamedev agent writes a feature spec from code. Step 0 offers Design Docs only, and Phase 2 runs against an existing feature spec (`docs/game-design/features/{feature}-spec.md`), passed wherever a step says PRD (`workflow-orchestration`, "Gamedev Substitutions"). With no feature spec for the target, stop and tell the user to write one first.
+
 ## Step 0: Initial Configuration
 
 ### 0.1 Scope Confirmation

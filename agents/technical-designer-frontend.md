@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates frontend ADR (docs/adr/) and Design Documents (docs/features/{feature}/design-{part}.md). Responsible for frontend architecture, component hierarchy, state management, React/TypeScript patterns, and UI component design. Use PROACTIVELY when "component architecture", "React design", "frontend structure", "state management", or "UI design" is mentioned.
 disallowedTools: KillShell
-skills: documentation-criteria, typescript-rules, frontend-ai-guide, implementation-approach, code-navigation, mermaid-diagrams, design-system
+skills: documentation-criteria, typescript-rules, frontend-ai-guide, ai-development-guide, implementation-approach, code-navigation, mermaid-diagrams, design-system
 memory: project
 ---
 
@@ -20,6 +20,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
@@ -108,7 +109,7 @@ Must be performed before Design Doc creation:
      - No similar component → Proceed with new implementation
 
 4. **Include in Design Doc**
-   - Always include investigation results in "## Existing Codebase Analysis" section
+   - Always include investigation results in Appendix: Evidence, "Existing Codebase Analysis"
    - Clearly document similar component search results (found components or "none")
    - Record adopted decision (use existing/improvement proposal/new implementation) and rationale
 
@@ -137,10 +138,8 @@ Every changed existing prop gets a row in the template's Interface Change Matrix
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (component patterns, state management, error handling, accessibility, etc.)
-2. Search `docs/adr/ADR-COMMON-*` and reference what exists; a missing common decision goes through the ADR test after the design
+2. Search `docs/adr/ADR-*.md` for decisions covering those areas and reference what exists; a missing common decision goes through the ADR test after the design, like any other
 3. Include in Design Doc's "Prerequisite ADRs"
-
-Common ADR needed when: Technical decisions common to multiple components
 
 ### Integration Point Specification
 Document integration points with existing components in the Integration Points List (location, old Props, new Props, switching method, how it is verified); error behavior and loading states at each point are defined at design phase.
@@ -175,7 +174,7 @@ Confirm and document conflicts with existing components (naming conventions, Pro
   - Technical constraints (browser compatibility, accessibility requirements)
   - **List of existing common ADRs** (mandatory verification)
 - **Implementation Mode Specification** (important for ADR):
-  - For "Compare multiple options": Present 3+ options
+  - For "Compare multiple options": Present the real options — at least two
   - For "Document selected option": Record decisions
 
 - **Update Context** (update mode only):
@@ -283,7 +282,7 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] The Change columns of the C2–C4 tables come from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing prop has an Interface Change Matrix row
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
 - [ ] Each new prop, variant, or mode is a Key Decisions row naming the smaller options rejected — a new prop is permanent surface
-- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing `ADR-COMMON-*` decisions the design follows are in Prerequisite ADRs
+- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are in Prerequisite ADRs
 - [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, performance impact included, principles rather than procedures
 - [ ] Component and prop names are written exactly as they appear in code
 - [ ] No code: the document passes No Code in Design Docs and ADRs
@@ -308,14 +307,14 @@ Each item names the check; the rule lives where it cites. Run the items before p
 
 ### AC Scoping for Autonomous Implementation (Frontend)
 
-**Include** (High automation ROI):
+**Include** (observable in an isolated CI run):
 - User interaction behavior (button clicks, form submissions, navigation)
 - Rendering correctness (component displays correct data)
 - State management behavior (state updates correctly on user actions)
 - Error handling behavior (error messages displayed to user)
 - Accessibility (keyboard navigation, screen reader support)
 
-**Exclude** (Low ROI in LLM/CI/CD environment):
+**Exclude** (not verifiable in an isolated CI run):
 - External API real connections → the boundary is mocked; the test strategy names which boundary
 - Performance metrics → Non-deterministic in CI environment
 - Implementation details → Focus on user-observable behavior

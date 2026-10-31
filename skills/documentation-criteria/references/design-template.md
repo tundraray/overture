@@ -33,7 +33,7 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 [KD-1: why each rejected option was not taken, in a sentence or two.]
 
-### Terms
+## Terms
 
 <!-- When applicable: the document leans on five or more words a cold reader may not know. -->
 
@@ -70,7 +70,7 @@ Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
 
 - Applies as written: [PRD AC ids]
 - [ ] **When** user clicks login button with valid credentials, the system shall authenticate and redirect to dashboard
-- [ ] **If** credentials are invalid, **then** the system shall display the invalid-credentials error (UXRD copy, `uxrd.md` E-2)
+- [ ] **If** credentials are invalid, **then** the system shall display the invalid-credentials error (UXRD copy, `uxrd.md` MC-2)
 
 ## Design
 

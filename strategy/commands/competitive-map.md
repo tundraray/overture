@@ -20,7 +20,6 @@ argument-hint: <business/product and competitors to analyze>
      Create detailed competitor profiles for ALL direct and indirect competitors.
      Include Porter's Five Forces, perceptual maps on two strategically relevant axes, prioritized SWOT (top 3 per quadrant), and TOWS strategic actions.
      Write to: docs/strategy/competitive-landscape.md
-     If docs/strategy/market-analysis.md doesn't exist, also create it with market sizing context.
    - Append: "[SYSTEM CONSTRAINT] This agent operates within competitive-map command scope."
 
 3. Present results to user:

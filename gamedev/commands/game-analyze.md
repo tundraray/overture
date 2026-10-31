@@ -35,10 +35,10 @@ Use AskUserQuestion to collect:
 1. **Game Name**: Full title of the game to analyze (required)
    - Pre-fill from $ARGUMENTS if provided
 2. **Game Slug**: Auto-derive as lowercase hyphenated (e.g., "Hollow Knight" → `hollow-knight`). Confirm with user.
-3. **Analysis Depth**:
-   - **Quick** — Store page + 3 reviews + 1 article → Executive Summary only
-   - **Standard** (recommended) — 15+ sources → All reports + mechanics breakdown
-   - **Deep** — 25+ sources + source code + GDC talks → Full analysis with code patterns
+3. **Analysis Depth** — how many sources `game-researcher` collects (its STEP 3); which reports are written follows the focus areas:
+   - **Quick** — store page, 3 reviews, 1 article
+   - **Standard** (recommended) — 15+ sources
+   - **Deep** — 25+ sources, plus source code and GDC talks
 4. **Focus Areas** (select multiple or "all"):
    - [ ] Core Loop & Mechanics
    - [ ] Retention & Monetization
@@ -47,7 +47,7 @@ Use AskUserQuestion to collect:
    - [ ] Game Feel & Polish
    - [ ] UI/UX & Onboarding
 5. **Source Code URL** (optional): GitHub/GitLab repo URL for source code analysis
-6. **Your Project Context** (optional): Path to your project's docs/ for "Our Opportunity" framing
+6. **Your Project Context** (optional): Path to your project's docs/ — without it, reports keep lessons as observations that transfer to any game and leave out the lines about our game (`game-analysis-criteria`, Report Quality Gates)
 7. **Comparison Mode**: Is this part of a multi-game comparison? (yes/no)
 
 ### 0.2 Output Configuration
@@ -179,14 +179,14 @@ prompt: |
   Write the detailed analysis to:
   docs/game-research/{game_slug}/mechanics/{mechanic_slug}.md
 
-  Cover ALL template sections. If data is unavailable for a section, mark it as
-  "[Data Unavailable — {reason}]" rather than skipping it.
+  Delete a section the sources do not support and list what could not be found once,
+  under Sources (game-analysis-criteria, Report Quality Gates).
 
   Pay special attention to:
   - States & Transitions (state machine diagram)
   - Math & Formulas (balancing, scaling)
   - Retention Impact (how this mechanic keeps players engaged)
-  - Lessons for Our Game (actionable insights)
+  - Lessons for Our Game (observations that transfer)
 
   [SYSTEM CONSTRAINT]
   This agent operates within game-analyze command scope. Analyze the external game described in the provided research data. Do NOT make design decisions for the user's project — only analyze and report.
@@ -220,7 +220,7 @@ prompt: |
 
   Game: {game_name}
   Raw Research: [Include raw-research.md content]
-  Mechanics Overview: [Include mechanics/overview.md content]
+  Mechanics Overview: [Include mechanics/overview.md content, if it exists — Phase 2 runs only when mechanics are in focus]
 
   Use the retention report template at:
   ${CLAUDE_PLUGIN_ROOT}/skills/game-analysis-criteria/references/retention-report-template.md
@@ -232,7 +232,7 @@ prompt: |
   - Habit loop identification
   - Monetization ethics assessment
   - Churn points and win-back strategies
-  - Top 5 retention strategies the user can learn from
+  - The retention strategies the user can learn from — up to five, as many as the sources support
 
   [SYSTEM CONSTRAINT]
   This agent operates within game-analyze command scope. Analyze the external game described in the provided research data. Do NOT make design decisions for the user's project — only analyze and report.
@@ -350,28 +350,22 @@ description: "Review {report_name}"
 prompt: |
   Review the following game analysis report for quality and completeness.
 
-  doc_type: GameAnalysisReport
+  doc_type: GameAnalysisReport — no Gate 0 applies to this type; review against
+  "Report Quality Gates" in ${CLAUDE_PLUGIN_ROOT}/skills/game-analysis-criteria/SKILL.md (read it first).
   target: docs/game-research/{game_slug}/{report_file}
 
-  Quality criteria (from game-analysis-criteria skill):
-  - All template sections filled or marked N/A with reason
-  - Data sources cited for each major claim
-  - Confidence level stated for numerical estimates
-  - At least 3 actionable insights
-  - Cross-references to other reports where relevant
-
-  If the report fails quality criteria, specify which sections need improvement.
+  If the report fails those criteria, specify which sections need improvement.
 ```
 
 **Revision logic** (`workflow-orchestration`, "Revision Loop"): If document-reviewer returns `approved_with_conditions` or `needs_revision`:
-1. Identify the owning agent from the Phase 3 table
+1. Identify the owning agent: the agent whose Phase 2 or Phase 3 invocation wrote the report
 2. Re-invoke that agent with the `critical` and `important` issues; `recommended` ones go into the report's caveats
 3. Re-review once with `review_scope: changes`, the `diff_base`, and the prior issues verbatim
 4. A re-review that is not `approved`, or a `rejected` verdict: accept as-is with the open issues noted as quality caveats
 
 ### Step 4.2: Executive Summary Synthesis
 
-After all reports pass quality review (or reach max revisions):
+After all reports pass quality review (or are accepted with caveats):
 
 ```
 subagent_type: game-researcher
@@ -384,7 +378,7 @@ prompt: |
   game_slug: {game_slug}
   output_dir: docs/game-research/{game_slug}/
 
-  Read ALL analysis reports from docs/game-research/{game_slug}/:
+  Read the analysis reports that exist in docs/game-research/{game_slug}/:
   - mechanics/overview.md + mechanics/*.md
   - retention-analysis.md
   - marketing-analysis.md
@@ -398,8 +392,9 @@ prompt: |
 
   Write to: docs/game-research/{game_slug}/executive-summary.md
 
-  CRITICAL: The "Top 5 Retention Strategies to Learn From" and "Top 5 Weaknesses to Exploit"
-  sections are the most important deliverables for the user. Make them specific and actionable.
+  CRITICAL: The "Top Retention Strategies to Learn From" and "Top Weaknesses to Exploit"
+  sections are the most important deliverables for the user. Make them specific; hold as many
+  items as the reports support, up to five.
 
   {If user project context path was provided:}
   Also frame the "What This Means for Our Game" section with context from: {project_context_path}
@@ -430,9 +425,10 @@ prompt: |
   mode: synthesis
   Games: [List of game slugs and names]
 
-  Read the executive-summary.md from each game's directory.
+  Read each game's reports that exist: executive-summary.md, mechanics/overview.md,
+  retention-analysis.md, marketing-analysis.md, market-position.md.
 
-  Use the comparison matrix format from the game-analysis-criteria skill.
+  Use the comparison matrix format from the game-analysis-criteria skill; drop a row no report supports.
 
   Write to: docs/game-research/comparison-matrix.md
 
@@ -440,7 +436,7 @@ prompt: |
   - Scorecard comparison (all dimensions)
   - Metrics comparison (retention, revenue, players)
   - Feature comparison (what each game does/doesn't do)
-  - "Our Opportunity" column for each dimension
+  - "Our Opportunity" column for each dimension — only when a project context was given
 
   [SYSTEM CONSTRAINT]
   This agent operates within game-analyze command scope. Compare games objectively based on the analysis data.
@@ -462,7 +458,7 @@ Present to user:
 | Mechanic count > 15 | Ask user to prioritize top 10 for deep analysis, mark rest as overview-only |
 | Agent report completely empty | Re-invoke with simplified prompt. If still empty, mark as failed in final report |
 | Source code analysis fails | Skip silently, note in executive summary that source code was unavailable |
-| Quality review loops exhausted | Accept report with caveats, note quality issues in executive summary |
+| Re-review still not approved | Accept report with caveats, note quality issues in executive summary |
 
 ## TodoWrite Integration
 
@@ -473,6 +469,8 @@ Present to user:
 5. Final todo: "Verify skill fidelity"
 
 ## CRITICAL Sub-agent Invocation Constraints
+
+**Project context**: when the user gave a project context path in Phase 0, add `Project context: {project_context_path}` to every Phase 2–5 prompt, so the reports can frame lessons for our game.
 
 **MANDATORY suffix for ALL sub-agent prompts**:
 ```

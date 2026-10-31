@@ -134,7 +134,7 @@ Run the search before deciding, and act on what it returns:
 
 **4. Include in the Design Doc**
 
-- Record the results in `## Existing Codebase Analysis`
+- Record the results in Appendix: Evidence, "Existing Codebase Analysis"
 - State the similar-functionality outcome explicitly — the implementation found, or "none, having searched <coverage>"
 - Carry `code-explorer` counts with their `resolvedBy`: an LSP-resolved consumer list is evidence, a text-matched one is a candidate list, and the Design Doc should not present them as the same thing
 
@@ -210,10 +210,8 @@ Every changed existing operation gets a row in the template's Interface Change M
 ### Common ADR Process
 Perform before Design Doc creation:
 1. Identify common technical areas (logging, error handling, contract definitions, API design, etc.)
-2. Search `docs/adr/ADR-COMMON-*` and reference what exists; a missing common decision goes through the ADR test after the design
+2. Search `docs/adr/ADR-*.md` for decisions covering those areas and reference what exists; a missing common decision goes through the ADR test after the design, like any other
 3. Include in Design Doc's "Prerequisite ADRs"
-
-Common ADR needed when: Technical decisions common to multiple components
 
 ### Integration Point Specification
 Document integration points with existing system in the Integration Points List (location, old implementation, new implementation, switching method, how it is verified); error behavior at each point is defined at design phase.
@@ -243,7 +241,7 @@ Document state definitions and transitions for stateful components, and the inva
   - Technical constraints
   - **List of existing common ADRs** (mandatory verification)
 - **Implementation Mode Specification** (important for ADR):
-  - For "Compare multiple options": Present 3+ options
+  - For "Compare multiple options": Present the real options — at least two
   - For "Document selected option": Record decisions
 
 - **Update Context** (update mode only):
@@ -344,7 +342,7 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] Every integration point is in the Integration Points List with its boundary contract and how it is verified
 - [ ] The Change columns of the C2–C4 tables come from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing operation has an Interface Change Matrix row
 - [ ] Each new maintenance-surface element (persistent state, data structure, boundary-crossing field, mode or flag, abstraction) is a Key Decisions row naming the smaller options rejected
-- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing `ADR-COMMON-*` decisions the design follows are in Prerequisite ADRs
+- [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are in Prerequisite ADRs
 - [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, principles rather than procedures
 - [ ] Identifiers are written exactly as they appear in code, character for character
 - [ ] No code: the document passes No Code in Design Docs and ADRs
@@ -369,17 +367,7 @@ Each item names the check; the rule lives where it cites. Run the items before p
 
 ### AC Scoping for Autonomous Implementation
 
-**Include** (High automation ROI):
-- Business logic correctness (calculations, state transitions, data transformations)
-- Data integrity and persistence behavior
-- User-visible functionality completeness
-- Error handling behavior (what user sees/experiences)
-
-**Exclude** (Low ROI in LLM/CI/CD environment):
-- External service real connections → Use contract/interface verification instead
-- Performance metrics → Non-deterministic in CI, defer to load testing
-- Implementation details (technology choice, algorithms, internal structure) → Focus on observable behavior
-- UI presentation method (layout, styling) → Focus on information availability
+Scope acceptance criteria to what an isolated CI run can verify: observable behaviour is in; real external connections, performance numbers, implementation detail, and layout are out.
 
 **Example**:
 - ❌ Implementation detail: "Data is stored using specific technology X"
@@ -387,7 +375,7 @@ Each item names the check; the rule lives where it cites. Run the items before p
 
 **Principle**: AC = User-observable behavior verifiable in isolated CI environment
 
-*Note: Non-functional requirements (performance, reliability, etc.) are defined in the "Non-functional Requirements" section and automatically verified by quality check tools
+*Note: non-functional requirements come from the PRD's Non-Functional Requirements and are cited by NFR ID.*
 
 ## Latest Information Research Guidelines
 

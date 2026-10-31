@@ -20,19 +20,19 @@ Check that strategy analysis exists:
    - description: "Product execution plan"
    - prompt: |
      Read ALL strategy documents in docs/strategy/.
-     Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/
-     Read templates from: ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
+     Read methodology from: opportunity-trees.md, feature-specification.md, roadmap-methods.md, mvp-definition.md in ${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/
+     Read templates: opportunity-map-template.md, feature-spec-template.md, product-roadmap-template.md, mvp-definition-template.md in ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
 
      Create the complete product execution plan:
 
      1. docs/strategy/opportunity-map.md — Opportunity Solution Tree: derive outcomes from strategy-canvas, opportunities from jobs-graph problems, solutions as feature ideas, assumption tests from RAT
-     2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs in Shape Up pitch format. EACH feature is a SEPARATE FILE. Include cross-references table linking to jobs-graph, segments, rat, strategy-canvas, prioritized-initiatives. Score WSJF, assign Kano category, set appetite.
+     2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs in Shape Up pitch format. EACH feature is a SEPARATE FILE. Include the cross-references table in the spec's appendix, linking to jobs-graph, segments, rat, strategy-canvas, prioritized-initiatives; a cell whose source document does not exist or has no matching entry says "no source". Score WSJF, assign Kano category, set appetite.
      3. docs/strategy/product-roadmap.md — Now/Next/Later roadmap. Each row LINKS to its feature spec file. Ranked by WSJF. Include Kano categorization, appetite, dependencies.
      4. docs/strategy/mvp-definition.md — MoSCoW categorization. Must-Have features LINK to spec files. Success metrics from growth-plan + business-model. Validation plan from rat.md. Kill criteria. Launch checklist.
 
      Additional context: $ARGUMENTS
 
-     All files are MANDATORY. Every feature must be in a SEPARATE file with full cross-references.
+     All files are MANDATORY. Every feature must be in a SEPARATE file with its cross-references.
    - Append: "[SYSTEM CONSTRAINT] This agent operates within product-plan command scope."
 
 2. Verify outputs:

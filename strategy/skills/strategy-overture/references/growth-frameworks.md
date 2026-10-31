@@ -91,32 +91,3 @@ More nuanced than BCG — uses two composite axes:
 | **Low** | Selective | Harvest/Divest | Harvest/Divest |
 
 **When to use GE-McKinsey over BCG**: When you need more granularity (multiple business units), when market share alone doesn't capture competitive strength, or when industry attractiveness is multi-dimensional.
-
-## Output Template
-
-```markdown
-# Growth Strategy Analysis
-
-## Current Portfolio Position (BCG)
-| Product/Unit | Market Share | Market Growth | Category | Recommendation |
-|---|---|---|---|---|
-| [name] | [X]% | [X]% | Star/Cow/QM/Dog | [action] |
-
-## Growth Direction (Ansoff)
-**Primary vector**: [strategy] — [rationale]
-**Secondary vector**: [strategy] — [rationale]
-
-### Recommended Actions
-1. [action] — Timeline: [X months], Investment: $[X], Expected return: [X]
-2. [action] — Timeline: [X months], Investment: $[X], Expected return: [X]
-
-## Resource Allocation
-| Source | Destination | Amount | Rationale |
-|--------|------------|--------|-----------|
-| Cash Cow [X] | Star [Y] | $[X] | [why] |
-
-## Risk Assessment
-| Risk | Probability | Impact | Mitigation |
-|------|------------|--------|-----------|
-| [risk] | High/Med/Low | High/Med/Low | [action] |
-```

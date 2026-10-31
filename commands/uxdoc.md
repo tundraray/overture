@@ -12,12 +12,12 @@ argument-hint: <UX feature or interaction description>
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER investigate/analyze yourself)
-2. **Follow workflow-orchestration skill design flow exactly**:
+2. **Follow the flow below exactly**:
    - Execute: requirement-analyzer → ux-designer → document-reviewer
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Scope**: Complete when UXRD receives approval
 
-**CRITICAL**: NEVER skip document-reviewer or stopping points defined in workflow-orchestration skill flows.
+**CRITICAL**: NEVER skip document-reviewer or a stopping point in the flow below.
 
 ## Required Skills
 
@@ -49,7 +49,7 @@ Requirements → requirement-analyzer → [Stop: Scope & UX requirements confirm
 
 Requirements: $ARGUMENTS
 
-**gamedev-overture**: every `ux-designer` call below goes to `game-ui-designer`, and the PRD reference is the feature spec (`docs/game-design/features/*-spec.md`).
+**gamedev-overture**: every `ux-designer` call below goes to `game-ui-designer`, the PRD reference is the feature spec (`docs/game-design/features/*-spec.md`), and `workflow-gamedev` replaces `workflow-product` — `workflow-orchestration`, "Gamedev Substitutions".
 
 ## Execution Flow
 

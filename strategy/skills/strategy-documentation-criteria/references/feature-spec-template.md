@@ -9,18 +9,6 @@
 
 [Overview: three to five plain sentences — what the user can do once this exists, and why it matters to them]
 
-## Cross-References
-
-| Source | Reference | What It Provides |
-|--------|-----------|-----------------|
-| Job | [jobs-graph.md → Job #N: "job name"] | The specific job this feature helps complete |
-| Segment | [segments.md → Segment #N: "segment name"] | Target segment for this feature |
-| Problem | [jobs-graph.md → Job #N, Problem: severity X/10] | The problem this feature solves |
-| Risk | [rat.md → Risk #N: "risk name", P×I=X] | Which risky assumption this addresses |
-| Strategy | [strategy-canvas.md → Four Actions: Eliminate/Reduce/Raise/Create] | Strategic action this supports |
-| Initiative | [prioritized-initiatives.md → #N, ICE=X] | Source initiative with priority score |
-| Opportunity | [opportunity-map.md → Opportunity #N] | Parent opportunity in OST |
-
 ## Problem
 
 [Specific problem from jobs-graph. Describe the situation, who experiences it, how severe it is. Link to the exact job and problem.]
@@ -67,3 +55,17 @@
 | **Cost of Delay** | **[sum]** | |
 | Job Duration | [score] | [estimated effort] |
 | **WSJF** | **[CoD/Duration]** | |
+
+## Appendix: Cross-References
+
+[Traceability to the strategy documents. A cell whose source document does not exist or has no matching entry says "no source" — never an invented link.]
+
+| Source | Reference | What It Provides |
+|--------|-----------|-----------------|
+| Job | [jobs-graph.md → Job #N: "job name"] | The specific job this feature helps complete |
+| Segment | [segments.md → Segment #N: "segment name"] | Target segment for this feature |
+| Problem | [jobs-graph.md → Job #N, Problem: severity X/10] | The problem this feature solves |
+| Risk | [rat.md → Risk #N: "risk name", P×I=X] | Which risky assumption this addresses |
+| Strategy | [strategy-canvas.md → Four Actions: Eliminate/Reduce/Raise/Create] | Strategic action this supports |
+| Initiative | [prioritized-initiatives.md → #N, ICE=X] | Source initiative with priority score |
+| Opportunity | [opportunity-map.md → Opportunity #N] | Parent opportunity in OST |

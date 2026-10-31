@@ -12,14 +12,14 @@ argument-hint: <game feature or project description>
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
-2. **Follow workflow-gamedev skill flows exactly**:
+2. **Follow the phase skills' flows exactly** (`workflow-gamedev` → `workflow-technical` → `workflow-execution`):
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Enter autonomous mode** only after the batch approval of the current part's plan
 4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
 
-**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-gamedev skill flows.
+**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in the phase skills' flows.
 
 ## Required Skills
 
@@ -50,34 +50,9 @@ When continuing existing flow, verify:
 - Current phase position (Requirements/Market Analysis/Game Design/Technical Design/Planning/Implementation/QA)
 - Identify next step in workflow-gamedev skill corresponding flow
 
-### Development Mode Detection
+### Development Mode and Scenario
 
-After requirement-analyzer returns, detect development mode from user input:
-
-| Mode | Trigger Keywords | Flow |
-|------|-----------------|------|
-| Full Development | "full", "complete game", "production" | Standard scale-based flow with all phases |
-| Design Only | "design only", "concept", "documentation only" | Execute through design phases, stop before implementation |
-| Prototype | "prototype", "proof of concept", "POC", "rapid" | Simplified flow: core mechanics only, skip market analysis and art phases |
-
-**Default**: Full Development (if no mode keywords detected)
-
-**Design Only termination**: After all design documents are approved (GDD, feature specs, art direction, analytics design), present final design package summary and stop. Do NOT proceed to technical-designer or implementation.
-
-**Prototype simplification**: Skip market-analyst, sr-game-artist, technical-artist, game-ui-designer, data-scientist. Go directly from mechanics-developer to technical-designer with minimal specs.
-
-### Scenario Detection
-
-After requirement-analyzer returns, determine project scenario:
-
-```yaml
-detection:
-  - Check: Does project-config.json exist in the project?
-  - Check: Does docs/game-design/*-gdd.md exist?
-
-  Scenario A (New Project): No config, no GDD → Full pipeline with market analysis
-  Scenario B (Existing Project): Config+GDD exist → Feature-focused pipeline, skip market analysis
-```
+After requirement-analyzer returns, detect the development mode and the scenario as `workflow-gamedev` defines them ("Development Mode Routing", "Scenario Detection"), and confirm both at the first stop. Design Only stops after the design package; Prototype runs the reduced flow defined there: after the lite feature spec is approved, it goes straight to a simplified plan.
 
 | Scenario | Market Analysis | GDD Creation | Feature Specs | Technical Design |
 |----------|----------------|--------------|---------------|-----------------|
@@ -246,92 +221,17 @@ The parts list confirmed in the product phase — the feature spec's Delivery Pa
 
 Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`mid-game-designer` in `update` mode and feature spec re-approval).
 
-### Commit Strategy Selection (MANDATORY before implementation)
+### Execution Phase (per part)
 
-**After feature spec approval and before the first part's batch approval**, ask user:
+`workflow-execution` owns every step below, with `gamedev-work-planner` as `{planner}`; follow it there rather than from memory:
 
-"Which commit strategy do you prefer?"
-- **per-task** (default) — Commit after each task. Atomic commits, easy rollback
-- **per-phase** — Commit after each phase completes. Balanced granularity
-- **per-feature** — Single commit at the end. Clean history
-- **manual** — You decide when to commit. Full control
+- **Commit strategy** — asked once per feature, after feature spec approval and before the first part's batch approval ("Commit Strategy Selection"); `per-phase` groups commits by the six game phases
+- **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
+- **Post-Implementation Verification** — the three verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed
+- **Final Cleanup** — the consumed task directory is deleted and `gamedev-work-planner` (`update` mode) sets the plan `completed`; the feature spec, GDD, `docs/design-system/`, and every design document stay
+- **Test skeleton paths** reach `gamedev-work-planner` per part — `workflow-orchestration`, "Main Orchestrator Roles"
 
-Store selected strategy for autonomous execution mode.
-
-### Task Execution Quality Cycle (per Task)
-
-**Per-task cycle** (complete each task before starting next):
-```
-1. task-executor → Implementation
-2. Escalation judgment → Check task-executor status
-3. quality-fixer → Quality check and fixes
-4. [Conditional] git commit → Based on selected commit strategy
-```
-
-**Rules**:
-1. Execute ONE task completely before starting next
-2. Check task-executor status before quality-fixer (escalation check)
-3. quality-fixer MUST run after each task-executor (no skipping)
-4. Commit execution depends on strategy (see the `workflow-execution` skill)
-
-**Step 2 branch conditions**:
-- `status: escalation_needed` or `status: blocked` → escalate to user
-- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`, then the reviewer again; `approved` → proceed to quality-fixer.
-- quality-fixer `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`, then quality-fixer again; never commit on it (diagram: `workflow-execution`, "The Per-Task Cycle")
-
-**Commit by strategy**:
-- **per-task**: Commit when quality-fixer returns `approved: true`
-- **per-phase**: Accumulate, commit when phase completes
-- **per-feature**: Accumulate all, single commit at end
-- **manual**: Wait for user to request commit
-
-**Violations**:
-- Skipping escalation check
-- Skipping quality-fixer
-- Committing without asking strategy first
-
-### Post-Implementation Verification
-
-The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
-
-1. **Invoke the verifiers in parallel** (single message, three Task tool calls):
-
-   | Agent | Prompt inputs |
-   |-------|---------------|
-   | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
-   | `security-reviewer` | Design Doc path, same modified-file list |
-   | `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path — advisory, never a gate: findings go to the completion report, never into `requiredFixes` |
-
-   Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
-
-2. **Apply pass/fail criteria** from the `workflow-execution` skill, "Post-Implementation Verification" section:
-   - `code-verifier`: `consistent` / `mostly_consistent` = pass; `needs_review` / `inconsistent` = fail
-   - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
-
-3. **Fix cycle** (any verifier failed, max 2 cycles):
-   - Normalize the verifiers' output into a single `requiredFixes[]` per the `workflow-execution` normalization rules
-   - `task-executor` in **Fix Mode** (no task file; `Design Doc: [path]`) → `quality-fixer` → commit per strategy → re-run **only** the failed verifiers
-   - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
-
-4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.
-
-### Final Cleanup
-
-Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state.
-
-- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `analysis/`
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **gamedev-work-planner** (`update` mode) set its frontmatter `status` to `completed` — the orchestrator does not edit the plan itself
-- **Preserve** every sibling plan and its directory — a part may hold several plans
-- When this run drove several parts, repeat the above per part rather than deleting the feature directory
-- **Preserve** the feature spec under `docs/game-design/features/`, the GDD, `uxrd.md`, `design-{part}.md`, and everything under `docs/design-system/` and `docs/adr/`
-
-If deletion fails, report the failure but do not block the completion report.
-
-### Test Information Communication
-After acceptance-test-generator execution, when calling gamedev-work-planner, communicate:
-- Generated integration test file path
-- Generated E2E test file path
-- Explicit note that integration tests are created simultaneously with implementation, E2E tests are executed after all implementations
+Append `[SYSTEM CONSTRAINT] This agent operates within implement command scope.` to each verifier prompt as well.
 
 ## Execution Method
 

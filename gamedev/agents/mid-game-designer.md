@@ -94,8 +94,8 @@ The document goes to disk; this response carries its path. A document written wi
   "summary": "[what the spec establishes, in one or two sentences]",
   "acceptanceCriteriaCount": 0,
   "parts": [
-    {"name": "systems", "covers": ["AC 1", "AC 3"], "cutAlong": "engine-systems", "dependsOn": []},
-    {"name": "hud", "covers": ["AC 2"], "cutAlong": "ui", "dependsOn": ["systems"]}
+    {"name": "systems", "covers": ["AC-1", "AC-3"], "cutAlong": "engine-systems", "dependsOn": []},
+    {"name": "hud", "covers": ["AC-2"], "cutAlong": "ui", "dependsOn": ["systems"]}
   ],
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}

@@ -15,9 +15,9 @@ Autonomy is delegated authority, not absence of limits. Every rule below exists 
 
 Run before planning begins.
 
-☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
-☐ ADR paths received per part, or an explicit "none passed the test"
-☐ Test skeleton paths received per part
+☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale or in gamedev Prototype mode, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
+☐ ADR paths received per part, or an explicit "none passed the test" (small scale and Prototype: none)
+☐ Test skeleton paths received per part (small scale and Prototype: none)
 ☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `game-ui-designer` output on the gamedev path); a small-scale plan's traceability table maps to the PRD's or feature spec's acceptance criteria
 ☐ The plan state of every part is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
 
@@ -68,7 +68,17 @@ Decomposition runs **after** batch approval: it produces working state, not a do
 
 Everything before it is reviewed by a human; everything after runs autonomously until completion or escalation. Do not reach it with an unresolved question — after it, no one is asked again.
 
-Small scale skips the plan review: `{planner}` writes a simplified plan with `design: none` whose traceability table maps to the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
+Small scale, and gamedev Prototype mode at any scale, skips the plan review: `{planner}` writes a simplified plan with `design: none` whose traceability table maps to the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
+
+## Resolving the Plan to Execute
+
+A command that resumes execution (`/build`, `/front-build`) finds its plan this way:
+
+- **A plan path was given**: use it. Its `{plan-name}` is the filename without `.md`; its tasks are in the sibling directory of the same name
+- **No path**: read every plan at `docs/features/*/*/*.md`, parse its frontmatter (`feature`, `part`, `design`, `plan: N of M`, `status`, `depends-on`), and take the plan with `status: active`
+- **Stop and escalate rather than guess** when a part's state is ambiguous: two plans in one part claim `active`; no plan is active while the part still has task files; the part's plan count disagrees with `M`; a `depends-on` names a missing plan; or the active plan's `depends-on` chain holds a plan that is not `completed`
+- **Several parts have an active plan**: take the one whose task directory has the most recently modified `task-*.md`, and report the choice and the alternatives
+- **No plan under `docs/features/*/*/`**: stop — "No work plan found. Pass a work plan path, or complete the planning phase first."
 
 ## Entry Conditions
 
@@ -152,9 +162,13 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 
 | Verifier | Inputs |
 |----------|--------|
-| `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
-| `security-reviewer` | Design Doc path, same implementation file list |
-| `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path |
+| `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths`: the part's file list |
+| `security-reviewer` | Design Doc path, the part's file list |
+| `test-auditor` | `testPaths`: the test files in the part's file list; Design Doc path |
+
+**The part's file list** is the union of `filesModified` and `testsAdded` from this run's task results, committed or not, plus the Target Files of this part's tasks completed before this run (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
+
+**Small scale** (and gamedev Prototype mode) has no Design Doc: `code-verifier` runs with `doc_type: prd` against the lite PRD (skipped on the gamedev path — the lite feature spec is not a `code-verifier` document type), `security-reviewer` and `test-auditor` take the lite PRD or feature spec in place of the Design Doc, and Fix Mode below receives the same path.
 
 **`test-auditor` is advisory, never a gate.** Its findings are not converted into `requiredFixes[]` and never dispatched to `task-executor`: deleting or merging an existing test is the user's decision. A `bloated` verdict goes into the completion report as a table of `merge` / `drop` / `move` rows with their reasons, plus the `gaps` list, and the user decides which to apply.
 
@@ -174,19 +188,19 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 
 **Fix cycle** (any verifier failed — maximum 2 cycles; when normalization yields no items, e.g. only `drift`, skip it and report the verdict and drift in the completion report):
 
-1. `task-executor` in **Fix Mode** with the normalized array and `Design Doc: [path]` — no task file; Fix Mode takes its file scope from the fix locations
+1. `task-executor` in **Fix Mode** with the normalized array and `Design Doc: [path]` (small scale: the lite PRD or feature spec) — no task file; Fix Mode takes its file scope from the fix locations
 2. `quality-fixer` → commit per strategy → re-run **only the failed verifiers**, retaining recorded evidence from those that passed
 
 **Re-run rule**: a cycle makes progress only when a previously failing verifier reaches a pass status, or its count of named remaining findings decreases. Escalate immediately when a cycle makes no progress or needs external input. After cycle 2, escalate every remaining failure with its findings.
 
 ## Final Cleanup
 
-Before the completion report, delete the task directory this run consumed. Its work is committed; the directory is working state, not a durable artifact.
+Before the completion report, delete the task directory this run consumed. The directory is working state, not a durable artifact.
 
 - Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `analysis/` (a Bash `rm` of working state, not a document edit)
 - Invoke `{planner}` in `update` mode to set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
 - **Preserve** sibling plans and their directories — a part may hold several, and only the executed one is finished
-- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`
+- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` and `docs/design-system/` — on the gamedev path also the feature spec and GDD under `docs/game-design/`
 
 If deletion fails, report the failure but do not block the completion report.
 
@@ -196,8 +210,7 @@ If deletion fails, report the failure but do not block the completion report.
 
 1. **Escalation from a subagent** — `status: "escalation_needed"` or `status: "blocked"`
 2. **Requirement change detected** — any match in the requirement-change checklist; stop and re-analyze with integrated requirements via requirement-analyzer
-3. **Work-planner update restriction violated** — requirement changes after task-decomposer has started require overall redesign; restart the flow from requirement-analyzer
-4. **User explicitly stops** — direct instruction or interruption
+3. **User explicitly stops** — direct instruction or interruption
 
 **Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc, the plan, or task files, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the per-task cycle resumes at the task that escalated.
 
@@ -208,8 +221,8 @@ These numeric thresholds MUST trigger immediate orchestrator action. They are no
 | Trigger Condition | Required Action |
 |---|---|
 | **6+ files changed** in a single task (task-decomposer allows up to 5) | STOP. Create an impact report listing all changed files and affected modules. Present to the user before continuing. |
-| **Same error occurs 3 times** | STOP. Mandatory root cause analysis via 5 Whys. Do NOT attempt another fix without completing it. |
-| **2nd consecutive error fix attempt** | Re-execute rule-advisor. The previous approach has failed — reassess task essence and strategy. |
+| **Same error occurs 3 times** | STOP. Run the Error-Fixing Impulse Control Protocol below before any further fix. |
+| **2nd consecutive error fix attempt** | Run rule-advisor. The previous approach has failed — reassess task essence and strategy. |
 
 **Enforcement rules**:
 
@@ -224,22 +237,13 @@ These numeric thresholds MUST trigger immediate orchestrator action. They are no
 When an error appears during implementation, follow this protocol **instead of** immediately attempting a fix. The reflex to patch is what turns one defect into a sequence of increasingly speculative edits.
 
 1. **PAUSE** — do not attempt a fix yet
-2. **Re-execute rule-advisor** with the error context:
+2. **Run rule-advisor** with the error context:
    ```yaml
    subagent_type: rule-advisor
    prompt: "Re-analyze task considering this error: [error details]. Determine whether the original approach is still valid or a different strategy is needed."
    ```
-3. **Root cause analysis** — apply 5 Whys:
-   ```
-   Error:  [observed error]
-   Why 1:  [immediate cause]
-   Why 2:  [cause of Why 1]
-   Why 3:  [cause of Why 2]
-   Why 4:  [cause of Why 3]
-   Why 5:  [root cause]
-   ```
-4. **Present an action plan** — root cause, proposed approach, estimated impact (files to change), risk assessment
-5. **Fix only after user approval**
+3. **Present an action plan** built from rule-advisor's re-analysis — root cause, proposed approach, estimated impact (files to change), risk assessment. When the cause is still unknown, delegate the investigation (`investigator`, as `/diagnose` does) rather than analysing it yourself
+4. **Fix only after user approval**
 
 ### Applies to
 
@@ -256,13 +260,13 @@ When an error appears during implementation, follow this protocol **instead of**
 
 Run before the completion report.
 
-☐ Every task in the Consumed Task Set is committed, or explicitly escalated and reported
+☐ Every task file of the executed plan is committed per the chosen strategy (under `manual`, its changes are in the working tree and named in the report), or explicitly escalated and reported
 ☐ Post-implementation verification passed, or its remaining findings were escalated after cycle 2
 ☐ No `quality-fixer` result was accepted on `non_substantive` test evidence
 ☐ Final Cleanup ran: the task directory is deleted and the plan's `status` is `completed`
 ☐ When the part has a further plan in the chain, its `depends-on` is now satisfied and it is reported as the next step
 ☐ When the parts list has a further part, it is reported as the next part to plan — its `dependsOn` parts are now built, not only designed
-☐ The completion report states what was built, what was verified, and anything left escalated
+☐ The completion report states what was built, what was verified, anything left escalated, and `security-reviewer` notes from an `approved_with_notes` verdict
 ☐ The completion report lists acceptance criteria proven only against mocks (no real-dependency check yet) and any verification deferred to another part
 
 **ENFORCEMENT**: an unchecked item means the run is not finished. Reporting completion with an unverified item is worse than reporting the gap, because it removes the reader's reason to look.

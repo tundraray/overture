@@ -69,31 +69,3 @@ Long-form article
 ```
 
 **Rule**: Create once, distribute 7+ times. One deep piece = 4-6 weeks of content.
-
-## Output Template
-
-```markdown
-# Content Marketing Strategy
-
-## Audience Mapping
-| Persona | Stage | Content Needs | Preferred Format |
-|---------|-------|-------------|-----------------|
-
-## Content Pillars (3-5)
-1. **[Pillar]**: [topic area] — [why this matters to audience]
-   - Cluster topics: [list]
-
-## Editorial Calendar (Next 90 Days)
-[Content calendar table]
-
-## Distribution Plan
-| Channel | Frequency | Content Type | Goal |
-|---------|-----------|-------------|------|
-
-## Success Metrics
-| Metric | Current | Target (90d) | Target (12m) |
-|--------|---------|-------------|-------------|
-| Organic traffic | [X] | [X] | [X] |
-| Lead conversion | [X]% | [X]% | [X]% |
-| Content ROI | [X] | [X] | [X] |
-```

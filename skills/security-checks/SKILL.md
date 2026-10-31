@@ -54,7 +54,8 @@ BAD:  element.innerHTML = userInput;
 BAD:  <div dangerouslySetInnerHTML={{__html: userComment}} />
 
 GOOD: element.textContent = userInput;
-GOOD: <div>{DOMPurify.sanitize(userComment)}</div>
+GOOD: <div>{userComment}</div>   // React escapes text content
+GOOD: <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(userHtml)}} />   // only when HTML must render
 ```
 
 **Severity**: High
@@ -71,7 +72,9 @@ BAD:  const file = `./data/${userInput}`;
 
 GOOD: const safeName = path.basename(req.params.filename);
       fs.readFile(path.join(uploadsDir, safeName));
-GOOD: if (resolved.startsWith(allowedDir)) { fs.readFile(resolved); }
+GOOD: const resolved = path.resolve(allowedDir, userInput);
+      if (resolved.startsWith(allowedDir + path.sep)) { fs.readFile(resolved); }
+      // a bare startsWith(allowedDir) also admits a sibling such as /data-evil
 ```
 
 **Severity**: High
@@ -80,7 +83,7 @@ GOOD: if (resolved.startsWith(allowedDir)) { fs.readFile(resolved); }
 
 **Detection**: Deserializing data from untrusted sources without validation.
 
-**Search patterns**: `JSON.parse` on external input without schema validation, `eval()` for data parsing, `unserialize` on user data, `yaml.load` (unsafe) vs `yaml.safeLoad`.
+**Search patterns**: `JSON.parse` on external input without schema validation, `eval()` for data parsing, `unserialize` on user data, YAML loaded with an unsafe loader (PyYAML `yaml.load` without `SafeLoader`, js-yaml before v4 `load`; use `yaml.safe_load` / js-yaml v4 `load`).
 
 ```
 BAD:  const data = JSON.parse(req.body);
@@ -96,7 +99,7 @@ GOOD: const data = orderSchema.parse(JSON.parse(req.body));
 
 **Detection**: Use of deprecated or weak cryptographic algorithms for security purposes.
 
-**Search patterns**: `MD5`, `SHA1` used for password hashing or security tokens, `DES`, `3DES`, `RC4` for encryption, `ECB` mode, key sizes < 256 bits for symmetric encryption.
+**Search patterns**: `MD5`, `SHA1` used for password hashing or security tokens, `DES`, `3DES`, `RC4` for encryption, `ECB` mode, symmetric keys below 128 bits.
 
 ```
 BAD:  crypto.createHash("md5").update(password).digest("hex");
@@ -188,39 +191,24 @@ GOOD: // server-side only, never exposed to client
 BAD:  jwt.sign(payload, "secret123");
 BAD:  jwt.verify(token, secret, { algorithms: ["HS256", "none"] });
 
-GOOD: jwt.sign(payload, process.env.JWT_SECRET, {
+GOOD: jwt.sign(payload, privateKey, {   // RS256 signs with the private key
         algorithm: "RS256",
         expiresIn: "1h",
         audience: "api.example.com",
         issuer: "auth.example.com"
       });
+GOOD: jwt.verify(token, publicKey, { algorithms: ["RS256"], audience: "api.example.com", issuer: "auth.example.com" });
 ```
 
 **Severity**: Critical (algorithm none), High (weak secret/no expiry)
 
 ## Severity Classification Guide
 
-| Severity | Impact | Action Required |
-|----------|--------|-----------------|
-| **Critical** | Direct exploitation possible, data breach risk | Immediate fix, blocks deployment |
-| **High** | Exploitable with moderate effort, significant impact | Fix before release |
-| **Medium** | Limited exploitability or impact | Fix in next sprint |
-| **Low** | Minimal risk, defense-in-depth improvement | Track as tech debt |
+| Severity | Impact |
+|----------|--------|
+| **Critical** | Direct exploitation possible, data breach risk |
+| **High** | Exploitable with moderate effort, significant impact |
+| **Medium** | Limited exploitability or impact |
+| **Low** | Minimal risk, defense-in-depth improvement |
 
-### Aggregation Rules
-
-- 1+ Critical finding → status: `blocked`
-- 1+ High finding (confirmed_risk) → status: `needs_revision`
-- Only Medium/Low findings → status: `approved_with_notes`
-- No findings → status: `approved`
-
-## Expert References (Reasoning Calibration)
-
-When facing security assessment decisions, calibrate your reasoning against these established principles:
-
-| Expert | Key Principle | Apply When |
-|--------|--------------|------------|
-| OWASP | "Never trust input" | Reviewing any data from external sources |
-| Saltzer & Schroeder | "Fail-safe defaults — deny by default" | Evaluating access control implementations |
-| Kerckhoffs | "Security must not depend on secrecy of the mechanism" | Reviewing hardcoded secrets or security-through-obscurity |
-| NIST | "Use approved cryptographic algorithms and key lengths" | Evaluating cryptographic implementations |
+The review verdict is decided by `security-reviewer` (Verdict Criteria), not by this table.

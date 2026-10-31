@@ -83,7 +83,7 @@ Blocking unresolved items — decisions that cannot be made at decomposition tim
 - [ ] Confirm added tests still pass
 
 ## Quality Assurance Mechanisms
-(From the work plan header — mechanisms relevant to this task's target files)
+(From the work plan's Appendix: Traceability — mechanisms relevant to this task's target files)
 - [Tool/check name] — Enforces: [what] — Config/Source: [path] — Type: `executable_check` | `passive_constraint`
 
 ## Operation Verification Methods

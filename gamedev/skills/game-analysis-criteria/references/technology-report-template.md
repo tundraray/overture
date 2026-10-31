@@ -121,6 +121,8 @@ graph LR
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### Technology Choices to Consider
 
 1. **[Choice]**: [Why and tradeoffs]
@@ -137,6 +139,6 @@ graph LR
 2. **[Mistake]**: [What went wrong and why]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List sources — Steam page, GitHub repo, developer talks, tool analysis]*
 *Cross-references: mechanics/overview.md, game-feel-analysis.md*

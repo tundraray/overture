@@ -8,7 +8,7 @@ argument-hint: <business/product/idea description>
 
 ## Orchestrator Definition
 
-**Core Identity**: "I am not an analyst. I am an orchestrator." (see strategy-orchestration-guide skill)
+**Core Identity**: The orchestrator delegates every analysis to strategy agents; it does not analyse or write documents itself.
 
 **Execution Protocol**:
 1. **Delegate all analysis** to strategy sub-agents (orchestrator role only, no direct analysis)
@@ -25,29 +25,9 @@ Before executing, load these skill files for guidance:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-orchestration-guide/SKILL.md` — flow rules, phases, stop points, parallel execution
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md` — document decision matrix, file ownership, quality standards
 
-## Deliverable Files (18+ Total)
+## Deliverable Files
 
-| # | File | Agent | Domain |
-|---|------|-------|--------|
-| 1 | `docs/strategy/context-brief.md` | context-analyzer | Business context |
-| 2 | `docs/strategy/rat.md` | product-analyst | RAT risk analysis |
-| 3 | `docs/strategy/segments.md` | product-analyst | AJTBD segments |
-| 4 | `docs/strategy/jobs-graph.md` | product-analyst | Jobs graph |
-| 5 | `docs/strategy/market-analysis.md` | market-analyst | TAM/SAM/SOM, industry trends |
-| 6 | `docs/strategy/competitive-landscape.md` | market-analyst | Competitors, Porter's, SWOT/TOWS |
-| 7 | `docs/strategy/customer-segments.md` | market-analyst | Segments, attractiveness |
-| 8 | `docs/strategy/strategy-canvas.md` | strategy-architect | Blue Ocean, Ansoff/BCG, VPC |
-| 9 | `docs/strategy/brand-positioning.md` | strategy-architect | Perceptual maps, positioning |
-| 10 | `docs/strategy/business-model.md` | business-modeler | Canvas, unit economics |
-| 11 | `docs/strategy/gtm-plan.md` | gtm-planner | ICP, channels, partnerships, launch |
-| 12 | `docs/strategy/pricing-analysis.md` | gtm-planner | Value-based pricing, tiers |
-| 13 | `docs/strategy/growth-plan.md` | growth-strategist | AARRR, experiments, 90-day plan |
-| 14 | `docs/strategy/prioritized-initiatives.md` | growth-strategist | ICE/RICE master priority list |
-| 15 | `docs/strategy/strategic-report.md` | report-compiler | Unified McKinsey-grade report |
-| 16 | `docs/strategy/opportunity-map.md` | product-planner | Opportunity Solution Tree |
-| 17 | `docs/strategy/features/*.md` | product-planner | Feature specifications (N files) |
-| 18 | `docs/strategy/product-roadmap.md` | product-planner | Now/Next/Later roadmap |
-| 19 | `docs/strategy/mvp-definition.md` | product-planner | MVP scope + validation |
+Every document in `strategy-documentation-criteria`, Storage Locations, except the landing page — 18+ files. Each phase below names the files it writes; File Verification lists them per phase.
 
 ## Execution Flow
 
@@ -79,8 +59,8 @@ Invoke product-analyst:
 - description: "AJTBD deep analysis"
 - prompt: |
   Perform complete AJTBD analysis based on docs/strategy/context-brief.md.
-  Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/
-  Read templates from: ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
+  Read methodology from: the Risk Analysis section of ${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md (RAT) and ${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part1.md (jobs, segmentation, jobs graph); other book parts only as your agent definition names them.
+  Read templates: rat-template.md, segments-template.md, jobs-graph-template.md in ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
 
   You MUST produce THREE separate files:
   1. docs/strategy/rat.md — Top 5 risky assumptions with P×I scoring and validation methods
@@ -177,7 +157,7 @@ After user approves strategy + model, launch TWO agents in parallel:
 - subagent_type: "gtm-planner"
 - description: "Go-to-market + pricing strategy"
 - prompt: |
-  Create COMPLETE GTM strategy based on all docs in docs/strategy/.
+  Create COMPLETE GTM strategy based on the strategy docs from Phases 1–4 (growth-plan.md and prioritized-initiatives.md are being written in parallel — do not read them).
   You MUST produce TWO separate files:
   1. docs/strategy/gtm-plan.md — ICP (B2B or B2C template), messaging matrix (per segment: pain → value prop → proof → CTA), GTM motion selection (Sales-Led/PLG/CLG/Hybrid with rationale), channel strategy (primary 60%/secondary 30%/experimental 10% with CAC targets), partnership strategy (types + top 5 named targets with synergy), content strategy (3-5 pillars + funnel mapping + 90-day editorial calendar), phased launch plan (3 phases with milestones), budget allocation + KPI targets at 3/6/12 months
   2. docs/strategy/pricing-analysis.md — Value-based pricing (economic value = reference + differentiation, 10:1 rule check), pricing model selection (flat/tiered/per-seat/usage/freemium with rationale), tier structure (Starter/Pro/Enterprise with features, target segments, expected mix), competitive pricing analysis (table with competitor prices + our position), unit economics impact projection (ARPU, CAC, LTV, LTV:CAC, payback)
@@ -188,10 +168,10 @@ After user approves strategy + model, launch TWO agents in parallel:
 - subagent_type: "growth-strategist"
 - description: "Growth strategy + initiative prioritization"
 - prompt: |
-  Create COMPLETE growth strategy based on all docs in docs/strategy/.
+  Create COMPLETE growth strategy based on the strategy docs from Phases 1–4.
   You MUST produce TWO separate files:
   1. docs/strategy/growth-plan.md — AARRR funnel audit (each stage: current performance, benchmark, gap, bottleneck score), North Star metric (definition + supporting metrics), growth motion assessment (PLG/Sales-Led/CLG/Hybrid with decision criteria), 10-15 growth experiments (each with hypothesis, ICE score with rationale, target + guard-rail metrics, success criteria), growth accounting (Quick Ratio, net new MRR analysis), 90-day sprint plan (3 sprints)
-  2. docs/strategy/prioritized-initiatives.md — Read ALL prior strategy docs and collect EVERY recommended action, next step, and initiative. Score each using ICE (Impact × Confidence × Ease) AND RICE (Reach × Impact × Confidence / Effort). Categorize into: do-now (top 5-7) / do-next / defer / kill. Include dependencies between initiatives and resource requirements for do-now items.
+  2. docs/strategy/prioritized-initiatives.md — Read the strategy docs from Phases 1–4 (gtm-plan.md and pricing-analysis.md are being written in parallel — do not read them) and collect EVERY recommended action, next step, and initiative. Score each using ICE (Impact × Confidence × Ease) AND RICE (Reach × Impact × Confidence / Effort). Categorize into: do-now (top 5-7) / do-next / defer / kill. Include dependencies between initiatives and resource requirements for do-now items.
   Both files are MANDATORY.
 - Append: "[SYSTEM CONSTRAINT] This agent operates within strategy-report command scope."
 
@@ -228,9 +208,9 @@ Invoke report-compiler:
   12. pricing-analysis.md
   13. growth-plan.md
   14. prioritized-initiatives.md
-  Verify all 14 exist. If any missing, list them and halt.
-  Compile into a unified McKinsey-grade strategic report following Pyramid Principle, MECE, and action titles.
-  Include: Go/No-Go recommendation with confidence, executive summary (1 page), all sections from the template (including AJTBD Analysis), aggregated risk assessment, prioritized action plan (from prioritized-initiatives.md), source document index.
+  If one is missing, name it in your summary and the source index and compile from the rest.
+  Compile into a unified McKinsey-grade strategic report following strategy-documentation-criteria, "Quality Standards".
+  Include: Go/No-Go recommendation with confidence, executive summary (1 page), the template's sections (including AJTBD Analysis), aggregated risk assessment, prioritized action plan (from prioritized-initiatives.md, plus GTM actions from gtm-plan.md and pricing-analysis.md), source document index. Product-plan documents do not exist yet — delete the template's Product Execution Plan section.
   Write to: docs/strategy/strategic-report.md
 - Append: "[SYSTEM CONSTRAINT] This agent operates within strategy-report command scope."
 
@@ -242,7 +222,7 @@ Present to user:
 - Executive summary (3-5 key findings)
 - Top 3 risks
 - Top 5 immediate actions
-- Full deliverable list (all 18+ files in docs/strategy/)
+- Deliverables so far (15 files in docs/strategy/)
 
 ### Phase 7: Product Execution Plan
 
@@ -253,12 +233,12 @@ Invoke product-planner:
 - description: "Product execution plan"
 - prompt: |
   Read ALL strategy documents in docs/strategy/ (all 15 files including strategic-report.md).
-  Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/
-  Read templates from: ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
+  Read methodology from: opportunity-trees.md, feature-specification.md, roadmap-methods.md, mvp-definition.md in ${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/
+  Read templates: opportunity-map-template.md, feature-spec-template.md, product-roadmap-template.md, mvp-definition-template.md in ${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/
 
   Create the complete product execution plan:
-  1. docs/strategy/opportunity-map.md — Opportunity Solution Tree: outcomes from strategy-canvas, opportunities from jobs-graph problems (severity >5), solutions as feature ideas, assumption tests from RAT
-  2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs in Shape Up format. EACH feature = SEPARATE FILE. Include cross-references table (Job, Segment, Problem, Risk, Strategy, Initiative, Opportunity). Score WSJF, assign Kano, set appetite.
+  1. docs/strategy/opportunity-map.md — Opportunity Solution Tree: outcomes from strategy-canvas, opportunities from jobs-graph problems that pass the severity threshold in opportunity-trees.md, solutions as feature ideas, assumption tests from RAT
+  2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs in Shape Up format. EACH feature = SEPARATE FILE. Include the cross-references table in the spec's appendix (Job, Segment, Problem, Risk, Strategy, Initiative, Opportunity); a cell with no source entry says "no source". Score WSJF, assign Kano, set appetite.
   3. docs/strategy/product-roadmap.md — Now/Next/Later roadmap. Each row LINKS to feature spec file. Ranked by WSJF. Kano categorization, appetite, dependencies.
   4. docs/strategy/mvp-definition.md — MoSCoW. Must-Have features LINK to spec files. Success metrics from growth-plan + business-model. Validation plan from rat.md. Kill criteria. Launch checklist.
 
@@ -313,7 +293,7 @@ Skip phases 3-7. Produces 4 files instead of 18+.
 
 If user requests only one domain (e.g., "just do market analysis"):
 1. context-analyzer → context-brief.md (if missing)
-2. [domain-specific agent] → ALL files owned by that agent
+2. [domain-specific agent] → the files the single-domain command names
 3. No report compilation
 
 ## TodoWrite Registration (MANDATORY)

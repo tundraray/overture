@@ -109,17 +109,15 @@ Unresolved trade-offs require explicit design decisions.
 | Refactoring / restructuring | Architecture, Testability, Error Handling |
 | External integration | Security, Error Handling, API Design, Testability |
 
-**Minimum**: Always include Architecture for 3+ file changes.
+**Minimum**: Always include Architecture when the change crosses a component or layer boundary.
 **Maximum**: 5 aspects — more adds noise without proportional insight.
 
 ## Skip Conditions
 
 Expert Analysis Phase should be **skipped** when:
 
-- **Small scale** (1-2 files): Overhead exceeds value
 - **Pure bug fix**: Root cause already identified, no design decisions needed
 - **Documentation-only changes**: No code impact
 - **Dependency updates**: Unless major version with breaking changes
-- **Task marked as "straightforward"** by requirement-analyzer with confidence ≥ 0.9
 
 When skipped, the orchestrator proceeds directly to the next phase in the flow.

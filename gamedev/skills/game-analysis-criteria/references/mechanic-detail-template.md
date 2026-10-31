@@ -26,7 +26,7 @@ stateDiagram-v2
     Cooldown --> Idle: timer_expires
 ```
 
-*Replace with actual states*
+<!-- Replace with actual states -->
 
 ### State Definitions
 
@@ -184,6 +184,8 @@ Investment: [What the player puts in — time, resources, identity]
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### What to Emulate
 
 1. **[Aspect]**: [Why it works and how to adapt it]
@@ -200,6 +202,6 @@ Investment: [What the player puts in — time, resources, identity]
 2. **[Idea]**: [How to combine this mechanic with our existing systems]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List key sources for this mechanic's analysis]*
 *Cross-references: [Links to related reports — retention, game-feel, technology]*

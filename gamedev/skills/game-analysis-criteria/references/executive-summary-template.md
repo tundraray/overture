@@ -3,7 +3,7 @@
 Generated: [Date]
 Analysis Depth: Quick / Standard / Deep
 Total Sources Analyzed: [X]
-Overall Confidence: [X]%
+Overall Confidence: [tier most findings rest on — Verified / Inferred / Estimated / Speculative]
 
 ## One-Page Overview
 
@@ -12,6 +12,8 @@ Overall Confidence: [X]%
 **[Game Name]** is a [genre] game by [developer] on [platforms], launched [date]. It [one-sentence description of what makes it notable].
 
 ### Scorecard
+
+<!-- A row per dimension a report covers. -->
 
 | Dimension | Score (1-10) | Key Finding |
 |-----------|-------------|-------------|
@@ -36,6 +38,8 @@ Overall Confidence: [X]%
 | D30 Retention (est.) | [X]% | [Above/At/Below] genre average |
 
 ## Key Findings by Pillar
+
+<!-- One subsection per report that exists; the focus areas chosen in /game-analyze decide which do. -->
 
 ### 1. Mechanics (see: mechanics/overview.md + mechanics/*.md)
 
@@ -86,27 +90,25 @@ Overall Confidence: [X]%
 
 **Accessibility**: [Comprehensive/Basic/Minimal/None]
 
-## Top 5 Retention Strategies to Learn From
+## Top Retention Strategies to Learn From
+
+<!-- Up to five, as many as the reports support (game-analysis-criteria, Report Quality Gates). -->
 
 | # | Strategy | How They Do It | Estimated Impact | Difficulty to Implement |
 |---|----------|---------------|-----------------|----------------------|
 | 1 | [Strategy] | [Specific implementation] | [High/Medium] | [Easy/Medium/Hard] |
-| 2 | [Strategy] | [Specific implementation] | [Impact] | [Difficulty] |
-| 3 | [Strategy] | [Specific implementation] | [Impact] | [Difficulty] |
-| 4 | [Strategy] | [Specific implementation] | [Impact] | [Difficulty] |
-| 5 | [Strategy] | [Specific implementation] | [Impact] | [Difficulty] |
 
-## Top 5 Weaknesses to Exploit
+## Top Weaknesses to Exploit
+
+<!-- Up to five, as many as the reports support. The Our Opportunity column only with a project context. -->
 
 | # | Weakness | Player Complaints | Our Opportunity |
 |---|----------|------------------|----------------|
 | 1 | [Weakness] | [What players say] | [How we do it better] |
-| 2 | [Weakness] | [Complaints] | [Our approach] |
-| 3 | [Weakness] | [Complaints] | [Our approach] |
-| 4 | [Weakness] | [Complaints] | [Our approach] |
-| 5 | [Weakness] | [Complaints] | [Our approach] |
 
 ## What This Means for Our Game
+
+<!-- Only when /game-analyze passed a project context; otherwise delete this section. -->
 
 ### Competitive Positioning
 
@@ -145,16 +147,18 @@ Overall Confidence: [X]%
 
 ### Reports Generated
 
+<!-- One row per report that exists. -->
+
 | Report | File | Confidence |
 |--------|------|------------|
-| Mechanics Overview | mechanics/overview.md | [X]% |
-| [Per-mechanic files] | mechanics/*.md | [X]% |
-| Technology | technology-analysis.md | [X]% |
-| Marketing | marketing-analysis.md | [X]% |
-| Retention | retention-analysis.md | [X]% |
-| Market Position | market-position.md | [X]% |
-| UI/UX | ui-ux-analysis.md | [X]% |
-| Game Feel | game-feel-analysis.md | [X]% |
+| Mechanics Overview | mechanics/overview.md | [tier] |
+| [Per-mechanic files] | mechanics/*.md | [tier] |
+| Technology | technology-analysis.md | [tier] |
+| Marketing | marketing-analysis.md | [tier] |
+| Retention | retention-analysis.md | [tier] |
+| Market Position | market-position.md | [tier] |
+| UI/UX | ui-ux-analysis.md | [tier] |
+| Game Feel | game-feel-analysis.md | [tier] |
 
 ### Data Sources
 
@@ -167,5 +171,4 @@ Overall Confidence: [X]%
 
 ---
 *Analysis completed: [Date]*
-*Analyst team: game-researcher, sr-game-designer, mechanics-developer, data-scientist, market-analyst, game-feel-developer, game-ui-designer*
 *Recommended re-analysis: [Timeframe — e.g., after next major update]*

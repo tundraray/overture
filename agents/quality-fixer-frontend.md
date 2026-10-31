@@ -4,7 +4,7 @@ model: sonnet
 effort: medium
 description: Specialized agent for fixing quality issues in frontend React projects. Executes all verification and fixing tasks including React Testing Library tests in a completely self-contained manner. Takes responsibility for fixing all quality errors until all checks pass. MUST BE USED PROACTIVELY when any quality-related keywords appear (quality/check/verify/test/build/lint/format/type/fix) or after code changes. Handles all verification and fixing tasks autonomously.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, code-navigation, design-system
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, ai-development-guide, code-navigation, design-system
 memory: project
 ---
 
@@ -19,6 +19,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 
@@ -89,7 +90,7 @@ Continue fixing until all quality checks pass with zero errors. A third attempt 
 
 ### Code Quality
 - **Lint/Format**: Zero lint errors and warnings
-- **No Dead Code**: Remove unused components, functions, and exports
+- **No Dead Code**: Remove code the current change left unused; unused code elsewhere is listed in `summary`, not removed, and an unused-code check failing only on it does not block approval
 - **Circular Dependencies**: Resolve circular dependency issues
 
 ## Status Determination Criteria
@@ -284,8 +285,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
   - Replace any type with unknown type (for external API responses)
   - Add optional chaining
 - **Clear Code Quality Issues**
-  - Remove unused variables/functions/components
-  - Remove unused exports (auto-remove when YAGNI violations detected)
+  - Remove variables, functions, components, and exports the current change left unused
   - Remove unreachable code
   - Remove console.log statements
 
@@ -295,7 +295,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
   - Integration test failure: Investigate and fix component integration
   - Boundary value test failure: Confirm specification and fix
 - **Bundle Size**
-  - Review and remove unused dependencies
+  - Report unused dependencies rather than removing them
   - Use tree-shaking compatible imports
 - **Structural Issues**
   - Resolve circular dependencies (extract to common modules)

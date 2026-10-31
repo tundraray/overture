@@ -84,7 +84,7 @@ Layer on top of Porter's for macro context:
 | **Indirect** | Different product, same job-to-be-done | Notion vs Excel + Email |
 | **Potential** | Could enter your market | Large tech with adjacent products |
 
-### TrustMRR for Competitor Revenue (Mandatory Check)
+### TrustMRR for Competitor Revenue (Software and Subscription Products)
 
 **Source**: https://trustmrr.com/ — Stripe-verified MRR database.
 
@@ -126,42 +126,4 @@ TrustMRR Competitor Data:
 
 ### Threat Level: [High / Medium / Low]
 **Reasoning**: [why]
-```
-
-## Output Template (Full Competitive Analysis)
-
-```markdown
-# Competitive Landscape Analysis
-
-## Executive Summary
-[One paragraph: key finding, market structure, our positioning]
-
-## Industry Structure (Porter's Five Forces)
-[Each force scored with evidence]
-**Overall industry attractiveness**: [Attractive / Neutral / Unattractive]
-
-## Macro Environment (PESTLE)
-[Key factors only — skip irrelevant dimensions]
-
-## Competitive Landscape
-### Direct Competitors
-[Competitor profiles]
-
-### Indirect Competitors
-[Competitor profiles]
-
-### Competitive Positioning Map
-[2D positioning on key axes]
-
-## SWOT (Prioritized)
-[Top 3 per quadrant with TOWS strategies]
-
-## Strategic Implications
-1. [Actionable implication]
-2. [Actionable implication]
-3. [Actionable implication]
-
-## Confidence & Sources
-- **Data quality**: [assessment]
-- **Sources**: [list with tier tags]
 ```

@@ -21,52 +21,6 @@ The Now/Next/Later format replaces date-based roadmaps. It communicates intent a
 5. **Maximum 3-5 items per column** — more means you haven't prioritized
 6. **Review cadence**: Re-evaluate every 6 weeks (one Shape Up cycle)
 
-### Now/Next/Later Template
-
-```markdown
-# Product Roadmap: [Product Name]
-
-**Last updated**: [date]
-**Review cadence**: Every 6 weeks
-**North Star Metric**: [from growth-plan.md]
-
-## NOW (0-6 weeks) — Committed
-
-| # | Feature | WSJF | Kano | Spec | Team | Status |
-|---|---------|------|------|------|------|--------|
-| 1 | [feature name] | [score] | [Must-Be/Performance/Attractive] | [link to pitch] | [team] | [In Progress / Starting] |
-| 2 | [feature name] | [score] | [category] | [link to pitch] | [team] | [status] |
-
-## NEXT (6-12 weeks) — Planned
-
-| # | Feature | WSJF | Kano | Spec Status | Depends On |
-|---|---------|------|------|-------------|------------|
-| 1 | [feature name] | [score] | [category] | [Draft / Needs Discovery] | [dependency] |
-| 2 | [feature name] | [score] | [category] | [status] | [dependency] |
-
-## LATER (3-6 months) — Exploring
-
-| # | Outcome/Theme | Why | Discovery Status |
-|---|--------------|-----|-----------------|
-| 1 | [outcome, not feature] | [strategic rationale] | [Not Started / In Discovery] |
-| 2 | [outcome, not feature] | [strategic rationale] | [status] |
-
-## Parking Lot (Explicitly Deferred)
-
-| # | Idea | Why Deferred | Revisit When |
-|---|------|-------------|-------------|
-| 1 | [idea] | [reason — WSJF too low / not strategic / dependency not met] | [condition] |
-
-## Changelog
-
-| Date | Change | Rationale |
-|------|--------|-----------|
-| [date] | Moved [X] from Next to Now | [why] |
-| [date] | Removed [Y] from Later | [why — validated that it's not worth building] |
-```
-
----
-
 ## Kano Model (Feature Categorization)
 
 The Kano Model classifies features by their relationship to customer satisfaction. Not all features have the same satisfaction curve.

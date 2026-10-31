@@ -17,7 +17,7 @@ argument-hint: <product description, stage, segment hypotheses>
    - prompt: |
      Perform RAT (Risky Assumption Testing) analysis.
 
-     Read methodology from: `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part4.md` (RAT) and `part1.md` (jobs).
+     Read methodology from: the Risk Analysis section of `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md` (RAT) and `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/part1.md` (jobs).
      Read template: `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md`
      Read context: docs/strategy/context-brief.md
      Additional input: $ARGUMENTS
@@ -27,7 +27,7 @@ argument-hint: <product description, stage, segment hypotheses>
      Algorithm:
      1. Collect RAT assumptions from the description
      2. Prioritize hypotheses whose incorrectness would "kill" the product
-     3. Classify by risk categories: market, segment, value, unit economics, acquisition, operational
+     3. Classify by risk categories: market, segment, value, unit economics, acquisition
      4. Make each hypothesis specific with numbers/conditions (mark missing data as "assumption")
      5. Design 2-5 fast, cheap validation tests per risk
      6. Score = P×I (each 1-5), sort by Score↓

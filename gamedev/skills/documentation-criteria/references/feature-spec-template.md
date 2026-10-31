@@ -50,7 +50,7 @@ Parts split the feature into independently designable slices. Each part receives
 
 | Part | Covers | Cut along | Depends on | Rationale |
 |------|--------|-----------|------------|-----------|
-| `[part-name]` | [AC-1, AC-3] | [engine systems / HUD / save migration / content] | — | [Why this is a separate slice, one sentence] |
+| `[part-name]` | [AC-1, AC-3] | [one key: `engine-systems`, `ui`, `hud`, `menu`, `domain`, `release-unit`] | — | [Why this is a separate slice, one sentence] |
 | `[part-name]` | [AC-2] | [...] | `[part-name]` | [...] |
 
 **Coverage**: every Must Have acceptance criterion above appears in exactly one row. Should Have and Could Have items appear in a row or are deferred here:
@@ -61,7 +61,7 @@ Parts split the feature into independently designable slices. Each part receives
 
 ### Part Dependency Diagram
 
-[Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes.]
+[When applicable: three or more parts (with two, the Depends on column already says it). An arrow points from a part to the part whose approved design it consumes.]
 
 ```mermaid
 ---

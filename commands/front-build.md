@@ -32,44 +32,30 @@ Work plan: $ARGUMENTS
 
 Before any task processing, locate the work plan. This recipe is the **frontend** build lane — it routes to `task-executor-frontend` and must never pick up a backend plan.
 
-**When `$ARGUMENTS` is provided**, it is the work plan path supplied by the user. Use it directly. Its `{plan-name}` is the filename without `.md`; its task directory is the sibling directory of the same name.
+Resolve the plan as `workflow-execution`, "Resolving the Plan to Execute", describes; `$ARGUMENTS`, when given, is the plan path. Then **verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of backend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed frontend signal is required.
 
-**When `$ARGUMENTS` is empty**, resolve from plan frontmatter — see the storage convention in the `documentation-criteria` skill:
+**Frontend signals (need at least one)**:
+- `## Related Documents` references a UXRD (`docs/features/*/uxrd.md`), or the plan has a `UXRD Component → Task Mapping` section
+- Target Files match frontend markers exclusively: `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`, or the project's own equivalents of those directories
+- The governing design describes component hierarchy, screen states, or UI interactions
+- The part name identifies the layer (`ui`, `frontend`, `web`, or a screen name)
+- Plan title or Snapshot explicitly identifies the work as frontend
 
-1. Read every plan at `docs/features/*/*/*.md` and parse its frontmatter (`feature`, `part`, `design`, `plan: N of M`, `status`, `depends-on`)
-2. Select the plan with `status: active`. Its tasks are in the sibling directory of the same name: `docs/features/{feature}/{part}/{plan-name}/task-*.md`
-3. **Stop and escalate rather than guess** when the part's state is ambiguous:
-   - two or more plans in one part claim `status: active`
-   - no plan is active while the part still has task files
-   - the number of plan files in the part disagrees with `M` in `plan: N of M`
-   - a `depends-on` names a plan file that does not exist
-   - the active plan's `depends-on` chain contains a plan that is not `completed`
-4. When several parts have an active plan, pick the one whose task directory has the most recently modified `task-*.md`; report the choice and the alternatives rather than resolving silently.
-5. **Verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of backend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed frontend signal is required.
+**Backend signals (any one disqualifies, even alongside a frontend signal)**:
+- Target Files exclusively under `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`
+- The governing design describes API endpoints, data schemas, or persistence with no rendering surface
+- Title or Snapshot mentioning API endpoints, database migrations, or server-side work
 
-   **Frontend signals (need at least one)**:
-   - `## Related Documents` references a UXRD (`docs/features/*/uxrd.md`), or the plan has a `UXRD Component → Task Mapping` section
-   - Target Files match frontend markers exclusively: `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`, or the project's frontend-equivalent paths declared in the `technical-spec` skill
-   - The governing design describes component hierarchy, screen states, or UI interactions
-   - The part name identifies the layer (`ui`, `frontend`, `web`, or a screen name)
-   - Plan title or Snapshot explicitly identifies the work as frontend
+**Decision**: at least one frontend signal AND zero backend signals → proceed. Otherwise stop and report which signals were checked and their results, then ask for an explicit plan path.
 
-   **Backend signals (any one disqualifies, even alongside a frontend signal)**:
-   - Target Files exclusively under `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`
-   - The governing design describes API endpoints, data schemas, or persistence with no rendering surface
-   - Title or Snapshot mentioning API endpoints, database migrations, or server-side work
-
-   **Decision**: at least one frontend signal AND zero backend signals → proceed. Otherwise stop and report which signals were checked and their results, then ask for an explicit plan path.
-
-   **Mixed-layer plans**: when a plan carries both, its part was not split cleanly. Do not guess — report that the plan spans layers, and ask whether to run `/implement` (which drives both) or to split the work into separate parts.
-6. When no plan exists under `docs/features/*/*/`, stop and report: "No work plan found. Pass a work plan path as `$ARGUMENTS`, or complete the planning phase first."
+**Mixed-layer plans**: when a plan carries both, its part was not split cleanly. Do not guess — report that the plan spans layers, and ask whether to run `/implement` (which drives both) or to split the work into separate parts.
 
 ### Consumed Task Set
 
 Compute the **Consumed Task Set** — the exact files this run owns, executes, and later deletes:
 
 1. List `docs/features/{feature}/{part}/{plan-name}/task-*.md` for the plan resolved above
-2. Exclude files belonging to other workflow phases rather than to implementation: `_overview.md`, `task-prep-*.md`
+2. Exclude `_overview.md`, which describes the set rather than being a task
 
 Every subsequent reference to "task files" in this command — the decision flow below, the execution cycle, and Final Cleanup — means this set, **not** an unrestricted glob over the directory. Tasks of a sibling plan in the same part are never in scope.
 
@@ -119,80 +105,16 @@ Invoke task-decomposer using Task tool:
 
 ✅ **Flow**: Task generation → Autonomous execution (in this order)
 
-## 🎯 Commit Strategy Selection (Before Autonomous Mode)
+## 🧠 Execution - Frontend Specialized
 
-**Ask user before starting execution**, unless a strategy was already chosen for this feature earlier in the session — the choice is made once per feature and holds across its parts:
+`workflow-execution` owns each step; this lane supplies the agents — `task-executor-frontend`, `quality-fixer-frontend`, and `work-planner` for the plan's status. The orchestrator commits with Bash, using `changeSummary` for the message.
 
-"Which commit strategy do you prefer?"
-- **per-task** (default) — Commit after each task. Atomic commits, easy rollback
-- **per-phase** — Commit after each phase completes. Balanced granularity
-- **per-feature** — Single commit at the end. Clean history
-- **manual** — You decide when to commit. Full control
+1. **Commit strategy** — ask before starting, unless one was already chosen for this feature earlier in the session ("Commit Strategy Selection")
+2. **Per-task cycle** — for each task in the Consumed Task Set: register its steps in TodoWrite (first "Confirm skill constraints", last "Verify skill fidelity"), then task-executor-frontend (`prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`) → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer-frontend (`prompt: "Execute all frontend quality checks and fixes"`) → commit per strategy, handling every returned status as "The Per-Task Cycle" draws it
+3. **Post-Implementation Verification** — after the last task: the three verifiers in parallel on the part's file list against the frontend Design Doc, then the fix cycles the skill allows, dispatched to task-executor-frontend in Fix Mode and quality-fixer-frontend; `test-auditor` is advisory. Append `[SYSTEM CONSTRAINT] This agent operates within front-build command scope.` to each prompt
+4. **Final Cleanup** — as the skill sets it. Then read the PRD's Delivery Parts: a part that depends on this one and has no `completed` plan yet is named in the completion report as the next part to plan
 
-## 🧠 Task Execution Cycle - Frontend Specialized
-
-**MANDATORY EXECUTION CYCLE**: `task-executor-frontend → escalation check → quality-fixer-frontend → [conditional commit]`
-
-### Sub-agent Invocation Method
-Use Task tool to invoke sub-agents:
-- `subagent_type`: Agent name
-- `description`: Brief task description (3-5 words)
-- `prompt`: Specific instructions
-
-### Execution Flow for Each Task
-
-For EACH task, YOU MUST:
-
-1. **UPDATE TodoWrite**: Register work steps. Always include: first "Confirm skill constraints", final "Verify skill fidelity"
-2. **USE task-executor-frontend**: Execute frontend implementation
-   - Invocation example: `subagent_type: "task-executor-frontend"`, `description: "Task execution"`, `prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`
-3. **FOLLOW the per-task cycle diagram** in `workflow-execution` for every status task-executor-frontend, integration-test-reviewer and quality-fixer-frontend return
-4. **EXECUTE quality-fixer-frontend** after each completed task
-   - Invocation example: `subagent_type: "quality-fixer-frontend"`, `description: "Quality check"`, `prompt: "Execute all frontend quality checks and fixes"`
-5. **COMMIT based on strategy**:
-   - **per-task**: Commit immediately after `approved: true`
-   - **per-phase**: Accumulate, commit when phase completes
-   - **per-feature**: Accumulate all, single commit at end
-   - **manual**: Wait for user to request commit
-
-### Quality Assurance During Autonomous Execution (Details)
-- task-executor-frontend execution → escalation check → quality-fixer-frontend execution → **orchestrator executes commit based on strategy** (using Bash tool)
-- Use `changeSummary` for commit message
-
-**CRITICAL**: Monitor ALL structured responses WITHOUT EXCEPTION and ENSURE every quality gate is passed.
-
-! ls -la docs/features/*/*/*.md | head -10
-
-VERIFY approval status before proceeding. Once confirmed, INITIATE autonomous execution mode. STOP IMMEDIATELY upon detecting ANY requirement changes.
-
-## Post-Implementation Verification (After All Tasks Complete)
-
-The per-task quality cycle checks tasks in isolation and cannot detect Design Doc drift or assess the security posture of the change set as a whole. After all task cycles finish, run verification **before** the completion report.
-
-1. **Invoke the verifiers in parallel** (single message, three Agent calls):
-   - `code-verifier` → `doc_type: design-doc`, frontend Design Doc path, `code_paths` from `git diff --name-only main...HEAD`
-   - `security-reviewer` → same Design Doc path and implementation file list
-   - `test-auditor` → `testPaths`: the test files in the same diff; Design Doc path. **Advisory, never a gate**: its findings go to the completion report for the user and are never turned into `requiredFixes` (`workflow-execution`, Post-Implementation Verification)
-
-   Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within front-build command scope.`
-
-2. **Consolidate results** — apply the pass/fail criteria in the `workflow-execution` skill, "Post-Implementation Verification" section. Present a unified verification report to the user.
-
-3. **Fix cycle** (any verifier failed, max 2 cycles) — follow the normalization rules and re-run rule defined in that same skill section. Dispatch fixes to `task-executor-frontend` in Fix Mode, followed by `quality-fixer-frontend`. Escalate when a cycle makes no progress or when findings remain after cycle 2.
-
-4. **All passed** → proceed to Final Cleanup.
-
-## Final Cleanup
-
-Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
-
-- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/` — its `task-*.md`, `_overview.md`, and `analysis/` are all working state for this run
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
-- **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
-- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state
-- **Report the next part**: read the PRD's Delivery Parts; when a part that depends on this one has no `completed` plan yet, name it in the completion report as the next part to plan
-
-If deletion fails (filesystem error), report the failure but do not block the completion report.
+**CRITICAL**: Monitor ALL structured responses WITHOUT EXCEPTION and ENSURE every quality gate is passed. VERIFY the plan's approval status (`status: active`) before entering autonomous execution, and STOP IMMEDIATELY upon detecting ANY requirement changes.
 
 ## Output Example
 Frontend implementation phase completed.

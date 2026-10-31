@@ -202,16 +202,18 @@ assert(result.isValid == true)
 - Multiple assertions OK if testing single concept
 - Split unrelated assertions into separate tests
 
-**Good**:
+**Good** — one rule, its cases as rows:
 ```
-test("validates user email format")
-test("validates user age is positive")
-test("validates required fields are present")
+test.each([
+  ["missing email",  { age: 30 },                 "email is required"],
+  ["malformed email", { email: "x", age: 30 },     "email is invalid"],
+  ["negative age",   { email: "a@b.c", age: -1 }, "age must be positive"],
+])("rejects %s", (_, input, message) => ...)
 ```
 
 **Bad**:
 ```
-test("validates user") // Tests everything at once
+test("validates user") // Asserts unrelated rules at once; one failure hides the others
 ```
 
 ### Descriptive Test Names
@@ -252,7 +254,7 @@ test("should throw exception when file not found")
 
 ### When to Use Mocks
 
-- **Mock external dependencies**: APIs, databases, file systems
+- **Mock external dependencies in unit tests**: APIs, databases, file systems — an integration test uses the real database (Test Selection)
 - **Mock slow operations**: Network calls, heavy computations
 - **Mock unpredictable behavior**: Random values, current time
 - **Mock unavailable services**: Third-party services
@@ -264,20 +266,12 @@ test("should throw exception when file not found")
 - Verify mock expectations when relevant
 - Don't mock external libraries/frameworks you don't control (prefer adapters)
 
-### Types of Test Doubles
-
-- **Stub**: Returns predetermined values
-- **Mock**: Verifies it was called correctly
-- **Spy**: Records information about calls
-- **Fake**: Simplified working implementation
-- **Dummy**: Passed but never used
-
 ## Test Quality Practices
 
 ### Keep Tests Active
 
-- **Fix or delete failing tests**: Resolve failures immediately
-- **Remove commented-out tests**: Fix them or delete entirely
+- **Fix failing tests' causes**: a failing existing test is resolved by fixing the implementation; deleting or weakening an existing test is escalated, never done to get green
+- **No commented-out or skipped tests**: fix them, or escalate their removal
 - **Keep tests running**: Broken tests lose value quickly
 - **Maintain test suite**: Refactor tests as needed
 
@@ -316,7 +310,7 @@ test("should throw exception when file not found")
 
 ### Test Edge Cases
 
-Always test:
+Consider each of these, and keep the ones that pass Test Selection — as rows of the rule's table, not as separate tests:
 - **Boundary conditions**: Min/max values, empty collections
 - **Error cases**: Invalid input, null values, missing data
 - **Edge cases**: Special characters, extreme values
@@ -381,7 +375,7 @@ Each test must:
 ### Zero Tolerance Policy
 
 - **Zero failing tests**: Fix immediately
-- **Zero skipped tests**: Delete or fix
+- **Zero skipped tests**: Fix, or escalate the removal
 - **Zero flaky tests**: Make deterministic
 - **Zero slow tests**: Optimize or split
 
@@ -417,26 +411,9 @@ tests/
 ### Optimization Strategies
 
 - Run tests in parallel when possible
-- Use in-memory databases for tests
 - Mock expensive operations
 - Split slow test suites
 - Profile and optimize slow tests
-
-## Continuous Integration
-
-### CI/CD Requirements
-
-- Run full test suite on every commit
-- Block merges if tests fail
-- Run tests in isolated environments
-- Test on target platforms/versions
-
-### Test Reports
-
-- Generate coverage reports
-- Track test execution time
-- Identify flaky tests
-- Monitor test trends
 
 ## Common Anti-Patterns to Avoid
 
@@ -518,29 +495,12 @@ Eliminate tests that fail intermittently:
 - Add context about what was being tested
 - Make debugging easier
 
-## Continuous Improvement
-
-### Review and Refactor Tests
-
-- Refactor tests as you refactor code
-- Remove obsolete tests
-- Improve test clarity
-- Update tests for new patterns
-
-### Learn from Failures
-
-- Analyze test failures thoroughly
-- Add tests for discovered edge cases
-- Close the gap a failure revealed with one test at the lowest level that catches it
-- Share learnings with team
-
 ## Expert References (Reasoning Calibration)
 
 When facing testing strategy decisions, calibrate your reasoning against these established principles:
 
 | Expert | Key Principle | Apply When |
 |--------|--------------|------------|
-| Kent C. Dodds | "Write tests. Not too many. Mostly integration." | Deciding test type distribution across the pyramid |
 | Kent C. Dodds | "The more your tests resemble the way your software is used, the more confidence they can give you." | Choosing between behavior-based vs. implementation-based tests |
 | Michael Feathers | "Legacy code is simply code without tests." | Prioritizing test coverage for untested code areas |
 | Gerard Meszaros | "Each test should have a single reason to fail." | Determining test granularity and assertion scope |

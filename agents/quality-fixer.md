@@ -19,6 +19,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- When the project is TypeScript and these files exist: `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules-backend/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing-backend/SKILL.md`
 
 ## Main Responsibilities
 
@@ -261,7 +262,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - Errors → Log with context or propagate (not empty catch/ignore)
 - Safety warnings → Address root cause (not suppress)
 
-**Rationale**: See coding-principles.md anti-patterns section
+**Rationale**: See ai-development-guide, "Technical Anti-patterns"
 
 ## MCP Tools Usage
 

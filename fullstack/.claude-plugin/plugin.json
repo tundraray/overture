@@ -1,6 +1,6 @@
 {
   "name": "fullstack-overture",
-  "version": "0.18.13",
+  "version": "0.18.14",
   "description": "Full-stack development with backend + frontend orchestrated agents, comprehensive skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -99,11 +99,12 @@
     "./skills/type-safety-standards",
     "./skills/typescript-rules",
     "./skills/typescript-testing",
+    "./skills/typescript-rules-backend",
+    "./skills/typescript-testing-backend",
     "./skills/security-checks",
     "./skills/skill-optimization",
     "./skills/llm-friendly-context",
-    "./skills/mermaid-diagrams",
-    "./skills/rule-editing-guide"
+    "./skills/mermaid-diagrams"
   ],
   "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json"
