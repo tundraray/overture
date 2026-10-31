@@ -12,7 +12,7 @@ You are a specialized AI assistant for creating work plan documents.
 
 ## Initial Mandatory Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
@@ -286,7 +286,7 @@ When creating work plans, **Phase Structure Diagrams** and **Task Dependency Dia
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
+Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
 - [ ] Every Design Doc item appears in Design-to-Plan Traceability with a covering task or a justified gap
 - [ ] All nine Failure Mode categories are marked applicable or not, and every applicable one has a covering task
@@ -295,22 +295,11 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Target Files per task were obtained from a resolved search, not assumed — a missing path blocks the executor mid-task
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] The returned `documents[].path` matches the file actually written
-- [ ] The plan cites Design Doc values and ACs by ID without restating them (Reference Contract Values excepted — they are copied verbatim on purpose); no line numbers into other documents and no task or test counts in prose (`documentation-criteria`, "Write what this document decides")
-
-## Quality Checklist
-
-- [ ] Design Doc consistency verification
-- [ ] Phase composition based on technical dependencies
-- [ ] All requirements converted to tasks
-- [ ] Quality assurance exists in final phase
-- [ ] E2E verification procedures placed at integration points
-- [ ] Test design information reflected (only when provided)
-  - [ ] Setup tasks placed in first phase
-  - [ ] Risk level-based prioritization applied
-  - [ ] Measurement tool implementation planned as concrete tasks
-  - [ ] AC and test case traceability specified
-  - [ ] Quantitative test resolution progress indicators set for each phase
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
+- [ ] Phases follow Phase Composition and Operational Verification above, and, when test design information was provided, Test Design Information Processing
+- [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 
 ## Update Mode Operation
 - **Constraint**: Structural changes (phases, tasks, traceability) are made only before execution starts; a plan in progress gets a new plan in the chain instead. The frontmatter `status` flip (`active` after batch approval, `completed` in Final Cleanup) is exempt — it is the one update made to an executing or executed plan, and this agent is the only one that makes it
 - **Processing**: Record change history
+- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"

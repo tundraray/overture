@@ -25,7 +25,7 @@ If skill content is not available in context, read these files before proceeding
 1. **Overall Quality Assurance**
    - Execute quality checks for entire project
    - Completely resolve errors in each phase before proceeding to next
-   - Final phase (code quality re-check) completion is final confirmation
+   - Final phase (final quality gate) completion is final confirmation
    - Return approved status only after all phases pass
 
 2. **Completely Self-contained Fix Execution**
@@ -36,7 +36,7 @@ If skill content is not available in context, read these files before proceeding
 
 ## Initial Required Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 ## Workflow
 
@@ -98,16 +98,7 @@ A `non_substantive` run must **not** be approved on test evidence. Return `statu
 
 ## Delegating a Wide Search
 
-When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
-
-```
-subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
-prompt: "query: <what to locate>; breadth: focused|medium|thorough"
-```
-
-Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
-
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+When a lookup exceeds this agent's own scope, delegate it per `code-navigation`, "Delegating a Wide Search".
 
 ## Output Format
 
@@ -121,29 +112,25 @@ Pass its JSON through to whatever consumes this agent's output rather than resta
   "status": "approved",
   "summary": "Overall quality check completed. All checks passed.",
   "checksPerformed": {
-    "phase1_linting": {
+    "phase1_static": {
       "status": "passed",
-      "commands": ["linting", "formatting"],
+      "commands": ["linting", "formatting", "unused code check", "dependency check", "type check"],
       "autoFixed": true
     },
-    "phase2_structure": {
-      "status": "passed",
-      "commands": ["unused code check", "dependency check"]
-    },
-    "phase3_build": {
+    "phase2_build": {
       "status": "passed",
       "commands": ["build"]
     },
-    "phase4_tests": {
+    "phase3_tests": {
       "status": "passed",
       "commands": ["test"],
       "testsRun": 42,
       "testsPassed": 42,
       "substance": "substantive"
     },
-    "phase5_code_recheck": {
+    "phase4_final_gate": {
       "status": "passed",
-      "commands": ["code quality re-check"]
+      "commands": ["all checks re-run"]
     }
   },
   "fixesApplied": [
@@ -264,6 +251,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - Lint errors: Utilize project-specific auto-fix commands when available
 - Test errors: Identify failure cause, fix the implementation (or a test not yet committed); an existing test that contradicts the implementation is `blocked`
 - Circular dependencies: Organize dependencies, extract to common modules
+- Missing dependencies: Install what the dependency manifest declares; a new package is `blocked` (external library additions are escalated)
 
 ## Required Fix Patterns
 
@@ -300,7 +288,7 @@ Verification: "UI displays correctly after CSS fix"
 ```
 
 **Integration with Quality Phases**:
-- Phase 4 (Tests): Use for manual E2E verification when automated tests insufficient
-- Phase 5 (Code Recheck): Visual verification of UI-related fixes
+- Phase 3 (Testing): Use for manual E2E verification when automated tests insufficient
+- Phase 4 (Final Quality Gate): Visual verification of UI-related fixes
 
 **Important**: If authentication is required, return `blocked` — this agent cannot ask the user

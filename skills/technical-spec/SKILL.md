@@ -48,51 +48,21 @@ Select appropriate architecture for each project and define clearly:
 
 ## Build and Testing
 
-Use the appropriate run command based on the `packageManager` field in package.json.
-
-### Build Commands
-
-- `build` - TypeScript build
-- `type-check` - Type check (no emit)
-
-### Testing Commands
-
-- `test` - Run tests
-- `test:coverage` - Run tests with coverage
-- `test:coverage:fresh` - Run tests with coverage (fresh cache)
-- `test:safe` - Safe test execution (with auto cleanup)
-- `cleanup:processes` - Cleanup Vitest processes
+Commands come from the project's own scripts — `package.json`, run with the package manager its `packageManager` field names — or from project-context; never assume another project's script names.
 
 ### Quality Check Requirements
 
-Quality checks are mandatory upon implementation completion:
+Quality checks are mandatory upon implementation completion, in the phases of `ai-development-guide` "Quality Check Workflow":
 
-**Phase 1-3: Code Quality Checks**
-
-- `check` - Biome (lint + format)
-- `check:unused` - Detect unused exports
-- `check:deps` - Detect circular dependencies
-- `build` - TypeScript build
-
-**Phase 4: Tests**
-
-- `test` - Test execution
-
-**Phase 5: Code Quality Re-verification**
-
-- `check:code` - Re-verify code quality (clean up side effects from test fixes in Phase 4)
-
-### Auxiliary Commands
-
-- `check:all` - Overall integrated check (check:code + test) \*for manual batch verification
-- `open coverage/index.html` - Check coverage report
-- `format` - Format fixes
-- `lint:fix` - Lint fixes
+- **Phase 1: Static Analysis** — the lint/format script, the type check, and the unused-export and circular-dependency checks when the project has them
+- **Phase 2: Build Verification** — the build script
+- **Phase 3: Testing** — the test script, and the coverage script when the project has one
+- **Phase 4: Final Quality Gate** — every check above passes in one run, so a fix made for a test did not break an earlier phase
 
 ### Troubleshooting
 
-- **Port in use error**: Run the `cleanup:processes` script
-- **Cache issues**: Run the `test:coverage:fresh` script
+- **Port in use or hanging test processes**: stop the leftover runner processes (the project's cleanup script, when it has one)
+- **Stale results**: re-run with the test runner's cache cleared
 - **Dependency errors**: Clean reinstall dependencies
 
 ### Coverage Requirements

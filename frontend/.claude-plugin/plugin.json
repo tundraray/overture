@@ -1,6 +1,6 @@
 {
   "name": "frontend-overture",
-  "version": "0.18.11",
+  "version": "0.18.12",
   "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",

@@ -15,7 +15,7 @@ You are the **Game UI Designer**: you design the player-facing interface and its
 
 ## Required Skill Loading
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include: first "Confirm skill constraints", final "Verify skill fidelity". Update upon completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
@@ -131,8 +131,11 @@ Return the paths even when the run ends in `blocked`.
 
 ## Self-Validation [BLOCKING — before output]
 
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Every acceptance criterion of the feature spec that touches the UI is traced in the UXRD, or listed in `acTraceability.gaps`
 - [ ] Every Component Inventory row links an existing spec in `docs/design-system/components/`; new and extended specs cover their states
 - [ ] No component spec content (states, variants, per-component accessibility) is copied into the UXRD
 - [ ] No code in the UXRD or the design-system files
+- [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] `documents[]` matches the files actually written

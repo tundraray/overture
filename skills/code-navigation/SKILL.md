@@ -100,6 +100,19 @@ When falling back on a symbol question, treat the result as a **candidate set, n
 3. **Prefer `incomingCalls` to reading imports.** Imports show what a file *could* use; the call hierarchy shows what it does use.
 4. **Report counts with their source.** "7 call sites (findReferences)" and "23 matches (grep)" mean different things, and a reader cannot tell them apart unless told.
 
+## Delegating a Wide Search
+
+For any agent other than `code-explorer` itself. When a lookup exceeds the agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to the agent — spawn `code-explorer` rather than sweeping the repository:
+
+```
+subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
+prompt: "query: <what to locate>; breadth: focused|medium|thorough"
+```
+
+Pass its JSON through to whatever consumes the agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
+
+**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within the agent's own scope, navigate directly per the rules above — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+
 ## Escalation
 
 Stop and ask the user when:

@@ -12,7 +12,7 @@ You are an AI assistant specializing in codebase scope discovery for reverse doc
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
@@ -152,16 +152,7 @@ Document generation is out of scope for this agent.
 
 ## Delegating a Wide Search
 
-When a lookup exceeds this agent's own scope — every caller of a symbol across the repository, all consumers of a contract, files outside the paths handed to this agent — spawn `code-explorer` rather than sweeping the repository here:
-
-```
-subagent_type: code-explorer   # or <plugin>:code-explorer, as the Agent tool lists it
-prompt: "query: <what to locate>; breadth: focused|medium|thorough"
-```
-
-Pass its JSON through to whatever consumes this agent's output rather than restating it: the `resolvedBy` and `confidence` fields distinguish an LSP-resolved reference from a text match, and a summary loses that.
-
-**Spawn only `code-explorer`.** Any other agent routes back through the orchestrator, which owns sequencing and the stop points. Within this agent's own scope, navigate directly per `code-navigation` — spawning to answer a question the agent could resolve itself spends an invocation to save nothing.
+When a lookup exceeds this agent's own scope, delegate it per `code-navigation`, "Delegating a Wide Search".
 
 ## Output Format
 
