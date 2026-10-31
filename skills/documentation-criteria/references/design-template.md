@@ -1,19 +1,22 @@
 # [Feature Name] Design Document — [part-name]
 
 <!--
-Reader order: header → Snapshot → what the part is and is not → design → how it is proven → Appendix: Evidence → Update History.
+A person reads this document top to bottom. The sections follow the questions they ask, in order:
+what is this and why is it built this way (Snapshot, Key Decisions) → which words need explaining (Terms) → what it covers and leaves alone (Part) → what must be true when it is done (Acceptance Criteria)
+→ how it works (Design) → how we will know it works (Test Strategy) → what could go wrong (Security Considerations, Risks and Mitigation, Open Questions)
+→ the evidence behind it (Appendix: Evidence) → when it changed (Update History).
 Text inside these comments is guidance for the author; it is not copied into the document.
-Every section follows "Writing for the Reader" in documentation-criteria: written for a cold reader, in sentences rather than shorthand,
+Every section follows "Writing for the Reader" in documentation-criteria: written for a cold reader, in sentences and short lists rather than tables or shorthand,
 at the design's altitude rather than the code's; a section marked "when applicable" is deleted when it does not apply.
+A table appears only where the reader compares several rows across the same columns. A cell is never just an ID: the words come first, the ID follows in parentheses.
+Which files and components change, in what order, and how each step is verified belong to the work plan, not here.
 -->
 
-| Status | Date | PRD | UXRD | Depends on |
-|---|---|---|---|---|
-| Draft / Approved | YYYY-MM-DD | [prd.md](./prd.md) | [uxrd.md](./uxrd.md) or — | [`design-[part].md`] or — |
+**Status:** Draft / Approved · **Date:** YYYY-MM-DD · **PRD:** [prd.md](./prd.md) · **UXRD:** [uxrd.md](./uxrd.md) or none · **Depends on:** [`design-[part].md`] or nothing
 
 ## Snapshot
 
-<!-- At most ten lines. A cold reader who stops here can say what this part does, how it works in outline, and what could go wrong. -->
+<!-- Answers: what is this, and what could go wrong? At most ten lines. A cold reader who stops here can say what this part does, how it works in outline, and what could go wrong. -->
 
 **Overview.** [Three to five plain sentences: the problem this part solves, what it adds or changes, and how it works in outline — as you would explain it to a colleague who has not followed the feature. No IDs, no code names the reader has not met.]
 
@@ -23,15 +26,12 @@ at the design's altitude rather than the code's; a section marked "when applicab
 
 ### Key Decisions
 
-<!-- Three to seven rows: the decisions a reviewer would argue about, each with every option not taken. This is the one place a decision is argued; every other section cites the ID instead of re-arguing it.
-The Rejected alternatives cell names the options; why each was not taken is a sentence under the table.
+<!-- Answers: why is it built this way and not another? Three to seven decisions a reviewer would argue about, each with every option not taken. This is the one place a decision is argued; every other section cites the ID instead of re-arguing it. A breaking change to an existing contract, and a data migration, are decisions here.
 When choosing, prefer the option adding the least: new persistent state, then crossing a boundary, then a new concept/mode/flag/prop, then a breaking change. -->
 
-| ID | Decision | Why | Rejected alternatives |
-|---|---|---|---|
-| KD-1 | [what was decided, in a sentence] | [the reason, in words a newcomer follows] | [each option not taken, by name] |
+#### KD-1: [what was decided, in one sentence]
 
-[KD-1: why each rejected option was not taken, in a sentence or two.]
+[Why, in words a newcomer follows. Then each option not taken, by name, and why it was not taken — a sentence or two each.]
 
 ## Terms
 
@@ -41,12 +41,12 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 ## Part
 
+<!-- Answers: what does this part cover, and what does it leave alone? Scope as agreed with the user: what this part leaves as it is, and what the design must respect. -->
+
 - **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
-- **Covers**: [requirement ids this part owns — the PRD holds their text]
+- **Covers**: [each requirement this part owns, in a few words with its ID in parentheses — the PRD holds the full text]
 - **Depends on**: [link to the contract section of each approved upstream design, e.g. `design-[other-part].md#contract-definitions` — cited, never restated: a copy forces a revision every time upstream changes], or "none — first part"
 - **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
-
-<!-- Scope as agreed with the user. What changes is the Change column of the C2, C3, and C4 tables; this section says what does not, and what the design must respect. -->
 
 **Out of scope**
 
@@ -56,27 +56,26 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 - [each agreed constraint — parallel operation, backward compatibility, performance measurement — in a sentence, with how the design meets it]
 
-## Acceptance Criteria (AC) - EARS Format
+## Acceptance Criteria
 
 <!--
+Answers: what must be true when this part is done?
 A PRD criterion that already states testable behaviour applies as written: cite its ID under its requirement, do not restate it.
-Write an EARS criterion only where the design refines a PRD criterion into system behaviour the PRD does not spell out — a trigger, a state, an error case.
-No table mapping criteria to sections or use cases, and no prose saying where each one is handled: each use case in Test Strategy names the criteria it covers.
-EARS keywords: When (event-triggered) · While (state-dependent) · If-then (conditional) · none (ubiquitous).
-Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
+Write a criterion of your own only where the design refines a PRD criterion into system behaviour the PRD does not spell out — a trigger, a state, an error case. Give it an ID (`DC-1`, `DC-2`) so flows and use cases can cite it.
+Each is one plain sentence a person reads: what happens, and when. No table mapping criteria to sections or use cases, and no prose saying where each one is handled: each use case in Test Strategy names the criteria it covers.
 -->
 
 ### [Requirement ID]: [short name]
 
-- Applies as written: [PRD AC ids]
-- [ ] **When** user clicks login button with valid credentials, the system shall authenticate and redirect to dashboard
-- [ ] **If** credentials are invalid, **then** the system shall display the invalid-credentials error (UXRD copy, `uxrd.md` MC-2)
+- Applies as written: [each PRD criterion in a few words, its ID in parentheses — "the list shows the newest thread first (AC-01.1)"]
+- When a user signs in with valid credentials, they land on the dashboard (DC-1).
+- When the credentials are wrong, the sign-in form shows the invalid-credentials message (`uxrd.md` MC-2) and the user stays on it (DC-2).
 
 ## Design
 
 ### Architecture (C1–C4)
 
-<!-- Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows the change: green new, red changed, black unchanged. The Change columns of the C2, C3, and C4 tables are the change impact: built from the resolved consumer list, they name every changed caller; what stays untouched is in Part, Out of scope. -->
+<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill (palette, path animation, redraw test); the levels are specified in its `references/c4-levels.md`. Node colour shows what is new and what changes. -->
 
 #### C1 · Context
 
@@ -84,31 +83,15 @@ Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
 
 #### C2 · Containers
 
-<!-- `flowchart LR`, ≤ 8 nodes: apps, services, stores, and the calls between them inside a dashed product boundary. -->
-
-| Container | Role | Change |
-|---|---|---|
-| [name] | [one line] | [NEW] / [MODIFY] / [REMOVE] / [READ] |
+<!-- `flowchart LR`, ≤ 8 nodes: apps, services, stores, and the calls between them inside a dashed product boundary. Under the diagram, a sentence per container the part touches: what it does in this part. -->
 
 #### C3 · Components: [container]
 
-<!-- One subsection per container marked [NEW] or [MODIFY] in C2. One `flowchart TB` per flow the part touches, titled **[container] — [flow]**, ≤ 10 nodes: caller on top, the container's components in call order inside its boundary, stores and external systems at the bottom. -->
-
-| Component | Responsibility in this flow | Change |
-|---|---|---|
-| [name] | [one line] | [NEW] / [MODIFY] / [REMOVE] / [READ] |
+<!-- One subsection per container the part adds or changes. One `flowchart TB` per flow the part touches, titled **[container] — [flow]**, ≤ 10 nodes: caller on top, the container's components in call order inside its boundary, stores and external systems at the bottom. Under the diagram, a sentence per component that is not obvious from its name. -->
 
 #### C4 · Code flow: [scope]
 
-<!-- When applicable: modules change. One vertical `flowchart TB` chain per entry point: changed classes, functions, or components as frames, step nodes `N · Name<br/>what it does`, arrows step to step, the return leg as its own steps. -->
-
-**Code locations:**
-
-- [relative link to file] — [a few general words, or nothing]
-
-| Type | Name | Change | Notes |
-|---|---|---|---|
-| [Controller / Service / Component / Hook / ...] | [name as in code] | [NEW] / [MODIFY] / [REMOVE] | [route, rule, or constraint in words — no code] |
+<!-- When applicable: the order of steps inside a module is itself a decision. One vertical `flowchart TB` chain per entry point: classes, functions, or components as frames, step nodes `N · Name<br/>what it does`, arrows step to step, the return leg as its own steps. -->
 
 ### Runtime Flows
 
@@ -116,7 +99,7 @@ Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
 
 #### Flow 1: [name]
 
-**Starts when:** [user action / request / event / schedule] · **AC:** [AC ids]
+**Starts when:** [user action / request / event / schedule], for [the criteria this flow delivers, in words with IDs]
 
 [`sequenceDiagram`]
 
@@ -126,68 +109,23 @@ Format: [Keyword] <trigger/condition>, the system shall <expected behavior>.
 
 - [what can go wrong] → [how it is handled, what the caller sees]
 
-### Integration Points List
-
-<!-- Each integration point names how it is verified. One integration case proves the wiring; E2E is reserved for the part's 1–2 journeys (`integration-e2e-testing`). -->
-
-| Integration Point | Location | Old Implementation | New Implementation | Switching Method | Verified by |
-|-------------------|----------|-------------------|-------------------|------------------|-------------|
-| Integration Point 1 | [Class/Function] | [Existing Process] | [New Process] | [DI/Factory etc.] | [integration case / E2E journey] |
-
 ### Contract Definitions
 
-<!-- What each operation offers its caller, at the design's altitude ("Writing for the Reader"): what it does, what it returns, which failures the caller handles. Contracts are tables, not source code — the schema or type is written at implementation; a code block here, or a table that copies one field by field, is a second copy that drifts.
-A precondition or guarantee the row does not make obvious is one or two sentences under the table. -->
+<!-- Answers: what can a caller — another part, the UI — rely on? What each operation offers its caller, at the design's altitude ("Writing for the Reader"). Sibling parts cite this section. No source code and no field-by-field copy of a schema — the schema or type is written at implementation. -->
 
-| Operation | What it does | Output | Errors |
-|---|---|---|---|
-| [route / method / event name] | [what it does for the caller, naming its input, in a sentence] | [status + shape name] | [status + error code, per case] |
+- **[route / method / event name]** — [what it does for the caller, naming its input, in a sentence]. Returns [result, by name]. [Each failure the caller handles, and what it sees.]
 
-#### Interface Change Matrix
+<!-- Only for a shape another part or the UI uses: the fields a caller must understand, as a list. A length, size, or format limit is written only when a requirement sets it or another part relies on it. -->
 
-<!-- When applicable: an existing operation, signature, or prop changes. One row per change, from the resolved consumer list. An indirect effect on an unchanged caller — a data format or timing change — is recorded in How existing callers keep working. -->
+**[Shape name]**
 
-| Existing | New | Conversion required | How existing callers keep working |
-|---|---|---|---|
-| [operation or prop as it is] | [as it becomes] | [yes / no] | [adapter, wrapper, or migration path — or "unchanged"] |
-
-#### [Shape name]
-
-<!-- Only for a shape another part or the UI uses; any other shape is named in a sentence. The fields a caller must understand. A length, size, or format limit is written only when a requirement sets it or another part relies on it, and then in Meaning with its source. -->
-
-| Field | Type | Meaning |
-|---|---|---|
-| [field] | [string / number / enum (a, b) / [Other shape]; optional or nullable] | [what it is for the caller] |
+- `[field]` — [what it is for the caller; optional or nullable when it is]
 
 ### Data Model
 
-<!-- When applicable: the part adds or changes persistent stores. What each store holds, how stores relate, and the constraints that keep the invariants — not column lists, types, or indexes: those are the migration's. -->
+<!-- When applicable: the part adds or changes persistent stores. In sentences: what each store holds, how stores relate, and the invariant each store guarantees — not columns, types, or indexes: those are the migration's. -->
 
-| Store | Holds | Related to | Enforces |
-|---|---|---|---|
-| [table / collection / key space] | [what one record is, in words] | [other store, and how] | [the invariant this store guarantees, or —] |
-
-### Frontend Design (frontend parts only)
-
-<!-- When a UXRD exists, its reuse and state tables are the source: cite them by ID and record here only what the design adds (paths, the technical decision). -->
-
-#### Existing Component Reuse Map
-
-| UI Element | Decision | Existing Component | Rationale |
-|---|---|---|---|
-| [element] | reuse / extend / new | [path or —] | [for `new`: what was searched and why nothing fit] |
-
-#### State × Display Matrix
-
-| Component | default | loading | empty | error | partial |
-|---|---|---|---|---|---|
-| [component] | [what renders] | [...] | [...] | [...] | [... or "—" when the state cannot occur] |
-
-#### UI Action-API Contract Mapping
-
-| UI Action | API Contract (from `dependsOn` design) | Request | Response handled | Error handled |
-|---|---|---|---|---|
-| [action] | [endpoint or operation, as written in the upstream design] | [shape] | [shape → state] | [status → state] |
+[What is stored, how the stores relate, and which rule each store enforces.]
 
 ### State Transitions and Invariants
 
@@ -197,27 +135,9 @@ A precondition or guarantee the row does not make obvious is one or two sentence
 
 1. [a rule that holds in every state, in a sentence]
 
-### Error Handling
-
-[Types of errors and how to handle them]
-
-### Logging and Monitoring
-
-[What to record in logs and how to monitor]
-
-### Implementation Approach
-
-**Selected Approach**: [vertical / horizontal / hybrid] — [one-line reason]
-
-### Migration Strategy
-
-<!-- When applicable: existing data or behaviour must move. -->
-
-[Technical migration approach, ensuring backward compatibility]
-
 ## Test Strategy
 
-<!-- Use cases, in the words of the domain: who acts, from what state, what they do, what they observe. Every acceptance criterion is covered by at least one use case. No test code, test file names, framework, fixture, or helper names — how a use case becomes a test is decided by `acceptance-test-generator` and the task files. Delete a subsection that has no use cases. -->
+<!-- Answers: how will we know it works? Use cases, in the words of the domain: who acts, from what state, what they do, what they observe. Every acceptance criterion is covered by at least one use case. No test code, test file names, framework, fixture, or helper names — how a use case becomes a test is decided by `acceptance-test-generator` and the task files. Delete a subsection that has no use cases. -->
 
 ### Main Use Cases
 
@@ -242,74 +162,27 @@ A precondition or guarantee the row does not make obvious is one or two sentence
 
 ## Security Considerations
 
-<!-- Answer each item against this part's trust boundaries. An item with no relevant boundary gets one line saying why — an unanswered question is not the same as an inapplicable one. -->
+<!-- Answers: who could misuse it, and what protects against that? Answer each item against this part's trust boundaries. An item with no relevant boundary gets one line saying why — an unanswered question is not the same as an inapplicable one. -->
 
 - **Authentication & Authorization**: [what protects new entry points and resource access]
 - **Input Validation**: [where external input enters and how it is validated]
 - **Sensitive Data Handling**: [what needs protection; what may appear in logs and error responses]
 
-## Verification Strategy
-
-<!-- What correctness means for this change and how it will be proven, at design time — distinct from the L1/L2/L3 completion tiers at task execution. -->
-
-### Correctness Proof Method
-
-- **Correctness definition**: [what "correct" means here]
-- **Verification method**: [specific technique]
-- **Verification timing**: [when]
-
-### Early Verification Point
-
-- **First verification target**: [smallest unit proving the approach works]
-- **Success criteria**: [observable outcome]
-- **Failure response**: [what to do if it fails]
-
-### Output Comparison
-
-<!-- When applicable: the design replaces or modifies existing behaviour. -->
-
-- **Comparison input**: [identical input used for both implementations]
-- **Expected output fields**: [specific fields compared]
-- **Diff method**: [file diff, field-by-field JSON, row count plus spot check]
-- **Transformation pipeline coverage**: [each step from codebase analysis `dataTransformationPipelines` and what the comparison covers]
-
 ## Risks and Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| [Risk 1] | High/Medium/Low | High/Medium/Low | [Countermeasure] |
+<!-- Answers: what could go wrong, and what reduces it? -->
 
-## Future Extensibility
-
-<!-- When applicable. Capability-level items considered and excluded; element-level rejected alternatives belong in Key Decisions. -->
-
-- **Deferred possibilities**: [capability — the requirement it would have served]
-- **Intentional limitations**: [what was kept small, and why]
+- **[Risk, in a sentence]** — [impact and how likely, in a few words]. [How the design reduces it.]
 
 ## Open Questions
 
-<!-- When applicable. Each names the decision it blocks and who resolves it. -->
+<!-- When applicable. Answers: what is not decided yet? Each names the decision it blocks and who resolves it. -->
 
-- [ ] [Question]: [blocks what] — [who resolves]
+- [The question, in a sentence] It blocks [which decision]; [who] resolves it.
 
 ## Appendix: Evidence
 
-<!-- The record that the design was grounded: the reviewer checks it, the reader reaches it by link. Nothing here restates the body; the body cites rows here by ID (fact_id, KD-n). -->
-
-### Design Summary (Meta)
-
-```yaml
-design_type: "new_feature|extension|refactoring"
-risk_level: "low|medium|high"
-complexity_level: "low|medium|high"
-complexity_rationale: "[Required if medium/high: (1) which requirements/ACs necessitate this complexity, (2) which constraints/risks it addresses]"
-main_constraints:
-  - "[constraint]"
-biggest_risks:
-  - "[risk]"
-unknowns:
-  - "[uncertainty]"
-```
+<!-- The record that the design was grounded: the reviewer checks it, the reader reaches it by link. Nothing here restates the body; the body cites rows here by ID (fact_id). -->
 
 ### Prerequisite ADRs
 
@@ -317,61 +190,20 @@ unknowns:
 
 - [ADR File Name]: [Related decision items]
 
-### Applicable Standards
-
-<!-- Found before design work began: the standards the design relies on, with no count to reach. An implicit standard is confirmed with the user at the Design Doc approval stop. -->
-
-| Standard | Type | Source | Impact on Design |
-|----------|------|--------|-----------------|
-| [e.g. Biome strict mode] | explicit | [biome.json] | [All new code must pass strict linting] |
-
 ### Existing Codebase Analysis
 
 #### Code Inspection Evidence
 
 - **Examined**: [path:function] — [relevance]
-- **Finding**: [finding, with the `code-explorer` coverage and `resolvedBy` that supports it] → [KD-n or section it drives]
-
-#### Field Propagation Map
-
-<!-- When applicable: the change crosses layers. -->
-
-```yaml
-fields:
-  - name: "[fieldName]"
-    origin: "[API Request / Database / User Input]"
-    transformations:
-      - layer: "[API Layer]"
-        transformation: "[what happens to the field here]"
-    destination: "[Database table.column / API Response / UI Component]"
-    loss_risk: "none | low | medium | high"
-    loss_risk_reason: "[required when risk > none]"
-```
+- **Finding**: [finding, and how it was established — followed through the code's references, or matched by text only] → [KD-n or section it drives]
 
 #### Fact Disposition Table
 
 <!-- One row per `focusAreas` entry from codebase analysis, one phrase per cell. The analyzer output already holds the evidence and files; this table records only what happened to each fact and where. A row per fact with an explicit disposition makes deliberate removal distinguishable from oversight. -->
 
-| Fact ID | Disposition | Handled in |
-|---------|-------------|------------|
-| [fact_id] | preserve / transform / remove / out-of-scope | [KD-n or section] |
-
-#### Cross-Layer Assumptions
-
-<!-- When applicable: this design relies on unverified claims from a prior-layer Design Doc. -->
-
-- [claim]: [justification]; verify at [step or artifact]
-
-### Test Boundaries
-
-| Component/Dependency | Mock? | Rationale |
-|---------------------|-------|-----------|
-| [External API / DB / file system / etc.] | [Yes/No] | [Why this boundary was chosen] |
-
-- **Schema dependencies**: [tables/models this part reads or writes, with paths to their definitions]
-- **Test data source**: [real database or substituted, in one phrase — fixtures and helpers are test code, not design]
-- **Mock limitations acknowledged**: [what cannot be reliably tested with mocks alone]
-- **Integration verification points**: [integration points requiring testing beyond unit-level mocks]
+| Fact | Disposition | Handled in |
+|------|-------------|------------|
+| [the fact in a few words (fact_id)] | preserve / transform / remove / out-of-scope | [the decision or section, in words with its ID] |
 
 ### References
 

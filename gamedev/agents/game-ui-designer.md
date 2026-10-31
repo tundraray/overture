@@ -3,7 +3,7 @@ name: game-ui-designer
 description: "Use this agent for user interface design, user experience optimization, and interaction design. It handles menu systems, HUD design, inventory UI, dialogue systems UI, accessibility features, and ensuring intuitive and visually appealing player interfaces."
 model: opus
 effort: high
-skills: documentation-criteria, design-system, mermaid-diagrams
+skills: documentation-criteria, design-system, mermaid-diagrams, prose
 memory: project
 ---
 
@@ -21,6 +21,7 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 
 ## Required Information
 
@@ -132,6 +133,8 @@ Return the paths even when the run ends in `blocked`.
 ## Self-Validation [BLOCKING — before output]
 
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] The `prose` pass ran on the whole document: read top to bottom as its reader, then the sentence-level cut — no surviving `R`-coded tell
+- [ ] When the document has Mermaid blocks, `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Every acceptance criterion of the feature spec that touches the UI is cited by a flow or a screen state, or listed in Acceptance Criteria Outside UX Scope with the reason; `acTraceability` reports the same
 - [ ] Every Component Inventory row links an existing spec in `docs/design-system/components/`; new and extended specs cover their states

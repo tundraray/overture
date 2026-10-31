@@ -30,7 +30,7 @@ Patterns 1, 3, and 4 are as in `ai-development-guide`. React adds to Patterns 2 
 
 ### Pattern 5: Insufficient Existing Code Investigation
 **Symptom**: A second date picker, a second fetch wrapper, a hook that duplicates one that exists
-**Avoidance**: Before writing a component or hook, search the existing ones by domain, responsibility, and component pattern; reuse or extend a fit, and escalate when the existing one is technical debt — whether to replace it is a design decision. At design time the decision is recorded in the Design Doc's Existing Component Reuse Map.
+**Avoidance**: Before writing a component or hook, search the existing ones by domain, responsibility, and component pattern; reuse or extend a fit, and escalate when the existing one is technical debt — whether to replace it is a design decision. At design time the decision is a Key Decision of the Design Doc.
 
 ## Debugging Techniques
 

@@ -13,11 +13,24 @@
  *   author   may Write and Edit   (create or replace: authoring)
  *   updater  may Edit only        (targeted change, e.g. a progress checkbox)
  *   other    denied
- *   no agent ask                  (main conversation: surfaced, not blocked)
+ *   no agent denied               (main conversation: the orchestrator delegates)
  *
  * Write versus Edit is the load-bearing distinction. A Write replaces the file
  * wholesale, which is authorship; an Edit is surgical, which is what an
  * executor ticking a checkbox in someone else's plan is doing.
+ *
+ * The main conversation is denied rather than asked: under auto mode an `ask`
+ * is resolved without the user, so it let the orchestrator edit a PRD directly.
+ *
+ * Bash and PowerShell are watched too. A `sed -i` or a redirect into docs/
+ * changes a human document without passing through Write/Edit, so ownership
+ * cannot be checked — every caller, owner included, is sent back to
+ * Edit/Write. The command is tokenised (quoted strings and heredoc bodies are
+ * data; `cd` is followed) and a write is a redirect, `rm`/`mv`/`tee`/`touch`/
+ * `truncate`, a copy destination, an in-place `sed`/`perl`, a writing `git`
+ * subcommand, or a PowerShell content/item cmdlet whose target is a human
+ * document. Work plans and task files are temporary and not guarded here. A
+ * script that opens files itself (`python -c`, `node -e`) is not recognised.
  *
  * The same hook also watches Agent/Task calls for one shape: a document owner
  * spawning a *different* document owner. The Write/Edit guard only sees who is
@@ -31,7 +44,9 @@
  * guards documents, not the repository.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Ownership rules, most specific first. `test` matches a repo-relative,
@@ -107,6 +122,165 @@ const WRITE_TOOLS = new Set(['Write', 'NotebookEdit']);
 const EDIT_TOOLS = new Set(['Edit', 'MultiEdit']);
 const SPAWN_TOOLS = new Set(['Agent', 'Task']);
 
+// --- shell guard ------------------------------------------------------------
+//
+// Human documents — PRD, UXRD, design system, Design Doc, ADR, GDD, feature
+// spec — change only through Write/Edit. Work plans and task files (a part
+// directory under docs/features/<feature>/) are temporary working state: the
+// shell may touch them, and Final Cleanup deletes them with `rm`.
+
+const SHELL_TOOLS = new Set(['Bash', 'PowerShell']);
+
+/** `docs`, `docs/features[/<feature>[/<file>]]`, `docs/adr/…`, … — but not a part directory. */
+function isHumanDocPath(p) {
+  if (p === 'docs') return true;
+  if (!p.startsWith('docs/')) return false;
+  const rest = p.slice('docs/'.length);
+  if (/^features\/[^/]+\/[^/.]+(\/|$)/.test(rest)) return false; // part directory: plans and task files
+  return /^(features|adr|design-system|game-design)(\/|$)/.test(rest);
+}
+
+/** Heredoc bodies are data, not commands. */
+const stripHeredocs = (cmd) =>
+  cmd.replace(/<<-?\s*(['"]?)(\w+)\1[^\n]*\n[\s\S]*?\n[ \t]*\2[ \t]*(?=\n|$)/g, '<<HEREDOC');
+
+/**
+ * Split a command into segments of tokens. A quoted string is one word (so a
+ * commit message never reads as a command); `;`, `|`, `&`, newlines and
+ * parentheses end a segment; `>`/`>>` (with an fd prefix) are redirect tokens.
+ */
+function shellSegments(command) {
+  const re = /"((?:[^"\\]|\\.)*)"|'([^']*)'|(\d*>>?|&>>?)|(&&|\|\||[;|&\n()])|([^\s"';|&<>()]+)/g;
+  const segments = [[]];
+  let end = -1; // where the previous word piece ended: pieces with no space between are one word (`S="a b"`)
+  for (const m of stripHeredocs(command).matchAll(re)) {
+    if (m[4] !== undefined) {
+      segments.push([]);
+      end = -1;
+      continue;
+    }
+    const seg = segments[segments.length - 1];
+    if (m[3] !== undefined) {
+      seg.push({ op: m[3] });
+      end = -1;
+      continue;
+    }
+    const piece = m[1] ?? m[2] ?? m[5];
+    const last = seg[seg.length - 1];
+    if (m.index === end && last?.word !== undefined) last.word += piece;
+    else seg.push({ word: piece });
+    end = m.index + m[0].length;
+  }
+  return segments.filter((s) => s.length);
+}
+
+const WRITE_ANY_ARG = new Set([
+  // POSIX
+  'rm', 'rmdir', 'unlink', 'truncate', 'touch', 'tee', 'shred', 'mv',
+  // PowerShell cmdlets and aliases
+  'set-content', 'add-content', 'out-file', 'clear-content', 'remove-item', 'move-item', 'rename-item',
+  'new-item', 'sc', 'ac', 'del', 'erase', 'ri', 'rni', 'ni', 'mi', 'move', 'ren',
+]);
+const COPY = new Set(['cp', 'install', 'copy-item', 'copy', 'cpi']);
+const CD = new Set(['cd', 'pushd', 'set-location', 'sl']);
+const GIT_WRITES = new Set(['checkout', 'restore', 'clean', 'rm', 'mv']);
+
+function shellChangesDocuments(command, cwd) {
+  const cwdForms = [];
+  if (cwd) {
+    const c = cwd.replace(/\\/g, '/').replace(/\/+$/, '');
+    cwdForms.push(c);
+    const drive = /^([A-Za-z]):\/(.*)$/.exec(c);
+    if (drive) cwdForms.push(`/${drive[1].toLowerCase()}/${drive[2]}`);
+  }
+  let base = ''; // directory `cd` moved into, relative to the repository
+
+  const resolve = (word) => {
+    let w = word.replace(/\\/g, '/');
+    const lower = w.toLowerCase();
+    let absolute = false;
+    for (const c of cwdForms) {
+      if (lower === c.toLowerCase()) return '';
+      if (lower.startsWith(c.toLowerCase() + '/')) {
+        w = w.slice(c.length + 1);
+        absolute = true;
+        break;
+      }
+    }
+    if (!absolute && /^([/~$]|[A-Za-z]:)/.test(w)) return null; // outside the repository, or unknown
+    w = w.replace(/^(\.\/)+/, '');
+    if (!absolute && base) w = `${base}/${w}`;
+    return w.replace(/\/+$/, '') || '';
+  };
+  const human = (word) => {
+    const p = resolve(word);
+    return p !== null && isHumanDocPath(p);
+  };
+
+  const segments = shellSegments(command);
+  // Variables assigned in the command (`f=docs/features/x/prd.md`). A value built
+  // by command substitution (`files=$(grep -rl …)`) is unknown and not recorded.
+  const vars = new Map();
+  const expand = (word) => word.replace(/^\$\{?(\w+)\}?/, (m, name) => vars.get(name) ?? m);
+  for (const s of segments) {
+    for (const t of s) {
+      const a = t.word === undefined ? null : /^(\w+)=(.+)$/.exec(t.word);
+      const value = a ? expand(a[2]) : '';
+      if (a && !value.startsWith('$')) vars.set(a[1], value);
+    }
+  }
+  // An unknown variable target (`sed -i … $files`) counts when the command names a human document anywhere.
+  const namesHumanDoc = segments.some((s) => s.some((t) => t.word !== undefined
+    && (human(t.word) || human(t.word.replace(/^\w+=/, '')))));
+
+  for (const seg of segments) {
+    for (let i = 0; i < seg.length - 1; i++) {
+      if (seg[i].op && !seg[i].op.startsWith('&') && seg[i + 1].word !== undefined && human(seg[i + 1].word)) return true;
+    }
+    // Arguments, without redirect targets (`2>/dev/null` is not a copy destination).
+    const words = seg.filter((t, i) => t.word !== undefined && !(i > 0 && seg[i - 1].op)).map((t) => t.word);
+    while (words.length && /^\w+=/.test(words[0])) words.shift();
+    if (words[0] === 'sudo' || words[0] === 'command') words.shift();
+    if (!words.length) continue;
+    const cmd = words[0].replace(/\\/g, '/').split('/').pop().toLowerCase();
+    const args = words.slice(1).map(expand);
+
+    if (CD.has(cmd)) {
+      const target = args.find((a) => !a.startsWith('-'));
+      const p = target === undefined ? null : resolve(target);
+      base = p ?? '';
+      continue;
+    }
+    if (WRITE_ANY_ARG.has(cmd) && args.some(human)) return true;
+    if (COPY.has(cmd)) {
+      const paths = args.filter((a) => !a.startsWith('-'));
+      const t = args.findIndex((a) => a === '-t' || /^-destination$/i.test(a));
+      const dest = t >= 0 ? args[t + 1] : paths[paths.length - 1];
+      if (dest !== undefined && human(dest)) return true;
+    }
+    const inPlace = (cmd === 'sed' && args.some((a) => /^-[nErsuz]*i|^--in-place/.test(a)))
+      || (cmd === 'perl' && args.some((a) => /^-[pnlaw0-9]*i/.test(a)));
+    if (inPlace && (args.some(human) || (namesHumanDoc && args.some((a) => a.startsWith('$'))))) return true;
+    if (cmd === 'git' && GIT_WRITES.has(args[0]) && args.some(human)
+      && !(args[0] === 'restore' && args.includes('--staged') && !args.includes('--worktree'))) return true;
+  }
+  return false;
+}
+
+function decideShell(command, cwd, agentType) {
+  if (typeof command !== 'string' || !command || !shellChangesDocuments(command, cwd)) return null;
+  const next = agentType
+    ? 'Use Edit on a document you own; for one you do not, return the change to the orchestrator.'
+    : 'Delegate the change to the owning agent (see File Ownership by Agent in workflow-orchestration), '
+      + 'e.g. through /update-doc.';
+  return {
+    decision: 'deny',
+    reason: `This command changes a document under docs/ through the shell. PRD, UXRD, design system, `
+      + `Design Doc, ADR, GDD, and feature spec change only through Write/Edit, where ownership is checked. `
+      + `${next} Work plans and task files are not affected by this rule.`,
+  };
+}
+
 /**
  * `agent_type` arrives bare (`prd-creator`) or plugin-scoped
  * (`backend-overture:prd-creator`) depending on how the agent was resolved.
@@ -114,9 +288,30 @@ const SPAWN_TOOLS = new Set(['Agent', 'Task']);
  */
 const normalise = (a) => String(a).trim().split(':').pop().toLowerCase();
 
-/** Every agent named anywhere in the table — used to tell "wrong agent" from "unknown name". */
+/**
+ * The plugin's own agents, read from the `agents/` directory beside this hook.
+ * A plugin agent missing from the table (quality-fixer, document-reviewer) owns
+ * no document, so it is denied like any other non-owner — not asked, which
+ * auto mode resolves without the user.
+ */
+function pluginAgents() {
+  // Beside the hook, and the plugin root: `hooks/` is a symlink in the plugin
+  // directories, so Node resolves the first to the shared root and misses
+  // agents only one plugin ships (gamedev).
+  const dirs = [join(dirname(fileURLToPath(import.meta.url)), '..', 'agents')];
+  if (process.env.CLAUDE_PLUGIN_ROOT) dirs.push(join(process.env.CLAUDE_PLUGIN_ROOT, 'agents'));
+  return dirs.flatMap((dir) => {
+    try {
+      return readdirSync(dir).filter((f) => f.endsWith('.md')).map((f) => f.slice(0, -3));
+    } catch {
+      return [];
+    }
+  });
+}
+
+/** Every agent named in the table or shipped by the plugin — used to tell "wrong agent" from "unknown name". */
 const KNOWN_AGENTS = new Set(
-  RULES.flatMap((r) => [...r.authors, ...r.updaters]).map(normalise),
+  [...RULES.flatMap((r) => [...r.authors, ...r.updaters]), ...pluginAgents()].map(normalise),
 );
 
 /** Agents that author a governed document — the only ones the spawn guard cares about. */
@@ -153,14 +348,13 @@ function decide(kind, toolName, agentType) {
   const isEdit = EDIT_TOOLS.has(toolName);
   if (!isWrite && !isEdit) return null;
 
-  // Main conversation or an unidentified caller: surface rather than block.
-  // The orchestrator is not supposed to write documents directly, but a person
-  // editing their own repository is not a policy violation.
+  // Main conversation: the orchestrator delegates documents, it never edits them.
   if (!agentType) {
     return {
-      decision: 'ask',
-      reason: `${rule.name} is owned by ${rule.authors.join(' or ')}. `
-        + `This edit is not coming from that agent — confirm it is intended.`,
+      decision: 'deny',
+      reason: `${rule.name} is owned by ${rule.authors.join(' or ')}; the main conversation does not `
+        + `edit it. Delegate the change to ${rule.authors.join(' or ')} (e.g. through /update-doc). `
+        + `To change it by hand, edit the file outside Claude Code.`,
     };
   }
 
@@ -214,15 +408,18 @@ function main() {
     process.exit(0); // unparseable: fail open, this guard must never wedge a session
   }
 
+  if (!input || typeof input !== 'object') process.exit(0);
   const toolName = input.tool_name || '';
-  const agentType = input.agent_type || '';
+  const agentType = typeof input.agent_type === 'string' ? input.agent_type : '';
 
   let verdict = null;
   if (SPAWN_TOOLS.has(toolName)) {
     verdict = decideSpawn(agentType, input.tool_input?.subagent_type || '');
+  } else if (SHELL_TOOLS.has(toolName)) {
+    verdict = decideShell(input.tool_input?.command, input.cwd || '', agentType);
   } else {
     const filePath = input.tool_input?.file_path || input.tool_input?.notebook_path || '';
-    if (!filePath) process.exit(0);
+    if (typeof filePath !== 'string' || !filePath) process.exit(0);
 
     // Normalise to a repo-relative, forward-slashed path.
     const cwd = (input.cwd || '').replace(/\\/g, '/').replace(/\/$/, '');

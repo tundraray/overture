@@ -1,9 +1,9 @@
 {
-  "description": "Enforces the File Ownership by Agent table: only the owning agent may author a governed document, and non-owners with a legitimate progress-update need may edit but not replace. On Agent/Task calls, a document owner may not spawn a different document owner to write on its behalf.",
+  "description": "Enforces the File Ownership by Agent table: only the owning agent may author a governed document, and non-owners with a legitimate progress-update need may edit but not replace; the main conversation delegates. Shell commands (Bash, PowerShell) that write a human document under docs/ are denied. On Agent/Task calls, a document owner may not spawn a different document owner to write on its behalf.",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Agent|Task",
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell|Agent|Task",
         "hooks": [
           {
             "type": "command",

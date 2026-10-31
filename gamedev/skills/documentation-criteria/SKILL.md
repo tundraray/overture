@@ -46,13 +46,13 @@ Game-specific decisions that commonly meet all three: save-file format, netcode 
 
 ## Writing for the Reader
 
-A document is read far more often than it is written, and most readers stop after the first screen. Every document this plugin writes — GDD, Feature Spec, UXRD, Design Doc, ADR, work plan, and the market and analytics documents — follows these rules; the templates are laid out to match them.
+A document is read far more often than it is written, and most readers stop after the first screen. Every document this plugin writes — GDD, Feature Spec, UXRD, Design Doc, ADR, work plan, and the market and analytics documents — follows these rules; the templates are laid out to match them. How the finished document reads, as a whole and sentence by sentence, is checked with the `prose` skill.
 
 **The reader is cold.** They know the product and the codebase in general, but not this feature, and they read without the author or the conversation that produced the document — a teammate, the user at an approval stop, the implementer months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
 
 **Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
-**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows), not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
+**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with three to seven **Key Decisions** — in a Design Doc a `KD-n` heading with a paragraph of why and the options not taken, in a UXRD a table — not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
 
 **Current truth only.** The body states what is true now. Who decided, on which date, in which version, or in answer to which review finding belongs to Update History and to git — not to requirements, acceptance criteria, table cells, or design text. "(user decision 2026-10-28)", "v1.2:", "per review I003" in the body are defects. Update History has one line per version, a phrase per change, no reviewer IDs.
 
@@ -114,24 +114,22 @@ An edit is finished when nothing else still says the old thing. Most findings on
 
 ### Design Document
 
-**Purpose**: Define technical implementation methods in detail
+**Purpose**: Describe, for a person reading top to bottom, how the part works and why it is built that way
 
 **Includes**:
-- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence); code locations, existing and new, in C4 when modules change
-- Technical implementation approach (vertical/horizontal/hybrid)
+- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence)
+- Key decisions, each with the options not taken — a breaking change to an existing contract, and a data migration, are decisions
 - Interface and contract definitions
 - Data flow and component design
-- **Acceptance criteria**: the feature spec's criteria cited by ID; EARS criteria only where the design refines one
-- Change impact: the Change columns of the C2–C4 tables, and an Interface Change Matrix row for every changed existing operation or prop
-- Every integration point with existing code — connection points even for new implementations — and how each is verified
+- **Acceptance criteria**: the feature spec's criteria cited by ID; plain-sentence criteria only where the design refines one
 - Scope agreed with the user: what is out of scope and the constraints the design meets
 - **Prerequisite ADRs** (including common ADRs)
 
 **Excludes**:
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
-- Test code, test file names, fixtures, test helpers (→acceptance-test-generator and task files; the Design Doc states use cases and, in Appendix: Evidence, its test boundaries)
+- Test code, test file names, fixtures, test helpers, mock boundaries (→acceptance-test-generator and task files; the Design Doc states use cases)
 - Why that technology was chosen (→Reference ADR)
-- Implementation order, when to implement, duration (→Work Plan)
+- Implementation order and approach, the files to change, integration points and how each is verified, the verification strategy, when to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
 
 ### GDD (Game Design Document)
@@ -222,7 +220,8 @@ An edit is finished when nothing else still says the old thing. Most findings on
 **Includes**:
 - Task breakdown and dependencies (maximum 2 levels)
 - Schedule and duration estimates
-- Verification: cites the Design Doc's Verification Strategy and states only the plan's own steps — which task runs the early verification point, and each phase's operational verification
+- Implementation approach (vertical/horizontal/hybrid), and the integration points where new code joins existing code
+- Verification: what correctness means for the part and how it is proven, the early verification point and the task that runs it, and each phase's operational verification
 - **A final Quality Assurance phase (required)**
 - Progress records (checkbox format)
 
@@ -296,7 +295,7 @@ docs/
 
 A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
 
-The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Every part takes `technical-designer` in the technical phase — the gamedev plugin ships no frontend designer; a part cut along `ui`, `hud`, or `menu` adds `ui-analyzer` to `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every Must Have acceptance criterion belongs to exactly one part, and a Should Have or Could Have belongs to a part or is explicitly deferred; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Every part takes `technical-designer` in the technical phase — the gamedev plugin ships no frontend designer; a part cut along `ui`, `hud`, or `menu` adds `ui-analyzer` to `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every Must Have acceptance criterion belongs to exactly one part, and a Should Have or Could Have belongs to a part or is explicitly deferred; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; an already implemented part is frozen.
 
 A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
 
@@ -308,6 +307,7 @@ design: design-core.md
 plan: 1 of 2
 status: active                # draft | active | completed
 depends-on:                   # previous plan filename; omit for the first
+temporary: true               # AI working file (documentation-criteria)
 ---
 ```
 
@@ -315,7 +315,7 @@ depends-on:                   # previous plan filename; omit for the first
 
 Exactly one plan per part may be `active`. Escalate rather than guess when two claim it, when the file count disagrees with the `M` in `plan: N of M`, or when a `depends-on` names a missing file.
 
-*Note: work plans and task files are ephemeral working state and are excluded by `.gitignore`.*
+*Note: work plans, task files, and `_overview.md` are temporary AI working state, marked `temporary: true` in their frontmatter and excluded by `.gitignore`. A file with that marker is judged only by consistency with the documentation (PRD, UXRD, Design Doc, ADR) — "Writing for the Reader", the `prose` pass, and diagrams do not apply; once its part is implemented, a later documentation change — from this feature or another — never updates it; and it may be deleted once the feature is implemented.*
 
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`

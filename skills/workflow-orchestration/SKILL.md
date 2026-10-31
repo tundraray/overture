@@ -196,10 +196,12 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 |------|-------|------|
 | Owning agent | allowed | allowed |
 | Progress updater (`task-executor`) | denied | allowed |
-| Any other agent | denied | denied |
-| Main conversation (no `agent_type`) | asks the user | asks the user |
+| Any other plugin agent | denied | denied |
+| Main conversation (no `agent_type`) | denied | denied |
 
-The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan.
+The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan. The main conversation is denied, not asked: auto mode resolves an `ask` without the user.
+
+Human documents change only through `Write`/`Edit`. A `Bash` or `PowerShell` command that writes one — `sed -i`, `perl -i`, a redirect, `tee`, `rm`, `mv`, `touch`, a copy destination, `git checkout`/`restore`/`clean`, `Set-Content`, `Remove-Item` — is denied for every caller, owner included, because a shell edit cannot be attributed to an owner. Work plans and task files are temporary and may be changed or deleted from the shell.
 
 The same hook watches `Agent`/`Task` calls for one shape: **a document owner spawning a different document owner** is denied. The Write/Edit guard only sees who is knocking right now, so an owner blocked from a file it does not own could otherwise spawn that file's owner and have it write on the caller's behalf. A cross-owner handoff goes back to the orchestrator, which delegates to the owner explicitly. An owner spawning itself (fan-out) or a non-owning helper (`code-explorer`) passes.
 

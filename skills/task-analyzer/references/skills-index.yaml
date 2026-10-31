@@ -107,7 +107,7 @@ skills:
   mermaid-diagrams:
     skill: "mermaid-diagrams"
     tags: [mermaid, diagrams, c4-model, sequence-diagram, runtime-flow, palette, path-animation, render-check, documentation]
-    typical-use: "Drawing, animating, and render-checking the Mermaid diagrams in PRD, UXRD, Design Doc, ADR, and work plans"
+    typical-use: "Drawing, animating, and render-checking the Mermaid diagrams in PRD, UXRD, Design Doc, and ADR"
     size: medium
     key-references:
       - "C4 Model - Simon Brown"
@@ -121,6 +121,21 @@ skills:
       - "Do not use"
       - "Render check"
       - "Revisions"
+
+  prose:
+    skill: "prose"
+    tags: [prose, readability, plain-language, ai-tells, kantselyarit, canonical-terms, documentation]
+    typical-use: "Reading a document as its reader and editing its sentences: cutting noise, plain sentences, AI-writing tells, technical terms in Russian prose"
+    size: medium
+    key-references:
+      - "The Elements of Style - Strunk"
+      - "Слово живое и мёртвое - Нора Галь"
+    sections:
+      - "Applicability"
+      - "The editing pass"
+      - "Canonical terms"
+      - "Rule sets"
+      - "Standing rules"
 
   implementation-approach:
     skill: "implementation-approach"
@@ -146,12 +161,11 @@ skills:
     key-references:
       - "Test Pyramid - Mike Cohn"
       - "Behavior-Driven Development"
-      - "EARS Format"
     sections:
       - "Test Type Definition and Limits"
       - "Behavior-First Principle"
       - "Test Skeleton Specification"
-      - "EARS Format Mapping"
+      - "Criterion Shape Mapping"
       - "Test File Naming Convention"
       - "Review Criteria"
       - "Quality Standards"

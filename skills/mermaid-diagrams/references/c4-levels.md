@@ -7,7 +7,7 @@ The Design Doc zooms in four steps, after the C4 model (Simon Brown, c4model.com
 | C1 · Context | Who uses the change, and what outside systems does it touch? | the product as **one box**, people and external systems | `flowchart LR` | 6 | omit when the part has no external actor or system that changes behaviour |
 | C2 · Containers | Which deployable units and stores take part? | apps, services, workers, databases, queues, browser storage; calls between them | `flowchart LR` | 8 | always |
 | C3 · Components | What inside one container does the work? | components of **one** container in call order | `flowchart TB` | 10 | one diagram per container the part changes, per flow it touches |
-| C4 · Code flow | Which modules change, and how does data pass through them? | changed classes / functions / components as a vertical step chain | `flowchart TB` | 10 (one long chain may exceed it if it stays readable) | omit when no module-level change |
+| C4 · Code flow | How does data pass through the modules, step by step? | classes / functions / components as a vertical step chain | `flowchart TB` | 10 (one long chain may exceed it if it stays readable) | omit when the order of steps inside a module is not itself a decision |
 
 Every level carries a frontmatter `title:` of the form `"C2 · Containers — <scope>"`, the shared `config:` block, and path animation (SKILL.md sections 4–5).
 
@@ -29,23 +29,15 @@ Every level carries a frontmatter `title:` of the form `"C2 · Containers — <s
 ## C2 · Containers
 
 - A dashed boundary subgraph named after the product holds the containers and stores the change touches; actors and external systems sit outside it. The subgraph has no inner `direction`.
-- Under the diagram, a table:
-
-| Container | Role | Change |
-|---|---|---|
-| `api` | threads and chat endpoints | `[MODIFY]` |
+- Under the diagram, a sentence per container the part touches: what it does in this part — "`api` serves the threads and chat endpoints".
 
 ## C3 · Components
 
-- One `###` subsection per C2 container marked `[NEW]` or `[MODIFY]`; inside it one diagram per flow, titled `**<container> — <flow>**`.
+- One `###` subsection per C2 container the part adds or changes; inside it one diagram per flow, titled `**<container> — <flow>**`.
 - Top to bottom: caller and entry node on top, the container's components inside a boundary subgraph named after the container in call order, stores and external systems in the bottom row with nothing below them.
 - Another container is one black node; its inside is drawn in its own subsection.
 - A component the flow does not touch is not drawn.
-- Under the diagram, a table — this replaces a prose component list:
-
-| Component | Responsibility in this flow | Change |
-|---|---|---|
-| `ThreadsService` | ownership check, list, rename, delete | `[NEW]` |
+- Under the diagram, a sentence per component whose job is not obvious from its name — "`ThreadsService` checks that the user owns the thread before listing, renaming, or deleting it".
 
 ## C4 · Code flow
 
@@ -55,7 +47,7 @@ Every level carries a frontmatter `title:` of the form `"C2 · Containers — <s
 - The return leg (result, error, response) is its own steps further down the column. Branches split off to the side.
 - Collaborators and stores sit beside the column with an arrow from the exact step that uses them; an unchanged collaborator stays black even when the step that calls it changed.
 - Two independent entry points (an event that writes, a request that reads) → two diagrams, `C4 · Code flow — write path` and `C4 · Code flow — read path`, with the shared store in both.
-- Method names, decorators, and wiring details stay in the code — neither the picture nor the module table carries them; the table's Notes column says in words what a module adds (a route, a rule, a constraint).
+- Method names, decorators, and wiring details stay in the code — the picture does not carry them; a sentence under the chain says in words what a module adds (a route, a rule, a constraint) when the picture does not show it.
 - A decision rule that needs its own flowchart goes in a `#### How <rule> works` subsection after the chain; it is not a C-level diagram.
 
 ```mermaid
@@ -102,19 +94,10 @@ flowchart TB
 
 (Path animation omitted for brevity; a real C4 diagram carries it.)
 
-Under the chain, two things and nothing else:
-
-**Code locations** — one relative Markdown link per file, with at most a few general words or none. No method or field names. Paths already cited in Code Inspection Evidence are not repeated.
-
-**Module table**:
-
-| Type | Name | Change | Notes |
-|---|---|---|---|
-| Controller | `ThreadsController` | `[NEW]` | `PATCH /api/threads/:threadId` |
-| Service | `ThreadsService` | `[NEW]` | renames a thread while no other write to it runs |
+Under the chain, at most a few sentences on what the picture does not show. The files to change are the work plan's; the files examined are in Code Inspection Evidence.
 
 ## Consistency across levels
 
 - A system on the left in C1 is on the left in C2; in C3 the same systems keep their relative order top to bottom (caller above, stores and externals below).
-- A name is spelled the same at every level and in every table.
-- A node's colour at one level matches its tag in that level's table, and a container red in C2 has at least one red or green component in its C3.
+- A name is spelled the same at every level and in the text.
+- A container red in C2 has at least one red or green component in its C3.

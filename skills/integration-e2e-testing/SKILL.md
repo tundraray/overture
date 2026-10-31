@@ -52,14 +52,14 @@ When verification points need explicit enumeration:
 // - [Item 2]
 ```
 
-## EARS Format Mapping
+## Criterion Shape Mapping
 
-| EARS Keyword | Test Type | Generation Approach |
+| The criterion describes | Test Type | Generation Approach |
 |--------------|-----------|---------------------|
-| **When** | Event-driven | Trigger event → verify outcome |
-| **While** | State condition | Setup state → verify behavior |
-| **If-then** | Branch coverage | Both condition paths verified |
-| (none) | Basic functionality | Direct invocation → verify result |
+| An event ("when a user …") | Event-driven | Trigger event → verify outcome |
+| A state ("while the thread is streaming …") | State condition | Setup state → verify behavior |
+| A condition ("if the credentials are wrong …") | Branch coverage | Both condition paths verified |
+| Plain behaviour | Basic functionality | Direct invocation → verify result |
 
 ## Test File Naming Convention
 

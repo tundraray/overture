@@ -5,11 +5,11 @@ design: design-[part-name].md     # governing design, at feature level; `none` o
 plan: 1 of 1                      # position in the part, and expected total
 status: draft                     # draft | active | completed
 depends-on:                       # previous plan filename; omit for the first
+temporary: true                   # AI working file — see documentation-criteria
 ---
 
 <!--
-Reader order: header → Snapshot → how the work runs (diagrams, phases, verification, risks) → Appendix: Traceability → Update History.
-The user reads this plan at batch approval; every section follows "Writing for the Reader" in documentation-criteria.
+Temporary AI working file — not in git, deleted after the feature ships. It must state exactly what the documentation states; nothing else is judged.
 Frontmatter is the source of truth for plan sequencing: `plan: N of M` states how many plans the part is expected to need, `status` marks which one runs now,
 `depends-on` fixes the order without relying on filename sort. Exactly one plan per part may be `active`; raise `M` rather than adding an unannounced plan file.
 Text inside these comments is guidance for the author; it is not copied into the document.
@@ -25,9 +25,9 @@ Related Issue/PR: #XXX (if any)
 
 ## Snapshot
 
-<!-- At most ten lines. A reader who stops here knows what gets built, in what order, and what could go wrong. The why of the feature is the PRD's and the design's; cite them, don't retell them. -->
+<!-- What gets built, in what order, and what could go wrong. The why of the feature is the PRD's and the design's; cite them, don't retell them. -->
 
-**Overview.** [Three to five plain sentences: what this plan builds, in what order, and why that order.]
+**Overview.** [Three to five plain sentences: what this plan builds, in what order, and why that order — including the implementation approach (vertical, horizontal, or hybrid, per `implementation-approach`) and its reason.]
 
 - **Does not change**: [what a reader would otherwise assume this plan touches]
 - **Biggest risk**: [one line, and the task that meets it first]
@@ -39,52 +39,9 @@ Related Issue/PR: #XXX (if any)
 - ADR: [docs/adr/ADR-XXXX.md] (if any)
 - UXRD: [docs/features/{feature}/uxrd.md] (if any)
 
-## Phase Structure Diagram
-
-```mermaid
----
-config:
-  theme: base
-  look: classic
-  themeVariables:
-    primaryColor: "#eef1f5"
-    primaryBorderColor: "#4b5563"
-    primaryTextColor: "#1a1a1a"
-    lineColor: "#6b7280"
-  flowchart:
-    curve: step
----
-graph LR
-    P1[Phase 1: Foundation] --> P2[Phase 2: Core]
-    P2 --> P3[Phase 3: Integration]
-    P3 --> QA[Final Phase: Quality Assurance]
-```
-
-## Task Dependency Diagram
-
-```mermaid
----
-config:
-  theme: base
-  look: classic
-  themeVariables:
-    primaryColor: "#eef1f5"
-    primaryBorderColor: "#4b5563"
-    primaryTextColor: "#1a1a1a"
-    lineColor: "#6b7280"
-  flowchart:
-    curve: step
----
-graph TD
-    T1[Task 1] --> T2[Task 2]
-    T1 --> T3[Task 3]
-    T2 --> T4[Task 4]
-    T3 --> T4
-```
-
 ## Implementation Phases
 
-<!-- Phases follow the Design Doc's technical dependencies and Implementation Approach. Repeat the phase block per phase; the final phase is always Quality Assurance.
+<!-- Phases follow the technical dependencies the Design Doc's components and contracts show, and the approach named in the Overview. Repeat the phase block per phase; the final phase is always Quality Assurance.
 A task opens with one line saying, in words, what it delivers; Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
 
 ### Phase 1: [Phase Name] (Estimated commits: X)
@@ -101,7 +58,7 @@ A task opens with one line saying, in words, what it delivers; Target Files, dep
 - [ ] [Quality completion criteria]
 
 #### Operational Verification Procedures
-1. [Operation verification steps — for the integration points this phase completes (Design Doc, Integration Points List)]
+1. [Operation verification steps — for each integration point this phase completes, where new code joins existing code]
 2. [Expected result verification]
 3. [Performance verification (when applicable)]
 
@@ -118,12 +75,13 @@ A task opens with one line saying, in words, what it delivers; Target Files, dep
 #### Operational Verification Procedures
 [End-to-end verification steps for the part's journeys]
 
-## Verification Strategy (from Design Doc)
+## Verification Strategy
 
-<!-- The design owns the correctness definition and the early verification point; cite them by section, don't copy them. This plan owns where they land. -->
+<!-- What correctness means for this part and how it will be proven — distinct from the L1/L2/L3 completion tiers at task execution. -->
 
-- **Correctness definition and method**: `design-{part}.md`, Verification Strategy
-- **Early verification point**: [the design's first verification target, in a few words] — run by [Phase X Task Y]
+- **Correctness definition and method**: [what "correct" means here, and the technique that proves it]
+- **Early verification point**: [the smallest unit proving the approach works, its success criteria, and what to do if it fails] — run by [Phase X Task Y]
+- **Output comparison** (when the part replaces existing behaviour): [identical input for both implementations, the fields compared, and how they are diffed]
 - **Proof obligations**: from test skeleton annotations (primary failure mode, proof obligation) when skeletons exist; otherwise each AC's primary failure mode, plus every applicable Failure Mode Checklist category. Each task that implements a claim records its Proof Obligations (task template), so review can judge whether the tests *prove* the claim rather than merely run
 
 ## Risks and Countermeasures
@@ -153,9 +111,9 @@ A task opens with one line saying, in words, what it delivers; Target Files, dep
 
 ## Appendix: Traceability
 
-<!-- The record that the plan covers the design: the reviewer and the executors check it, the reader reaches it by link. A subsection marked "when applicable" is deleted when it does not apply. -->
+<!-- The record that the plan covers the design: the reviewer and the executors check it. A subsection marked "when applicable" is deleted when it does not apply. -->
 
-### Quality Assurance Mechanisms (from Design Doc)
+### Quality Assurance Mechanisms
 
 Adopted quality gates for the change area. Each task in this plan must satisfy these mechanisms.
 

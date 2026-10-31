@@ -90,7 +90,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
      - Identify information sharing points between tasks
 
 4. **Overall Design Document Creation**
-   - Record overall design in `docs/features/{feature}/{part}/{plan-name}/_overview.md`
+   - Record overall design in `docs/features/{feature}/{part}/{plan-name}/_overview.md`, with frontmatter `temporary: true` like every task file
    - Clarify positioning and relationships of each task
    - Document design intent and important notes
 
@@ -98,7 +98,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - Create plan directory: `docs/features/{feature}/{part}/{plan-name}/`
    - Naming convention: `task-{number}.md` (inside plan directory)
    - Example: `docs/features/checkout/core/20260726-refactor-types/task-01.md`
-   - **Phase verification**: the last task of each phase ends with that phase's verification procedure from the Design Doc, so the executor runs it
+   - **Phase verification**: the last task of each phase ends with that phase's verification procedure from the work plan, so the executor runs it
 
 6. **Task Structuring**
    Include the following in each task file:
@@ -108,7 +108,7 @@ Decompose tasks based on implementation strategy patterns determined in implemen
    - Completion criteria
 
 7. **Implementation Pattern Consistency**
-   When including implementation samples, MUST ensure strict compliance with the Design Doc implementation approach that forms the basis of the work plan
+   When including implementation samples, MUST ensure strict compliance with the implementation approach named in the work plan's Overview
 
 8. **Utilize Test Information**
    When test information (@category, @dependency, @complexity, etc.) is documented in the work plan, reflect that information in task files
@@ -266,5 +266,5 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Task dependencies are explicit; two tasks touching the same files are ordered rather than left concurrent
 - [ ] Every work plan item is covered by a task, or its absence is recorded
 - [ ] Every file written appears in `documents` — a task file written but not reported is one the executor never runs
-- [ ] Task text is in the plan's language and reads as sentences, not telegrams (`documentation-criteria`, "Writing for the Reader"); values copied verbatim stay verbatim
+- [ ] Task text states what the work plan and the documentation state — nothing added, nothing contradicting them; values copied verbatim stay verbatim
 
