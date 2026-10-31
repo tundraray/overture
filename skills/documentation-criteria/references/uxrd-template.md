@@ -14,9 +14,11 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 <!-- At most ten lines. -->
 
-- **UX scope**: [which screens and surfaces this document specifies]
-- **Screens**: [list]
+**Overview.** [Three to five plain sentences: what the user sees and does in this feature, which screens and surfaces it covers, and the experience it aims for. No IDs.]
+
+- **Does not change**: [the one or two surfaces a reader would otherwise assume change]
 - **Biggest UX risk**: [one line]
+- **Open questions**: [a link to Undetermined Items, or "none"]
 
 ### Key Decisions
 
@@ -25,19 +27,13 @@ A change to an existing design-system foundation or component is a Key Decision 
 
 | ID | Decision | Why | Rejected alternative |
 |---|---|---|---|
-| KD-1 | [what was decided] | [one phrase] | [the option not taken] |
+| KD-1 | [what was decided] | [the reason, in words a newcomer follows] | [the option not taken] |
 
-## AC Traceability
+## Terms
 
-<!-- Maps PRD acceptance criteria to the screens and states that satisfy them. Without this table a UXRD can look complete while leaving an acceptance criterion with no surface that delivers it. -->
+<!-- When applicable: the document leans on five or more UX words a newcomer may not know that the PRD's Terms do not already explain. One line each. -->
 
-| AC ID | Screen / State | Reference (element ID / prototype path) | Adoption Decision |
-|-------|----------------|----------------------------------------|-------------------|
-| AC-001 | [Screen / state name] | [element or file reference] | Adopted / Not adopted / On hold — [reason when not Adopted] |
-
-<!-- No AC summary column: the AC text lives in the PRD, and the ID is enough to find it. -->
-
-<!-- Every AC in the PRD that has a user-visible surface needs a row. An AC with no row is either out of UX scope — state that explicitly — or an omission. -->
+- **[Term]**: [what it means here, in a few plain words]
 
 ## Design System
 
@@ -59,9 +55,11 @@ Follows the [design system](../../design-system/README.md).
 
 ## User Flows
 
+<!-- Each flow names the use cases and acceptance criteria it delivers. Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state; one this document does not deliver is listed in Appendix → Acceptance Criteria Outside UX Scope. -->
+
 ### Primary User Flow
 
-**Implements:** [UC ids from the PRD]
+**Implements:** [UC and AC ids from the PRD]
 
 [The path through the screens — what the user sees and does at each step. The use case's goal and outcome are in the PRD and are not repeated here.]
 
@@ -89,7 +87,7 @@ flowchart TD
 
 ### Alternative Flows
 
-[Edge cases and alternative paths, each naming the UC or AC it serves]
+[Edge cases and alternative paths, each naming the UC or AC ids it serves]
 
 ### Error Flows
 
@@ -125,11 +123,11 @@ flowchart TD
 
 <!-- States of the screen as a whole; delete rows that cannot occur. -->
 
-| State | What shows |
-|---|---|
-| Loading | [which components show which state] |
-| Empty | [what renders, and the action offered] |
-| Error | [display and recovery] |
+| State | What shows | AC |
+|---|---|---|
+| Loading | [which components show which state] | [AC ids or —] |
+| Empty | [what renders, and the action offered] | [...] |
+| Error | [display and recovery] | [...] |
 
 ### Screen 2: [Screen Name]
 
@@ -165,22 +163,23 @@ flowchart TD
 
 <!-- Only UX questions this document must settle. A product question goes back to the PRD; a technical one goes to the Design Doc. -->
 
-- [ ] [Question 1]: [Options or impacts to discuss]
-- [ ] [Question 2]: [Options or impacts to discuss]
+- [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
 <!-- _Discuss with stakeholders until this section is empty, then delete after confirmation_ -->
 
 ## Appendix
 
-<!-- References and glossary only. A manual acceptance scenario repeats the ACs and flows; it is not written here. -->
+<!-- A manual acceptance scenario repeats the ACs and flows; it is not written here. -->
+
+### Acceptance Criteria Outside UX Scope
+
+<!-- When applicable: a PRD acceptance criterion with a user-visible surface that this document does not deliver. -->
+
+- [AC id] — [not adopted / on hold, and why]
 
 ### References
 
 - [User research findings, usability test results, design files]
-
-### Glossary
-
-- **Term 1**: [Definition — only UX terms not already in the PRD glossary]
 
 ## Update History
 

@@ -1,58 +1,65 @@
 # [ADR Number] [Title]
 
+<!--
+Reader order: Status → Decision → Context → Rationale → Consequences → Implementation Guidance. Status and Decision are the ADR's header and Snapshot ("Writing for the Reader" in documentation-criteria): a cold reader who stops after Decision knows what was decided and why it matters.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
+
 ## Status
 
 [Proposed | Accepted | Deprecated | Superseded]
 
-## Context
-
-[Describe the background and reasons why this decision is needed. Include the essence of the problem, current challenges, and constraints]
-
 ## Decision
 
-[Describe the actual decision made. Aim for specific and clear descriptions]
+[Three to five plain sentences: the problem in one line, what is decided, and what it replaces or rules out]
 
 ### Decision Details
 
 | Item | Content |
 |------|---------|
-| **Decision** | [The decision in one sentence] |
 | **Why now** | [Why this needs to happen now (timing rationale)] |
-| **Why this** | [Why this option over alternatives (1-3 lines)] |
 | **Known unknowns** | [At least one uncertainty at this point] |
 | **Kill criteria** | [One signal that should trigger reversal of this decision] |
 
+## Context
+
+[The background a cold reader needs: the problem, the current state, and the constraints the options had to meet]
+
 ## Rationale
 
-[Explain why this decision was made and why it is the best option compared to alternatives]
+[Why this option over the others, in a short paragraph]
 
 ### Options Considered
 
+<!-- Each pro and con is a sentence a newcomer can follow, not a keyword. -->
+
 1. **Option 1**: [Description]
-   - Pros: [List advantages]
-   - Cons: [List disadvantages]
+   - Pros: [advantages]
+   - Cons: [disadvantages]
 
 2. **Option 2**: [Description]
-   - Pros: [List advantages]
-   - Cons: [List disadvantages]
+   - Pros: [advantages]
+   - Cons: [disadvantages]
 
 3. **Option 3 (Selected)**: [Description]
-   - Pros: [List advantages]
-   - Cons: [List disadvantages]
+   - Pros: [advantages]
+   - Cons: [disadvantages]
 
 ## Consequences
 
 ### Positive Consequences
 
-- [List positive impacts on the project or system]
+- [Positive impacts on the project or system]
 
 ### Negative Consequences
 
-- [List negative impacts or trade-offs that need to be accepted]
+- [Negative impacts or trade-offs that need to be accepted]
 
 ### Neutral Consequences
 
-- [List changes that are neither good nor bad]
+<!-- When applicable. -->
+
+- [Changes that are neither good nor bad]
 
 ## Implementation Guidance
 

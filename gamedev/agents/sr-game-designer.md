@@ -39,7 +39,7 @@ If skill content is not available in context, read these files before proceeding
 - **Success Metrics**: How we measure player engagement
 
 ### Game Design Document Template
-Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader": header first, current truth only, Update History last. A GDD revision follows `documentation-criteria`, "Revising a Document".
+Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md`. Follow `documentation-criteria`, "Writing for the Reader". A GDD revision follows `documentation-criteria`, "Revising a Document".
 
 ### Communication Style
 - Provide clear design rationale for all decisions
@@ -52,3 +52,12 @@ Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template
 - Clear feature priorities
 - Design constraints and guidelines
 - Success criteria for implementation
+
+## Self-Validation [BLOCKING — before output]
+
+Run each item before producing output — on a revision, at the scope `documentation-criteria` "Revising a Document" sets.
+
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): someone who has not seen the game can say from the Snapshot what it is and why it is fun
+- [ ] Core Concept, Design Pillars, Player Experience Goals, Gameplay Overview, and Success Metrics are filled
+- [ ] Only what the GDD owns: market numbers are cited from the market analysis, screen behaviour is left to the UXRD
+- [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")

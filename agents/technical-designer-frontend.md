@@ -63,9 +63,9 @@ prompt: "query: components that render a paginated result list; breadth: thoroug
 
 | About to | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Component Props Change Matrix |
-| Remove or rename a component or prop | `query: every reference to <symbol>; breadth: thorough` | Change Impact Map |
-| Claim a surface is unaffected | `query: what renders <component>; breadth: thorough` | "No Ripple Effect" — write it only for what the sweep covered; check `coverage.notSearched` first |
+| Change a props contract | `query: every consumer of <component>; breadth: thorough` | Interface Change Matrix |
+| Remove or rename a component or prop | `query: every reference to <symbol>; breadth: thorough` | Change columns of the C3 and C4 tables |
+| Claim a surface is unaffected | `query: what renders <component>; breadth: thorough` | Part, Out of scope — write it only for what the sweep covered; check `coverage.notSearched` first |
 
 ### Sequencing
 
@@ -93,7 +93,7 @@ Must be performed before Design Doc creation:
 
 1. **Implementation File Path Verification**
    - Locate target components and hooks with code-explorer (see Searching the Code Before Designing)
-   - Record existing and planned new locations in C4 Code locations, marked [NEW] / [MODIFY] in the C4 table
+   - Record existing and planned new locations in C4 Code locations, marked [NEW] / [MODIFY] / [REMOVE] in the C4 table
 
 2. **Existing Component Investigation** (Only when changing existing features)
    - List major public Props of target component (about 5 important ones if over 10)
@@ -112,19 +112,10 @@ Must be performed before Design Doc creation:
    - Clearly document similar component search results (found components or "none")
    - Record adopted decision (use existing/improvement proposal/new implementation) and rationale
 
-### Agreement Checklist【Most Important】
-Must be performed at the beginning of Design Doc creation:
+### Scope Agreement【Most Important】
+Must be performed at the beginning of Design Doc creation. List what was agreed with the user: which components and features change, which do not, and the constraints — browser compatibility, accessibility, performance targets such as rendering time.
 
-1. **List agreements with user in bullet points**
-   - Scope (which components/features to change)
-   - Non-scope (which components/features not to change)
-   - Constraints (browser compatibility, accessibility requirements, etc.)
-   - Performance requirements (rendering time, etc.)
-
-2. **Confirm reflection in design**
-   - [ ] Specify where each agreement is reflected in the design
-   - [ ] Confirm no design contradicts agreements
-   - [ ] If any agreements are not reflected, state the reason
+Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** with how the design meets each. What changes shows in the Change columns of the C2–C4 tables. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
 
 ### Implementation Approach Decision【Required】
 Must be performed when creating Design Doc:
@@ -136,30 +127,12 @@ Must be performed when creating Design Doc:
    - **Hybrid**: Composite, handles complex requirements
    - Record the selected approach and a one-line reason in the template's Implementation Approach; implementation order and per-task verification levels belong to the work plan
 
-### Change Impact Map【Required】
-Must be included when creating Design Doc:
-
-```yaml
-Change Target: UserProfileCard component
-Direct Impact:
-  - src/components/UserProfileCard/UserProfileCard.tsx (Props change)
-  - src/pages/ProfilePage.tsx (usage site)
-Indirect Impact:
-  - User context (data format change)
-  - Theme settings (style prop additions)
-No Ripple Effect:
-  - Other components, API endpoints
-```
+### Change Impact【Required】
+Record the impact from the sweeps in Searching the Code Before Designing: the Change columns of the C2, C3, and C4 tables name every changed component, hook, and usage site the sweep resolved; what stays untouched goes to Part, Out of scope.
 
 ### Interface Change Impact Analysis【Required】
 
-**Component Props Change Matrix:**
-| Existing Props | New Props | Conversion Required | Wrapper Required | Compatibility Method |
-|----------------|-----------|-------------------|------------------|---------------------|
-| userName       | userName  | None              | Not Required     | -                   |
-| profile        | userProfile| Yes             | Required         | Props mapping wrapper |
-
-When conversion is required, clearly specify wrapper implementation or migration path.
+Every changed existing prop gets a row in the template's Interface Change Matrix (Contract Definitions): the prop as it is, as it becomes, whether usage sites need a conversion, and how they keep working — the wrapper or migration path when conversion is required.
 
 ### Common ADR Process
 Perform before Design Doc creation:
@@ -172,21 +145,11 @@ Common ADR needed when: Technical decisions common to multiple components
 ### Integration Point Specification
 Document integration points with existing components in the Integration Points List (location, old Props, new Props, switching method, how it is verified); error behavior and loading states at each point are defined at design phase.
 
-### Data Contracts
-Define Props types and state management contracts between components (types, preconditions, guarantees, error behavior).
+### Contracts at Component Boundaries【Required】
+Define what crosses each component boundary in Contract Definitions — props, events, state management contracts, and how errors are handled (Error Boundary, error state) — at the design's altitude (`documentation-criteria` "Writing for the Reader"). A precondition or guarantee the row does not make obvious is one or two sentences under the table.
 
 ### State Transitions (When Applicable)
-Document state definitions and transitions for stateful components (loading, error, success states).
-
-### Integration Boundary Contracts【Required】
-Define Props types, event handlers, and error handling at component boundaries.
-
-```yaml
-Boundary Name: [Component Integration Point]
-  Input (Props): [Props type definition]
-  Output (Events): [Event handler signatures]
-  On Error: [How to handle errors (Error Boundary, error state, etc.)]
-```
+Document state definitions and transitions for stateful components (loading, error, success states), and the invariants as plain sentences.
 
 **Integration Boundaries:**
 - React → DOM: Component rendering to browser DOM
@@ -279,9 +242,9 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 
 | Allowed | Not allowed |
 |---|---|
-| Identifiers exactly as in code (`ThreadList`, `useThreads`, `onRename`) | Component, hook, or type source (TSX, Props types, zod schemas) |
-| Props and contract tables per the template's Contract Definitions (prop / type / required / meaning) | Function bodies, "key fragments", snippets of changed files |
-| Mermaid diagrams; the YAML blocks and matrices the template defines | Test code, test file names, fixtures, render helpers, mock wiring |
+| Identifiers exactly as in code (`ThreadList`, `useThreads`, `onRename`) | Component, hook, or type source (TSX, Props types, zod schemas) — or the same copied into a table field by field, with lengths and formats |
+| Props and contract tables per the template's Contract Definitions (prop / type / meaning) | Function bodies, "key fragments", snippets of changed files |
+| Mermaid diagrams; the matrices the template defines; the YAML blocks in Appendix: Evidence | Test code, test file names, fixtures, render helpers, mock wiring |
 | File paths in C4 Code locations and Code Inspection Evidence | Styling code, config files |
 
 Test Strategy is a list of use cases (Given / When / Then in what the user sees and does, each naming the ACs it covers), not a list of test files.
@@ -313,11 +276,11 @@ Each item names the check; the rule lives where it cites. Run the items before p
 
 - [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract — typically the backend part's API — is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
-- [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
-- [ ] Every agreement in the Agreement Checklist names where the design reflects it, or why it does not; no design element contradicts one
+- [ ] Every acceptance criterion is named by a Test Strategy use case, or recorded as out of scope
+- [ ] Every agreement with the user is in Part (Out of scope, Constraints) or shows in a Change column; no design element contradicts one
 - [ ] Every prop, event, and API call a component uses exists in the contract table of the component or part that offers it, with types; an API call also with error behaviour and loading state (State × Display Matrix)
 - [ ] Every integration point is in the Integration Points List with its boundary contract and how it is verified
-- [ ] The Change Impact Map was built from a resolved consumer list, not an assumed one; "No Ripple Effect" covers only what the sweep reached; every changed existing prop has a Component Props Change Matrix row
+- [ ] The Change columns of the C2–C4 tables come from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing prop has an Interface Change Matrix row
 - [ ] The Existing Component Reuse Map records reuse/extend/new per element, and `new` states what was searched and why nothing fit
 - [ ] Each new prop, variant, or mode is a Key Decisions row naming the smaller options rejected — a new prop is permanent surface
 - [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing `ADR-COMMON-*` decisions the design follows are in Prerequisite ADRs
@@ -326,7 +289,8 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] No code: the document passes No Code in Design Docs and ADRs
 - [ ] Test Strategy is a list of use cases; every AC is named by a use case whose Given sets up that AC's condition
 - [ ] Diagrams follow `mermaid-diagrams` (C1–C4 per `references/c4-levels.md`, runtime flows as sequence diagrams), and `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
-- [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, write only what is decided
+- [ ] Cold read: from the Overview alone, a reader who has not followed the feature can say what this part does and how it works in outline
+- [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, terms explained, sentences rather than telegrams, for people first, one language, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, the design's altitude, write only what is decided
 - [ ] Snapshot and Key Decisions match the body; evidence, Applicable Standards included, sits in Appendix: Evidence
 - [ ] On a revision, every place that depends on what changed agrees with it, and no cut left a reference to removed content (`documentation-criteria` "Revising a Document")
 - [ ] The returned `documents[].path` matches the file actually written

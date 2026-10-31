@@ -143,19 +143,10 @@ Run the search before deciding, and act on what it returns:
 ### Data Representation Decision【Required】
 For every new data structure, search for an existing one first and record reuse, extend, or new as a Key Decisions row, with the rejected options. Reuse when the existing structure fits the same concept, bounded context, and lifecycle without unwanted coupling; otherwise extend or create new.
 
-### Agreement Checklist【Most Important】
-Must be performed at the beginning of Design Doc creation:
+### Scope Agreement【Most Important】
+Must be performed at the beginning of Design Doc creation. List what was agreed with the user: what changes, what does not, and the constraints — parallel operation, compatibility, performance measurement and its targets.
 
-1. **List agreements with user in bullet points**
-   - Scope (what to change)
-   - Non-scope (what not to change)
-   - Constraints (parallel operation, compatibility requirements, etc.)
-   - Performance requirements (measurement necessity, target values)
-
-2. **Confirm reflection in design**
-   - [ ] Specify where each agreement is reflected in the design
-   - [ ] Confirm no design contradicts agreements
-   - [ ] If any agreements are not reflected, state the reason
+Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** with how the design meets each. What changes shows in the Change columns of the C2–C4 tables. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
 
 ### Implementation Approach Decision【Required】
 Must be performed when creating Design Doc:
@@ -167,27 +158,15 @@ Must be performed when creating Design Doc:
    - **Hybrid**: Composite, handles complex requirements
    - Record the selected approach and a one-line reason in the template's Implementation Approach; implementation order and per-task verification levels belong to the work plan
 
-### Change Impact Map【Required】
+### Change Impact【Required】
 
 Obtain the impact set from `code-explorer` rather than assuming it — assumed consumers are how a Design Doc ships a breaking change described as backward-compatible:
 
 - Changing an interface, signature, or schema → `query: every consumer of <symbol>; breadth: thorough`
 - Removing or renaming → `query: every reference to <symbol>; breadth: thorough`
-- Writing "No Ripple Effect" → only for what the sweep actually covered; check `coverage.notSearched` before claiming a boundary is unaffected
+- Claiming something is unaffected → only for what the sweep actually covered; check `coverage.notSearched` before claiming a boundary is unaffected
 
-Must be included when creating Design Doc:
-
-```yaml
-Change Target: [ServiceName.methodName()]
-Direct Impact:
-  - [service file path] (method change)
-  - [API handler path] (call site)
-Indirect Impact:
-  - [Component name] (data format change)
-  - [Component name] (new fields added)
-No Ripple Effect:
-  - [Explicitly list unaffected components]
-```
+Record the result in the Change columns of the C2, C3, and C4 tables — every changed caller the sweep resolved — and in the Interface Change Matrix for every changed existing operation; what stays untouched goes to Part, Out of scope.
 
 ### Field Propagation Map【Required for multi-layer changes】
 When the design involves data flowing between layers or modules, the Design Doc MUST include a Field Propagation Map:
@@ -199,14 +178,11 @@ fields:
     origin: "API Request / Database / User Input / etc."
     transformations:
       - layer: "API Layer"
-        type: "RequestDTO"
-        validation: "required, max 255 chars"
+        transformation: "validated on entry"
       - layer: "Service Layer"
-        type: "DomainModel"
         transformation: "trimmed, lowercased"
       - layer: "Repository Layer"
-        type: "Entity"
-        transformation: "mapped to DB column"
+        transformation: "stored as the record's address"
     destination: "Database table.column / API Response / UI Component"
     loss_risk: "none | low | medium | high"
     loss_risk_reason: "Optional explanation if risk > none"
@@ -229,13 +205,7 @@ Skip if no fields cross component boundaries.
 
 ### Interface Change Impact Analysis【Required】
 
-**Change Matrix:**
-| Existing Operation | New Operation | Conversion Required | Adapter Required | Compatibility Method |
-|-------------------|---------------|-------------------|------------------|---------------------|
-| operationA()      | operationA()  | None              | Not Required     | -                   |
-| operationB(x)     | operationC(x,y)| Yes             | Required         | Adapter implementation |
-
-When conversion is required, clearly specify adapter implementation or migration path.
+Every changed existing operation gets a row in the template's Interface Change Matrix (Contract Definitions): the operation as it is, as it becomes, whether callers need a conversion, and how existing callers keep working — the adapter or migration path when conversion is required.
 
 ### Common ADR Process
 Perform before Design Doc creation:
@@ -248,23 +218,13 @@ Common ADR needed when: Technical decisions common to multiple components
 ### Integration Point Specification
 Document integration points with existing system in the Integration Points List (location, old implementation, new implementation, switching method, how it is verified); error behavior at each point is defined at design phase.
 
-### Data Contracts
-Define input/output between components (types, preconditions, guarantees, error behavior).
-
-### State Transitions (When Applicable)
-Document state definitions and transitions for stateful components.
-
-### Integration Boundary Contracts【Required】
-Define input/output, sync/async, and error handling at component boundaries in language-agnostic manner.
-
-```yaml
-Boundary Name: [Connection Point]
-  Input: [What is received]
-  Output: [What is returned (specify sync/async)]
-  On Error: [How to handle]
-```
+### Contracts at Component Boundaries【Required】
+Define what crosses each component boundary in Contract Definitions — operation, input, output (sync or async), and the failures the caller handles — at the design's altitude (`documentation-criteria` "Writing for the Reader"). A precondition or guarantee the row does not make obvious is one or two sentences under the table.
 
 Confirm and document conflicts with existing systems (priority, naming conventions, etc.) to prevent integration inconsistencies.
+
+### State Transitions (When Applicable)
+Document state definitions and transitions for stateful components, and the invariants as plain sentences.
 
 ## Required Information
 
@@ -350,9 +310,9 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 
 | Allowed | Not allowed |
 |---|---|
-| Identifiers exactly as in code (`ThreadsService`, `GET /api/threads`, `THREAD_NOT_FOUND`) | Schema or type source (zod, TS interfaces, classes, DTOs, SQL DDL) |
+| Identifiers exactly as in code (`ThreadsService`, `GET /api/threads`, `THREAD_NOT_FOUND`) | Schema or type source (zod, TS interfaces, classes, DTOs, SQL DDL) — or the same copied into a table field by field, with lengths, sizes, and column lists |
 | Contract and field tables per the template's Contract Definitions | Function bodies, "key fragments", snippets of changed files |
-| Mermaid diagrams; the YAML blocks the template defines | Test code, test file names, fixtures, test helpers, mock wiring |
+| Mermaid diagrams; the YAML blocks in Appendix: Evidence | Test code, test file names, fixtures, test helpers, mock wiring |
 | File paths in C4 Code locations and Code Inspection Evidence | Config files, command lines beyond the build/test commands the project already has |
 
 Test Strategy is a list of use cases (Given / When / Then in domain terms, each naming the ACs it covers), not a list of test files.
@@ -378,11 +338,11 @@ Each item names the check; the rule lives where it cites. Run the items before p
 
 - [ ] Every `focusAreas` entry from fact gathering has a row in the Fact Disposition Table with a disposition and where it is handled (`KD-n` or section)
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here
-- [ ] Every acceptance criterion traces to a section of this design, or is explicitly recorded as out of scope
-- [ ] Every agreement in the Agreement Checklist names where the design reflects it, or why it does not; no design element contradicts one
+- [ ] Every acceptance criterion is named by a Test Strategy use case, or recorded as out of scope
+- [ ] Every agreement with the user is in Part (Out of scope, Constraints) or shows in a Change column; no design element contradicts one
 - [ ] Every operation a flow or component calls exists in the Contract Definitions of the component that offers it, with inputs, outputs, and error behaviour; every rule a field or counter is said to enforce is stated in the contract or in State Transitions and Invariants
 - [ ] Every integration point is in the Integration Points List with its boundary contract and how it is verified
-- [ ] The Change Impact Map was built from a resolved consumer list, not an assumed one; "No Ripple Effect" covers only what the sweep reached; every changed existing operation has an Interface Change Matrix row
+- [ ] The Change columns of the C2–C4 tables come from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing operation has an Interface Change Matrix row
 - [ ] Each new maintenance-surface element (persistent state, data structure, boundary-crossing field, mode or flag, abstraction) is a Key Decisions row naming the smaller options rejected
 - [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing `ADR-COMMON-*` decisions the design follows are in Prerequisite ADRs
 - [ ] An ADR, when written, follows `adr-template.md` and ADR Responsibility Boundaries: real alternatives compared on the same criteria, principles rather than procedures
@@ -390,7 +350,8 @@ Each item names the check; the rule lives where it cites. Run the items before p
 - [ ] No code: the document passes No Code in Design Docs and ADRs
 - [ ] Test Strategy is a list of use cases; every AC is named by a use case whose Given sets up that AC's condition
 - [ ] Diagrams follow `mermaid-diagrams` (C1–C4 per `references/c4-levels.md`, runtime flows as sequence diagrams), and `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
-- [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, write only what is decided
+- [ ] Cold read: from the Overview alone, a reader who has not followed the feature can say what this part does and how it works in outline
+- [ ] `documentation-criteria` "Writing for the Reader" holds: order and Snapshot, terms explained, sentences rather than telegrams, for people first, one language, current truth only, delete don't stub, short units, words before IDs, cite by path and ID, the design's altitude, write only what is decided
 - [ ] Snapshot and Key Decisions match the body; evidence sits in Appendix: Evidence
 - [ ] On a revision, every place that depends on what changed agrees with it, and no cut left a reference to removed content (`documentation-criteria` "Revising a Document")
 - [ ] The returned `documents[].path` matches the file actually written

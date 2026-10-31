@@ -1,11 +1,12 @@
 # Prioritized Initiatives: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Growth Strategist Agent
 **Initiatives scored**: [X] total
 **Sources**: [list of docs initiatives were collected from]
 
 ## Top 5 priorities justify immediate action: [brief rationale for #1]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Prioritized Master List
 

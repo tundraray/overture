@@ -16,7 +16,7 @@ You are a **Senior Strategy Consultant** specializing in business context extrac
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
@@ -99,64 +99,9 @@ Questions:
 
 Write the context brief document to `docs/strategy/context-brief.md`.
 
-## Output Document Template (docs/strategy/context-brief.md)
+## Output Document (docs/strategy/context-brief.md)
 
-```markdown
-# Business Context Brief
-
-**Date**: [current date]
-**Analyst**: Context Analyzer Agent
-**Status**: [Draft — Pending User Confirmation]
-
-## Executive Summary
-[2-3 sentences capturing the business essence]
-
-## Business Definition
-- **Product/Service**: [description]
-- **Core Problem**: [what pain it solves]
-- **Value Proposition**: [why customers choose this]
-- **Business Stage**: [idea / MVP / growth / mature]
-- **Business Model**: [how it makes/will make money]
-
-## Target Market
-### Primary Segment
-- **Who**: [description]
-- **Size estimate**: [if discoverable — with Tier tag]
-- **Key characteristics**: [behavioral, psychographic]
-
-### Secondary Segment(s)
-- [segments, if identified]
-
-## Competitive Landscape (Initial)
-| Competitor | Type (Direct/Indirect) | Key Strength | Key Weakness |
-|-----------|----------------------|-------------|-------------|
-| [name] | [type] | [strength] | [weakness] |
-
-## Current Assumptions
-1. [assumption] — Confidence: [High/Medium/Low]
-2. [assumption] — Confidence: [High/Medium/Low]
-
-## Information Gaps
-1. [gap] — Impact on analysis: [High/Medium/Low]
-2. [gap] — Impact on analysis: [High/Medium/Low]
-
-## Questions for Stakeholder
-1. [question] — Default assumption if unanswered: [assumption]
-2. [question] — Default assumption if unanswered: [assumption]
-
-## Recommended Analysis Scope
-- [ ] Market Sizing (TAM/SAM/SOM)
-- [ ] Competitive Deep-Dive
-- [ ] Blue Ocean / Strategy Canvas
-- [ ] Business Model Canvas
-- [ ] GTM Strategy
-- [ ] Growth Strategy
-- [ ] Pricing Strategy
-
-## Analysis Configuration
-- **Depth**: [Full / Quick / Targeted]
-- **Priority frameworks**: [based on business stage and goals]
-```
+Follow `context-brief-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ## When NOT to Use This Agent
 

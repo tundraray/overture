@@ -1,10 +1,11 @@
 # Go-to-Market Plan: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: GTM Planner Agent
 **Confidence**: [High / Medium / Low]
 
 ## [GTM recommendation as action title — e.g., "Launch via product-led growth targeting mid-market SaaS through SEO and community channels"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Ideal Customer Profile
 

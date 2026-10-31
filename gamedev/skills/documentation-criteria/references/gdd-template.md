@@ -1,160 +1,114 @@
-# Game Design Document Template
+# [Game Title] — Game Design Document
 
-**Status**: Draft | In review | Approved · **Date**: YYYY-MM-DD
+<!--
+Follow `documentation-criteria`, "Writing for the Reader": header and Snapshot first, current truth only, Update History last, delete what does not apply.
+Text inside these comments is guidance for the author; it is not copied into the document.
+-->
 
-## Project Overview
-**Game Title**: [Project Name]  
-**Engine**: [Godot/Unity/Unreal Engine]  
-**Genre**: [Primary/Secondary Genre]  
-**Platform**: [Target Platforms]  
-**Target Audience**: [Demographics, Experience Level]  
-**Development Mode**: [Design/Prototype/Development]  
-**Timeline**: [Rapid/Short/Medium/Long]  
+**Status**: Draft | In review | Approved · **Date**: YYYY-MM-DD · **Engine**: [engine] · **Platform**: [target platforms] · **Mode**: [Full Development / Design Only / Prototype]
 
-## Market Intelligence
+## Snapshot
 
-### Competitive Analysis
-**Primary Competitors**: [List 3-5 direct competitors]
-**Market Position**: [How we differentiate]
-**Target Market Size**: [Market opportunity]
-**Revenue Model**: [Monetization approach]
+<!-- At most ten lines. -->
 
-### Market Validation
-- **Market Demand**: [Evidence of player interest]
-- **Competitive Advantage**: [Our unique selling proposition]
-- **Risk Assessment**: [Market risks and mitigation]
-- **Go-to-Market Strategy**: [Launch and marketing approach]
+**Overview.** [three to five plain sentences — what the game is, who it is for, what the player does minute to minute, and why that is fun]
+
+- **Does not change**: [on a GDD update, what stays as it was; delete on a new GDD]
+- **Biggest risk**: [one line, or "none above low"]
+- **Open questions**: [a link to Open Questions, or "none"]
 
 ## Core Concept
-[One paragraph describing the game's central idea]
+
+<!-- The central idea and its hook — what makes it different from the games it will be compared with. Expands the Overview; does not repeat it. -->
+
+[One paragraph]
+
+## Market Position
+
+<!-- When a market analysis exists, cite it by path and state only the conclusion the design relies on; the analysis owns the numbers. -->
+
+- **Closest competitors**: [three to five games, and how this one differs from them]
+- **Revenue model**: [premium / free-to-play / subscription, in a phrase]
+- **Source**: [market analysis path, or delete]
 
 ## Design Pillars
-1. **[Pillar 1 Name]**: [Description of how this guides design decisions]
-2. **[Pillar 2 Name]**: [Description of how this guides design decisions]
-3. **[Pillar 3 Name]**: [Description of how this guides design decisions]
+
+1. **[Pillar name]**: [the design decisions this pillar settles, in a sentence]
+2. **[Pillar name]**: [...]
+3. **[Pillar name]**: [...]
 
 ## Player Experience Goals
-- **Target Emotion**: [What should players feel while playing?]
-- **Core Fantasy**: [What fantasy does the game fulfill?]
-- **Key Moments**: [Memorable experiences we want to create]
+
+- **Target emotion**: [what the player should feel while playing]
+- **Core fantasy**: [who the player gets to be]
+- **Key moments**: [the experiences the player should remember]
 
 ## Gameplay Overview
+
 ### Core Loop
-[Description of the primary gameplay cycle - what players do repeatedly]
+[What the player does over and over, step by step]
 
 ### Meta Loop
-[Longer-term progression and goals that keep players engaged]
+[The longer-term goals and progression that bring the player back]
 
 ### Victory Conditions
-[How players win or achieve success]
+[How the player wins or succeeds]
 
 ## Game Mechanics
+
 ### Primary Mechanics
-- **[Mechanic 1]**: [Detailed description]
-- **[Mechanic 2]**: [Detailed description]
-- **[Mechanic 3]**: [Detailed description]
+- **[Mechanic]**: [what the player does and what it achieves]
 
 ### Secondary Mechanics
-- **[Mechanic 1]**: [Brief description]
-- **[Mechanic 2]**: [Brief description]
+- **[Mechanic]**: [a sentence]
 
 ## Progression Systems
+
 ### Player Progression
-[How the player character/abilities advance]
+[How the character or the player's abilities grow]
 
 ### Difficulty Progression
-[How the game becomes more challenging]
+[How the game gets harder, and how the player is prepared for it]
 
 ### Content Progression
-[How new content/areas unlock]
+[How new content and areas unlock]
 
 ## User Interface Requirements
-### HUD Elements
-- [UI Element 1]: [Purpose and behavior]
-- [UI Element 2]: [Purpose and behavior]
 
-### Menu Systems
-- [Menu 1]: [Contents and flow]
-- [Menu 2]: [Contents and flow]
+<!-- What the player must see and reach. How each screen looks and behaves belongs to the UXRD. -->
+
+- **HUD**: [the information the player needs at all times]
+- **Menus**: [the menus and what each lets the player do]
 
 ## Art Direction
-### Visual Style
-[Overall aesthetic approach]
 
-### Color Palette
-[Primary and secondary colors]
-
-### Reference Images
-[Key visual inspirations]
+- **Visual style**: [the overall look, in words]
+- **Colour palette**: [primary and secondary colours]
+- **References**: [the games, films, or images the look draws from]
 
 ## Audio Direction
-### Music Style
-[Genre, mood, instrumentation]
 
-### Sound Design
-[Approach to sound effects and audio feedback]
+- **Music**: [genre, mood, instrumentation]
+- **Sound design**: [how sound gives the player feedback]
 
 ## Technical Requirements
-### Performance Targets
-- Frame Rate: [Target FPS]
-- Memory Usage: [Limits]
-- File Size: [Distribution constraints]
 
-### Platform Considerations
-[Platform-specific requirements or limitations]
+- **Performance targets**: [frame rate, memory, and download size per platform]
+- **Platform constraints**: [what each platform rules out or requires]
 
-## Analytics Framework
+## Analytics
 
-### Core Metrics
-**Engagement Metrics**:
-- Session Length: [Target duration]
-- Retention: [Day 1, Day 7, Day 30 targets]
-- User Actions: [Key events to track]
+<!-- What the game measures, so the Success Metrics below can be checked. The analytics setup document owns event definitions. -->
 
-**Performance Metrics**:
-- Frame Rate: [Target FPS]
-- Load Times: [Maximum acceptable]
-- Crash Rate: [Quality threshold]
-
-**Business Metrics** (if applicable):
-- Downloads/Installs: [Growth targets]
-- Revenue: [Monetization goals]
-- User Acquisition Cost: [Marketing efficiency]
-
-### Telemetry Plan
-**Data Collection Points**:
-- Player progression milestones
-- Feature usage and adoption
-- Performance bottlenecks
-- User experience friction points
-
-**A/B Testing Framework**:
-- Core mechanics variations
-- UI/UX alternatives
-- Difficulty curve adjustments
-- Monetization optimization
-
-## Engine-Specific Implementation
-*Technical requirements for [Engine]*
-
-### Engine Best Practices
-[Engine-specific guidelines and patterns]
-
-### Performance Targets
-[Engine-specific optimization goals]
-
-### Platform Considerations
-[Engine and platform-specific requirements]
+- **Questions the data answers**: [e.g. where players quit, which mechanic they use most]
 
 ## Success Metrics
-### Player Engagement
-[How we measure if the game is fun]
 
-### Technical Performance
-[Measurable technical goals]
+<!-- This document owns these targets; the analytics setup and feature specs cite them. -->
 
-### Business Goals
-[If applicable - downloads, retention, etc.]
+- **Player engagement**: [session length, retention on day 1, 7, and 30]
+- **Technical performance**: [crash rate, load time — frame rate is under Technical Requirements]
+- **Business goals**: [downloads, revenue — delete when not applicable]
 
 ## Open Questions
 <!-- Delete the section when none are open. -->

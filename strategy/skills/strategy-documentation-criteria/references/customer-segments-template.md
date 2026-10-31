@@ -1,11 +1,12 @@
 # Customer Segments: [Product/Industry]
 
 **Date**: [current date]
-**Analyst**: Market Analyst Agent
 **Segmentation approach**: [Behavioral / Psychographic / Value-Based / JTBD / Hybrid]
 **Rationale for approach**: [why this approach fits this business]
 
 ## [Primary segment] represents the highest-value opportunity with [X]% of SAM and [key characteristic]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Segment 1: "[Name]" — Priority: HIGH
 

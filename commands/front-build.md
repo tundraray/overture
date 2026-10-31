@@ -48,16 +48,16 @@ Before any task processing, locate the work plan. This recipe is the **frontend*
 5. **Verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of backend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed frontend signal is required.
 
    **Frontend signals (need at least one)**:
-   - `## Related Documents` references a UXRD (`docs/features/*/uxrd.md`), or the plan has a `## UXRD Component → Task Mapping` section
+   - `## Related Documents` references a UXRD (`docs/features/*/uxrd.md`), or the plan has a `UXRD Component → Task Mapping` section
    - Target Files match frontend markers exclusively: `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`, or the project's frontend-equivalent paths declared in the `technical-spec` skill
    - The governing design describes component hierarchy, screen states, or UI interactions
    - The part name identifies the layer (`ui`, `frontend`, `web`, or a screen name)
-   - Plan title, `## Objective`, or `## Background` explicitly identifies the work as frontend
+   - Plan title or Snapshot explicitly identifies the work as frontend
 
    **Backend signals (any one disqualifies, even alongside a frontend signal)**:
    - Target Files exclusively under `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`
    - The governing design describes API endpoints, data schemas, or persistence with no rendering surface
-   - Title or objective mentioning API endpoints, database migrations, or server-side work
+   - Title or Snapshot mentioning API endpoints, database migrations, or server-side work
 
    **Decision**: at least one frontend signal AND zero backend signals → proceed. Otherwise stop and report which signals were checked and their results, then ask for an explicit plan path.
 

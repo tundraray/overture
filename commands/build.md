@@ -53,17 +53,17 @@ Before any task processing, locate the work plan. This recipe is the **backend**
 5. **Verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of frontend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed backend signal is required.
 
    **Backend signals (need at least one)**:
-   - Target Files under `## Impact Scope > ### Target Files` match backend markers exclusively: `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`, or the project's backend-equivalent paths declared in the `technical-spec` skill
+   - The Target Files of the plan's tasks match backend markers exclusively: `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`, or the project's backend-equivalent paths declared in the `technical-spec` skill
    - The governing design describes API endpoints, data schemas, persistence, or service boundaries
    - The part name identifies the layer (`api`, `backend`, `service`, `migration`)
-   - Plan title, `## Objective`, or `## Background` explicitly identifies the work as backend
+   - Plan title or Snapshot explicitly identifies the work as backend
 
    **Frontend signals (any one disqualifies, even alongside a backend signal)**:
    - `## Related Documents` pointing to a UXRD (`docs/features/*/uxrd.md`)
-   - A `## UXRD Component → Task Mapping` section
+   - A `UXRD Component → Task Mapping` section
    - Target Files exclusively under `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`
    - The governing design describes component hierarchy, screen states, or UI interactions
-   - Title or objective mentioning React, UI components, or screens
+   - Title or Snapshot mentioning React, UI components, or screens
 
    **Decision**: at least one backend signal AND zero frontend signals → proceed. Otherwise stop and report which signals were checked and their results, then ask for an explicit plan path.
 

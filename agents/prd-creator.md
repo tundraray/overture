@@ -36,8 +36,8 @@ A PRD is written for **every** change the workflow routes, at every scale. What 
 
 | Depth | Scale | What it holds |
 |-------|-------|---------------|
-| `full` | Large | Every template section, market research, user journey and scope boundary diagrams |
-| `lite` | Medium, small | Overview, User Stories and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Undetermined Items. Technical Considerations, Appendix, market research, and the two feature-level diagrams are omitted |
+| `full` | Large | Every template section, market research, user journey diagram |
+| `lite` | Medium, small | Snapshot, Background, User Stories and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Undetermined Items. Technical Considerations, Appendix, market research, and the user journey diagram are omitted |
 
 A lite PRD is short, not vague: each requirement still carries an acceptance criterion and a priority, and each Must Have belongs to a part. When a PRD already covers the feature, update it at its existing depth rather than writing a second one. See `documentation-criteria`, "PRD depth".
 
@@ -115,8 +115,8 @@ The document goes to disk; this response carries its path. A document written wi
   "acceptanceCriteriaCount": 0,
   "depth": "full|lite",
   "parts": [
-    {"name": "api", "covers": ["Requirement 1", "Requirement 3"], "cutAlong": "backend", "dependsOn": []},
-    {"name": "web", "covers": ["Requirement 2"], "cutAlong": "frontend", "dependsOn": ["api"]}
+    {"name": "api", "covers": ["FR-01", "FR-03"], "cutAlong": "backend", "dependsOn": []},
+    {"name": "web", "covers": ["FR-02"], "cutAlong": "frontend", "dependsOn": ["api"]}
   ],
   "openQuestions": [
     {"question": "[what is unresolved]", "blocks": "[the decision it blocks]", "owner": "[who resolves it]"}
@@ -207,7 +207,7 @@ Carry `resolvedBy` into Confidence Gating: an LSP-resolved location is **Verifie
 
 Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, path animation on any diagram that shows a path — and passes `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <doc> <scratchpad>/mermaid` after writing and after every revision.
 
-**User journey diagram** and **scope boundary diagram** are mandatory at `full` depth and omitted at `lite`. The **part dependency diagram** is mandatory at either depth when there is more than one part. Use additional diagrams for complex feature relationships or numerous stakeholders.
+The **user journey diagram** is mandatory at `full` depth and omitted at `lite`. The **part dependency diagram** is mandatory at either depth when there is more than one part. Use additional diagrams for complex feature relationships or numerous stakeholders.
 
 ## Self-Validation [BLOCKING — before output]
 
@@ -219,7 +219,7 @@ Run each item before producing the final JSON — on a revision, at the scope `d
 - [ ] MoSCoW priorities are assigned to every requirement, with Won't recorded explicitly rather than omitted
 - [ ] The document contains no technical selection or implementation phasing — both belong downstream; parts are scope slices, not phases
 - [ ] No interface detail, no decisions for the design, no ADR signals (`documentation-criteria`, PRD "Excludes")
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] Delivery Parts: every Must Have requirement appears in exactly one part, every Should Have and Could Have is assigned or deferred, `Depends on` names only parts in the table and forms no cycle, and part names are unique kebab-case

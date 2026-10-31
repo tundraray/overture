@@ -16,7 +16,7 @@ You are a **McKinsey Engagement Manager** responsible for synthesizing multiple 
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
@@ -101,30 +101,11 @@ Don't just concatenate. Create narrative flow:
 
 ### Step 3: Formulate Recommendation
 
-Based on all evidence, formulate:
-
-```yaml
-Recommendation: "Go | No-Go | Pivot | Conditional Go"
-Confidence: "High | Medium | Low"
-Key_Condition: "[if Conditional Go, what must be true]"
-Reasoning: "[3 sentences max]"
-Biggest_Risk: "[the one thing most likely to derail this]"
-```
+From all the evidence, decide the recommendation (Go, No-Go, Pivot, or Conditional Go), how confident it is, the condition that must hold when it is conditional, and the single risk most likely to derail it. These fill the template's Executive Summary: the recommendation line, the plain-sentence summary, and Critical Risk.
 
 ### Step 4: Create Action Plan
 
-Prioritize across all agents' recommended next steps:
-
-```yaml
-Immediate (Week 1-2):
-  - "[action]" — Owner: [role] — Goal: [outcome]
-
-Short-term (Month 1-3):
-  - "[action]" — Owner: [role] — Goal: [outcome]
-
-Medium-term (Month 3-6):
-  - "[action]" — Owner: [role] — Goal: [outcome]
-```
+Prioritize the next steps all agents recommended into the template's action buckets — Do Now, Do Next, Defer, and Kill — each action with an owner and the outcome it aims for. The first few Do Now actions also fill the Executive Summary's Immediate Next Steps.
 
 ### Step 5: Quality Check
 
@@ -136,6 +117,7 @@ Apply checklist from `references/deliverable-standards.md`:
 - No vague language (no "some", "many", "significant")
 - Numbers are specific
 - Every section has "So what?" and "Now what?"
+- A cold reader can follow it: Overview first, sentences not telegrams, terms explained (`strategy-documentation-criteria`, "Writing for the Reader")
 
 ### Step 6: Write Final Report
 
@@ -143,146 +125,7 @@ Write to `docs/strategy/strategic-report.md`.
 
 ## Output Document: docs/strategy/strategic-report.md
 
-```markdown
-# Strategic Analysis Report: [Product/Business Name]
-
-**Date**: [current date]
-**Prepared by**: Strategy Overture Analysis Suite
-**Confidence Level**: [High/Medium/Low]
-
----
-
-## Executive Summary
-
-**Recommendation**: [GO / NO-GO / PIVOT / CONDITIONAL GO]
-
-[2-3 sentence synthesis of the strategic situation and recommendation]
-
-### Key Findings
-1. [Finding with action title — complete sentence]
-2. [Finding with action title — complete sentence]
-3. [Finding with action title — complete sentence]
-
-### Critical Risk
-[The single biggest risk, in one sentence]
-
-### Immediate Next Steps
-1. [Action] — [Owner] — [Timeline]
-2. [Action] — [Owner] — [Timeline]
-3. [Action] — [Owner] — [Timeline]
-
----
-
-## 1. Business Context
-[Synthesized from context-brief.md]
-
-## 1.5. AJTBD Analysis
-[Synthesized from rat.md + segments.md + jobs-graph.md]
-### Core Job & Job Hierarchy
-### Job-Based Segments (Top 5)
-### Critical Job Sequence
-### Top Risky Assumptions (RAT)
-
-## 2. Market Landscape
-[Synthesized from market-analysis.md]
-### Market Size & Growth (TAM/SAM/SOM)
-### Industry Trends & Drivers
-
-## 3. Competitive Landscape
-[Synthesized from competitive-landscape.md]
-### Industry Structure (Porter's Five Forces)
-### Key Competitors
-### Perceptual Positioning
-### SWOT & Strategic Responses (TOWS)
-
-## 4. Customer Segments
-[Synthesized from customer-segments.md]
-### Primary Segment
-### Secondary Segments
-### Segment Prioritization
-
-## 5. Strategic Positioning
-[Synthesized from strategy-canvas.md + brand-positioning.md]
-### Blue Ocean Opportunity
-### Value Proposition
-### Growth Direction (Ansoff/BCG)
-### Brand Positioning & Statement
-### Competitive Moat
-
-## 6. Business Model
-[Synthesized from business-model.md]
-### Canvas Summary
-### Revenue Model
-### Unit Economics
-### Innovation Metrics & PMF Status
-
-## 7. Go-to-Market Strategy
-[Synthesized from gtm-plan.md]
-### Ideal Customer Profile
-### Messaging Framework
-### Channel Strategy
-### Partnership Strategy
-### Content Strategy
-### Launch Plan
-
-## 8. Pricing Strategy
-[Synthesized from pricing-analysis.md]
-### Value Assessment & 10:1 Check
-### Tier Structure
-### Competitive Pricing Position
-
-## 9. Growth Strategy
-[Synthesized from growth-plan.md]
-### Funnel Analysis (AARRR)
-### North Star Metric
-### Growth Experiments (Top 5)
-### 90-Day Growth Plan
-
-## 10. Aggregated Risk Assessment
-[Risks from ALL 14 documents, deduplicated and ranked]
-| # | Risk | Source | Probability | Impact | Mitigation |
-|---|------|--------|------------|--------|-----------|
-
-## 11. Prioritized Action Plan
-[Based on prioritized-initiatives.md]
-### Do Now (Week 1-4)
-### Do Next (Month 2-3)
-### Defer (Month 3-6)
-### Kill (Not recommended)
-
-## 12. Product Execution Plan
-[Synthesized from opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md]
-### Opportunity Map Summary
-### Feature Overview (count, Kano distribution)
-### Roadmap (Now/Next/Later with key features)
-### MVP Scope & Validation Plan
-
-## 13. Appendix
-### Source Documents Index
-| # | Document | Agent | Key Contribution |
-|---|----------|-------|-----------------|
-| 1 | context-brief.md | context-analyzer | Business definition |
-| 2 | rat.md | product-analyst | RAT risk analysis |
-| 3 | segments.md | product-analyst | AJTBD job-based segments |
-| 4 | jobs-graph.md | product-analyst | Critical job sequence |
-| 5 | market-analysis.md | market-analyst | TAM/SAM/SOM |
-| 6 | competitive-landscape.md | market-analyst | Competitor intelligence |
-| 7 | customer-segments.md | market-analyst | Segment prioritization |
-| 8 | strategy-canvas.md | strategy-architect | Blue Ocean + growth direction |
-| 9 | brand-positioning.md | strategy-architect | Positioning strategy |
-| 10 | business-model.md | business-modeler | Canvas + unit economics |
-| 11 | gtm-plan.md | gtm-planner | Go-to-market execution |
-| 12 | pricing-analysis.md | gtm-planner | Pricing strategy |
-| 13 | growth-plan.md | growth-strategist | Growth experiments |
-| 14 | prioritized-initiatives.md | growth-strategist | Master priority list |
-| 15 | opportunity-map.md | product-planner | Opportunity Solution Tree |
-| 16 | features/*.md | product-planner | Feature specifications |
-| 17 | product-roadmap.md | product-planner | Now/Next/Later roadmap |
-| 18 | mvp-definition.md | product-planner | MVP scope + validation |
-
-### Assumptions Register
-### Methodology Notes
-```
+Follow `strategic-report-template.md` — its section order is the report's order — and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ## When NOT to Use This Agent
 

@@ -1,11 +1,10 @@
 # Business Context Brief
 
 **Date**: [current date]
-**Analyst**: Context Analyzer Agent
 **Status**: [Draft — Pending User Confirmation]
 
 ## Executive Summary
-[2-3 sentences capturing the business essence. Lead with the answer.]
+[Overview: three to five plain sentences capturing the business essence, leading with the answer]
 
 ## Business Definition
 

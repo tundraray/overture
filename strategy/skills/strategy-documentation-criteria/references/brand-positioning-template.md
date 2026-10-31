@@ -1,10 +1,11 @@
 # Brand Positioning: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Strategy Architect Agent
 **Confidence**: [High / Medium / Low]
 
 ## [Positioning recommendation as action title — e.g., "Position as category creator in [space] targeting [segment]"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Perceptual Positioning Map
 

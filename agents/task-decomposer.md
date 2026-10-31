@@ -125,14 +125,6 @@ See task template in documentation-criteria skill for details.
 Generation Date: [Date/Time]
 Target Plan Document: [Plan document filename]
 
-## Project Overview
-
-### Purpose and Goals
-[What we want to achieve with entire work]
-
-### Background and Context
-[Why this work is necessary]
-
 ## Task Division Design
 
 ### Division Policy
@@ -274,4 +266,5 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Task dependencies are explicit; two tasks touching the same files are ordered rather than left concurrent
 - [ ] Every work plan item is covered by a task, or its absence is recorded
 - [ ] Every file written appears in `documents` — a task file written but not reported is one the executor never runs
+- [ ] Task text is in the plan's language and reads as sentences, not telegrams (`documentation-criteria`, "Writing for the Reader"); values copied verbatim stay verbatim
 

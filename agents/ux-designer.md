@@ -482,16 +482,16 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 
 Run each item before producing the final JSON — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every PRD acceptance criterion with a user-visible surface appears in AC Traceability, or is explicitly marked out of UX scope
+- [ ] Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state, or listed in Acceptance Criteria Outside UX Scope with the reason; `acTraceability` reports the same
 - [ ] Every Component Inventory row links a spec that exists in `docs/design-system/components/`, and `new` states what was searched and why nothing fit
 - [ ] Each new or extended spec covers the states the component can reach — default, loading, empty, error, partial — with unreachable ones deleted
 - [ ] No component spec content (states, variants, per-component accessibility) is inside the UXRD
 - [ ] Design-system files contain no code, and cite the brand book or external design system instead of restating it
 - [ ] Accessibility requirements name a level and the specific behavior, not a general commitment
 - [ ] The document contains no technical implementation detail — that belongs to the Design Doc
-- [ ] Nothing from the PRD is restated: no summary or background retold, no AC text in AC Traceability, no use case retold in a flow — each is cited by ID, and every flow names the UC ids it implements
-- [ ] Glossary and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader")
+- [ ] Nothing from the PRD is restated: no summary or background retold, no AC or use case text retold in a flow or a screen — each is cited by ID, and every flow names the UC and AC ids it implements
+- [ ] Terms and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
 - [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")

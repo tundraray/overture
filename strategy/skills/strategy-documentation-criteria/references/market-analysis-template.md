@@ -1,12 +1,11 @@
 # Market Analysis: [Product/Industry]
 
 **Date**: [current date]
-**Analyst**: Market Analyst Agent
 **Confidence**: [High / Medium / Low]
 
 ## The [industry] market is [growing/stable/declining] at [X]% CAGR, representing a $[X]B opportunity with [key characteristic]
 
-[Executive summary paragraph: market attractiveness verdict, key finding, primary implication]
+[Overview: market attractiveness verdict, key finding, primary implication — in plain sentences]
 
 ## Market Size & Growth
 

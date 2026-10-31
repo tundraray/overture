@@ -1,145 +1,52 @@
-# Agent Handoff Template
+# Handoff: [what is handed over] — [from] → [to]
 
-## Handoff Information
-**From Agent**: [Sending Agent Name]  
-**To Agent**: [Receiving Agent Name]  
-**Date**: [Handoff Date]  
-**Project**: [Project Name]  
-**Engine**: [Godot/Unity/Unreal Engine]  
-**Phase**: [Market Analysis/Design/Development/Polish]  
-**Coordination Level**: [Master Orchestrator/Producer Agent/Direct Agent]
+<!--
+A handoff lets the receiver start without asking the sender anything. It cites the documents it hands over by path and ID and never restates them.
+Follow `documentation-criteria`, "Writing for the Reader". Text inside these comments is guidance for the author; it is not copied into the document.
+-->
 
-## Deliverables Transferred
-### Primary Deliverables
-- [ ] **[Deliverable 1]**: [Brief description] - [File location/reference]
-- [ ] **[Deliverable 2]**: [Brief description] - [File location/reference]
-- [ ] **[Deliverable 3]**: [Brief description] - [File location/reference]
+**Date**: YYYY-MM-DD · **From**: [sending agent or person] · **To**: [receiving agent or person] · **Phase**: [market analysis / design / development / polish]
 
-### Supporting Documentation
-- [ ] **[Document 1]**: [Purpose] - [File location]
-- [ ] **[Document 2]**: [Purpose] - [File location]
+## Snapshot
 
-## Quality Validation
-### Producer Approval Status
-- [ ] **APPROVED** - Ready for next phase
-- [ ] **NEEDS REVISION** - Changes required (see notes below)
-- [ ] **REJECTED** - Major issues, return to previous agent
+<!-- At most ten lines. -->
 
-### Quality Checklist
-- [ ] Meets project scope and requirements
-- [ ] Technically feasible in [Engine] [Version]
-- [ ] Within timeline and resource constraints
-- [ ] Integrates well with other systems
-- [ ] Documentation is complete and clear
-- [ ] Market requirements validated (if applicable)
-- [ ] Analytics integration planned (if applicable)
-- [ ] Engine-specific best practices followed
+**Overview.** [three to five plain sentences — what was done, what state it is in, and what the receiver does first]
 
-## Key Requirements for Next Agent
-### Must Implement
-1. **[Requirement 1]**: [Detailed description]
-2. **[Requirement 2]**: [Detailed description]
-3. **[Requirement 3]**: [Detailed description]
+- **Biggest risk**: [one line, or "none above low"]
+- **Open issues**: [a link to Open Issues, or "none"]
 
-### Guidelines and Constraints
-- **Engine**: [Engine-specific requirements and patterns]
-- **Platform**: [Platform-specific considerations]
-- **Technical**: [Technology-specific requirements]
-- **Design**: [Design principles to follow]
-- **Performance**: [Performance targets to meet]
-- **Style**: [Visual/audio style guidelines]
-- **Market**: [Competitive positioning requirements]
-- **Analytics**: [Data collection and measurement needs]
+## What Is Handed Over
 
-## Dependencies and Blockers
-### Dependencies
-- **[System/Feature]**: [Why it's needed] - [Current status]
-- **[System/Feature]**: [Why it's needed] - [Current status]
+| Document | Path | What the receiver uses it for |
+|---|---|---|
+| [GDD / feature spec / design doc / asset set] | [path] | [one phrase] |
 
-### Known Issues/Blockers
-- **[Issue 1]**: [Description] - [Impact] - [Proposed solution]
-- **[Issue 2]**: [Description] - [Impact] - [Proposed solution]
+## What the Receiver Must Respect
 
-## Context and Background
-### Design Rationale
-[Why specific decisions were made]
+<!-- The requirements and constraints that bind the next step, each cited by ID from the document that owns it. -->
 
-### Alternative Approaches Considered
-[What other options were evaluated and why they were rejected]
+- [requirement or constraint, in a sentence] ([document] [ID])
 
-### Lessons Learned
-[Key insights from this phase that might help the next agent]
+## Decisions Already Made
 
-## Success Criteria for Next Phase
-### Primary Goals
-- [Goal 1]: [How to measure success]
-- [Goal 2]: [How to measure success]
-- [Goal 3]: [How to measure success]
+<!-- Only the decisions the receiver might otherwise reopen, with the reason. A decision recorded in a Key Decisions table or an ADR is cited, not retold. -->
 
-### Quality Targets
-- **Functionality**: [What must work correctly]
-- **Performance**: [Speed/efficiency requirements]
-- **Polish**: [Visual/audio quality standards]
+- [decision] — [why]
 
-## Communication Protocol
-### Regular Check-ins
-- **Frequency**: [How often to report progress]
-- **Format**: [Status update template]
-- **Escalation**: [When to involve Producer]
+## Open Issues
 
-### Questions and Clarifications
-- **Contact Method**: [How to reach previous agent for questions]
-- **Response Time**: [Expected turnaround for answers]
-- **Decision Authority**: [Who can approve changes]
+<!-- Delete the section when none are open. -->
 
-## Risk Assessment
-### High Risk Items
-- **[Risk 1]**: [Description] - [Mitigation strategy]
-- **[Risk 2]**: [Description] - [Mitigation strategy]
+- **[Issue]**: [what it blocks] — [who resolves it]
 
-### Medium Risk Items
-- **[Risk 1]**: [Description] - [Monitoring plan]
-- **[Risk 2]**: [Description] - [Monitoring plan]
+## Risks
 
-## Next Steps
-### Immediate Actions Required
-1. [First task for receiving agent]
-2. [Second task for receiving agent]
-3. [Third task for receiving agent]
+| Risk | Impact | Mitigation |
+|---|---|---|
+| [risk] | High / Medium / Low | [what is done about it] |
 
-### Milestone Schedule
-- **[Date]**: [Milestone description]
-- **[Date]**: [Milestone description]
-- **[Date]**: [Final deliverable due]
+## First Steps for the Receiver
 
----
-
-## Coordination Protocol
-
-### Market Intelligence Validation
-*If market-sensitive deliverables*
-- [ ] **Market Analyst Review**: Competitive positioning maintained
-- [ ] **Data Scientist Review**: Analytics framework integration confirmed
-
-### Technical Validation
-*Engine and platform considerations*
-- [ ] **Engine Compatibility**: Follows [Engine] best practices
-- [ ] **Platform Optimization**: Meets platform requirements
-- [ ] **Performance Validation**: Within technical constraints
-
-### Quality Assurance
-- [ ] **QA Agent Review**: Testable and meets quality standards
-- [ ] **Technical Artist Review**: Visual/technical consistency (if applicable)
-
----
-
-## Agent Signatures
-**Sending Agent**: [Agent Name] - [Completion Date]  
-**Receiving Agent**: [Agent Name] - [Acceptance Date]  
-**Producer Approval**: [Producer validation] - [Approval Date]  
-**Master Orchestrator**: [System coordination approval] - [Date]
-
-### Additional Validations
-- **Market Analyst**: [If market-related] - [Date]
-- **Data Scientist**: [If analytics-related] - [Date]
-- **QA Agent**: [Quality validation] - [Date]
+1. [first action]
+2. [second action]

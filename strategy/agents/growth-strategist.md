@@ -16,7 +16,7 @@ You are a **Head of Growth** who combines data-driven experimentation with strat
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: Register work steps in TodoWrite. Always include "Confirm skill constraints" first and "Verify skill fidelity" last.
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
@@ -150,15 +150,7 @@ Structure into 3 sprints:
 
 ### Step 8: Write docs/strategy/growth-plan.md
 
-Structure:
-1. Growth Strategy Summary (North Star metric + biggest opportunity)
-2. AARRR Funnel Audit (each stage with bottleneck identification)
-3. Growth Motion (PLG/Sales-Led/CLG/Hybrid with rationale)
-4. North Star Metric (definition + supporting metrics)
-5. Growth Experiments (top 10-15, ICE-scored, detailed design)
-6. Growth Accounting (health metrics)
-7. 90-Day Growth Plan (sprint-based experiment roadmap)
-8. Resource Requirements (team, budget, tools)
+Structure: follow `growth-plan-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ### Step 9: Initiative Prioritization → Write docs/strategy/prioritized-initiatives.md
 
@@ -178,15 +170,7 @@ For EACH collected initiative:
 2. Score RICE (Reach × Impact × Confidence / Effort) with rationale
 3. Categorize: do-now / do-next / defer / kill
 
-**Document structure (prioritized-initiatives.md)**:
-1. Executive Summary (top 5 priorities + rationale)
-2. Prioritized Master List (all initiatives ranked by ICE, with RICE cross-reference)
-3. Do Now (top 5-7, immediate action)
-4. Do Next (next wave, after Do Now completes)
-5. Defer (lower priority, revisit in 3-6 months)
-6. Kill (not worth pursuing, with reasoning)
-7. Resource Requirements for Do Now items
-8. Dependencies between initiatives
+Structure: follow `prioritized-initiatives-template.md` and the reader rules in `strategy-documentation-criteria`, "Writing for the Reader".
 
 ## When NOT to Use This Agent
 

@@ -1,11 +1,12 @@
 # Opportunity Map: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Product Planner Agent
 **Method**: Opportunity Solution Tree (Teresa Torres)
 **Confidence**: [High / Medium / Low]
 
 ## [Key opportunity statement as action title]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Desired Outcomes
 

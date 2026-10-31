@@ -1,12 +1,13 @@
 # Product Roadmap: [Product/Business]
 
 **Date**: [current date]
-**Analyst**: Product Planner Agent
 **Total Features**: [N]
 **MVP Features**: [N Must-Haves]
 **Confidence**: [High / Medium / Low]
 
 ## [Roadmap summary as action title — e.g., "Build in 3 phases: MVP core job completion → growth features → enterprise expansion"]
+
+[Overview: three to five plain sentences — the answer, what it means for the business, the biggest risk or uncertainty]
 
 ## Now (0-6 weeks) — Committed
 
