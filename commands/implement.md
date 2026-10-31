@@ -12,14 +12,14 @@ argument-hint: <feature description>
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (orchestrator role only, no direct implementation)
-2. **Follow workflow-orchestration skill flows exactly**:
+2. **Follow the phase skills' flows exactly** (`workflow-product` → `workflow-technical` → `workflow-execution`):
    - Execute one step at a time in the defined flow (Large/Medium/Small scale)
    - When flow specifies "Execute document-reviewer" → Execute it immediately
    - **Stop at every `[Stop: ...]` marker** → Wait for user approval before proceeding
 3. **Enter autonomous mode** only after the batch approval of the current part's plan
 4. **Drive the parts loop** (see "Parts Loop" below): all parts designed first, then each part planned and built in turn
 
-**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in workflow-orchestration skill flows.
+**CRITICAL**: Execute all steps, sub-agents, and stopping points defined in the phase skills' flows.
 
 ## Required Skills
 
@@ -49,7 +49,7 @@ When continuing existing flow, verify:
 - Latest artifacts (PRD/ADR/Design Doc/Work Plan/Tasks)
 - Current phase position (Requirements/Design/Planning/Implementation/QA)
 - The parts list (the PRD's "Delivery Parts" section), which parts have an approved `design-{part}.md`, and which have a `completed` plan chain — the current part is the first one not finished in the current phase
-- Identify next step in workflow-orchestration skill corresponding flow
+- Identify the next step in the current phase skill's flow
 
 ### 3. Scope Change Detection
 
@@ -79,7 +79,7 @@ scopeDependencies:
 | `confidence: provisional` and any `scopeDependencies[].impact.if_yes` is a higher scale than the reported `scale` | **STOP** — Present the question with its `reason` at the requirement confirmation stop. Do not proceed until answered; a "yes" re-runs requirement-analyzer with the answer |
 | `confidence: provisional` and no answer changes the scale | Proceed, carrying the questions into the PRD's Undetermined Items |
 | `confidence: confirmed` | Proceed normally |
-| `scaleRationale.decidingAxis` is not `files` | State it at the stop: "6 files but routed as Large because this is a breaking contract change" |
+| `scaleRationale.decidingAxis` is not `files` | State it at the stop: "2 files but routed as Large because this is a breaking contract change" |
 
 #### Scope Change Report (presented to user at stop points)
 
@@ -101,7 +101,7 @@ scopeDependencies:
 
 ### 4. Next Action Execution
 
-**MANDATORY workflow-orchestration skill reference**:
+**MANDATORY phase skill reference** (the skill for the phase you are in):
 - Verify scale-based flow (Large/Medium/Small scale)
 - Confirm autonomous execution mode conditions
 - Recognize mandatory stopping points
@@ -118,7 +118,7 @@ scopeDependencies:
 ## Subagents Orchestration Guide Compliance Execution
 
 **Pre-execution Checklist (MANDATORY)**:
-- [ ] Confirmed relevant workflow-orchestration skill flow
+- [ ] Confirmed the current phase skill's flow
 - [ ] Identified current progress position
 - [ ] Clarified next step
 - [ ] Recognized stopping points
@@ -152,94 +152,19 @@ The parts list confirmed in the product phase — the PRD's Delivery Parts secti
 
 Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`prd-creator` in `update` mode and PRD re-approval).
 
-### Commit Strategy Selection (MANDATORY before implementation)
+### Execution Phase (per part)
 
-**After PRD approval and before the first part's batch approval**, ask user:
+`workflow-execution` owns every step below; follow it there rather than from memory:
 
-"Which commit strategy do you prefer?"
-- **per-task** (default) — Commit after each task. Atomic commits, easy rollback
-- **per-phase** — Commit after each phase completes. Balanced granularity
-- **per-feature** — Single commit at the end. Clean history
-- **manual** — You decide when to commit. Full control
+- **Commit strategy** — asked once per feature, after PRD approval and before the first part's batch approval ("Commit Strategy Selection")
+- **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
+- **Post-Implementation Verification** — the three verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed
+- **Final Cleanup** — the consumed task directory is deleted and `work-planner` (`update` mode) sets the plan `completed`
+- **Test skeleton paths** reach the planner per part — `workflow-orchestration`, "Main Orchestrator Roles"
 
-Store selected strategy for autonomous execution mode.
-
-### Task Execution Quality Cycle (per Task)
-
-**Per-task cycle** (complete each task before starting next):
-```
-1. task-executor → Implementation
-2. Escalation judgment → Check task-executor status
-3. quality-fixer → Quality check and fixes
-4. [Conditional] git commit → Based on selected commit strategy
-```
-
-**Rules**:
-1. Execute ONE task completely before starting next
-2. Check task-executor status before quality-fixer (escalation check)
-3. quality-fixer MUST run after each task-executor (no skipping)
-4. Commit execution depends on strategy (see the `workflow-execution` skill)
-
-**Step 2 branch conditions**:
-- `status: escalation_needed` or `status: blocked` → escalate to user
-- `testsAdded` contains `*.int.test.ts` or `*.e2e.test.ts`, or the task reports `requiresTestReview: true` → run **integration-test-reviewer** before quality-fixer. `needs_revision` → return to task-executor in Fix Mode with `requiredFixes`, then the reviewer again; `approved` → proceed to quality-fixer.
-- quality-fixer `stub_detected` → return to task-executor in **Fix Mode** with `incompleteImplementations[]`, then quality-fixer again; never commit on it (diagram: `workflow-execution`, "The Per-Task Cycle")
-
-**Commit by strategy**:
-- **per-task**: Commit when quality-fixer returns `approved: true`
-- **per-phase**: Accumulate, commit when phase completes
-- **per-feature**: Accumulate all, single commit at end
-- **manual**: Wait for user to request commit
-
-**Violations**:
-- ✗ Skipping escalation check
-- ✗ Skipping quality-fixer
-- ✗ Committing without asking strategy first
-
-### Post-Implementation Verification
-
-The per-task quality cycle checks tasks in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After all tasks complete and before generating the final completion report:
-
-1. **Invoke the verifiers in parallel** (single message, three Task tool calls):
-
-   | Agent | Prompt inputs |
-   |-------|---------------|
-   | `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths` from `git diff --name-only main...HEAD` |
-   | `security-reviewer` | Design Doc path, same modified-file list |
-   | `test-auditor` | `testPaths`: the test files in the same diff; Design Doc path — advisory, never a gate: findings go to the completion report, never into `requiredFixes` |
-
-   Append to each prompt: `[SYSTEM CONSTRAINT] This agent operates within implement command scope.`
-
-2. **Apply pass/fail criteria** from the `workflow-execution` skill, "Post-Implementation Verification" section:
-   - `code-verifier`: `consistent` / `mostly_consistent` = pass; `needs_review` / `inconsistent` = fail
-   - `security-reviewer`: `approved` / `approved_with_notes` = pass; `needs_revision` = fail; `blocked` → **STOP immediately**, report credentials/critical vulnerability, do NOT commit
-
-3. **Fix cycle** (any verifier failed, max 2 cycles):
-   - Normalize the verifiers' output into a single `requiredFixes[]` per the skill's normalization rules
-   - `task-executor` in **Fix Mode** (no task file; `Design Doc: [path]`) → `quality-fixer` → commit per strategy → re-run **only** the failed verifiers
-   - No progress in a cycle, or findings remaining after cycle 2 → escalate to user
-
-4. **All passed** → include any `approved_with_notes` security notes in the completion report and proceed to Final Cleanup.
-
-### Final Cleanup
-
-Before the completion report, delete the task directory this run consumed. Its work is committed; `docs/features/{feature}/{part}/{plan-name}/` is ephemeral working state and is not retained between runs.
-
-- Delete the whole task directory `docs/features/{feature}/{part}/{plan-name}/`, including `task-*.md`, `_overview.md`, `analysis/`
-- **Preserve** the plan file `docs/features/{feature}/{part}/{plan-name}.md`, and have **work-planner** (`update` mode) set its frontmatter `status` to `completed` so the next run resolves the following plan in the chain — the orchestrator does not edit the plan itself
-- **Preserve** every sibling plan and its directory — a part may hold several plans, and only the one this run executed is finished
-- When this run drove several parts, repeat the above per part rather than deleting the feature directory
-- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` — those are durable artifacts, not working state
-
-If deletion fails (filesystem error), report the failure but do not block the completion report.
-
-### Test Information Communication
-After acceptance-test-generator execution, when calling work-planner, communicate:
-- Generated integration test file path
-- Generated E2E test file path
-- Explicit note that integration tests are created simultaneously with implementation, E2E tests are executed after all implementations
+Append `[SYSTEM CONSTRAINT] This agent operates within implement command scope.` to each verifier prompt as well.
 
 ## Execution Method
 
 All work is executed through sub-agents.
-Sub-agent selection follows workflow-orchestration skill.
+Sub-agent selection follows the phase skills.

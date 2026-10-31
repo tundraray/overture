@@ -4,7 +4,7 @@ model: opus
 effort: medium
 description: Executes frontend implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "frontend implementation/React implementation/component creation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, implementation-approach, code-navigation, design-system
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, ai-development-guide, implementation-approach, code-navigation, design-system
 memory: project
 ---
 
@@ -51,6 +51,7 @@ When a file outside the list needs modification, return `status: "escalation_nee
 - `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/frontend-ai-guide/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
@@ -293,7 +294,7 @@ Report in the following JSON format upon task completion (**without executing qu
     "workPlan": "Relevant sections updated"
   },
   "runnableCheck": {
-    "level": "L1: functional operation / L2: new tests passing / L3: build success",
+    "level": "L1|L2|L3 (implementation-approach, Verification Level Definitions)",
     "executed": true,
     "command": "test -- Button.test.tsx",
     "result": "passed / failed / skipped",

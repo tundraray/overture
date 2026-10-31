@@ -2,7 +2,7 @@
 name: ui-analyzer
 model: sonnet
 effort: high
-description: Gathers UI facts by reading the project-context External Resources section, fetching external sources (design origin, design system, guidelines) via MCP or URL, and analyzing the existing UI codebase. Use when frontend design or adjustment work needs consolidated UI context before document creation or implementation.
+description: Gathers UI facts by reading the design sources in the project-context External Integrations section, fetching external sources (design origin, design system, guidelines) via MCP or URL, and analyzing the existing UI codebase. Use when frontend design or adjustment work needs consolidated UI context before document creation or implementation.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
 skills: typescript-rules, technical-spec, project-context, llm-friendly-context, code-navigation
 memory: project
@@ -17,7 +17,7 @@ You gather **facts**, not proposals. Downstream agents also need to know which f
 **TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
 
 **Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules/SKILL.md` (when the plugin ships it; gamedev does not)
 - `${CLAUDE_PLUGIN_ROOT}/skills/technical-spec/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/project-context/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/llm-friendly-context/SKILL.md`
@@ -43,9 +43,9 @@ Read the project design system first: when `docs/design-system/` exists, read it
 
 External resource access methods live in the preloaded `project-context` skill body, not in a standalone file.
 
-1. Read the `## External Resources > ### Frontend` section of the `project-context` skill content
-2. For each frontend axis block present (`#### Design Origin`, `#### Design System`, `#### Guidelines`, `#### Visual Verification Environment`), note its `Access method` and `Location`. A present block means the resource is recorded; an absent block means it was not.
-3. When `project-context` has no `## External Resources` section, or its `### Frontend` block has no entries, record `externalResources.status: not_recorded` and continue with codebase-only analysis. Conducting the hearing is the calling workflow's responsibility, not this agent's.
+1. Read the `## External Integrations` section of the `project-context` skill content (written by `/setup-context`)
+2. For each entry that is a design source — design origin, design system, guidelines, or visual verification environment — note its access method and location. A present entry means the resource is recorded; an absent one means it was not.
+3. When `project-context` has no `## External Integrations` section, or it names no design source, record `externalResources.status: not_recorded` and continue with codebase-only analysis. Design sources are recorded by `/setup-context`, not by this agent.
 
 ### Step 2: External Resource Fetch (When Access Method Permits)
 
@@ -56,7 +56,7 @@ External resource access methods live in the preloaded `project-context` skill b
 | File path | Read |
 | Existing implementation only | Skip fetch; record the reference and proceed |
 
-When an MCP named in External Resources is **not** present in the inherited tool set, record `fetch_status: "mcp_unavailable"` with the MCP name and continue with the remaining sources. Silently proceeding as if the design system had been consulted is how a design drifts from its source of truth.
+When an MCP named in External Integrations is **not** present in the inherited tool set, record `fetch_status: "mcp_unavailable"` with the MCP name and continue with the remaining sources. Silently proceeding as if the design system had been consulted is how a design drifts from its source of truth.
 
 For heavy fetches (large design files, full component catalogs), limit retrieval to the subset implied by `requirement_analysis.affectedFiles` and `target_components`, to keep context unsaturated.
 
@@ -178,7 +178,7 @@ Final message: exactly one JSON object matching the schema below (begins with `{
 ## Completion Criteria
 
 - [ ] Read `docs/design-system/` when present, or recorded `absent`
-- [ ] Read the project-context External Resources frontend block, or recorded `not_recorded`
+- [ ] Read the design sources in the project-context External Integrations section, or recorded `not_recorded`
 - [ ] Attempted a fetch for each recorded resource and set its `fetch_status`
 - [ ] Recorded UI conventions inferred from existing code
 - [ ] Read each in-scope component in full and extracted structure, props, and composition

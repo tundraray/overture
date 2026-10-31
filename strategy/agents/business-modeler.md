@@ -154,7 +154,7 @@ Structure: follow `business-model-template.md` and the reader rules in `strategy
   "summary": "Business model viability assessment in one sentence",
   "confidence": "high|medium|low",
   "sourceTier": "Tier used",
-  "outputFile": "docs/strategy/business-model.md",
+  "outputFiles": ["docs/strategy/business-model.md"],
   "canvasType": "lean|bmc",
   "businessStage": "idea|mvp|growth|mature",
   "unitEconomics": {

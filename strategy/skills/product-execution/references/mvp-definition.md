@@ -59,52 +59,6 @@ Is this feature needed to complete the Core Job?
         └── Yes → WON'T-HAVE (this time)
 ```
 
-### MoSCoW Template
-
-```markdown
-## MoSCoW Analysis: [MVP Name]
-
-**Core Job**: [from jobs-graph.md]
-**Target Segment**: [from customer-segments.md]
-**Date**: [current date]
-
-### Must-Have (~60% of effort)
-
-| # | Feature | Job Reference | Why Must-Have | Effort (days) |
-|---|---------|--------------|---------------|--------------|
-| 1 | [feature] | Job [X], Problem [Y] | [Core Job cannot complete without this] | [days] |
-| 2 | [feature] | Job [X], Problem [Y] | [reason] | [days] |
-
-**Must-Have effort total**: [X] days ([Y]% of total)
-
-### Should-Have (~20% of effort)
-
-| # | Feature | Job Reference | Workaround | Effort (days) |
-|---|---------|--------------|-----------|--------------|
-| 1 | [feature] | Job [X] | [manual workaround] | [days] |
-
-**Should-Have effort total**: [X] days ([Y]% of total)
-
-### Could-Have (~20% of effort)
-
-| # | Feature | Job Reference | User Impact if Missing | Effort (days) |
-|---|---------|--------------|----------------------|--------------|
-| 1 | [feature] | Job [X] | [low — users unlikely to notice] | [days] |
-
-**Could-Have effort total**: [X] days ([Y]% of total)
-
-### Won't-Have (this time)
-
-| # | Feature | Why Excluded | When to Revisit |
-|---|---------|-------------|----------------|
-| 1 | [feature] | [scaling concern / not Core Job] | [after X users / after validation] |
-
-**Total MVP effort**: [X] days
-**Must-Have %**: [Y]% (target: ~60%)
-```
-
----
-
 ## Lean MVP Principles
 
 ### MVP Types

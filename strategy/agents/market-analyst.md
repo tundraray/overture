@@ -55,7 +55,7 @@ This agent produces **THREE separate files**:
 | `docs/strategy/competitive-landscape.md` | Competitor profiles, Porter's Five Forces, perceptual maps, SWOT/TOWS |
 | `docs/strategy/customer-segments.md` | Segment definitions, attractiveness scoring, prioritization |
 
-**CRITICAL**: All three files must be created. Never combine these into a single file.
+**CRITICAL**: Create every file the command names — all three in `/strategy-report` and `/analyze-market`, only `competitive-landscape.md` in `/competitive-map`. Never combine these into a single file.
 
 ## Execution Steps
 
@@ -74,7 +74,7 @@ Use WebSearch extensively to gather:
 - Customer behavior patterns — search for "[category] user research", "[category] customer behavior"
 - **Date-stamp all findings**: Reference actual current date. Mark data older than 12 months as "[Potentially outdated — verify]"
 
-**MANDATORY: TrustMRR Research** (https://trustmrr.com/)
+**TrustMRR Research** (https://trustmrr.com/) — for a software or subscription product; skip it for other businesses.
 Use WebFetch to query TrustMRR for the relevant category:
 1. Search for competitors and similar products in the category
 2. Extract verified MRR data, growth rates, revenue multiples
@@ -84,14 +84,14 @@ Use WebFetch to query TrustMRR for the relevant category:
 
 TrustMRR categories to check: AI, SaaS, Developer Tools, Fintech, Marketing, E-commerce, Design Tools, Education, Health & Fitness, and 15+ others.
 
-**Source tagging is mandatory**: Every data point must be tagged Tier 1, 2, or 3. TrustMRR data is Tier 1 (Stripe-verified).
+**Source tagging**: Every number a conclusion rests on is tagged Tier 1, 2, or 3 (`strategy-documentation-criteria`, Source Credibility). TrustMRR data is Tier 1 (Stripe-verified).
 
 ### Step 3: Market Sizing → Write docs/strategy/market-analysis.md
 
 Apply hybrid methodology from `references/market-sizing.md`:
 1. Top-down estimate from industry reports
 2. Bottom-up estimate from unit economics
-3. **TrustMRR validation**: Cross-reference with real MRR data from similar startups in the category
+3. **TrustMRR validation** (when TrustMRR applies): Cross-reference with real MRR data from similar startups in the category
 4. Triangulate — if delta >30%, investigate assumptions
 5. PESTLE analysis for relevant macro factors
 
@@ -102,7 +102,7 @@ Structure: follow `market-analysis-template.md` and the reader rules in `strateg
 **Confidence Filtering**: Only report competitive findings with >80% confidence. Tag uncertain findings as "[Low confidence — needs validation]". If a competitor's revenue data is not Tier 1 (TrustMRR/filings), mark it explicitly.
 
 1. **Porter's Five Forces**: Score each force (High/Medium/Low) with evidence
-2. **Competitor Profiles**: Detailed profile for each direct/indirect competitor (use template from references)
+2. **Competitor Profiles**: Detailed profile for each direct/indirect competitor, in the Direct and Indirect Competitors sections of `competitive-landscape-template.md`
 3. **SWOT**: Prioritized (top 3 per quadrant, ranked by impact × actionability)
 4. **TOWS Matrix**: Convert SWOT to strategic actions (SO/WO/ST/WT)
 5. **Perceptual Map**: Position all competitors on two most relevant axes, identify white spaces

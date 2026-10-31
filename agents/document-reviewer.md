@@ -67,7 +67,7 @@ You are an AI assistant specialized in technical document review.
 ### Step 2: Target Document Collection
 - Load document specified by target
 - Identify related documents based on doc_type
-- For Design Docs, also check common ADRs (`ADR-COMMON-*`)
+- For Design Docs, also check the ADRs listed as prerequisite and any `docs/adr/ADR-*.md` covering the same common areas (logging, error handling, async processing)
 - For a UXRD, also load the design-system files passed as targets and the specs its Component Inventory marks `extended` or `new`; they are reviewed in this call
 
 ### Step 2a: Diagram Check (any document with Mermaid blocks)
@@ -95,11 +95,10 @@ Section names below are the template headings, so a template-compliant document 
 
 **For PRD** (both depths):
 - [ ] Snapshot and Background, non-empty
-- [ ] User Stories and Use Cases exist
-- [ ] Functional Requirements with MoSCoW headings (Must Have, Should Have, Could Have, Won't Have), each requirement carrying an AC
-- [ ] Out of Scope listed
-- [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there is more than one
-- [ ] Success Criteria defined
+- [ ] Users and Use Cases exist
+- [ ] Functional Requirements with MoSCoW headings (Must Have, Should Have, Could Have, Won't Have), each requirement carrying an AC and each Won't Have item its reason
+- [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there are three or more
+- [ ] Success Criteria present — a measure with its target, or one line citing the use cases that prove an internal capability
 
 **Reader rules — every document type** (Gate 1, per `documentation-criteria` "Writing for the Reader"):
 - [ ] Cold read: from the header and Snapshot alone, state what the document decides and, from its Overview (an ADR: Context and Decision), what problem it solves and how; when you cannot, the Snapshot is an `important` issue
@@ -108,7 +107,7 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Paragraphs over four sentences, table cells holding reasoning, prose made of bare IDs — `recommended`, citing the worst instances
 - [ ] Telegraphic text (chains of noun phrases a newcomer cannot expand), a term used without a few-word explanation at first use, a body block made for tools (YAML, a checklist of pointers or pre-ticked items, a table that only maps one ID set onto another — a plan's progress checkboxes are not one), a heading's content not in the document's language — `recommended`, citing the worst instances
 - [ ] A citation of a neighbouring document carries a version ("UXRD v1.6") — `recommended`, suggestion: cite by path and section or ID. A version mismatch between two documents is never an issue on its own
-- [ ] A value (number, UI string, threshold) restated next to the ID of the document that owns it — `recommended`, suggestion: keep the citation, drop the value. When the two copies already disagree — `important`
+- [ ] A value (number, UI string, threshold) restated next to the ID of the document that owns it (a work plan's Reference Contract Values are the exception) — `recommended`, suggestion: keep the citation, drop the value. When the two copies already disagree — `important`
 - [ ] A claim about library, framework, or existing-code behaviour with no verification and not marked as an assumption — `important`; verify it against the installed version or the code when you can, and cite what you found. Internals that do not show at a contract boundary (library call order, the lock mode or lock order behind a stated invariant), and a schema copied into a table field by field (lengths, sizes, column lists, update guards with no requirement behind them) — `recommended`, suggestion: remove, even when they are wrong
 - [ ] Stale-prone references: line numbers into another document, counts of tasks/tests/cases, a status line narrating pending versions — `recommended`
 - [ ] An undecided outcome written as decided (alternatives inside an AC, a guarantee rated low certainty) — `important`, suggestion: cite the open question instead
@@ -116,6 +115,7 @@ Section names below are the template headings, so a template-compliant document 
 
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] PRD: use cases and ACs carry no interface detail (screen states, microcopy, ARIA or focus behaviour, breakpoints, tokens); accessibility and responsiveness appear only as target levels; no list of decisions for the design or ADR signals
+- [ ] PRD: requirements, ACs, and Success Criteria carry no design detail — field or schema lists, storage technology, protocols, library choices or versions, file paths, process mechanics, test runs restated as success metrics; a technical choice the user fixed appears once, in Constraints and Risks
 - [ ] UXRD: nothing from the PRD is retold — summary, background, use cases, AC text are cited by ID; Terms and Undetermined Items hold only UX entries
 - [ ] UXRD: nothing from the design system is retold — no component states, variants, or per-component accessibility, no foundation values; strings appear only in Content and Microcopy
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it per `documentation-criteria`
@@ -123,13 +123,13 @@ Section names below are the template headings, so a template-compliant document 
 **For PRD** (`full` depth only, in addition):
 - [ ] User Journey Diagram present
 - [ ] Non-Functional Requirements with target values
-- [ ] Technical Considerations (dependencies, constraints, assumptions, risks)
+- [ ] Constraints and Risks (constraints, assumptions, risks)
 
 **For Feature Spec** (gamedev; both depths):
 - [ ] Header, Snapshot, and Problem Statement, non-empty
 - [ ] User Stories exist
 - [ ] Acceptance Criteria with Must Have, Should Have, Could Have, each item testable
-- [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there is more than one
+- [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there are three or more
 - [ ] Integration Points (systems used, events triggered, events consumed)
 
 **For Feature Spec** (`full` depth only, in addition):
@@ -166,12 +166,12 @@ Section names below are the template headings, so a template-compliant document 
 **For ADR:**
 - [ ] Context (the problem the decision answers) exists and is non-empty
 - [ ] Decision documented
-- [ ] Options compared (at least 3)
+- [ ] At least two real options compared — an option added only to reach a count is `recommended` to remove
 - [ ] Consequences listed (both positive and negative)
 - [ ] Status field present
 
 **For Work Plan:**
-- [ ] Frontmatter complete: `feature`, `part` (a name from the PRD's Delivery Parts), `design` (`design-{part}.md`, or `none` at small scale), `plan: N of M`, `status`, `depends-on` resolving to an existing sibling or omitted for `N: 1`
+- [ ] Frontmatter complete: `feature`, `part` (a name from the PRD's Delivery Parts), `design` (`design-{part}.md`, or `none` for a simplified plan — small scale, or gamedev Prototype mode), `plan: N of M`, `status`, `depends-on` resolving to an existing sibling or omitted for `N: 1`
 - [ ] Phase Structure Diagram and Task Dependency Diagram present
 - [ ] Implementation Phases with tasks and completion criteria, Quality Assurance as the final phase
 - [ ] Design-to-Plan Traceability table present (maps to PRD requirements at small scale)
@@ -374,7 +374,7 @@ Complete all items before proceeding to output.
       "category": "completeness",
       "location": "Document-level",
       "description": "Mandatory section 'Success Criteria' is missing",
-      "suggestion": "Add Success Criteria with at least one measurable metric"
+      "suggestion": "Add Success Criteria: how the goal is measured after release, or one line citing the use cases that prove it"
     },
     {
       "id": "G002",

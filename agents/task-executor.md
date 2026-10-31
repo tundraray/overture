@@ -52,6 +52,7 @@ The task file plus its declared metadata sections are the source of truth for sc
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- When the project is TypeScript and these files exist: `${CLAUDE_PLUGIN_ROOT}/skills/typescript-rules-backend/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/skills/typescript-testing-backend/SKILL.md`
 
 ### Applying to Implementation
 - Determine layer structure and dependency direction with architecture rules
@@ -297,7 +298,7 @@ Report in the following JSON format upon task completion (**without executing qu
     "workPlan": "Relevant sections updated"
   },
   "runnableCheck": {
-    "level": "L1: functional operation / L2: new tests passing / L3: build success",
+    "level": "L1|L2|L3 (implementation-approach, Verification Level Definitions)",
     "executed": true,
     "command": "Executed test command",
     "result": "passed / failed / skipped",

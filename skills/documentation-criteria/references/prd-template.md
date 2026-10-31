@@ -2,8 +2,9 @@
 
 <!--
 Depth: `full` | `lite` — set by scale (documentation-criteria, "PRD depth"). Sections marked (full depth) are omitted in a lite PRD.
-The PRD says what the user achieves, not what the screen looks like. Screen states, microcopy, ARIA and focus behaviour, breakpoints,
-tokens, and animation belong to the UXRD; technical choices and decisions for the design belong to the Design Doc.
+The PRD says what the user achieves, not what the screen looks like or how the system does it. Screen states, microcopy, ARIA and focus behaviour,
+breakpoints, tokens, and animation belong to the UXRD; field lists, storage, protocols, libraries and their versions, file paths, and process
+mechanics belong to the Design Doc. A technical choice the user fixed as a product decision is one line in Constraints and Risks.
 Later documents cite this PRD by ID (UC-2, AC-01.3) instead of restating it.
 Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
 -->
@@ -19,7 +20,7 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 **Overview.** [Three to five plain sentences: what problem the users have today, what they can do once this ships, and the core capabilities that make it possible. No IDs.]
 
 - **For**: [primary users]
-- **Not included**: [the one or two things a reader would expect here but that are out of scope]
+- **Not included**: [the one or two things a reader would expect here, from Won't Have]
 - **Parts**: [part names, in build order]
 - **Biggest risk**: [one line]
 - **Open questions**: [a link to Undetermined Items, or "none"]
@@ -36,22 +37,18 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 [What exists today and why this is needed now]
 
-## User Stories
+## Users and Use Cases
 
-### Primary Users
+### Users
 
 - **[User type]** — [who they are, and what matters to them in this feature]
 
-### User Stories
-
-- As a [user type], I want to [goal], so that [value].
-
 ### Use Cases
 
-<!-- Who, what they achieve, and the outcome — no interface elements (buttons, menus, keys); the UXRD draws the path through the screens and cites these IDs. -->
+<!-- Who, what they achieve, the outcome, and why it matters to them — no interface elements (buttons, menus, keys) and no system internals; the UXRD draws the path through the screens and later documents cite these IDs. -->
 
-- **UC-1**: [user] [achieves what] → [outcome]
-- **UC-2**: [user] [achieves what] → [outcome]
+- **UC-1**: [user] [achieves what] → [outcome], so that [value]
+- **UC-2**: [user] [achieves what] → [outcome], so that [value]
 
 ### User Journey Diagram *(full depth)*
 
@@ -76,7 +73,8 @@ journey
 
 ## Functional Requirements
 
-<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
+<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. A requirement states a capability and its observable outcome; how the system delivers it is the Design Doc's.
+`Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
 IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents cite these. -->
 
 ### Must Have (MVP)
@@ -96,13 +94,11 @@ IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents 
 - **FR-04. [Short name].** [...]
   - AC-04.1: [...]
 
-### Won't Have (this release)
+### Won't Have
 
-- [What is left out] — [why]
+<!-- Everything a reader might expect here that is not delivered: deferred to a later release, or not part of this feature at all. -->
 
-### Out of Scope
-
-- [Work explicitly not part of this feature] — [why]
+- [What is left out] — [later release / not this feature], [why]
 
 ## Non-Functional Requirements
 
@@ -130,7 +126,7 @@ Each requirement has an ID (`NFR-01`) and states a target and how it is measured
 
 ### Part Dependency Diagram
 
-<!-- Required when there is more than one part. An arrow points from a part to the part whose approved design it consumes. -->
+<!-- When applicable: three or more parts (with two, the Depends on column already says it). An arrow points from a part to the part whose approved design it consumes. -->
 
 ```mermaid
 ---
@@ -151,34 +147,29 @@ graph LR
 
 ## Success Criteria
 
-### Quantitative Metrics
-1. [Measurable success metric 1 — numeric target, measurement method, timeframe]
-2. [Measurable success metric 2]
-3. [Measurable success metric 3]
+<!-- How we will know, after release, that the feature reached its goal: what is measured, the target, and where it is read — as many as the goal needs, no fixed count.
+Acceptance criteria prove the feature works; success criteria prove it was worth building. Never restate an acceptance criterion as a test run.
+When the feature is an internal capability with no measure beyond its acceptance criteria, write one line naming the use cases that prove it. -->
 
-### Qualitative Metrics
-1. [User experience metric 1]
-2. [User experience metric 2]
+- [what is measured] — [target], read from [where], by [when]
 
-## Technical Considerations *(full depth)*
+## Constraints and Risks
 
-### Dependencies
-- [Dependencies on existing systems]
-- [Dependencies on external services]
+<!-- Required at full depth; at lite depth, when the feature has any. Product-level only: no inventory of dependencies, versions, or file paths — codebase facts belong to the design's analysis. -->
 
 ### Constraints
-- [Technical constraints]
-- [Resource constraints]
+
+- [a limit the solution must respect — business, legal, a deadline, or a technical choice the user fixed as a product decision — in a sentence]
 
 ### Assumptions
-- [Prerequisite requiring validation 1]
-- [Prerequisite requiring validation 2]
 
-### Risks and Mitigation
+- [what the decision rests on that is not yet confirmed] — [how and when it is checked]
+
+### Risks
+
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
-| [Risk 1] | High/Medium/Low | High/Medium/Low | [Countermeasure] |
-| [Risk 2] | High/Medium/Low | High/Medium/Low | [Countermeasure] |
+| [what could make the feature fail its users or its goal] | High/Medium/Low | High/Medium/Low | [Countermeasure] |
 
 ## Undetermined Items
 

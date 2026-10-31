@@ -32,7 +32,7 @@ Number of potential customers
 **When to use**: Operational planning, pricing validation, SOM estimation
 **Strength**: Based on unit economics you can verify
 
-### TrustMRR Validation (Mandatory)
+### TrustMRR Validation (Software and Subscription Products)
 
 **Source**: https://trustmrr.com/ — Stripe-verified startup revenue database.
 
@@ -72,33 +72,6 @@ Triangulation:
     - delta < 15%: Use average, high confidence
     - delta 15-30%: Use bottom-up, note range
     - delta > 30%: Investigate assumptions before proceeding
-```
-
-## Output Template
-
-```markdown
-## Market Size Assessment
-
-### TAM: $[X]B ([Year])
-- **Method**: [Top-down / Bottom-up / Hybrid]
-- **Source**: [Tier 1/2/3 — specific source]
-- **Growth rate**: [X]% CAGR ([period])
-
-### SAM: $[X]B
-- **Geographic filter**: [regions]
-- **Segment filter**: [verticals]
-- **Product fit filter**: [criteria]
-- **SAM as % of TAM**: [X]%
-
-### SOM: $[X]M (Year 1-3)
-- **Capture assumption**: [X]% of SAM
-- **Basis**: [comparable company benchmarks, sales capacity]
-- **Key constraints**: [list limiting factors]
-
-### Confidence Assessment
-- **Data quality**: [High/Medium/Low]
-- **Assumption risk**: [which assumptions are weakest]
-- **Revalidation trigger**: [when to rerun this analysis]
 ```
 
 ## Common Mistakes

@@ -1,6 +1,6 @@
 ---
 name: strategy-documentation-criteria
-description: This skill should be used when creating strategy documents — context briefs, market analyses, competitive landscapes, strategy canvases, business models, GTM plans, pricing analyses, growth plans, initiative prioritizations, or strategic reports. Provides document templates, creation decision matrix, and quality standards.
+description: This skill should be used when creating strategy documents — context briefs, market analyses, competitive landscapes, strategy canvases, business models, GTM plans, pricing analyses, growth plans, initiative prioritizations, strategic reports, RAT analyses, AJTBD segments, jobs graphs, opportunity maps, feature specs, product roadmaps, or MVP definitions. Provides document templates, storage locations, creation decision matrix, and quality standards (Pyramid Principle, MECE, source tiers, writing for a cold reader).
 ---
 
 # Strategy Documentation Criteria
@@ -31,7 +31,7 @@ description: This skill should be used when creating strategy documents — cont
 
 | Analysis Scope | Required Documents | Creation Order |
 |---------------|-------------------|----------------|
-| Full Analysis (`/strategy-report`) | All 12 documents | Context → Market (3) → Strategy (2) + Model (1) → GTM (2) + Growth (2) → Report (1) |
+| Full Analysis (`/strategy-report`) | Every document in Storage Locations except the landing page | Phases 1–7 of `strategy-orchestration-guide`: Context → AJTBD (3) → Market (3) → Strategy (2) + Model (1) → GTM (2) + Growth (2) → Report (1) → Product Plan (3+N) |
 | Market Only (`/analyze-market`) | Context + Market + Competitive + Segments | Context → Market (3) |
 | Strategy Only (`/strategy-canvas`) | Context + [Market] → Strategy Canvas + Brand Positioning | Prereqs → Strategy (2) |
 | Model Only (`/business-model`) | Context + [Market] → Business Model | Prereqs → Model (1) |
@@ -77,7 +77,6 @@ graph TD
     BM --> GP[growth-plan]
     MA --> GP
     GP --> PI[prioritized-initiatives]
-    GTM --> PI
     SC --> PI
     BM --> PI
     PI --> SR[strategic-report]
@@ -95,36 +94,39 @@ graph TD
 
 ## Storage Locations
 
-| Document | Path | Owner Agent | Template |
-|----------|------|-------------|----------|
-| Context Brief | `docs/strategy/context-brief.md` | context-analyzer | [context-brief-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/context-brief-template.md) |
-| Market Analysis | `docs/strategy/market-analysis.md` | market-analyst | [market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/market-analysis-template.md) |
-| Competitive Landscape | `docs/strategy/competitive-landscape.md` | market-analyst | [competitive-landscape-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/competitive-landscape-template.md) |
-| Customer Segments | `docs/strategy/customer-segments.md` | market-analyst | [customer-segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/customer-segments-template.md) |
-| Strategy Canvas | `docs/strategy/strategy-canvas.md` | strategy-architect | [strategy-canvas-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategy-canvas-template.md) |
-| Brand Positioning | `docs/strategy/brand-positioning.md` | strategy-architect | [brand-positioning-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/brand-positioning-template.md) |
-| Business Model | `docs/strategy/business-model.md` | business-modeler | [business-model-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/business-model-template.md) |
-| GTM Plan | `docs/strategy/gtm-plan.md` | gtm-planner | [gtm-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/gtm-plan-template.md) |
-| Pricing Analysis | `docs/strategy/pricing-analysis.md` | gtm-planner | [pricing-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/pricing-analysis-template.md) |
-| Growth Plan | `docs/strategy/growth-plan.md` | growth-strategist | [growth-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/growth-plan-template.md) |
-| Prioritized Initiatives | `docs/strategy/prioritized-initiatives.md` | growth-strategist | [prioritized-initiatives-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/prioritized-initiatives-template.md) |
-| Strategic Report | `docs/strategy/strategic-report.md` | report-compiler | [strategic-report-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategic-report-template.md) |
-| RAT Analysis | `docs/strategy/rat.md` | product-analyst | [rat-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md) |
-| AJTBD Segments | `docs/strategy/segments.md` | product-analyst | [segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md) |
-| Jobs Graph | `docs/strategy/jobs-graph.md` | product-analyst | [jobs-graph-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/jobs-graph-template.md) |
-| Opportunity Map | `docs/strategy/opportunity-map.md` | product-planner | [opportunity-map-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/opportunity-map-template.md) |
-| Feature Specs | `docs/strategy/features/feature-NNN-[slug].md` | product-planner | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/feature-spec-template.md) |
-| Product Roadmap | `docs/strategy/product-roadmap.md` | product-planner | [product-roadmap-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/product-roadmap-template.md) |
-| MVP Definition | `docs/strategy/mvp-definition.md` | product-planner | [mvp-definition-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/mvp-definition-template.md) |
+This table is the one list of strategy files, their owners, and the commands that write them; the orchestration guide and commands cite it.
+
+| Document | Path | Owner Agent | Command | Template |
+|----------|------|-------------|---------|----------|
+| Context Brief | `docs/strategy/context-brief.md` | context-analyzer | every flow | [context-brief-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/context-brief-template.md) |
+| Market Analysis | `docs/strategy/market-analysis.md` | market-analyst | `/analyze-market` | [market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/market-analysis-template.md) |
+| Competitive Landscape | `docs/strategy/competitive-landscape.md` | market-analyst | `/competitive-map`, `/analyze-market` | [competitive-landscape-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/competitive-landscape-template.md) |
+| Customer Segments | `docs/strategy/customer-segments.md` | market-analyst | `/analyze-market` | [customer-segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/customer-segments-template.md) |
+| Strategy Canvas | `docs/strategy/strategy-canvas.md` | strategy-architect | `/strategy-canvas` | [strategy-canvas-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategy-canvas-template.md) |
+| Brand Positioning | `docs/strategy/brand-positioning.md` | strategy-architect | `/strategy-canvas` | [brand-positioning-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/brand-positioning-template.md) |
+| Business Model | `docs/strategy/business-model.md` | business-modeler | `/business-model` | [business-model-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/business-model-template.md) |
+| GTM Plan | `docs/strategy/gtm-plan.md` | gtm-planner | `/gtm-plan` | [gtm-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/gtm-plan-template.md) |
+| Pricing Analysis | `docs/strategy/pricing-analysis.md` | gtm-planner | `/pricing-strategy`, `/gtm-plan` | [pricing-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/pricing-analysis-template.md) |
+| Growth Plan | `docs/strategy/growth-plan.md` | growth-strategist | `/growth-audit` | [growth-plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/growth-plan-template.md) |
+| Prioritized Initiatives | `docs/strategy/prioritized-initiatives.md` | growth-strategist | `/prioritize`, `/growth-audit` | [prioritized-initiatives-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/prioritized-initiatives-template.md) |
+| Strategic Report | `docs/strategy/strategic-report.md` | report-compiler | `/strategy-report` | [strategic-report-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategic-report-template.md) |
+| RAT Analysis | `docs/strategy/rat.md` | product-analyst | `/rat` | [rat-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md) |
+| AJTBD Segments | `docs/strategy/segments.md` | product-analyst | `/b2b-segments`, `/b2c-segments` | [segments-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md) |
+| Jobs Graph | `docs/strategy/jobs-graph.md` | product-analyst | `/jobs-graph` | [jobs-graph-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/jobs-graph-template.md) |
+| Opportunity Map | `docs/strategy/opportunity-map.md` | product-planner | `/product-plan` | [opportunity-map-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/opportunity-map-template.md) |
+| Feature Specs | `docs/strategy/features/feature-NNN-[slug].md` | product-planner | `/product-plan` | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/feature-spec-template.md) |
+| Product Roadmap | `docs/strategy/product-roadmap.md` | product-planner | `/product-plan` | [product-roadmap-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/product-roadmap-template.md) |
+| MVP Definition | `docs/strategy/mvp-definition.md` | product-planner | `/product-plan` | [mvp-definition-template.md](${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/mvp-definition-template.md) |
+| Landing Page | `docs/strategy/landing.md` | product-analyst | `/landing` | none — the structure is in the `/landing` command |
 
 ## Quality Standards (All Documents)
 
-### Pyramid Principle (Mandatory)
+### Pyramid Principle and MECE (Mandatory)
 
-1. **Governing thought first** — every section opens with the conclusion
-2. **Action titles** — section headings are complete sentences stating the main point
-3. **Titles test** — reading only titles conveys the full argument
-4. **MECE grouping** — arguments at each level are Mutually Exclusive, Collectively Exhaustive
+1. **Governing thought first** — the document, and each section that draws a conclusion, opens with the answer.
+2. **Action titles** — the document's governing-thought heading and each heading that states a conclusion are complete sentences stating the point. A template's structural headings ("Market Size & Growth", "Risk Assessment") stay as labels; the conclusion goes in the first sentence under them.
+3. **Titles test** — the action titles and the Overview, read alone, carry the argument.
+4. **MECE grouping** — categories at each level do not overlap (Mutually Exclusive) and together cover the space (Collectively Exhaustive).
 
 ### Writing for the Reader (Mandatory)
 
@@ -140,11 +142,11 @@ The reader is cold: they know the business in general but not this analysis, and
 
 ### Source Credibility (Mandatory)
 
-Every data point must be tagged:
+Every number a conclusion or recommendation rests on carries its tier; background figures need none.
 
 | Tier | Description | Usage |
 |------|-------------|-------|
-| **Tier 1** | Official filings, confirmed metrics, direct data | Hard numbers, quotes |
+| **Tier 1** | Official filings, confirmed metrics, direct data; TrustMRR (Stripe-verified revenue) for software and subscription products | Hard numbers, quotes |
 | **Tier 2** | Industry reports, analyst estimates, reliable press | Market context, trends |
 | **Tier 3** | AI estimates, pattern extrapolation, analogies | Gap-fill with disclosure |
 
@@ -152,39 +154,23 @@ Every data point must be tagged:
 
 ### Actionability (Mandatory)
 
-Every section must end with:
-- **So what?** — Why this matters
-- **Now what?** — Specific next actions
-- **Confidence** — High / Medium / Low
+The document's conclusion says **So what?** (why this matters) and **Now what?** (specific next actions) — once, at the end or in its recommendations section, never repeated after every section. **Confidence** (High / Medium / Low) is stated once, in the header where the template puts it.
 
 ### Tone
 
 | Do | Don't |
 |----|-------|
-| "Revenue will reach $2M ARR by Month 18" | "Revenue could potentially grow significantly" |
+| "Base case: $2M ARR by Month 18 (Tier 3 estimate, Medium confidence)" | "Revenue could potentially grow significantly" |
 | "This approach carries three risks" | "There are some concerns" |
 | "The data shows 73% preference" | "Most people seem to prefer" |
 | Use numbers, percentages, timelines | Use "many", "some", "soon", "significant" |
 
 ### Pre-Submission Checklist
 
-```yaml
-Structure:
-  - Pyramid Principle applied (conclusion first)
-  - All categorizations are MECE
-  - Action titles on every section
-  - Titles test passes
-
-Content:
-  - Every data point has source tier tag
-  - Every section has "So what?" + "Now what?"
-  - Recommendations are specific and actionable
-  - Confidence levels stated
-
-Completeness:
-  - Overview and the reader rules hold (Writing for the Reader)
-  - No placeholders; a section that does not apply is deleted
-  - Risk assessment included
-  - Clear next steps with owners and timelines
-  - Assumptions explicitly stated
-```
+- The governing thought comes first; headings that state a conclusion are action titles
+- Categories are MECE
+- Numbers a conclusion rests on carry a tier; no Tier 3 presented as Tier 1; estimation methods disclosed
+- The conclusion says So what / Now what once; confidence is stated once
+- Recommendations are specific and actionable; assumptions are stated
+- Writing for the Reader holds; no placeholders, and a section that does not apply is deleted
+- Strategic report only: an aggregated risk assessment with mitigations, and next steps with owners and timelines

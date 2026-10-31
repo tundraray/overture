@@ -1,6 +1,6 @@
 ---
 name: documentation-criteria
-description: This skill should be used when the user asks to "create a PRD", "write an ADR", "create a design doc", "make a work plan", "create task files", or needs guidance on document templates, creation criteria, or determining which documents are required for a given change scope.
+description: This skill should be used when the user asks to "create a PRD", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "create task files", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
 ---
 
 # Documentation Creation Criteria
@@ -29,17 +29,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 
 **Design Docs and work plans are written per part.** The split into parts is proposed by `requirement-analyzer`, refined by `prd-creator` into the PRD's Delivery Parts section, and confirmed by the user at PRD approval — before any design begins. See "Parts" under Storage Locations.
 
-**File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a public contract or migrates persisted data is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s 5-axis assessment; where no analysis is available, evaluate the axes directly:
-
-| Axis | Small | Medium | Large |
-|------|-------|--------|-------|
-| Estimated files | 1-2 | 3-5 | 6+ |
-| Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
-| Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, or persisted-data migration |
-| Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
-
-Select the highest scale triggered by any observed axis.
+**File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a public contract or migrates persisted data is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s five-axis assessment ("Estimate Task Scale"), which owns the axes; the highest scale any axis triggers wins.
 
 ## ADR Creation Conditions
 
@@ -79,7 +69,7 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
-**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD add a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows); the rest of the document cites `KD-n` instead of re-arguing the decision.
+**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows), not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
 
 **Current truth only.** The body states what is true now. Who decided, on which date, in which version, or in answer to which review finding belongs to Update History and to git — not to requirements, acceptance criteria, table cells, or design text. "(user decision 2026-10-28)", "v1.2:", "per review I003" in the body are defects. Update History has one line per version, a phrase per change, no reviewer IDs.
 
@@ -97,10 +87,10 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
 
-**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` TH-08 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
+**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
 
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
-- **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit.
+- **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit. The one exception is a work plan's Reference Contract Values, which copy a binding value verbatim next to its source because the executor reads the task without the design open.
 - **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
 - **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Field lengths and sizes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. A limit is written only when a requirement sets it or another part relies on it.
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
@@ -118,7 +108,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 
 ## Detailed Document Definitions
 
-**One fact, one document.** Each fact has exactly one home — the document listed below as including it. A later document cites an earlier one by ID (`UC-2`, `AC-01.3`, `FR-05`, `D-03`) and never retells it: a retold requirement drifts from its source at the first revision of either, and the reviewer cannot tell which copy is meant. The chain is PRD (what the user achieves) → UXRD (what the user sees and does) → Design Doc (how the system does it); the design system, shared by every feature, holds how the interface looks and how each component works.
+**One fact, one document.** Each fact has exactly one home — the document listed below as including it. A later document cites an earlier one by ID (`UC-2`, `AC-01.3`, `FR-05`, `KD-3`) and never retells it: a retold requirement drifts from its source at the first revision of either, and the reviewer cannot tell which copy is meant. The chain is PRD (what the user achieves) → UXRD (what the user sees and does) → Design Doc (how the system does it); the design system, shared by every feature, holds how the interface looks and how each component works.
 
 ### PRD (Product Requirements Document)
 
@@ -126,25 +116,25 @@ An edit is finished when nothing else still says the old thing. Most findings on
 
 **Includes**:
 - Business requirements and user value
-- Success metrics and KPIs (measurable format)
-- User stories and use cases
-- MoSCoW prioritization (Must/Should/Could/Won't)
-- MVP and Future phase separation
+- Users and use cases
+- Functional requirements, each a capability with an observable outcome and an acceptance criterion, prioritized by MoSCoW; Won't Have records every exclusion with its reason
+- Success criteria — how, after release, the goal is seen to be reached
+- Constraints and risks at product level — constraints, the assumptions the decision rests on, product risks
 - **Delivery Parts** — the partition of the requirements into independently designable slices, each with the requirements it covers and the parts it depends on (see "Parts" below)
 - User journey diagram (full depth)
-- Part dependency diagram (required when there is more than one part, at either depth)
+- Part dependency diagram (three or more parts, at either depth)
 
 **PRD depth**:
 
 | Depth | When | Sections |
 |-------|------|----------|
-| `full` | Large scale | Every template section, market research, user journey diagram |
-| `lite` | Medium and small scale | Snapshot, Background, User Stories and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria (at least one observable outcome), Undetermined Items. Technical Considerations, Appendix, market research, and the user journey diagram are omitted |
+| `full` | Large scale | Every template section, including Constraints and Risks and the user journey diagram |
+| `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Constraints and Risks when the feature has any, Undetermined Items while any remain. The Appendix and the user journey diagram are omitted |
 
 A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. `document-reviewer` receives the depth and applies Gate 0 accordingly. An existing PRD is updated rather than duplicated, at whatever depth it already has.
 
 **Excludes**:
-- Technical implementation details (→Design Doc)
+- **How the system does it** (→Design Doc) — field and schema lists, storage technology, protocols, library choices and versions, file paths, process and recovery mechanics; an inventory of existing dependencies (→the design's codebase analysis). A requirement states the capability and its observable outcome; a technical choice the user fixed as a product decision is one line in Constraints and Risks
 - Technical selection rationale (→ADR)
 - **Implementation phases** (→Work Plan) — a part is a slice of *what* is built; a phase is a step in *when* it is built. Parts belong in the PRD, phases do not.
 - **Task breakdown** (→Work Plan)
@@ -193,7 +183,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 **Includes**:
 - Decision (what was selected)
 - Rationale (why that selection was made)
-- Option comparison (minimum 3 options) and trade-offs
+- Option comparison (at least two real options) and trade-offs
 - Architecture impact
 - Principled implementation guidelines (e.g., "Use dependency injection")
 
@@ -208,22 +198,19 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 **Purpose**: Define technical implementation methods in detail
 
 **Includes**:
-- **Existing codebase analysis** (required)
-  - Code locations, existing and new (C4)
-  - Integration point clarification (connection points with existing code even for new implementations)
+- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence); code locations, existing and new, in C4 when modules change
 - Technical implementation approach (vertical/horizontal/hybrid)
 - Interface and contract definitions
 - Data flow and component design
-- **E2E verification procedures at integration points**
-- **Acceptance criteria (measurable format)**
+- **Acceptance criteria**: the PRD's criteria cited by ID; EARS criteria only where the design refines one
 - Change impact: the Change columns of the C2–C4 tables, and an Interface Change Matrix row for every changed existing operation or prop
-- Complete enumeration of integration points
+- Every integration point with existing code — connection points even for new implementations — and how each is verified
 - Scope agreed with the user: what is out of scope and the constraints the design meets
 - **Prerequisite ADRs** (including common ADRs)
 
 **Excludes**:
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
-- Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
+- Test code, test file names, fixtures, test helpers (→acceptance-test-generator and task files; the Design Doc states use cases and, in Appendix: Evidence, its test boundaries)
 - Why that technology was chosen (→Reference ADR)
 - Implementation order, when to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
@@ -236,41 +223,32 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 - Task breakdown and dependencies (maximum 2 levels)
 - Schedule and duration estimates
 - Verification: cites the Design Doc's Verification Strategy and states only the plan's own steps — which task runs the early verification point, and each phase's operational verification
-- **Phase 4 Quality Assurance Phase (required)**
+- **A final Quality Assurance phase (required)**
 - Progress records (checkbox format)
 
 **Excludes**:
 - Technical rationale (→ADR)
 - Design details (→Design Doc)
 
-**Phase Division Criteria**:
-1. **Phase 1: Foundation Implementation** - Contract definitions, interfaces/signatures, test preparation
-2. **Phase 2: Core Feature Implementation** - Business logic, unit tests
-3. **Phase 3: Integration Implementation** - External connections, presentation layer
-4. **Phase 4: Quality Assurance (Required)** - Acceptance criteria achievement, all tests passing, quality checks
-
-**Three Elements of Task Completion Definition**:
-1. **Implementation Complete**: Code is functional
-2. **Quality Complete**: Tests, static checks, linting pass
-3. **Integration Complete**: Verified connection with other components
+The planner composes the phases from technical dependencies and the implementation approach, and owns the completion definition of a task ("Task Completion Definition: 3 Elements").
 
 ## Creation Process
 
 Each step names the evidence that must exist before the next step starts. A step without its output evidence has not completed, regardless of elapsed effort.
 
-**1. Problem Analysis** — change scale assessment, ADR condition check
+**1. Problem Analysis** — change scale assessment
 - *Output evidence*: confirmed scale with its deciding axis named; a named source for each existing document consulted
-- *Transition*: proceed when the scale and every applicable ADR condition have an explicit yes/no
+- *Transition*: proceed when the scale has an explicit deciding axis. Whether an ADR is written is decided after the Design Doc, by the test in "ADR Creation Conditions"
 
-**2. ADR Option Consideration** (ADR only) — compare 3+ options, specify trade-offs
-- *Output evidence*: at least 3 options with trade-offs stated as concrete costs, not generic caveats
+**2. ADR Option Consideration** (ADR only, after the Design Doc) — compare the real options, specify trade-offs
+- *Output evidence*: at least two real options with trade-offs stated as concrete costs, not generic caveats
 - *Transition*: proceed when the selected option names what the rejected options fail to satisfy
 
 **3. Creation** — use templates, include measurable conditions
 - *Output evidence*: every mandatory template section filled (or answered in one line with the reason), every *when applicable* section that does not apply deleted; every acceptance criterion measurable
 - *Transition*: proceed when no section is silently empty — an unanswered question is not the same as an inapplicable one
 
-**4. Approval** — "Accepted" after review enables implementation
+**4. Approval** — "Approved" after review enables implementation (an ADR's status becomes `Accepted`)
 - *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
 - *Transition*: implementation begins only on an approved verdict
 
@@ -424,13 +402,14 @@ Required diagrams for each document. Every diagram follows the `mermaid-diagrams
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
-| PRD | User journey diagram (full depth); Part dependency diagram (when more than one part, either depth) | Clarify user experience, scope, and the order parts are designed in |
+| PRD | User journey diagram (full depth); Part dependency diagram (three or more parts, either depth) | Clarify user experience, scope, and the order parts are designed in |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
 | Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |
 
 ## Common ADR Relationships
-1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.), reference existing common ADRs
-2. **When missing**: Consider creating necessary common ADRs
-3. **Design Doc**: Specify common ADRs in "Prerequisite ADRs" section
-4. **Compliance check**: Verify design aligns with common ADR decisions
+1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.) and search `docs/adr/ADR-*.md` for decisions that already cover them
+2. **Design Doc**: Specify those ADRs in the "Prerequisite ADRs" section
+3. **Compliance check**: Verify the design aligns with them
+
+A missing common decision is not a reason to write an ADR on its own; it goes through the three-part test after the design like any other.

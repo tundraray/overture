@@ -19,6 +19,10 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 
+## Initial Required Tasks
+
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+
 ## CRITICAL: Market Analysis Integration
 
 When activated for a project, you MUST:

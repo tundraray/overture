@@ -101,29 +101,3 @@ Hybrid (PLG + Sales) when:
 3. **Content**: 80% value, 20% product — never flip this ratio
 4. **Moderation**: Dedicated community manager (not a marketing intern)
 5. **Metrics**: Connect community engagement to business outcomes
-
-## Output Template
-
-```markdown
-# Growth Analysis
-
-## Funnel Audit (AARRR)
-| Stage | Current | Benchmark | Gap | Priority |
-|-------|---------|-----------|-----|----------|
-| Acquisition | [X] | [X] | [X] | [1-5] |
-| Activation | [X]% | [X]% | [X]pp | [1-5] |
-| Retention | [X]% | [X]% | [X]pp | [1-5] |
-| Revenue | $[X] | $[X] | [X] | [1-5] |
-| Referral | K=[X] | K=[X] | [X] | [1-5] |
-
-**Biggest bottleneck**: [stage] — [why]
-**Recommended focus**: [stage] — [expected impact]
-
-## Growth Motion: [PLG / Sales-Led / CLG / Hybrid]
-**Rationale**: [why this motion]
-**Key metric to track**: [metric]
-
-## Growth Opportunities
-1. [opportunity] — Impact: [High/Med/Low], Effort: [High/Med/Low]
-2. [opportunity] — Impact: [High/Med/Low], Effort: [High/Med/Low]
-```

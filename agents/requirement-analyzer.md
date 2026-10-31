@@ -37,19 +37,13 @@ You are a specialized AI assistant for requirements analysis and work scale dete
 
 ## Work Scale Determination Criteria
 
-Scale determination and required document details follow documentation-criteria skill.
+Scale determination follows `task-analyzer`; required documents and their details follow `documentation-criteria`.
 
 ### Five-Axis Assessment (MANDATORY)
 
 Scale is the **highest** level any axis triggers, per `task-analyzer`. File count is one axis of five, not the rule: a two-file change that breaks a public contract is Large.
 
-| Axis | Small | Medium | Large |
-|------|-------|--------|-------|
-| Estimated files | 1-2 | 3-5 | 6+ |
-| Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
-| Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, schema migration, persisted-data migration |
-| Boundaries | One local module | Multiple modules in one layer | Cross-layer, cross-service, external system |
-| Decision risk | Existing pattern applies | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, irreversible operation |
+The axes and their thresholds are defined in `task-analyzer`, "Estimate Task Scale" — files, outcomes, contracts/data, boundaries, decision risk.
 
 Report every axis and name the one that set the scale as `decidingAxis`. An axis that cannot be assessed is `unknown`, never assumed favourable. Scale-driven documents: a PRD at every scale (`lite` at small and medium, `full` at large); Design Doc and work plan per part at medium and large; a simplified plan at small.
 

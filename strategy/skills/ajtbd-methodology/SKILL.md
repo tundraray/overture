@@ -69,12 +69,12 @@ So that: {higher-level job result}
 - Performance criteria (quickly, cheaply, reliably, etc.)
 - Economic characteristics (frequency, budget, LTV potential)
 
-### 5. Never Use "Pain" - Use Jobs
+### 5. Word Jobs and Segments as Jobs, Not Pains
 
 **Wrong:** "We solve the pain of slow delivery"
 **Right:** "When I need to receive a package quickly, I want it delivered same-day so I can complete my project on deadline"
 
-Pain is a consequence of a solution performing below expectations. Focus on the job, not the pain.
+Pain is a consequence of a solution performing below expectations. A job and a segment are worded as the job, not the pain; frameworks with their own Pains and Gains blocks (Value Proposition Canvas) keep those labels.
 
 ### 6. Critical Job Sequence
 
@@ -115,14 +115,14 @@ The sequence of jobs a person must complete to achieve their Big Job. If any job
 
 ## Available Resources in Plugin
 
-The plugin includes the complete AJTBD book at `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/`:
-- `part1.md` - First Principles (job hierarchy, formulas, core concepts)
-- `part2.md` - Segmentation and Market Analysis
-- `part3.md` - Product Development and PMF
-- `part4.md` - Advanced Topics and Risk Analysis (RAT)
-- `part5.md` - Implementation Strategies
+The plugin includes the AJTBD book (in Russian) at `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/`. Read a named part, never the whole folder — parts 1 and 4 are 135–155 KB each:
+- `part1.md` — First principles: job hierarchy, job formula, segmentation by jobs, jobs graph
+- `part2.md` — What a product must be for a customer to switch to it: value, consideration set
+- `part3.md` — Interview guides (switch interviews), for validating jobs and segments
+- `part4.md` — Methodology case studies: worked examples of segmentation and jobs graphs
+- `part5.md` — Translated articles and guides (OODA loop and others)
 
-**Note:** The product-analyst agent has Read access and can study these in depth when needed.
+The book has no RAT chapter: the RAT method is the Risk Analysis section above together with `rat-template.md`.
 
 ## How to Apply This Skill
 

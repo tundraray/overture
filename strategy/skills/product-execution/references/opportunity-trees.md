@@ -30,7 +30,7 @@ Desired Outcome
 | Layer | Definition | Source | Rule |
 |-------|-----------|--------|------|
 | **Desired Outcome** | Measurable business or product metric you want to move | `strategy-canvas.md`, `growth-plan.md` | One outcome per tree. Must be quantifiable. |
-| **Opportunities** | Unmet needs, pains, or desires that, if addressed, could move the outcome | `jobs-graph.md` (problems with severity >7) | Discovered through research, not brainstormed. MECE if possible. |
+| **Opportunities** | Unmet needs, pains, or desires that, if addressed, could move the outcome | `jobs-graph.md` (problems passing the Selection Criteria below) | Discovered through research, not brainstormed. MECE if possible. |
 | **Solutions** | Specific product changes or features that could address an opportunity | Team ideation, Shape Up pitches | Generate 3+ per opportunity before selecting. Never just one. |
 | **Assumption Tests** | Smallest experiments that test the riskiest assumption of a solution | `rat.md` risk mapping | Test before building. Cheapest/fastest test first. |
 
@@ -70,7 +70,7 @@ Not every problem from the jobs graph becomes an opportunity. Apply these filter
 
 | Filter | Threshold | Rationale |
 |--------|-----------|-----------|
-| **Severity** | >= 7 out of 10 | Low-severity problems don't move outcomes meaningfully |
+| **Severity** | 7 or higher out of 10 — the one severity threshold every strategy document cites | Low-severity problems don't move outcomes meaningfully |
 | **Frequency** | Occurs in core job flow | Edge-case problems affect too few users |
 | **Segment coverage** | Affects primary or secondary segment | Tertiary segments can wait |
 | **Strategic alignment** | Connects to an ERRC action | If strategy doesn't call for it, defer |
@@ -185,68 +185,6 @@ Every solution carries assumptions. The riskiest assumptions must be tested befo
 | "Is this technically feasible?" | Engineering spike | 1-3 days | $0 |
 | "Is there enough demand?" | Landing page + ads | 1-2 weeks | $500-2000 |
 | "Can we deliver value manually first?" | Concierge MVP | 2-4 weeks | $0 |
-
-## Complete OST Template
-
-```markdown
-# Opportunity Solution Tree: [Product/Feature Area]
-
-**Date**: [current date]
-**Desired outcome**: [measurable outcome from strategy docs]
-**Current value**: [current metric value]
-**Target value**: [target metric value]
-**Timeline**: [by when]
-
-## Outcome Source
-- **Strategy Canvas**: [ERRC action that drives this outcome]
-- **Growth Plan**: [North Star or supporting metric]
-- **Business Model**: [revenue/cost constraint]
-
----
-
-## Opportunity 1: [HMW statement]
-
-**Source**: jobs-graph.md → Job [X], Problem [Y] (Severity: [Z]/10)
-**Segment**: [from customer-segments.md]
-
-### Solution 1a: [Name]
-- **Description**: [low-fidelity description]
-- **Appetite**: [S/M/L]
-- **Riskiest assumption**: "[statement]"
-- **Test**: [test type] — [duration], $[cost]
-- **Success criteria**: [threshold]
-
-### Solution 1b: [Name]
-- **Description**: [low-fidelity description]
-- **Appetite**: [S/M/L]
-- **Riskiest assumption**: "[statement]"
-- **Test**: [test type] — [duration], $[cost]
-- **Success criteria**: [threshold]
-
----
-
-## Opportunity 2: [HMW statement]
-
-**Source**: jobs-graph.md → Job [X], Problem [Y] (Severity: [Z]/10)
-**Segment**: [from customer-segments.md]
-
-### Solution 2a: [Name]
-[same structure as above]
-
----
-
-## Decision Log
-
-| Opportunity | Selected Solution | Rationale | Status |
-|------------|------------------|-----------|--------|
-| [Opp 1] | [Sol 1a] | [why this over 1b] | Testing / Validated / Building |
-| [Opp 2] | [Sol 2a] | [why] | Testing / Validated / Building |
-
-## Next Steps
-1. [Run assumption test for highest-priority solution]
-2. [Validate or invalidate within [X] days]
-3. [If validated, proceed to feature spec (Shape Up pitch)]
-```
 
 ## When NOT to Use OST
 

@@ -29,6 +29,8 @@
 
 ### TrustMRR Category Benchmark (Tier 1 — Stripe-verified)
 
+[Software or subscription products only; delete this section for other businesses.]
+
 **Category**: [TrustMRR category searched]
 **Source**: https://trustmrr.com/
 

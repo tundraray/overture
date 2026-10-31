@@ -87,7 +87,7 @@ Difficulty vs. Time:
         0   2   5   10  20  50
 ```
 
-*Describe actual curve shape and notable transitions*
+<!-- Describe actual curve shape and notable transitions -->
 
 ## Long-Term Retention (D30+)
 
@@ -187,13 +187,13 @@ Difficulty vs. Time:
 
 ## Lessons for Our Game
 
-### Top 5 Retention Strategies to Adopt
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
+### Retention Strategies to Adopt
+
+<!-- Up to five, as many as the sources support. -->
 
 1. **[Strategy]**: [How it works and why it's effective]
-2. **[Strategy]**: [How it works and why it's effective]
-3. **[Strategy]**: [How it works and why it's effective]
-4. **[Strategy]**: [How it works and why it's effective]
-5. **[Strategy]**: [How it works and why it's effective]
 
 ### Retention Anti-Patterns to Avoid
 
@@ -202,11 +202,11 @@ Difficulty vs. Time:
 
 ### Quick Wins for Our Retention
 
+<!-- Only with a project context; up to three. -->
+
 1. **[Quick win]**: [Low effort, high impact suggestion]
-2. **[Quick win]**: [Low effort, high impact suggestion]
-3. **[Quick win]**: [Low effort, high impact suggestion]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List sources — review aggregation, community data, analytics tools]*
 *Cross-references: mechanics/overview.md, marketing-analysis.md, executive-summary.md*

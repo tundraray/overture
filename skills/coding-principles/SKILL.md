@@ -12,13 +12,15 @@ description: This skill provides language-agnostic coding principles for maintai
 3. **Explicit over Implicit**: Make intentions clear through code structure and naming
 4. **Delete over Comment**: Remove unused code instead of commenting it out
 
+The sizes in this skill (parameters, function and file length, nesting) are signals to look again, not limits: past one, consider a split; keep the code as it is when splitting would make it harder to read.
+
 ## Code Quality
 
 ### Continuous Improvement
 - Refactor as you go - don't accumulate technical debt
 - Improve code structure incrementally
 - Keep the codebase lean and focused
-- Delete unused code immediately
+- Delete code your change leaves unused
 
 ### Readability
 - Use meaningful, descriptive names for variables and functions
@@ -47,7 +49,7 @@ description: This skill provides language-agnostic coding principles for maintai
 - Pure functions when possible (no side effects)
 - Separate data transformation from side effects
 - Use early returns to reduce nesting
-- Avoid deep nesting (maximum 3 levels)
+- Avoid deep nesting (beyond 3 levels is a signal)
 
 ## Error Handling
 
@@ -107,7 +109,6 @@ description: This skill provides language-agnostic coding principles for maintai
 ## Commenting Principles
 
 ### When to Comment
-- **Document "what"**: Describe what the code does
 - **Explain "why"**: Clarify reasoning behind decisions
 - **Note limitations**: Document known constraints or edge cases
 - **API documentation**: Public interfaces need clear documentation
@@ -209,12 +210,6 @@ description: This skill provides language-agnostic coding principles for maintai
 - Commit working code (passes tests)
 - Avoid committing debug code or secrets
 
-### Code Review Readiness
-- Self-review before requesting review
-- Keep changes focused and reviewable
-- Provide context in pull request descriptions
-- Respond to feedback constructively
-
 ## Language-Specific Adaptations
 
 While these principles are language-agnostic, adapt them to your specific programming language:
@@ -224,22 +219,3 @@ While these principles are language-agnostic, adapt them to your specific progra
 - **OOP languages**: Apply SOLID principles
 - **Functional languages**: Prefer pure functions and immutability
 - **Concurrency**: Follow language-specific patterns for thread safety
-
-## Continuous Learning
-
-- Stay updated with language-specific best practices
-- Learn from code reviews
-- Study well-maintained open source projects
-- Regularly refactor and improve existing code
-
-## Expert References (Reasoning Calibration)
-
-When facing design or implementation trade-offs, calibrate your reasoning against these established principles:
-
-| Expert | Key Principle | Apply When |
-|--------|--------------|------------|
-| Martin Fowler | "Any fool can write code that a computer can understand. Good programmers write code that humans can understand." | Choosing between clever/compact code and readable/explicit code |
-| Martin Fowler | "Refactoring is the process of changing a software system in a way that does not alter the external behavior of the code yet improves its internal structure." | Deciding when and how to refactor |
-| Kent Beck | "Make it work, make it right, make it fast — in that order." | Choosing implementation sequence and resisting premature optimization |
-| Sandi Metz | "Prefer duplication over the wrong abstraction." | Deciding whether to abstract or keep code inline |
-| Robert C. Martin | "A function should do one thing. It should do it well. It should do it only." | Determining function scope and responsibility boundaries |

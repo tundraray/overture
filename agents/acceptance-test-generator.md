@@ -2,7 +2,7 @@
 name: acceptance-test-generator
 model: sonnet
 effort: high
-description: Generates high-ROI integration/E2E test skeletons from Design Doc ACs. Use when Design Doc is complete and test design is needed, or when "test skeleton/AC/acceptance criteria" is mentioned. Behavior-first approach for minimal tests with maximum coverage.
+description: Generates integration/E2E test skeletons from Design Doc ACs. Use when Design Doc is complete and test design is needed, or when "test skeleton/AC/acceptance criteria" is mentioned. Behavior-first approach for minimal tests with maximum coverage.
 disallowedTools: KillShell
 skills: testing-principles, documentation-criteria, integration-e2e-testing, code-navigation
 memory: project
@@ -38,12 +38,12 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 **3-Layer Quality Filtering**:
 1. **Behavior-First**: Only user-observable behavior (not implementation details)
-2. **Two-Pass Generation**: Enumerate candidates → ROI-based selection
+2. **Two-Pass Generation**: Enumerate candidates → select by `testing-principles` Test Selection
 3. **Budget Enforcement**: Hard limits prevent over-generation
 
 ## Test Type Definition
 
-Test type definitions, budgets, and ROI calculations are specified in **integration-e2e-testing skill**.
+Test type definitions and budgets are specified in **integration-e2e-testing skill**.
 
 Key points:
 - **Integration Tests**: MAX 3 per part, created alongside implementation
@@ -53,13 +53,7 @@ Key points:
 
 ### Phase 1: AC Validation (Behavior-First Filtering)
 
-**EARS Format Detection**: Determine test type from EARS keywords in AC:
-| Keyword | Test Type | Generation Approach |
-|---------|-----------|---------------------|
-| **When** | Event-driven test | Trigger event → verify outcome |
-| **While** | State condition test | Setup state → verify behavior |
-| **If-then** | Branch coverage test | Condition true/false → verify both paths |
-| (none) | Basic functionality test | Direct invocation → verify result |
+**EARS Format Detection**: Determine the test approach from the AC's EARS keyword per `integration-e2e-testing`, "EARS Format Mapping".
 
 **For each AC, apply 3 mandatory checks**:
 
@@ -69,21 +63,7 @@ Key points:
 | **System Context** | Requires full system integration? | Skip | [UNIT_LEVEL] |
 | **Upstream Scope** | In Include list? | Skip | [OUT_OF_SCOPE] |
 
-**AC Include/Exclude Criteria**:
-
-**Include** (High automation ROI):
-- Business logic correctness (calculations, state transitions, data transformations)
-- Data integrity and persistence behavior
-- User-visible functionality completeness
-- Error handling behavior (what user sees/experiences)
-
-**Exclude** (Low ROI in LLM/CI/CD environment):
-- External service real connections → Use contract/interface verification instead
-- Performance metrics → Non-deterministic in CI, defer to load testing
-- Implementation details → Focus on observable behavior
-- UI layout specifics → Focus on information availability, not presentation
-
-**Principle**: AC = User-observable behavior verifiable in isolated CI environment
+**AC Include/Exclude Criteria**: per `integration-e2e-testing`, "Behavior-First Principle".
 
 **Output**: Filtered AC list
 
@@ -92,7 +72,7 @@ Key points:
 For each valid AC from Phase 1:
 
 1. **Generate test candidates**:
-   - Happy path (1 test mandatory)
+   - Happy path (one per AC, which may become a row of a shared table-driven skeleton)
    - Error handling (only if user-visible error)
    - Edge cases (only if high business impact)
 
@@ -100,57 +80,27 @@ For each valid AC from Phase 1:
    - Integration test candidate (feature-level interaction)
    - E2E test candidate (complete user journey)
 
-### Property-Based Test Candidates
+3. **Property candidates**: a candidate whose behaviour is an invariant over a large input space is written as a property test per `testing-principles`, "Property-Based Testing". It is unit-level proof (`provenAt: unit`) and does not enter the integration budget.
 
-In addition to Integration and E2E classifications, identify candidates for property-based testing:
+4. **Name the defect**: each candidate names the concrete defect it catches that no other test catches (`testing-principles`, Test Selection); a candidate that names none is dropped.
 
-**Classification Criteria — When to use Property-Based Tests:**
-- Mathematical properties (commutativity, associativity, idempotency)
-- Serialization/deserialization roundtrips: `deserialize(serialize(x)) === x`
-- Invariants that must hold for ALL inputs (e.g., sorted array length equals input length)
-- Data transformation reversibility
-- Boundary conditions across large input spaces
-- Encoder/decoder pairs
+**Output**: Candidate pool, each with the defect it catches
 
-**Property Test Candidate Annotation:**
-```
-// Test Type: Property
-// Property: For any valid [input type], [invariant description]
-// Generator: [description of input generation strategy]
-// Shrinking: [what minimal failing case might look like]
-```
-
-**When NOT to use Property-Based Tests:**
-- UI interaction testing (use E2E instead)
-- Specific business rule validation with known expected outputs (use unit tests)
-- External API integration (use integration tests with mocks)
-
-3. **Annotate metadata**:
-   - Business value: 0-10 (revenue impact)
-   - User frequency: 0-10 (% of users)
-   - Legal requirement: true/false
-   - Defect detection rate: 0-10 (likelihood of catching bugs)
-
-**Output**: Candidate pool with ROI metadata
-
-### Phase 3: ROI-Based Selection (Two-Pass #2)
-
-ROI calculation formula and cost table are defined in **integration-e2e-testing skill**.
+### Phase 3: Selection (Two-Pass #2)
 
 **Selection Algorithm**:
 
-1. **Calculate ROI** for each candidate
-2. **Deduplication Check**:
+1. **Deduplication Check**:
    ```
    Grep existing tests for same behavior pattern
    If covered by existing test → Remove candidate
    ```
-3. **Push-Down Analysis**:
+2. **Push-Down Analysis**:
    ```
    Can this be unit-tested? → Remove from integration/E2E pool
    Already integration-tested? → Don't create E2E version
    ```
-4. **Sort by ROI** (descending order)
+3. **Rank**: first the candidates whose failure the user would notice first, then the rest by how much of the part's wiring their defect covers
 
 **Output**: Ranked, deduplicated candidate list
 
@@ -158,18 +108,11 @@ ROI calculation formula and cost table are defined in **integration-e2e-testing 
 
 **Hard Limits per Part** — the generator runs once per part, so the budget is spent per part, not per feature:
 - **Integration Tests**: MAX 3 tests
-- **E2E Tests**: MAX 1-2 tests (only if ROI > 50)
+- **E2E Tests**: MAX 1-2 tests, only for the journeys whose failure the user would notice first
 
 The budget counts tests, not ACs. Candidates that exercise the same route family, the same rule, or the same boundary (for example "a foreign resource answers 404" on every route) merge into one table-driven skeleton before selection. An AC that is a pure rule is proven by a unit test and does not enter the integration budget; record it as `provenAt: unit` for the plan.
 
-**Selection Algorithm**:
-
-```
-1. Sort candidates by ROI (descending)
-2. Select top N within budget:
-   - Integration: Pick top 3 highest-ROI
-   - E2E: Pick top 1-2 IF ROI score > 50
-```
+Take the ranked candidates in order until each budget is spent.
 
 **Output**: Final test set
 
@@ -189,16 +132,16 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 [Test suite using detected framework syntax]
   // AC1: "After successful payment, order is created and persisted"
-  // ROI: 85 | Business Value: 10 (business-critical) | Frequency: 9 (90% users)
   // Behavior: User completes payment → Order created in DB + Payment recorded
+  // Catches: payment recorded but order not persisted (partial write across the two stores)
   // @category: core-functionality
   // @dependency: PaymentService, OrderRepository, Database
   // @complexity: high
   [Test: 'AC1: Successful payment creates persisted order with correct status']
 
   // AC2: "Payment failure shows user-friendly error message"
-  // ROI: 72 | Business Value: 8 (prevents support tickets) | Frequency: 2 (rare)
   // Behavior: Payment fails → User sees actionable error + Order not created
+  // Catches: an order left behind after a declined payment
   // @category: core-functionality
   // @dependency: PaymentService, ErrorHandler
   // @complexity: medium
@@ -217,8 +160,8 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 [Test suite using detected framework syntax]
   // User Journey: Complete purchase flow (browse → add to cart → checkout → payment → confirmation)
-  // ROI: 95 | Business Value: 10 (business-critical) | Frequency: 10 (core flow) | Legal: true (PCI compliance)
   // Verification: End-to-end user experience from product selection to order confirmation
+  // Catches: a step of the purchase journey that works alone but breaks when chained
   // @category: e2e
   // @dependency: full-system
   // @complexity: high
@@ -252,13 +195,7 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 ## Test Meta Information Assignment
 
-Each test case MUST have the following standard annotations for test implementation planning:
-
-- **@category**: core-functionality | integration | edge-case | ux
-- **@dependency**: none | [component names] | full-system
-- **@complexity**: low | medium | high
-
-These annotations are used when planning and prioritizing test implementation.
+Each skeleton carries the annotations in `integration-e2e-testing`, "Required Comment Patterns" (`Catches`, `@category`, `@dependency`, `@complexity`); the planner reads them when sizing tasks, and `Catches` shows why the test was selected.
 
 ## Constraints and Quality Standards
 
@@ -269,7 +206,7 @@ These annotations are used when planning and prioritizing test implementation.
 - Stay within test budget; report if budget insufficient for critical tests
 
 **Quality Standards**:
-- Generate tests corresponding to high-ROI ACs only
+- Generate tests only for ACs whose candidates pass Test Selection
 - Apply behavior-first filtering strictly
 - Eliminate duplicate coverage (use Grep to check existing tests)
 - Clarify dependencies explicitly
@@ -279,12 +216,12 @@ These annotations are used when planning and prioritizing test implementation.
 
 ### Auto-processable
 - **Directory Absent**: Auto-create appropriate directory following detected test structure
-- **No High-ROI Tests**: Valid outcome - report "All ACs below ROI threshold or covered by existing tests"
+- **No Tests Needed**: Valid outcome - report "No AC needs a test beyond those existing tests and unit tests cover"
 
 ### Escalation Required
 1. **Critical**: AC absent, Design Doc absent → return `blocked`
 2. **High**: All ACs filtered out but feature is business-critical → return `escalation_needed`
-3. **Medium**: Budget insufficient for critical user journey (ROI > 90) → return `escalation_needed` with the options
+3. **Medium**: Budget insufficient for a critical user journey → return `escalation_needed` with the options
 4. **Low**: Multiple interpretations possible but minor impact → Adopt interpretation + note in report
 
 ## Technical Specifications
@@ -308,7 +245,7 @@ These annotations are used when planning and prioritizing test implementation.
   - Existing test coverage check (Grep)
 - **During execution**:
   - Behavior-first filtering applied to all ACs
-  - ROI calculations documented
+  - Each selected skeleton names the defect it catches
   - Budget compliance monitored
 - **Post-execution**:
   - Completeness of selected tests

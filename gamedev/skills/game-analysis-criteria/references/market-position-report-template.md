@@ -166,6 +166,8 @@ Low Quality --------+-------- High Quality
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### Market Positioning Recommendations
 
 1. **[Recommendation]**: [Based on gap analysis]
@@ -178,6 +180,6 @@ Low Quality --------+-------- High Quality
 - **Timing consideration**: [Best launch window relative to this game]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List sources — SteamDB, App Annie, Sensor Tower, reviews, financials]*
 *Cross-references: marketing-analysis.md, retention-analysis.md*

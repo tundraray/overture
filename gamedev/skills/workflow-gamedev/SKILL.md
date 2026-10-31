@@ -38,7 +38,7 @@ A game feature and a service endpoint need the same design rigour, the same code
 
 ## Scenario Detection
 
-`requirement-analyzer` selects the flow from what already exists in the repository:
+The orchestrator selects the flow from what already exists in the repository, after `requirement-analyzer` returns:
 
 ```yaml
 scenarioDetection:
@@ -57,13 +57,19 @@ scenarioDetection:
 
 ## Development Mode Routing
 
-Detected by `requirement-analyzer` from the user's request. Confirm the detected mode at the first stop rather than assuming it.
+Detected by the orchestrator from the user's request, after `requirement-analyzer` returns. Confirm the detected mode at the first stop rather than assuming it.
+
+| Mode | Trigger words |
+|------|---------------|
+| Full Development | "full", "complete game", "production" — and the default when none match |
+| Design Only | "design only", "concept", "documentation only" |
+| Prototype | "prototype", "proof of concept", "POC", "rapid" |
 
 | Mode | Description | Flow modification |
 |------|-------------|-------------------|
 | **Full Development** | Standard scale-based flow | None |
 | **Design Only** | Run the product phase to completion, stop before technical design | Deliver the design package; no implementation |
-| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part) → simplified plan | Skip market analysis, art direction, and analytics; the lite spec still exists, so the execution entry gate and the parts list hold |
+| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part) → document-reviewer → [Stop: Feature Spec approval] → simplified plan with `design: none`, at any scale | Skip market analysis, art direction, UI, analytics, and the technical phase; the lite spec still exists, so the execution entry gate and the parts list hold, and the plan's traceability maps to the spec's acceptance criteria |
 
 ## Flow
 

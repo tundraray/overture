@@ -119,68 +119,6 @@ Explicit exclusions protect scope. They prevent stakeholder creep and keep the s
 
 **Rule**: If someone asks "why doesn't this include X?", the No-Gos section should have the answer.
 
-### Complete Shape Up Pitch Template
-
-```markdown
-# Pitch: [Feature Name]
-
-**Date**: [current date]
-**Author**: [name]
-**Status**: [Draft / Betting Table / In Progress / Shipped]
-
-## Traceability
-
-| Field | Source | Reference |
-|-------|--------|-----------|
-| **Job** | jobs-graph.md | Job [X]: [name] |
-| **Segment** | customer-segments.md | [segment name] |
-| **Problem** | jobs-graph.md | Problem [Y]: [description], Severity [Z]/10 |
-| **Risk** | rat.md | Risk Card [N]: [name], Score [P x I] |
-| **Strategy** | strategy-canvas.md | [ERRC action]: [factor] |
-| **Initiative** | prioritized-initiatives.md | Initiative [N]: [name] |
-| **Opportunity** | opportunity-tree.md | Opportunity [N]: [HMW statement] |
-
-## Problem
-
-[Problem description grounded in jobs-graph evidence]
-
-**Current workaround**: [what users do today]
-**Cost of inaction**: [consequence of not solving]
-
-## Appetite
-
-**Size**: [S / M / L]
-**Duration**: [time budget]
-**Rationale**: [why this problem is worth this investment]
-
-## Solution
-
-[Low-fidelity description of approach]
-
-**Key elements**:
-1. [Element]: [what it does]
-2. [Element]: [what it does]
-3. [Element]: [what it does]
-
-## Rabbit Holes
-
-1. [Risk]: [mitigation]
-2. [Risk]: [mitigation]
-
-## No-Gos
-
-- [Exclusion]: [reason]
-- [Exclusion]: [reason]
-
-## Acceptance Criteria
-
-1. **Given** [precondition], **When** [action], **Then** [expected result]
-2. **Given** [precondition], **When** [action], **Then** [expected result]
-3. **Given** [precondition], **When** [action], **Then** [expected result]
-```
-
----
-
 ## Amazon PR/FAQ (Alternative for Large Features)
 
 The PR/FAQ format (Amazon "Working Backwards") is used for strategic features that need alignment across teams. Write as if the feature has already shipped.
@@ -322,7 +260,7 @@ Every feature specification, regardless of format, must include a traceability s
 | **Strategy** | `strategy-canvas.md` | ERRC action + competitive factor | Raise: "Customization" from 2 to 5 |
 | **Initiative** | `prioritized-initiatives.md` | Initiative number + name | Initiative 3: "Personalization engine" |
 
-**If a field has no match**: Document it as "No direct link — [justification for building without strategic trace]". This forces conscious decisions about unlinked features.
+**If a field has no match**: Write "no source" with the justification for building without that trace — never an invented link. This forces conscious decisions about unlinked features.
 
 ## Acceptance Criteria Standards
 

@@ -11,7 +11,7 @@ description: This skill provides React/TypeScript frontend development rules inc
 ❌ **Unused "Just in Case" Code** - Violates YAGNI principle (Kent Beck)
 
 ## Comment Writing Rules
-- **Function Description Focus**: Describe what the code "does"
+- **Why, not what**: Explain the reason the code reads the way it does; the code shows what it does
 - **No Historical Information**: Do not record development history
 - **Timeless**: Write only content that remains valid whenever read
 - **Conciseness**: Keep explanations to necessary minimum
@@ -51,11 +51,8 @@ function isUser(value: unknown): value is User {
 - **Backend → Frontend**: API Response (`unknown`) → Type Guard → State (Type Guaranteed)
 
 **Type Complexity Management**
-- **Props Design**:
-  - Props count: 3-7 props ideal (consider component splitting if exceeds 10)
-  - Optional Props: 50% or less (consider default values or Context if excessive)
-  - Nesting: Up to 2 levels (flatten deeper structures)
-- Type Assertions: Review design if used 3+ times
+- **Props Design**: a long props list, mostly optional props, or deeply nested props are signals to split the component, add defaults, or use composition or Context (`coding-principles`: sizes are signals, not limits)
+- Type Assertions: repeated assertions signal a type mismatch to fix at its source
 - **External API Types**: Relax constraints and define according to reality (convert appropriately internally)
 
 ## Coding Conventions
@@ -64,14 +61,14 @@ function isUser(value: unknown): value is User {
 - **Function Components (Mandatory)**: Official React recommendation, optimizable by modern tooling
 - **Classes Prohibited**: Class components completely deprecated (Exception: Error Boundary)
 - **Custom Hooks**: Standard pattern for logic reuse and dependency injection
-- **Component Hierarchy**: Atoms → Molecules → Organisms → Templates → Pages
+- **Component Structure**: Follow the project's component hierarchy and folder convention
 - **Co-location**: Place tests, styles, and related files alongside components
 
 **State Management Patterns**
 - **Local State**: `useState` for component-specific state
 - **Context API**: For sharing state across component tree (theme, auth, etc.)
 - **Custom Hooks**: Encapsulate state logic and side effects
-- **Server State**: React Query or SWR for API data caching
+- **Server State**: The project's server-state library for API data caching, when it has one
 
 **Data Flow Principles**
 - **Single Source of Truth**: Each piece of state has one authoritative source
@@ -100,15 +97,15 @@ setUsers(users)
 - Type-safe: Always define Props type explicitly
 
 **Environment Variables**
-- **Use build tool's environment variable system**: `process.env` does not work in browsers
+- **Use build tool's environment variable system**: `process.env` does not work in browsers; the build tool exposes only variables with its public prefix (Vite: `VITE_`)
 - Centrally manage environment variables through configuration layer
 - Implement proper type safety and default value handling
 
 ```typescript
-// ✅ Build tool environment variables (public values only)
+// ✅ Build tool environment variables (public values only; Vite shown)
 const config = {
-  apiUrl: import.meta.env.API_URL || 'http://localhost:3000',
-  appName: import.meta.env.APP_NAME || 'My App'
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  appName: import.meta.env.VITE_APP_NAME || 'My App'
 }
 
 // ❌ Does not work in frontend
@@ -123,7 +120,7 @@ const apiUrl = process.env.API_URL
 
 ```typescript
 // ❌ Security risk: API key exposed in browser
-const apiKey = import.meta.env.API_KEY
+const apiKey = import.meta.env.VITE_API_KEY
 const response = await fetch(`https://api.example.com/data?key=${apiKey}`)
 
 // ✅ Correct: Backend manages secrets, frontend accesses via proxy
@@ -139,19 +136,19 @@ const response = await fetch('/api/data') // Backend handles API key authenticat
 - Type Definition: Explicitly define return value types (e.g., `Promise<Result>`)
 
 **Format Rules**
-- Semicolon omission (follow Biome settings)
+- Formatting follows the project's formatter and linter config
 - Types in `PascalCase`, variables/functions in `camelCase`
-- Imports use absolute paths (`src/`)
+- Import paths follow the project's path aliases
 
 **Clean Code Principles**
-- ✅ Delete unused code immediately
+- ✅ Delete code your change leaves unused
 - ✅ Delete debug `console.log()`
 - ❌ Commented-out code (manage history with version control)
 - ✅ Comments explain "why" (not "what")
 
 ## Error Handling
 
-**Absolute Rule**: Error suppression prohibited. All errors must have log output and appropriate handling.
+**Absolute Rule**: Error suppression prohibited. Every error is either handled — and logged once, where it is handled — or propagated to the layer that handles it.
 
 **Fail-Fast Principle**: Fail quickly on errors to prevent continued processing in invalid states
 ```typescript
@@ -160,11 +157,14 @@ catch (error) {
   return defaultValue // Hides error
 }
 
-// ✅ Required: Explicit failure
+// ✅ Handled here: log once and show the error state
 catch (error) {
   logger.error('Processing failed', error)
-  throw error // Handle with Error Boundary or higher layer
+  setError(error)
 }
+
+// ✅ Not handled here: no catch — during render the Error Boundary catches it; in a hook or service the caller handles it
+// Event handlers and async code are outside any Error Boundary: they catch and set the error state themselves
 ```
 
 **Result Type Pattern**: Express errors with types for explicit handling
@@ -173,8 +173,8 @@ type Result<T, E> = { ok: true; value: T } | { ok: false; error: E }
 
 // Example: Express error possibility with types
 function parseUser(data: unknown): Result<User, ValidationError> {
-  if (!isValid(data)) return { ok: false, error: new ValidationError() }
-  return { ok: true, value: data as User }
+  if (!isUser(data)) return { ok: false, error: new ValidationError() }
+  return { ok: true, value: data } // narrowed by the type guard, no assertion
 }
 ```
 
@@ -200,7 +200,7 @@ Never include sensitive information (password, token, apiKey, secret, creditCard
 **Asynchronous Error Handling in React**
 - Error Boundary setup mandatory: Catch rendering errors
 - Use try-catch with all async/await in event handlers
-- Always log and re-throw errors or display error state
+- Catch in the handler and display the error state there: an Error Boundary does not catch event-handler or async errors, so propagating from them leaves an unhandled rejection
 - **Effect race/cleanup**: guard `useEffect` data fetches against out-of-order responses and post-unmount state updates — abort or ignore stale results (`AbortController` or a mounted flag), or use a server-state library (React Query/SWR) that cancels and dedupes. `try-catch` alone does not cover this: a settled-but-stale response is not an error, so nothing throws and the newer result gets overwritten by the older one.
 
 ```typescript
@@ -230,8 +230,3 @@ useEffect(() => {
 - State Optimization: Minimize re-renders with proper state structure
 - Lazy Loading: Use React.lazy and Suspense for code splitting
 - Bundle Size: Keep within the project's budget, when it sets one
-
-## Non-functional Requirements
-
-- **Browser Compatibility**: Chrome/Firefox/Safari/Edge (latest 2 versions)
-- **Rendering Time**: Within 5 seconds for major pages

@@ -19,6 +19,10 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 
+## Initial Required Tasks
+
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+
 ### Core Responsibilities
 - Define game's core pillars and vision statement
 - Create comprehensive Game Design Documents (GDD)
@@ -55,7 +59,7 @@ Use `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template
 
 ## Self-Validation [BLOCKING — before output]
 
-Run each item before producing output — on a revision, at the scope `documentation-criteria` "Revising a Document" sets.
+Run each item before producing a GDD — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. Inside `/game-analyze` you write a mechanics overview, not a GDD: the command's prompt and `game-analysis-criteria`, "Report Quality Gates", are the check there.
 
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): someone who has not seen the game can say from the Snapshot what it is and why it is fun
 - [ ] Core Concept, Design Pillars, Player Experience Goals, Gameplay Overview, and Success Metrics are filled

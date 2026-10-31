@@ -48,7 +48,7 @@ graph TD
     Results --> Level
 ```
 
-*Replace with actual navigation*
+<!-- Replace with actual navigation -->
 
 ### Navigation Depth
 
@@ -84,7 +84,7 @@ graph TD
 
 ### HUD Screenshots Analysis
 
-*Reference specific visual elements and their design choices*
+<!-- Reference specific visual elements and their design choices -->
 
 ## Interaction Patterns
 
@@ -168,6 +168,8 @@ graph TD
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### UX Patterns to Adopt
 
 1. **[Pattern]**: [What works and why]
@@ -185,6 +187,6 @@ graph TD
 2. **[Feature]**: [Why it matters for our audience]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List sources — gameplay observation, screenshots, reviews, accessibility databases]*
 *Cross-references: game-feel-analysis.md, retention-analysis.md*

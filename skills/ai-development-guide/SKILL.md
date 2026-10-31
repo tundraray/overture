@@ -78,8 +78,8 @@ Prioritize primary code reliability over fallback implementations. In distribute
 
 ✅ PREFERRED: Explicit failure with context
     <handle error>:
-        log_error('Operation failed', context, error)
-        <propagate error>  // Re-throw exception, return Error, return error tuple
+        <propagate error with context>  // Re-throw with cause, return Error, return error tuple
+    // Logged once, where the error is finally handled
 ```
 
 **Adaptation**: Use language-appropriate error handling (exceptions, Result types, error tuples, etc.)
@@ -142,14 +142,7 @@ validateEmail(email, context) { /* ... */ }
 ### Pattern 4: Ignoring Technical Uncertainty
 **Symptom**: Frequent unexpected errors when introducing new technology
 **Cause**: Assuming "it should work according to official documentation" without prior investigation
-**Avoidance**:
-- Record certainty evaluation at the beginning of task files
-  ```
-  Certainty: low (Reason: no examples of MCP connection found)
-  Exploratory implementation: true
-  Fallback: use conventional API
-  ```
-- For low certainty cases, create minimal verification code first
+**Avoidance**: Treat a behaviour you have not verified as an assumption — state it, and prove it with minimal verification code before building on it
 
 ### Pattern 5: Insufficient Existing Code Investigation
 **Symptom**: Duplicate implementations, architecture inconsistency, integration failures
@@ -157,9 +150,9 @@ validateEmail(email, context) { /* ... */ }
 **Avoidance Methods**:
 - Before implementation, always search for similar functionality (using domain, responsibility, configuration patterns as keywords)
 - Similar functionality found → Use that implementation (do not create new implementation)
-- Similar functionality is technical debt → Create ADR improvement proposal before implementation
+- Similar functionality is technical debt → escalate; whether to reuse or replace it is a design decision
 - No similar functionality exists → Implement new functionality following existing design philosophy
-- Record all decisions and rationale in "Existing Codebase Analysis" section of Design Doc
+- At design time these decisions are recorded in the Design Doc's Appendix: Evidence, "Existing Codebase Analysis"
 
 ## Debugging Techniques
 
@@ -183,23 +176,6 @@ To isolate problems, attempt reproduction with minimal code:
 - Remove unrelated parts
 - Replace external dependencies with mocks
 - Create minimal configuration that reproduces problem
-
-### 4. Debug Log Output
-```
-Pattern: Structured logging with context
-{
-  context: 'operation-name',
-  input: { relevant, input, data },
-  state: currentState,
-  timestamp: current_time_ISO8601
-}
-
-Key elements:
-- Operation context (what is being executed)
-- Input data (what was received)
-- Current state (relevant state variables)
-- Timestamp (for correlation)
-```
 
 ## Quality Check Workflow
 
@@ -261,107 +237,10 @@ Auto-fix capabilities (when available):
 - Design interfaces that appropriately express domain
 - Use abstraction mechanisms to reduce duplication
 
-## Continuous Improvement Mindset
-
-- **Humility**: Perfect code doesn't exist, welcome feedback
-- **Courage**: Execute necessary refactoring boldly
-- **Transparency**: Clearly document technical decision reasoning
-
 ## Implementation Completeness Assurance
 
-### Impact Analysis: Mandatory 3-Stage Process
+### Impact Before Change
+Before changing code whose callers are unknown, resolve its consumers per `code-navigation`. The change stays inside the task's Target Files; a consumer outside them that must change is an escalation (`out_of_scope_file`), not a silent edit.
 
-Complete these stages sequentially before any implementation:
-
-**1. Discovery** - Identify all affected code:
-- Implementation references (imports, calls, instantiations)
-- Interface dependencies (contracts, types, data structures)
-- Test coverage
-- Configuration (build configs, env settings, feature flags)
-- Documentation (comments, docs, diagrams)
-
-**2. Understanding** - Analyze each discovered location:
-- Role and purpose in the system
-- Dependency direction (consumer or provider)
-- Data flow (origin → transformations → destination)
-- Coupling strength
-
-**3. Identification** - Produce structured report:
-```
-## Impact Analysis
-### Direct Impact
-- [Unit]: [Reason and modification needed]
-
-### Indirect Impact
-- [System]: [Integration path → reason]
-
-### Data Flow
-[Source] → [Transformation] → [Consumer]
-
-### Risk Assessment
-- High: [Complex dependencies, fragile areas]
-- Medium: [Moderate coupling, test gaps]
-- Low: [Isolated, well-tested areas]
-
-### Implementation Order
-1. [Start with lowest risk or deepest dependency]
-2. [...]
-```
-
-**Critical**: Do not implement until all 3 stages are documented
-
-### Unused Code Deletion
-
-When unused code is detected:
-- Will it be used in this work? Yes → Implement now | No → Delete now (Git preserves)
-- Applies to: Code, tests, docs, configs, assets
-
-### Existing Code Modification
-
-```
-In use? No → Delete
-       Yes → Working? No → Delete + Reimplement
-                     Yes → Fix/Extend
-```
-
-**Principle**: Prefer clean implementation over patching broken code
-
-## Complexity Management Metrics
-
-Quantitative thresholds for managing code complexity. When thresholds are exceeded, redesign rather than work around.
-
-### Data Structure Complexity
-
-| Metric | Threshold | Action if Exceeded |
-|---|---|---|
-| Field count per type/interface | ≤20 fields | Split by responsibility (exception: external API types) |
-| Optional field ratio | ≤30% | Separate required and optional into distinct types |
-| Nesting depth | ≤3 levels | Flatten nested structures |
-| Type assertions / casts | ≤3 per file | Review design — excessive casting indicates type system mismatch |
-
-### Exception: External API Types
-External API response types may exceed these thresholds. In such cases:
-- Define the external type as-is (matching reality)
-- Create an internal domain type within thresholds
-- Map external → internal at the boundary layer
-
-### Code Complexity
-
-| Metric | Threshold | Action if Exceeded |
-|---|---|---|
-| Function length | ≤20 lines | Extract helper functions |
-| Cyclomatic complexity | ≤10 | Simplify conditional logic or extract strategy pattern |
-| File length | ≤300 lines | Split into focused modules |
-| Import count | ≤15 per file | Module may have too many responsibilities |
-
-## Expert References (Reasoning Calibration)
-
-When facing technical decisions about resilience, complexity, or quality trade-offs, calibrate your reasoning against these established principles:
-
-| Expert | Key Principle | Apply When |
-|--------|--------------|------------|
-| Michael Nygard | "Cynical software expects bad things to happen and is never surprised when they do." | Designing error handling, resilience, and defensive patterns |
-| Gene Kim | "Improving daily work is even more important than doing daily work." | Weighing tech debt remediation vs. new feature delivery |
-| Kent Beck | "Optimism is an occupational hazard of programming; feedback is the treatment." | Resisting the urge to skip tests or validation |
-| Ward Cunningham | "Technical debt is the gap between what code is and what it should be." | Assessing whether shortcuts are acceptable or creating future burden |
-| John Ousterhout | "Complexity is anything related to the structure of a software system that makes it hard to understand and modify." | Evaluating whether design choices add unnecessary complexity |
+### Unused and Broken Code
+Within the task's Target Files, code this work leaves unused is deleted (Git preserves it), and code that does not work is fixed or replaced rather than patched around. Unused or broken code outside them is reported, not touched.

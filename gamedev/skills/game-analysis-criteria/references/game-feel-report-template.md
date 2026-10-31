@@ -151,6 +151,8 @@ Music Shift: [If any adaptive music change occurs]
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### Game Feel Elements to Prioritize
 
 1. **[Element]**: [Why it's critical and how to implement]
@@ -164,11 +166,11 @@ Music Shift: [If any adaptive music change occurs]
 
 ### Quick Wins for Polish
 
+<!-- Up to three, as many as the sources support. -->
+
 1. **[Quick win]**: [Minimal effort, maximum feel improvement]
-2. **[Quick win]**: [Easy addition with big impact]
-3. **[Quick win]**: [Small tweak that transforms feel]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [Gameplay observation, audio analysis, developer talks, source code]*
 *Cross-references: mechanics/overview.md, ui-ux-analysis.md, technology-analysis.md*

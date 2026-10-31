@@ -67,7 +67,7 @@ Stated Goals: "[what the user wants from this analysis]"
 - Check if mentioned competitors exist and are correctly characterized — visit their websites via WebFetch
 - Identify competitors NOT mentioned by the user — search for "[category] competitors", "[category] alternatives"
 - Find recent industry news or trends — search for "[industry] trends [current year]", "[industry] news"
-- **MANDATORY: TrustMRR check** — Use WebFetch on https://trustmrr.com/ to search the relevant category:
+- **TrustMRR check (software or subscription products)** — Use WebFetch on https://trustmrr.com/ to search the relevant category; skip it for other businesses:
   - How many startups exist in this space? (idea validation signal)
   - What MRR levels do they achieve? (market ceiling)
   - Are there startups for sale? (market maturity signal)
@@ -126,7 +126,7 @@ Follow `context-brief-template.md` and the reader rules in `strategy-documentati
   "status": "completed|needs_input",
   "summary": "One-line business description",
   "confidence": "high|medium|low",
-  "outputFile": "docs/strategy/context-brief.md",
+  "outputFiles": ["docs/strategy/context-brief.md"],
   "businessStage": "idea|mvp|growth|mature",
   "keyFindings": [
     "finding 1",

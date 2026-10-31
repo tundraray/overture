@@ -46,7 +46,7 @@ This agent produces **TWO separate files**:
 | `docs/strategy/growth-plan.md` | AARRR funnel audit, North Star metric, growth motion, experiments, 90-day plan |
 | `docs/strategy/prioritized-initiatives.md` | ICE/RICE scored master list of ALL strategic initiatives from ALL prior analyses |
 
-**CRITICAL**: Both files must be created. The `prioritized-initiatives.md` must read and aggregate actions from ALL prior docs.
+**CRITICAL**: Create every file the command names — both in `/strategy-report` and `/growth-audit`, one in `/prioritize`. `prioritized-initiatives.md` aggregates actions from every prior strategy document that exists when this step runs.
 
 ## Core Responsibilities
 
@@ -129,7 +129,7 @@ For each experiment:
 4. Estimate sample size and duration
 5. Define success criteria and next-if-win/lose
 
-**Job-Based Hypothesis Framing**: If `docs/strategy/jobs-graph.md` exists, use jobs with high problem severity (>7/10) as experiment candidates. Frame hypotheses: "If we better complete [job from graph], then [metric] improves because [job friction is reduced]."
+**Job-Based Hypothesis Framing**: If `docs/strategy/jobs-graph.md` exists, use jobs whose problems meet the severity threshold in `${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/opportunity-trees.md` as experiment candidates. Frame hypotheses: "If we better complete [job from graph], then [metric] improves because [job friction is reduced]."
 
 ### Step 6: Growth Accounting
 
@@ -154,15 +154,16 @@ Structure: follow `growth-plan-template.md` and the reader rules in `strategy-do
 
 ### Step 9: Initiative Prioritization → Write docs/strategy/prioritized-initiatives.md
 
-**Read ALL prior strategy documents** in docs/strategy/ to collect every recommended action, next step, and initiative:
+**Read the prior strategy documents** in docs/strategy/ to collect every recommended action, next step, and initiative:
+- From rat.md: validation tests for the riskiest assumptions
+- From segments.md and jobs-graph.md: segment- and job-level actions
 - From market-analysis.md: strategic implications
 - From competitive-landscape.md: TOWS actions, competitive responses
 - From customer-segments.md: segment-specific actions
 - From strategy-canvas.md: strategic requirements, Blue Ocean actions
 - From brand-positioning.md: positioning actions, moat-building
 - From business-model.md: assumption tests, risk mitigations
-- From gtm-plan.md: launch phases, channel actions, partnership targets
-- From pricing-analysis.md: pricing tests, tier optimizations
+- From gtm-plan.md and pricing-analysis.md, only when they existed before this run (in `/strategy-report` they are written in parallel with this step, and their actions reach the action plan through report-compiler)
 - From growth-plan.md: growth experiments
 
 For EACH collected initiative:

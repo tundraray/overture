@@ -1,13 +1,12 @@
 ---
 name: documentation-criteria
-description: This skill should be used when the user asks to "create a PRD", "write an ADR", "create a design doc", "make a work plan", "create task files", or needs guidance on document templates, creation criteria, or determining which documents are required for a given change scope.
+description: This skill should be used when the user asks to "write a GDD", "write a feature spec", "write a market analysis", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "create task files", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
 ---
 
 # Documentation Creation Criteria
 
 ## Templates
 
-- **[prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md)** - Product Requirements Document template
 - **[adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md)** - Architecture Decision Record template
 - **[design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md)** - Technical Design Document template
 - **[plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md)** - Work Plan template
@@ -18,8 +17,6 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 - **[market-analysis-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/market-analysis-template.md)** - Market Analysis template
 - **[feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/feature-spec-template.md)** - Feature Specification template
 - **[analytics-setup-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/analytics-setup-template.md)** - Analytics Setup template
-- **[engine-setup-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/engine-setup-template.md)** - Engine Setup template
-- **[handoff-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/handoff-template.md)** - Handoff Document template
 
 ## Creation Decision Matrix
 
@@ -29,7 +26,7 @@ description: This skill should be used when the user asks to "create a PRD", "wr
 | New Game Feature (large) | GDD update → Feature Spec (full) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
 | Medium scale | Feature Spec (lite) → Design Doc per part → [ADR] → Work Plan per part | After Feature Spec approval |
 | Art/Visual Change | Art Direction → Feature Spec (lite) → Design Doc per part | After Feature Spec approval |
-| Small scale | Feature Spec (lite) → simplified Work Plan | After Feature Spec approval |
+| Small scale, or Prototype mode at any scale | Feature Spec (lite) → simplified Work Plan | After Feature Spec approval |
 
 **The ADR follows the Design Doc**, and is written only when a decision the design made passes all three parts of the test below. Most features produce none. Documents in `[brackets]` are conditional.
 
@@ -49,13 +46,13 @@ Game-specific decisions that commonly meet all three: save-file format, netcode 
 
 ## Writing for the Reader
 
-A document is read far more often than it is written, and most readers stop after the first screen. Every document this plugin writes — PRD, UXRD, Design Doc, ADR, work plan, GDD, Feature Spec, and the market, analytics, engine-setup, and handoff documents — follows these rules; the templates are laid out to match them.
+A document is read far more often than it is written, and most readers stop after the first screen. Every document this plugin writes — GDD, Feature Spec, UXRD, Design Doc, ADR, work plan, and the market and analytics documents — follows these rules; the templates are laid out to match them.
 
 **The reader is cold.** They know the product and the codebase in general, but not this feature, and they read without the author or the conversation that produced the document — a teammate, the user at an approval stop, the implementer months later. **Lean** means the document says fewer things and says each one fully; the same content squeezed into shorthand is not lean, it is unreadable.
 
 **Order.** A short header (status, date, links to the neighbouring documents — no more than five fields) → **Snapshot** → the body → the appendix (**Appendix: Evidence** in a Design Doc, **Appendix: Traceability** in a work plan) → **Update History**, always last. A reader learns what the document decides before how it was researched or how it got here. An ADR's Status and Decision sections are its header and Snapshot, and it has no Update History: a changed decision is a new ADR that supersedes it.
 
-**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD add a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows); the rest of the document cites `KD-n` instead of re-arguing the decision.
+**Snapshot.** At most ten lines at the top. It opens with **Overview** — three to five plain sentences telling what problem this solves and how, the way one explains it to a colleague: no IDs, no code names the reader has not met. Then what does not change, the biggest risk, and whether questions are open, with a link to them. A cold reader who stops there can say what the document decides. A Design Doc and a UXRD follow it with a **Key Decisions** table (ID, decision, why, rejected alternative — three to seven rows), not counted in the Snapshot's ten lines; the rest of the document cites `KD-n` instead of re-arguing the decision.
 
 **Current truth only.** The body states what is true now. Who decided, on which date, in which version, or in answer to which review finding belongs to Update History and to git — not to requirements, acceptance criteria, table cells, or design text. "(user decision 2026-10-28)", "v1.2:", "per review I003" in the body are defects. Update History has one line per version, a phrase per change, no reviewer IDs.
 
@@ -73,10 +70,10 @@ A document is read far more often than it is written, and most readers stop afte
 
 **Words before IDs.** Prose names things in words and adds the ID in parentheses — "the open thread is marked as current (AC-01.2)" — not "AC-01.2, SB-06, UX-04". Each ID is defined in exactly one place and cited everywhere else.
 
-**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` TH-08 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
+**Cite by path and ID, never by version.** A link to a neighbouring document names its path and the section or ID — `uxrd.md` MC-8 — not "UXRD v1.6". A version in a citation goes stale on the neighbour's next edit and turns every edit into a round of edits elsewhere.
 
 **Write what this document decides, and only what is decided.** Every statement in a document is a promise that has to stay true. Detail that the document does not own, or that is not settled, goes stale and comes back as a review finding:
-- **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit.
+- **One owner per value.** A number, a UI string, a threshold, or a limit is written in the document that owns it. Everywhere else cites it by ID without repeating the value — "within the title latency budget (AC-17.1)", not "within 10 s (AC-17.1)". A repeated value drifts at the owner's next edit. The one exception is a work plan's Reference Contract Values, which copy a binding value verbatim next to its source because the executor reads the task without the design open.
 - **Verified or assumed, never guessed.** A claim about how a library, framework, or existing code behaves is either verified — with how: the installed version, the code location, a spike — or written as an assumption with the check that will settle it in the plan. Internals that do not show at a contract boundary (call order inside a library, exception class names, props of a third-party component, the database lock mode or lock order behind an invariant) are not written at all; the design states the invariant, implementation decides the mechanism.
 - **The design's altitude, not the code's.** A contract, schema, or data model is described at the level its consumer and reviewer need: what each operation does, what it returns, which failures the caller handles, what each field means. Field lengths and sizes, full column lists, query conditions, and update guards are code — restated as table rows they are still code, and go stale the same way. A limit is written only when a requirement sets it or another part relies on it.
 - **No references that go stale on their own.** No line numbers into another document, no version tags in headers of generated files, no counts of something listed elsewhere — tasks, tests, cases ("19 tasks", "3/14"); a list counts itself, no status line that narrates which versions are pending. Line numbers into the codebase belong only to Appendix: Evidence, as a snapshot.
@@ -96,26 +93,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 
 **One fact, one document.** Each fact has exactly one home — the document listed below as including it. A later document cites an earlier one by ID (`AC-1`, `OQ-2`, `KD-3`) and never retells it: a retold requirement drifts from its source at the first revision of either, and the reviewer cannot tell which copy is meant. The chain is GDD (the game's vision and systems) → Feature Spec (what the player achieves with one feature) → UXRD when the feature has a UI surface (what the player sees and does) → Design Doc (how the system does it); the design system, shared by every feature, holds how the HUD and menus look and how each component works.
 
-### PRD (Product Requirements Document)
-
-*Not produced on the gamedev path: the feature spec plays this role and carries the Delivery Parts. The template is kept for reverse-engineering an existing non-game module.*
-
-**Purpose**: Define business requirements and user value
-
-**Includes**:
-- Business requirements and user value
-- Success metrics and KPIs (measurable format)
-- User stories and use cases
-- MoSCoW prioritization (Must/Should/Could/Won't)
-- MVP and Future phase separation
-- User journey diagram (required)
-
-**Excludes**:
-- Technical implementation details (→Design Doc)
-- Technical selection rationale (→ADR)
-- **Implementation phases** (→Work Plan)
-- **Task breakdown** (→Work Plan)
-- **How the interface looks and behaves** (→UXRD and the design system)
+*No PRD is produced on the gamedev path: the feature spec plays its role and carries the Delivery Parts.*
 
 ### ADR (Architecture Decision Record)
 
@@ -124,7 +102,7 @@ An edit is finished when nothing else still says the old thing. Most findings on
 **Includes**:
 - Decision (what was selected)
 - Rationale (why that selection was made)
-- Option comparison (minimum 3 options) and trade-offs
+- Option comparison (at least two real options) and trade-offs
 - Architecture impact
 - Principled implementation guidelines (e.g., "Use dependency injection")
 
@@ -139,22 +117,19 @@ An edit is finished when nothing else still says the old thing. Most findings on
 **Purpose**: Define technical implementation methods in detail
 
 **Includes**:
-- **Existing codebase analysis** (required)
-  - Code locations, existing and new (C4)
-  - Integration point clarification (connection points with existing code even for new implementations)
+- **Existing codebase analysis** (required): the code inspected and the facts it yielded (Appendix: Evidence); code locations, existing and new, in C4 when modules change
 - Technical implementation approach (vertical/horizontal/hybrid)
 - Interface and contract definitions
 - Data flow and component design
-- **E2E verification procedures at integration points**
-- **Acceptance criteria (measurable format)**
+- **Acceptance criteria**: the feature spec's criteria cited by ID; EARS criteria only where the design refines one
 - Change impact: the Change columns of the C2–C4 tables, and an Interface Change Matrix row for every changed existing operation or prop
-- Complete enumeration of integration points
+- Every integration point with existing code — connection points even for new implementations — and how each is verified
 - Scope agreed with the user: what is out of scope and the constraints the design meets
 - **Prerequisite ADRs** (including common ADRs)
 
 **Excludes**:
 - Source code of any kind — schemas, interfaces, function bodies, snippets of changed files, and their copies as field-by-field tables (→written at implementation; contracts state what a caller needs)
-- Test code, test file names, fixtures, test helpers, mocking mechanics (→acceptance-test-generator and task files; the Design Doc states use cases)
+- Test code, test file names, fixtures, test helpers (→acceptance-test-generator and task files; the Design Doc states use cases and, in Appendix: Evidence, its test boundaries)
 - Why that technology was chosen (→Reference ADR)
 - Implementation order, when to implement, duration (→Work Plan)
 - Who will implement (→Work Plan)
@@ -167,13 +142,12 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Core loop
 - Game pillars
 - Progression systems
-- Balancing parameters
-- Content specifications
 
 **Excludes**:
 - Technical implementation (→Design Doc)
 - Market analysis (→Market Analysis)
-- Art specifications (→Art Direction)
+- Balancing values of a feature (→Feature Spec, which owns them)
+- Detailed art specifications (→the Art Direction document; the GDD states the direction in a few lines)
 
 ### Market Analysis
 
@@ -249,55 +223,36 @@ An edit is finished when nothing else still says the old thing. Most findings on
 - Task breakdown and dependencies (maximum 2 levels)
 - Schedule and duration estimates
 - Verification: cites the Design Doc's Verification Strategy and states only the plan's own steps — which task runs the early verification point, and each phase's operational verification
-- **Phase 4 Quality Assurance Phase (required)**
+- **A final Quality Assurance phase (required)**
 - Progress records (checkbox format)
 
 **Excludes**:
 - Technical rationale (→ADR)
 - Design details (→Design Doc)
 
-**Phase Division Criteria**:
-1. **Phase 1: Foundation Implementation** - Contract definitions, interfaces/signatures, test preparation
-2. **Phase 2: Core Feature Implementation** - Business logic, unit tests
-3. **Phase 3: Integration Implementation** - External connections, presentation layer
-4. **Phase 4: Quality Assurance (Required)** - Acceptance criteria achievement, all tests passing, quality checks
-
-**Three Elements of Task Completion Definition**:
-1. **Implementation Complete**: Code is functional
-2. **Quality Complete**: Tests, static checks, linting pass
-3. **Integration Complete**: Verified connection with other components
+The planner composes the phases from technical dependencies and the implementation approach, and owns the completion definition of a task ("Task Completion Definition: 3 Elements").
 
 ## Scale Axes
 
-**File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a save-file format or a networked contract is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s assessment; where none is available, evaluate directly:
-
-| Axis | Small | Medium | Large |
-|------|-------|--------|-------|
-| Estimated files | 1-2 | 3-5 | 6+ |
-| Observable outcomes | One behavior | Multiple related behaviors | Multiple independently verifiable outcomes |
-| Contracts/data | No public contract or persisted-data change | Backward-compatible contract change | Breaking contract, save-format migration, or persisted-data migration |
-| Boundaries | One local module/component | Multiple modules in one layer | Cross-layer, cross-service, or external-system boundary |
-| Decision risk | Existing pattern applies directly | One bounded technical decision; complex logic (3+ interacting state variables, 5+ coordinated async operations) or a new pattern | Architecture, security, compliance, or irreversible operational decision |
-
-Select the highest scale triggered by any observed axis.
+**File count is one scale signal, not the deciding rule.** Contract, data, boundary, and decision risk can each raise the scale on their own — a two-file change that breaks a save-file format or a networked contract is not a small-scale change. Take the scale and its `decidingAxis` from `task-analyzer`'s five-axis assessment ("Estimate Task Scale"), which owns the axes; on the gamedev path a save-format migration counts as a persisted-data migration. The highest scale any axis triggers wins.
 
 ## Creation Process
 
 Each step names the evidence that must exist before the next step starts. A step without its output evidence has not completed, regardless of elapsed effort.
 
-**1. Problem Analysis** — change scale assessment, ADR condition check
+**1. Problem Analysis** — change scale assessment
 - *Output evidence*: confirmed scale with its deciding axis named; a named source for each existing document consulted
-- *Transition*: proceed when the scale and every applicable ADR condition have an explicit yes/no
+- *Transition*: proceed when the scale has an explicit deciding axis. Whether an ADR is written is decided after the Design Doc, by the test in "ADR Creation Conditions"
 
-**2. ADR Option Consideration** (ADR only) — compare 3+ options, specify trade-offs
-- *Output evidence*: at least 3 options with trade-offs stated as concrete costs, not generic caveats
+**2. ADR Option Consideration** (ADR only, after the Design Doc) — compare the real options, specify trade-offs
+- *Output evidence*: at least two real options with trade-offs stated as concrete costs, not generic caveats
 - *Transition*: proceed when the selected option names what the rejected options fail to satisfy
 
 **3. Creation** — use templates, include measurable conditions
 - *Output evidence*: every mandatory template section filled (or answered in one line with the reason), every *when applicable* section that does not apply deleted; every acceptance criterion measurable
 - *Transition*: proceed when no section is silently empty — an unanswered question is not the same as an inapplicable one
 
-**4. Approval** — "Accepted" after review enables implementation
+**4. Approval** — "Approved" after review enables implementation (an ADR's status becomes `Accepted`)
 - *Output evidence*: reviewer verdict recorded; every blocking issue resolved or explicitly deferred with justification
 - *Transition*: implementation begins only on an approved verdict
 
@@ -309,10 +264,11 @@ Documents are grouped **by feature**, not by document type. Game-wide documents 
 docs/
 ├── adr/ADR-0007-save-format.md
 ├── design-system/{README,foundations}.md, components/{component-name}.md
-├── game-design/{project}-gdd.md
+├── game-design/{project}-gdd.md, features/{feature}-spec.md
+├── art/{project}-art-direction.md
+├── analytics/{project}-analytics.md
 ├── resources/market-research/{market_overview,summary}.md
 └── features/{feature}/
-    ├── prd.md
     ├── uxrd.md
     ├── design-{part}.md
     └── {part}/
@@ -322,7 +278,6 @@ docs/
 
 | Document | Path | Naming Convention | Template |
 |----------|------|------------------|----------|
-| PRD | `docs/features/{feature}/` | `prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
@@ -335,14 +290,13 @@ docs/
 | Feature Spec | `docs/game-design/features/` | `[feature-name]-spec.md` | [feature-spec-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/feature-spec-template.md) |
 | Art Direction | `docs/art/` | `[project-name]-art-direction.md` | N/A |
 | Analytics Setup | `docs/analytics/` | `[project-name]-analytics.md` | [analytics-setup-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/analytics-setup-template.md) |
-| Handoff | `docs/handoffs/` | `[handoff-name]-handoff.md` | [handoff-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/handoff-template.md) |
 
 
 ### Parts and plans
 
 A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
 
-The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. A part cut along `ui`, `hud`, or `menu` takes `technical-designer-frontend` and `ui-analyzer` in the technical phase; every other seam takes `technical-designer` and `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every requirement belongs to exactly one part; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Every part takes `technical-designer` in the technical phase — the gamedev plugin ships no frontend designer; a part cut along `ui`, `hud`, or `menu` adds `ui-analyzer` to `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every Must Have acceptance criterion belongs to exactly one part, and a Should Have or Could Have belongs to a part or is explicitly deferred; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; a part whose plan is `completed` is frozen.
 
 A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
 
@@ -357,11 +311,11 @@ depends-on:                   # previous plan filename; omit for the first
 ---
 ```
 
-Exactly one plan per part may be `active`. Escalate rather than guess when two claim it, when the file count disagrees with `M`, or when a `depends-on` names a missing file.
+`design` is `none` only for a simplified plan — small scale, or Prototype mode at any scale (`workflow-gamedev`) — where the lite feature spec is the specification and the plan traces to its acceptance criteria.
 
-The 6 game phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are phases *within* one plan, not separate plans. Reach for a second plan when a later pass is genuinely deferred — a post-playtest tuning round — not to model the phase sequence.
+Exactly one plan per part may be `active`. Escalate rather than guess when two claim it, when the file count disagrees with the `M` in `plan: N of M`, or when a `depends-on` names a missing file.
 
-*Note: Work plans are excluded by `.gitignore`
+*Note: work plans and task files are ephemeral working state and are excluded by `.gitignore`.*
 
 ## ADR Status
 `Proposed` → `Accepted` → `Deprecated`/`Superseded`/`Rejected`
@@ -374,13 +328,14 @@ Required diagrams for each document. Every diagram follows the `mermaid-diagrams
 
 | Document | Required Diagrams | Purpose |
 |----------|------------------|---------|
-| PRD | User journey diagram | Clarify user experience |
+| Feature Spec | Part dependency diagram (three or more parts) | Show the order parts are designed and built in |
 | ADR | Option comparison diagram (when needed) | Visualize trade-offs |
 | Design Doc | C2 container diagram always; C1, C3, C4 when they apply; a sequence diagram per runtime flow | Zoom from context to code; show each flow as the running system executes it |
 | Work Plan | Phase structure diagram, Task dependency diagram | Clarify implementation order |
 
 ## Common ADR Relationships
-1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.), reference existing common ADRs
-2. **When missing**: Consider creating necessary common ADRs
-3. **Design Doc**: Specify common ADRs in "Prerequisite ADRs" section
-4. **Compliance check**: Verify design aligns with common ADR decisions
+1. **At creation**: Identify common technical areas (logging, error handling, async processing, etc.) and search `docs/adr/ADR-*.md` for decisions that already cover them
+2. **Design Doc**: Specify those ADRs in the "Prerequisite ADRs" section
+3. **Compliance check**: Verify the design aligns with them
+
+A missing common decision is not a reason to write an ADR on its own; it goes through the three-part test after the design like any other.

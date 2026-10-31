@@ -30,7 +30,7 @@ Historical Context Understanding: Current form rationale, past decision validity
 
 #### Strategy Discovery Process
 ```yaml
-Research and Exploration: Tech stack examples (WebSearch), similar projects, OSS references, literature/blogs
+Research and Exploration: patterns already in the codebase, similar projects, the libraries' own documentation
 Creative Thinking: Strategy combinations, constraint-based design, phase division, extension point design
 ```
 
@@ -101,9 +101,7 @@ Select optimal solution from basic implementation approaches (creative combinati
 **Application Conditions**: Unclear requirements, need to change approach per phase, transition from prototyping to full implementation
 **Verification Method**: Verify at appropriate L1/L2/L3 levels according to each phase's goals
 
-### Phase 6: Decision Rationale Documentation
-
-**Design Doc Documentation**: Clearly specify implementation strategy selection reasons and rationale.
+The decision is recorded as one line in the Design Doc's Implementation Approach (the approach and its reason); implementation order and per-task verification levels belong to the work plan.
 
 ## Verification Level Definitions
 
@@ -129,13 +127,10 @@ Define integration points according to selected strategy:
 - **Insufficient Analysis**: Skipping Phase 1 analysis framework before strategy selection
 - **Risk Neglect**: Starting implementation without Phase 3 risk analysis matrix
 - **Constraint Ignorance**: Deciding strategy without checking Phase 4 constraint checklist
-- **Rationale Omission**: Selecting strategy without using Phase 6 documentation template
 
 ## Guidelines for Meta-cognitive Execution
 
 1. **Leverage Known Patterns**: Use as starting point, explore creative combinations
-2. **Active WebSearch Use**: Research implementation examples from similar tech stacks
-3. **Apply 5 Whys**: Pursue root causes to grasp essence
-4. **Multi-perspective Evaluation**: Comprehensively evaluate from each Phase 1-4 perspective
-5. **Creative Thinking**: Consider sequential application of multiple strategies and designs leveraging project-specific constraints
-6. **Clarify Decision Rationale**: Make strategy selection rationale explicit in design documents
+2. **Apply 5 Whys**: Pursue root causes to grasp essence
+3. **Multi-perspective Evaluation**: Comprehensively evaluate from each Phase 1-4 perspective
+4. **Creative Thinking**: Consider sequential application of multiple strategies and designs leveraging project-specific constraints

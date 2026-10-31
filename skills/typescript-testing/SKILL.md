@@ -1,12 +1,12 @@
 ---
 name: typescript-testing
-description: This skill provides frontend testing rules with Vitest, React Testing Library, and MSW. Automatically loaded when writing frontend tests, reviewing test quality, or when "Vitest", "React Testing Library", "MSW", "component test", or "frontend test coverage" are mentioned.
+description: This skill provides frontend testing rules with React Testing Library and MSW on the project's test runner (Vitest or Jest). Automatically loaded when writing frontend tests, reviewing test quality, or when "Vitest", "React Testing Library", "MSW", "component test", or "frontend test coverage" are mentioned.
 ---
 
 # TypeScript Testing Rules (Frontend)
 
 ## Test Framework
-- **Vitest**: This project uses Vitest
+- **Test runner**: the project's own (Vitest or Jest); the examples below use Vitest — translate `vi.*` to `jest.*` on Jest
 - **React Testing Library**: For component testing
 - **MSW (Mock Service Worker)**: For API mocking
 - Test imports: `import { describe, it, expect, beforeEach, vi } from 'vitest'`
@@ -25,7 +25,7 @@ description: This skill provides frontend testing rules with Vitest, React Testi
 ### Where to concentrate test rigor
 For shared components, custom hooks, and utilities reused across features, cover their public branches, error states, and boundary contracts — their regression blast radius is wider. Verify page-level composition through integration/E2E tests when the behavior depends on multiple rendered units.
 
-Read coverage reports as a map of where to look first, in roughly this order of payoff: Utils and Atoms (highest reuse), then Custom Hooks and Molecules, then Organisms (usually better covered by integration tests). A low number on a high-reuse unit is a finding; a low number on a thin composition wrapper often is not.
+Read coverage reports as a map of where to look first, in roughly this order of payoff: shared utilities and primitive components (highest reuse), then custom hooks and composite components, then page-level compositions (usually better covered by integration tests). A low number on a high-reuse unit is a finding; a low number on a thin composition wrapper often is not.
 
 **Metrics** (what coverage reports break down): Statements, Branches, Functions, Lines
 
@@ -52,15 +52,7 @@ Read coverage reports as a map of where to look first, in roughly this order of 
 
 **Recommended Principle**: Start each change that adds behaviour with a failing test — behaviour that passes `testing-principles`, Test Selection; a constant, type, or wiring step gets no test of its own
 
-**Background**:
-- Ensure behavior before changes, prevent regression
-- Clarify expected behavior before implementation
-- Ensure safety during refactoring
-
-**Development Steps**:
-1. **Red**: Write test for expected behavior (it fails)
-2. **Green**: Pass test with minimal implementation
-3. **Refactor**: Improve code while maintaining passing tests
+The cycle itself is `testing-principles`, "The RED-GREEN-REFACTOR Cycle".
 
 **NG Cases (Test-first not required)**:
 - Pure configuration file changes (vite.config.ts, tailwind.config.js, etc.)
@@ -91,9 +83,7 @@ Read coverage reports as a map of where to look first, in roughly this order of 
 
 ### Test Failure Response Decision Criteria
 
-**Fix tests**: Wrong expected values, references to non-existent features, dependence on implementation details, implementation only for tests
-**Fix implementation**: Valid specifications, business logic, important edge cases
-**When in doubt**: Confirm with user
+A failing test that already existed before this task is resolved by fixing the implementation. When the test itself looks wrong — a wrong expected value, a feature that no longer exists — deleting or weakening it is escalated, never done to get green (`testing-principles`, Keep Tests Active). A test written in this task is fixed freely.
 
 ## Test Helper Utilization Rules
 
@@ -152,7 +142,7 @@ src/
 
 ❌ **Avoid: test.skip() or commenting out**
 - Reason: Creates test gaps and incomplete quality checks
-- Solution: Completely delete unnecessary tests
+- Solution: fix the test, or escalate its removal (`testing-principles`, Keep Tests Active)
 
 ## Test Granularity Principles
 
@@ -170,7 +160,7 @@ expect(component.state.count).toBe(0)
 
 ## Test Quality Criteria
 
-These criteria ensure reliable, maintainable tests.
+The criteria are `testing-principles`, "Test Quality Criteria"; these are their React Testing Library forms.
 
 ### Literal Expected Values
 Use hardcoded literal values for assertions. This ensures independent verification of implementation correctness.
@@ -224,7 +214,7 @@ const handlers = [
 ]
 
 // Error state: override the handler for one test
-server.use(http.get('/api/users', () => new HttpResponse(null, { status: 500 })))
+server.use(http.get('/api/users/:id', () => new HttpResponse(null, { status: 500 })))
 ```
 
 MSW v2 replaced v1's `rest` / `res(ctx.json(...))` API. Check the installed major version before writing handlers — v1 syntax fails outright on v2.
@@ -259,7 +249,7 @@ describe('Button', () => {
     const onClick = vi.fn()
     render(<Button label="Click me" onClick={onClick} />)
     await user.click(screen.getByRole('button', { name: 'Click me' }))
-    expect(onClick).toHaveBeenCalledOnce()
+    expect(onClick).toHaveBeenCalledTimes(1)
   })
 })
 ```

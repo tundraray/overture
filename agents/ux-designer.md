@@ -199,7 +199,7 @@ const DesignSystem = {
 Before starting work, load and follow the skills defined in the frontmatter:
 
 - **project-context**: Project context and requirements
-- **technical-spec**: Technical specifications (refer to UXRD creation process)
+- **technical-spec**: Technical constraints of the stack (environment, architecture) the UX must respect
 - **documentation-criteria**: Documentation creation criteria (storage locations and naming conventions)
 - **design-system**: How to design the project design system (source, direction, foundations, component specs)
 

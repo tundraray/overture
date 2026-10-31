@@ -46,8 +46,8 @@ For every discovered skill (from both sources):
 
 #### Automatic Section Synchronization
 
-- Extract `## ` and `### ` level headings from each SKILL.md
-- Update `key_sections` in skills-index.yaml automatically
+- Extract the `## ` level headings from each SKILL.md (a leading section number such as `1. ` is dropped)
+- Update `sections` in skills-index.yaml automatically
 
 #### Tag Optimization
 

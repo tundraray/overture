@@ -16,7 +16,7 @@ All investigation, analysis, and implementation work flows through specialized s
 | Trigger | Action |
 |---------|--------|
 | New task | Invoke **requirement-analyzer** |
-| Flow in progress | Check scale determination table for next subagent |
+| Flow in progress | Take the next step from the current phase skill's flow (see "Workflow Phases") |
 | Phase completion | Delegate to the appropriate subagent |
 | Stop point reached | Wait for user approval |
 
@@ -30,7 +30,6 @@ Before the orchestrator performs any other action in a new session:
 
 1. **Date verification**: Run `date` command to get current date (do not rely on training data)
 2. **Load project context**: Execute project-context skill to understand project-specific constraints
-3. **Pre-edit gate**: Before any editing operation, run rule-advisor first to assess the task
 
 These steps ensure the orchestrator has current context before making decisions.
 
@@ -43,7 +42,7 @@ graph TD
     Scale --> Flow[Execute flow based on scale]
 ```
 
-**During flow execution, determine next subagent according to scale determination table**
+**During flow execution, take the next subagent from the current phase skill's flow** — see "Workflow Phases"
 
 ### Requirement Change Detection During Flow
 
@@ -65,6 +64,7 @@ The following subagents are available:
 4. **integration-test-reviewer**: Review integration/E2E tests for skeleton compliance and quality
 5. **security-reviewer**: Security compliance review against Design Doc and coding-principles (read-only)
 6. **code-explorer**: Searches the codebase — locates a named thing and what touches it, or sweeps for what is unused (read-only)
+7. **test-auditor**: Post-implementation audit of the part's tests — advisory, never a gate (read-only)
 
 ### Document Creation Agents
 1. **requirement-analyzer**: Requirement analysis and work scale determination
@@ -81,6 +81,21 @@ The following subagents are available:
 12. **ui-analyzer**: Read-only pre-design UI fact gathering, including external design-resource fetch with per-resource `fetch_status` (frontend)
 13. **code-verifier**: Post-implementation consistency check of the code against the Design Doc (read-only)
 14. **cleanup-executor**: Safely removes confirmed dead code with git backup and build verification
+
+### Gamedev Substitutions
+
+gamedev-overture ships the shared commands but not every shared agent or skill. When a shared command or skill runs there, read each name on the left as the one on the right:
+
+| Shared | gamedev-overture |
+|--------|------------------|
+| `workflow-product` | `workflow-gamedev` |
+| `prd-creator`; the PRD (`docs/features/{feature}/prd.md`, `doc_type: PRD`) | `mid-game-designer`; the feature spec (`docs/game-design/features/{feature}-spec.md`, `doc_type: FeatureSpec`), with the GDD as context |
+| `ux-designer`; the UXRD | `game-ui-designer`; its UXRD |
+| `work-planner` | `gamedev-work-planner` |
+| `technical-designer-frontend` | `technical-designer`, with `ui-analyzer` for a `ui`, `hud`, or `menu` part |
+| `task-executor-frontend`, `quality-fixer-frontend` | `task-executor`, `quality-fixer` |
+
+`/reverse-engineer` is the one exception: no gamedev agent writes a feature spec from code, so on gamedev it skips its PRD phase and generates Design Docs against an existing feature spec.
 
 ## Orchestration Principles
 
@@ -207,7 +222,7 @@ Autonomous execution MUST stop and wait for user input at these points.
 | Product | After document-reviewer completes UXRD review (frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
 | Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
 | Technical | After document-reviewer completes ADR review (only when an ADR was written) | ADR | Approve ADR |
-| Execution | After document-reviewer completes work plan review | part | Batch approval for that part's implementation |
+| Execution | After document-reviewer completes the work plan review (small scale and gamedev Prototype: after the simplified plan, which is not reviewed) | part | Batch approval for that part's implementation |
 
 The ADR stop follows the Design Doc stop: which decisions are architecture-binding is only visible once the design exists, and most features produce no ADR at all.
 
@@ -216,7 +231,7 @@ The ADR stop follows the Design Doc stop: which decisions are architecture-bindi
 ## Scale Determination and Document Requirements
 | Scale | Typical file count※5 | PRD | UXRD | ADR | Design Doc | Work Plan |
 |-------|------------|-----|------|-----|------------|-----------|
-| Small | 1-2 | **Required**, lite※1 | Not needed | Rare※2 | Not needed | Simplified, one part |
+| Small | 1-2 | **Required**, lite※1 | Not needed | Not needed | Not needed | Simplified, one part |
 | Medium | 3-5 | **Required**, lite※1 | Conditional※4 | Rare※2 | **Required**, per part | **Required**, per part |
 | Large | 6+ | **Required**, full※3 | Conditional※4 | Rare※2 | **Required**, per part | **Required**, per part |
 
@@ -229,7 +244,7 @@ The ADR stop follows the Design Doc stop: which decisions are architecture-bindi
 ## How to Call Subagents
 
 ### Execution Method
-Call subagents using the Task tool:
+Call subagents using the Agent tool:
 - subagent_type: Agent name
 - description: Concise task description (3-5 words)
 - prompt: Specific instructions
@@ -293,7 +308,7 @@ The orchestrator never accepts a reviewer finding on its own authority, and neve
 
 ## Structured Response Specification
 
-Each subagent responds in JSON format. Key fields for orchestrator decisions:
+Each subagent responds in JSON format. A document-producing agent returns the paths it wrote in `documents[].path` — that path, not the response text, is what the orchestrator hands to the next agent. Key fields for orchestrator decisions:
 - **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
 - **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
 - **quality-fixer**: status, checksPerformed, fixesApplied, approved, incompleteImplementations
@@ -305,6 +320,7 @@ Each subagent responds in JSON format. Key fields for orchestrator decisions:
 - **code-explorer**: status, answer, locations (directed) or findings (sweep: id, category, files, confidence, signals, ruledOut, notRuledOut), counts, coverage
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 - **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
+- **test-auditor**: status, verdict (lean/bloated/blocked), findings (per-test `merge` / `drop` / `move` verdicts), budget, gaps — advisory, reported to the user
 
 
 ## Handling Requirement Changes
@@ -380,41 +396,8 @@ Everything after batch approval — entry conditions, the per-task cycle, commit
 
 Load `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md` before entering autonomous mode.
 
-## Metacognitive TodoWrite Integration
+## TodoWrite Management
 
-When rule-advisor returns its analysis, the orchestrator MUST formalize the metacognitive outputs into TodoWrite entries for tracking:
-
-### Mapping Rule-Advisor Output → TodoWrite
-
-| Rule-Advisor Output Field | TodoWrite Usage |
-|---|---|
-| `metaCognitiveGuidance.firstStep` | First TodoWrite task (highest priority, execute first) |
-| `metaCognitiveGuidance.taskEssence` | Completion criteria — record as the final verification task |
-| `warningPatterns` | Checkpoint tasks inserted between implementation steps |
-| `metaCognitiveGuidance.pastFailures` | Guard tasks — verify these are not repeated during execution |
-
-### TodoWrite Structure After Rule-Advisor
-
-```
-1. [in_progress] {firstStep from rule-advisor}
-2. [pending] Checkpoint: Verify {warningPattern[0]} not triggered
-3. [pending] Implementation step 1
-4. [pending] Checkpoint: Verify {warningPattern[1]} not triggered
-5. [pending] Implementation step 2
-...
-N-1. [pending] Guard: Confirm {pastFailures[i]} not repeated
-N. [pending] Verify task essence: {taskEssence}
-```
-
-### Rules
-
-1. Checkpoints are inserted between every 2-3 implementation steps
-2. Guard tasks reference specific `pastFailures` entries
-3. The final task ALWAYS verifies `taskEssence` from rule-advisor
-4. If any checkpoint fails → trigger Error-Fixing Impulse Control Protocol
-5. TodoWrite updates MUST happen before and after each checkpoint evaluation
-
-### 2-Stage TodoWrite Management
 
 **Stage 1: Phase Management** (Orchestrator responsibility)
 - Register overall phases as TodoWrite items
@@ -434,7 +417,7 @@ N. [pending] Verify task essence: {taskEssence}
    - Compose commit messages from changeSummary → **Execute git commit with Bash**
    - Explicitly integrate initial and additional requirements when requirements change
 
-   #### *1 acceptance-test-generator → work-planner
+   #### acceptance-test-generator → work-planner
 
    **Purpose**: Prepare information for work-planner to incorporate into work plan
 
@@ -450,15 +433,14 @@ N. [pending] Verify task essence: {taskEssence}
 
 3. **Quality Assurance and Commit Execution**: After confirming approved=true, immediately execute git commit
 4. **Autonomous Execution Mode Management**: Start/stop autonomous execution after approval, escalation decisions
-5. **ADR Status Management**: Update ADR status after user decision (Accepted/Rejected)
+5. **ADR Status Management**: After the user's decision, have `technical-designer(-frontend)` set the ADR's status in `update` mode
 
 ## Important Constraints
 
 - **Quality check is mandatory**: quality-fixer approval needed before commit
 - **Structured response mandatory**: Information transmission between subagents in JSON format
 - **Approval management**: Document creation → Execute document-reviewer → Get user approval before proceeding
-- **Flow confirmation**: After getting approval, always check next step with work planning flow (large/medium/small scale)
-- **Consistency verification**: If subagent determinations contradict, prioritize guidelines
+- **Flow confirmation**: After getting approval, take the next step from the current phase skill's flow
 
 ## Required Dialogue Points with Humans
 

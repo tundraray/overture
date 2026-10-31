@@ -32,7 +32,7 @@
 | **Value Proposition** | [what they promise] |
 | **Pricing** | [model + price points] |
 | **Threat Level** | High / Med / Low |
-| **TrustMRR Verified** | [Yes — $X MRR, X% MoM / Not listed] |
+| **TrustMRR Verified** | [Yes — $X MRR, X% MoM / Not listed; software or subscription products only — delete the row otherwise] |
 
 **Strengths** (ranked by impact):
 1. [strength]

@@ -24,7 +24,7 @@ Replace ambiguous guidance with measurable criteria.
 
 ```
 BAD:  "Write clean functions"
-GOOD: "Function length: <50 lines ideal, <200 max. Single return type. Max 3 parameters (use options object beyond 3)."
+GOOD: "Every external input passes schema validation at the boundary; domain functions receive only typed values"
 ```
 
 **BP-3: Missing Output Format Specification**
@@ -87,19 +87,15 @@ GOOD: "Escalate when: security implications unclear, performance impact >10%, br
 
 ## Editing Principles
 
-For detailed editing principles (context efficiency, deduplication, grouping, measurability, positive form, consistent notation, explicit prerequisites, priority ordering, scope boundaries), reference **rule-editing-guide** skill.
+The writing rules for any LLM-facing instruction are `llm-friendly-context`, "Core Rules". For a skill in particular:
 
-### Skill-Specific Applications
-
-1. **Context Efficiency**: Skill SKILL.md should be self-contained within its scope. Reference other skills by name, never duplicate content.
-
-2. **Deduplication**: If content overlaps with another skill, reference it: "See [skill-name] skill '[section]' for details."
-
-3. **Measurability**: Every criterion should be checkable — "Is this rule followed? Yes/No" must be answerable from the code.
-
-4. **Scope Boundaries**: First paragraph of skill MUST state what is in scope and what is not.
-
-5. **Expert References**: Every skill should end with "Expert References (Reasoning Calibration)" table for decision grounding.
+1. **Context Efficiency**: every sentence carries meaning; a skill is self-contained within its scope.
+2. **One Owner per Rule**: a rule lives in exactly one skill; others cite it — "See [skill-name] skill '[section]'" — never copy it.
+3. **One Domain per Skill**: related rules are grouped; one skill covers one coherent domain.
+4. **Measurability**: every criterion is checkable — "Is this rule followed? Yes/No" is answerable from the code or document.
+5. **Explicit Assumptions**: what the skill applies to, and what follows another skill instead, is stated, not assumed.
+6. **Importance Order**: the constraints that change behaviour most come first; examples and edge cases last.
+7. **Scope Boundaries**: the first paragraph states what is in scope and what is not.
 
 ## Grading System
 
@@ -107,7 +103,6 @@ For detailed editing principles (context efficiency, deduplication, grouping, me
 - All P1 patterns (BP-1, BP-2, BP-3) resolved
 - 80%+ of P2 patterns (BP-4, BP-5, BP-6) addressed
 - Output format clearly specified
-- Expert References section present
 - No ambiguous or unmeasurable criteria
 
 ### B Grade — Usable with Gaps
@@ -126,8 +121,7 @@ For detailed editing principles (context efficiency, deduplication, grouping, me
 When evaluating a skill, check each item:
 
 ### Structure
-- [ ] Frontmatter has name and description with auto-load triggers
-- [ ] Description includes "Automatically loaded when..." clause
+- [ ] Frontmatter has name and a description that names the situations and phrases that should load it
 - [ ] Content flows general → specific
 - [ ] Consistent heading hierarchy (H2 for sections, H3 for subsections)
 - [ ] Scope clearly stated in opening paragraph
@@ -143,10 +137,9 @@ When evaluating a skill, check each item:
 ### Completeness
 - [ ] Both success and failure examples included (BP-7)
 - [ ] Escalation criteria defined (BP-8)
-- [ ] Expert References table present
 - [ ] No content duplicated from other skills
 
 ### Integration
 - [ ] Referenced in skills-index.yaml with accurate tags
 - [ ] Tags cover all relevant search terms
-- [ ] key_sections list matches actual H2 headings
+- [ ] `sections` list matches the skill's actual section headings

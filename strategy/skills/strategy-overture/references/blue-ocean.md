@@ -97,34 +97,3 @@ Six systematic paths to discover blue oceans:
 | Imitation destroys advantage | Blue ocean becomes red within 12-18 months | Build barriers: IP, network effects, switching costs |
 | Execution gap | Great strategy, poor implementation | Include resource plan and timeline in canvas |
 | Customer doesn't want what you created | "Create" factor based on assumption | Validate with customer research before full build |
-
-## Output Template
-
-```markdown
-# Blue Ocean Strategy Analysis
-
-## Executive Summary
-[Go/Pivot/No-Go recommendation with reasoning]
-
-## Current Industry Strategy Canvas
-[Competitive factors table with current curves]
-
-## Blue Ocean Opportunity
-### Four Actions Applied
-[Eliminate, Reduce, Raise, Create details]
-
-### New Strategy Canvas (Target)
-[Table showing proposed value curve vs competitors]
-
-### Six Paths Exploration
-[Which paths reveal opportunity, which don't]
-
-## Implementation Requirements
-- **Resources needed**: [people, capital, time]
-- **Key risks**: [ranked]
-- **Imitation barriers**: [what protects the blue ocean]
-- **Timeline to competitive advantage**: [estimate]
-
-## Confidence: [High / Medium / Low]
-**Key uncertainty**: [biggest unknown]
-```

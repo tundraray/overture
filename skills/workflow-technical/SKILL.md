@@ -13,7 +13,7 @@ Mechanics common to every phase — how to invoke subagents, response contracts,
 
 This phase is identical for every domain — a game feature and a service endpoint need the same fact gathering, the same design rigour, and the same consistency verification. Planning is where the domain difference appears, and planning belongs to `workflow-execution`.
 
-Layer selection between `technical-designer` and `technical-designer-frontend`, and between `codebase-analyzer` and `ui-analyzer`, follows the part being designed, not the domain — a part whose `cutAlong` is `frontend` (or `ui`, `hud`, `menu` on the gamedev path) takes the frontend pair, whatever the project is.
+Layer selection between `technical-designer` and `technical-designer-frontend`, and between `codebase-analyzer` and `ui-analyzer`, follows the part being designed, not the domain — a part whose `cutAlong` is `frontend` takes the frontend pair, whatever the project is. gamedev-overture ships no frontend designer: a `ui`, `hud`, or `menu` part there takes `technical-designer` with `ui-analyzer` (`workflow-orchestration`, "Gamedev Substitutions").
 
 ## Entry Gate [BLOCKING]
 
@@ -36,7 +36,7 @@ The flow runs **once per part**, in the dependency order of the parts list, and 
 
 **Once per feature, before the first part:**
 
-1. *[Optional]* **expert-analyst** ×3-5 **in parallel** per the `expert-analysis-guide` heuristics, then synthesize. Skip for straightforward work or a pure bug fix. The synthesis is handed to every part's designer.
+1. *[Optional]* **expert-analyst** ×3-5 **in parallel** per the `expert-analysis-guide` heuristics, then synthesize. Skip for a pure bug fix. The synthesis is handed to every part's designer.
 
 **For each part, in dependency order:**
 
@@ -118,7 +118,7 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 ☐ Every part in the parts list has a `design-{part}.md` approved after `design-sync` consistency verification — no part is left undesigned, and no design exists for a part not in the list
 ☐ Each part's design was approved after the designs of every part in its `dependsOn`, and consumes their contracts as written
 ☐ Every `focusAreas` entry from fact gathering has a row in its part's Fact Disposition Table with a disposition and where it is handled — an unaddressed fact is an unexamined behavior
-☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `game-ui-designer` output on the gamedev path) is traceable to a section of exactly one part's Design Doc, or explicitly recorded as out of scope
+☐ Every acceptance criterion in the product documents (PRD and UXRD; feature spec and `game-ui-designer` output on the gamedev path) is covered by exactly one part's Design Doc — named by one of its Test Strategy use cases — or explicitly recorded as out of scope
 ☐ The ADR test was applied to each design and its outcome recorded — either an approved ADR, or a note that no decision passed all three parts
 ☐ Test skeletons are generated per part and their paths recorded
 ☐ Every `document-reviewer` verdict is `approved`, or the user accepted the open findings and the owner recorded them in the document

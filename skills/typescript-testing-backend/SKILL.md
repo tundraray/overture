@@ -1,13 +1,13 @@
 ---
 name: typescript-testing-backend
-description: This skill provides backend testing rules with Vitest, real DB/API integration patterns, and service-level testing conventions. Automatically loaded when writing backend tests, reviewing test quality, or when "backend test", "service test", "API test", "integration test", "database test", or "backend test coverage" are mentioned.
+description: This skill provides backend testing rules on the project's test runner (Vitest or Jest), real DB/API integration patterns, and service-level testing conventions. Automatically loaded when writing backend tests, reviewing test quality, or when "backend test", "service test", "API test", "integration test", "database test", or "backend test coverage" are mentioned.
 ---
 
 # TypeScript Testing Rules (Backend)
 
 ## Test Framework
 
-- **Vitest**: Primary test runner
+- **Test runner**: the project's own (Vitest or Jest; a NestJS project defaults to Jest); the examples below use Vitest — translate `vi.*` to `jest.*` on Jest
 - **Supertest**: For HTTP endpoint testing
 - **fast-check**: For property-based testing
 - Test imports: `import { describe, it, expect, beforeEach, vi } from 'vitest'`
@@ -43,23 +43,20 @@ Cover public branches, error states, and boundary contracts on units whose regre
 
 2. **Integration Tests**
    - Verify coordination between layers (Controller → Service → Repository)
-   - Use real database (test instance) or in-memory database
+   - Use a real database test instance of the engine production runs (`testing-principles`, Test Selection)
    - Use real HTTP through Supertest
    - Test API contracts end-to-end within the service
 
 3. **Property-Based Tests (fast-check)**
    - Verify invariants hold across random inputs
    - Use for: parsers, validators, serializers, mathematical operations
-   - Complement example-based tests — do not replace them
+   - When to write one: `testing-principles`, "Property-Based Testing"
 
 ## Red-Green-Refactor Process (Test-First Development)
 
 **Recommended Principle**: Start each change that adds behaviour with a failing test — behaviour that passes `testing-principles`, Test Selection; a constant, type, or wiring step gets no test of its own
 
-**Development Steps**:
-1. **Red**: Write test for expected behavior (it fails)
-2. **Green**: Pass test with minimal implementation
-3. **Refactor**: Improve code while maintaining passing tests
+The cycle itself is `testing-principles`, "The RED-GREEN-REFACTOR Cycle".
 
 **NG Cases (Test-first not required)**:
 - Pure configuration file changes (nest-cli.json, ormconfig.ts, etc.)
@@ -76,7 +73,7 @@ Cover public branches, error states, and boundary contracts on units whose regre
 
 ### Test Data Management
 
-- Manage test data in `__tests__/` directories or co-located with source
+- Manage test data where the project's test layout keeps it
 - Use factory functions or builder patterns for test data creation
 - Always mock sensitive information (API keys, credentials)
 - Keep test data minimal — only data directly related to test verification
@@ -89,19 +86,19 @@ Cover public branches, error states, and boundary contracts on units whose regre
 - Mock at the boundary — not internal functions
 
 **For integration tests: Use real dependencies**
-- Real database (test instance or in-memory like SQLite)
+- Real database (a test instance of the production engine)
 - Real HTTP stack through Supertest
 - Mock only truly external services (third-party APIs)
 
 ### Test Failure Response Decision Criteria
 
-**Fix tests**: Wrong expected values, implementation detail coupling, flaky assertions
-**Fix implementation**: Valid business rules, edge cases, contract violations
-**When in doubt**: Confirm with user
+A failing test that already existed before this task is resolved by fixing the implementation. When the test itself looks wrong — a wrong expected value, a feature that no longer exists — deleting or weakening it is escalated, never done to get green (`testing-principles`, Keep Tests Active). A test written in this task is fixed freely.
 
 ## Test Implementation Conventions
 
 ### Directory Structure
+
+Follow the project's existing test layout. When none exists, one common shape:
 
 ```
 src/
@@ -115,10 +112,7 @@ src/
 │   └── index.ts
 ```
 
-**Rationale**:
-- `__tests__/` directory convention for backend projects
-- Clear separation between unit and integration tests
-- Easy to find and maintain tests alongside implementation
+**Rationale**: tests sit next to the module they cover, and unit and integration tests are told apart by file name.
 
 ### Naming Conventions
 
@@ -134,7 +128,7 @@ src/
 
 **Avoid: `test.skip()` or commenting out**
 - Creates test gaps and incomplete quality checks
-- Solution: Completely delete unnecessary tests
+- Solution: fix the test, or escalate its removal (`testing-principles`, Keep Tests Active)
 
 ## Service Testing Patterns
 
@@ -143,6 +137,8 @@ src/
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { UserService } from '../users.service'
+import type { UserRepository } from '../users.repository'
+import { NotFoundError } from '../errors'
 
 describe('UserService', () => {
   let service: UserService
@@ -153,7 +149,8 @@ describe('UserService', () => {
       findOne: vi.fn(),
       save: vi.fn(),
     }
-    service = new UserService(mockRepository as any)
+    // Test double with only the methods the service calls
+    service = new UserService(mockRepository as unknown as UserRepository)
   })
 
   it('should return user when found', async () => {
@@ -179,17 +176,19 @@ describe('UserService', () => {
 ```typescript
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import request from 'supertest'
+import type { Express } from 'express'
 import { createApp } from '../app'
 
 describe('POST /api/users', () => {
   let app: Express
+  let shutdown: () => Promise<void> // closes the DB connection the app opened
 
   beforeAll(async () => {
-    app = await createApp({ database: 'test' })
+    ;({ app, shutdown } = await createApp({ database: 'test' }))
   })
 
   afterAll(async () => {
-    await app.close()
+    await shutdown()
   })
 
   it('should create user and return 201', async () => {
@@ -221,6 +220,8 @@ import { describe, it, expect } from 'vitest'
 import fc from 'fast-check'
 import { parseUserId } from '../utils/parse-user-id'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 describe('parseUserId', () => {
   it('should round-trip: format(parse(id)) === id for valid UUIDs', () => {
     fc.assert(
@@ -234,7 +235,7 @@ describe('parseUserId', () => {
   it('should reject non-UUID strings', () => {
     fc.assert(
       fc.property(
-        fc.string().filter((s) => !isValidUuid(s)),
+        fc.string().filter((s) => !UUID_RE.test(s)),
         (invalidId) => {
           expect(() => parseUserId(invalidId)).toThrow()
         }
@@ -245,6 +246,8 @@ describe('parseUserId', () => {
 ```
 
 ## Test Quality Criteria
+
+The criteria are `testing-principles`, "Test Quality Criteria"; these are their backend forms.
 
 ### Literal Expected Values
 
@@ -281,20 +284,28 @@ vi.mock('../clients/email.client')          // External API — mock
 
 ### Test Database Setup
 
-- Use separate test database instance or in-memory alternative
+- Use a separate test database instance of the production engine
 - Run migrations before test suite
 - Clean data between tests (truncate or transaction rollback)
 - Seed with minimal required data per test
 
 ### Transaction Rollback Pattern
 
+The transaction must run on the same connection the code under test uses. `BEGIN` sent through a pooled `dataSource.query` lands on an arbitrary connection and isolates nothing; hand the code under test the transaction's own manager, or clean up by truncation instead.
+
 ```typescript
+let queryRunner: QueryRunner
+
 beforeEach(async () => {
-  await dataSource.query('BEGIN')
+  queryRunner = dataSource.createQueryRunner()
+  await queryRunner.connect()
+  await queryRunner.startTransaction()
+  service = new UserService(queryRunner.manager.getRepository(User))
 })
 
 afterEach(async () => {
-  await dataSource.query('ROLLBACK')
+  await queryRunner.rollbackTransaction()
+  await queryRunner.release()
 })
 ```
 

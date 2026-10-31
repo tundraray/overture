@@ -66,6 +66,8 @@ Read the document and determine its layer from content signals:
 
 Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 
+**gamedev-overture**: read every agent, skill, and document name in this command as `workflow-orchestration`, "Gamedev Substitutions", maps it: a feature spec (`docs/game-design/features/*-spec.md`, `doc_type: FeatureSpec`) goes to `mid-game-designer`, a UXRD and the design system to `game-ui-designer`, and every Design Doc or ADR to `technical-designer`.
+
 **Design system**: there is no separate review type for it. A change to `docs/design-system/` is reviewed as part of the UXRD it serves — the one whose Component Inventory links the changed file; when several do, ask the user in Step 3 which one carries the change. That UXRD records the change as a Key Decision.
 
 ### Step 3: Change Clarification
@@ -85,7 +87,7 @@ Call the appropriate agent based on document type:
 **For Design Doc:**
 ```yaml
 subagent_type: $UPDATE_AGENT   # technical-designer or technical-designer-frontend, resolved in Step 2
-prompt: "Update the Design Doc at [path]. Required changes: [user's changes from Step 3]. Preserve existing approved content. Only modify sections affected by the changes. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope. Do not create new documents or modify requirements."
+prompt: "Operation Mode: update. Update the Design Doc at [path]. Required changes: [user's changes from Step 3]. Preserve existing approved content. Only modify sections affected by the changes. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope. Do not create new documents or modify requirements."
 ```
 
 **For PRD:**
@@ -109,7 +111,7 @@ prompt: "Operation Mode: update. Update the design system at [path(s) under docs
 **For ADR:**
 ```yaml
 subagent_type: $UPDATE_AGENT   # technical-designer or technical-designer-frontend, resolved in Step 2
-prompt: "Update the ADR at [path]. For minor changes: update relevant sections. For major changes: consider creating a new ADR that supersedes this one. Required changes: [user's changes from Step 3]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+prompt: "Operation Mode: update. Update the ADR at [path]. For minor changes: update relevant sections. For major changes: consider creating a new ADR that supersedes this one. Required changes: [user's changes from Step 3]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 ### ADR-Specific Guidance

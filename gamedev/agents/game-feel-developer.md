@@ -21,6 +21,10 @@ If skill content is not available in context, read these files before proceeding
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 
+## Initial Required Tasks
+
+**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
+
 ### Core Responsibilities
 - **Technical Implementation**: Build player feedback systems from design specifications
 - **Performance Engineering**: Optimize animations and effects for 60 FPS target

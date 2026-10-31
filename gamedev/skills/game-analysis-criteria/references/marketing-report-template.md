@@ -120,6 +120,8 @@ Data Source: raw-research.md
 
 ## Lessons for Our Game
 
+<!-- Observations that transfer to any game. Framing for our game only when /game-analyze passed a project context (game-analysis-criteria, Report Quality Gates); otherwise delete those lines. -->
+
 ### Marketing Strategies to Emulate
 
 1. **[Strategy]**: [Why it worked and how to adapt]
@@ -136,6 +138,6 @@ Data Source: raw-research.md
 2. **[Mistake]**: [What went wrong]
 
 ---
-*Data Confidence: [X]%*
+*Data Confidence: [tier most of the report rests on — Verified / Inferred / Estimated / Speculative]*
 *Sources: [List sources]*
 *Cross-references: market-position.md, retention-analysis.md*

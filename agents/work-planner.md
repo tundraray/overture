@@ -191,7 +191,6 @@ Read test skeleton files (integration tests, E2E tests) with the Read tool and e
 - `// @category:` → Test classification (core-functionality, edge-case, e2e, etc.)
 - `// @dependency:` → Dependent components (material for phase placement decisions)
 - `// @complexity:` → Complexity (high/medium/low, material for effort estimation)
-- `// ROI:` → Priority judgment
 
 #### Step 2: Reflect Meta Information in Work Plan
 

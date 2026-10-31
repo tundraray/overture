@@ -9,11 +9,11 @@ description: This skill provides backend TypeScript development rules including 
 
 - **Functions Over Classes**: Prefer pure functions and function composition. Use classes only when the framework requires it (NestJS controllers/services, TypeORM entities)
 - **YAGNI Principle**: Don't implement until necessary — no speculative abstractions
-- **Aggressive Refactoring**: Prevent technical debt; delete unused code immediately
+- **Aggressive Refactoring**: Prevent technical debt; delete code your change leaves unused
 
 ## Comment Writing Rules
 
-- **Function Description Focus**: Describe what the code "does"
+- **Why, not what**: Explain the reason the code reads the way it does; the code shows what it does
 - **No Historical Information**: Do not record development history
 - **Timeless**: Write only content that remains valid whenever read
 - **Conciseness**: Keep explanations to necessary minimum
@@ -54,9 +54,9 @@ function isCreateUserDto(value: unknown): value is CreateUserDto {
 - **Database → Server**: Query result (ORM typed) → Response DTO → Serialization → Client
 
 **Type Complexity Management**
-- **DTO Design**: Keep DTOs flat; max 2 levels of nesting. Split complex DTOs into composition
-- **Generic Services**: Max 3 type parameters. If more needed, reconsider design
-- **Type Assertions**: Review design if used 3+ times in a module
+- **DTO Design**: Prefer flat DTOs; deep nesting is a signal to split into composition (`coding-principles`: sizes are signals, not limits)
+- **Generic Services**: Many type parameters signal a design to reconsider
+- **Type Assertions**: Repeated assertions signal a type mismatch to fix at its source
 
 ## Coding Conventions
 
@@ -133,19 +133,19 @@ function requiredEnv(key: string): string {
 - **Authentication/Authorization**: Implement as guards, not inline checks in controllers
 
 **Format Rules**
-- Semicolon omission (follow project linter settings)
+- Formatting follows the project's formatter and linter config
 - Types in `PascalCase`, variables/functions in `camelCase`
-- Use path aliases for imports (`@/`, `@app/`, etc.)
+- Import paths follow the project's path aliases
 
 **Clean Code Principles**
-- Delete unused code immediately
+- Delete code your change leaves unused
 - Delete debug `console.log()`
 - No commented-out code (manage history with version control)
 - Comments explain "why" (not "what")
 
 ## Error Handling
 
-**Absolute Rule**: Error suppression prohibited. All errors must have log output and appropriate handling.
+**Absolute Rule**: Error suppression prohibited. Every error is either handled — and logged once, where it is handled — or propagated to the layer that handles it.
 
 **Layered Error Handling (Backend)**
 
@@ -154,7 +154,7 @@ Three distinct layers, each with specific responsibilities:
 1. **API Layer (Controllers/Middleware)**
    - Catch service errors, map to HTTP status codes
    - Return consistent error response format
-   - Log request context (method, path, user ID)
+   - Log the error here, once, with request context (method, path, user ID)
 
 2. **Service Layer (Business Logic)**
    - Throw domain-specific errors (ValidationError, NotFoundError, ConflictError)
@@ -164,7 +164,7 @@ Three distinct layers, each with specific responsibilities:
 3. **Repository Layer (Data Access)**
    - Convert database errors to domain errors
    - Handle connection failures, deadlocks, constraint violations
-   - Retry transient failures (connection drops, deadlocks) with backoff
+   - Retry a transient failure only where the Design Doc specifies the retry; otherwise propagate it
 
 ```typescript
 // ✅ Layered error handling
@@ -191,18 +191,23 @@ async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserR
 
 **Fail-Fast Principle**: Fail quickly on errors to prevent continued processing in invalid states
 ```typescript
-// ✅ Required: Explicit failure
+// ❌ Prohibited: log and re-throw — every layer logs the same error again
 catch (error) {
   logger.error('Processing failed', { error, context })
   throw error
+}
+
+// ✅ Add context and propagate; the API layer logs it once
+catch (error) {
+  throw new AppError(`Processing failed for order ${orderId}`, 'ORDER_PROCESSING_FAILED', 500, { cause: error })
 }
 ```
 
 **Custom Error Classes**
 ```typescript
 export class AppError extends Error {
-  constructor(message: string, public readonly code: string, public readonly statusCode = 500) {
-    super(message)
+  constructor(message: string, public readonly code: string, public readonly statusCode = 500, options?: ErrorOptions) {
+    super(message, options) // options.cause keeps the original error
     this.name = this.constructor.name
   }
 }
@@ -210,7 +215,7 @@ export class AppError extends Error {
 ```
 
 **Structured Logging**
-- Use structured logger (pino, winston) — not `console.log`
+- Use the project's structured logger — not `console.log`
 - Include correlation IDs for request tracing
 - Never log sensitive information (passwords, tokens, API keys, PII)
 
@@ -252,7 +257,7 @@ await pipeline(
 ## Performance Optimization
 
 - **Database Queries**: Use indexes, avoid N+1 queries, paginate large result sets
-- **Caching**: Apply at service layer — Redis for shared state, in-memory for single-instance
+- **Caching**: Apply at service layer — a shared store for state across instances, in-memory for a single instance
 - **Connection Pooling**: Configure appropriate pool sizes for database and Redis connections
 - **Lazy Loading**: Load expensive resources on demand, not at startup
 - **Batch Processing**: Process bulk operations in batches to control memory usage

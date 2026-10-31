@@ -36,98 +36,9 @@ All research, analysis, and report generation flows through specialized strategy
 8. **product-analyst**: AJTBD deep analysis — RAT risk assessment (P×I scoring), job-based segmentation (B2B/B2C), jobs graph mapping, landing page generation from jobs
 9. **product-planner**: Strategy-to-execution bridge — opportunity maps (Teresa Torres OST), feature specifications (Shape Up pitch), Now/Next/Later roadmap (Kano + WSJF), MVP definition (MoSCoW)
 
-## Context Modes
+## Output Files
 
-Each phase of the strategy flow operates in a specific context mode that shapes agent behavior:
-
-| Phase | Context Mode | File | Behavioral Focus |
-|-------|-------------|------|-----------------|
-| Phase 1: Context | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Research-first, data gathering, source verification |
-| Phase 2: AJTBD | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Deep job analysis, segment discovery |
-| Phase 3: Market | Analyze | `${CLAUDE_PLUGIN_ROOT}/contexts/analyze.md` | Market data, competitive intelligence |
-| Phase 4: Strategy + Model | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Document creation, template compliance |
-| Phase 5: GTM + Growth | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Actionable plans, concrete numbers |
-| Phase 6: Report | Review | `${CLAUDE_PLUGIN_ROOT}/contexts/review.md` | Synthesis, contradiction detection, quality |
-| Phase 7: Product Plan | Execute | `${CLAUDE_PLUGIN_ROOT}/contexts/execute.md` | Feature specs, roadmap, MVP definition |
-
-**Rule**: When invoking a sub-agent, the orchestrator should reference the appropriate context mode in the prompt to set behavioral expectations.
-
-## Orchestration Principles
-
-### Pyramid Principle (Mandatory for All Outputs)
-
-Every deliverable follows Barbara Minto's Pyramid Principle:
-1. **Lead with the conclusion** — the "so what" comes first
-2. **Support with MECE arguments** — Mutually Exclusive, Collectively Exhaustive
-3. **Action titles** — every section heading is a complete sentence stating the main point
-4. **Titles test** — an executive reads only titles and understands the entire argument
-
-### Source Credibility Tiers
-
-All data in reports must be tagged:
-- **Tier 1 (Primary)**: Direct market data, official filings, confirmed metrics
-- **Tier 2 (Secondary)**: Industry reports, analyst estimates, reliable press
-- **Tier 3 (Inference)**: AI-generated estimates, pattern extrapolation, analogies
-
-### MECE Enforcement
-
-All categories, segments, and analysis dimensions must be:
-- **Mutually Exclusive**: No overlap between categories
-- **Collectively Exhaustive**: Categories cover the full space
-
-## Output Directory Structure
-
-All strategy reports are written to `docs/strategy/` in the user's project. **Each analysis domain produces its own dedicated file** — no analyses are embedded or hidden inside other reports.
-
-```
-docs/strategy/
-├── context-brief.md              # Business context (context-analyzer)
-├── rat.md                        # RAT: Top 5 risky assumptions with P×I scoring (product-analyst)
-├── segments.md                   # AJTBD job-based segments, B2B or B2C (product-analyst)
-├── jobs-graph.md                 # Critical job sequence for primary segment (product-analyst)
-├── market-analysis.md            # Market sizing TAM/SAM/SOM + industry trends (market-analyst)
-├── competitive-landscape.md      # Competitor profiles + perceptual maps + SWOT/TOWS (market-analyst)
-├── customer-segments.md          # Customer segmentation analysis (market-analyst)
-├── strategy-canvas.md            # Blue Ocean + Ansoff/BCG + value proposition (strategy-architect)
-├── brand-positioning.md          # Perceptual maps + positioning statement + strategy (strategy-architect)
-├── business-model.md             # BMC / Lean Canvas + unit economics + innovation accounting (business-modeler)
-├── gtm-plan.md                   # ICP + messaging + channels + partnerships + content + launch plan (gtm-planner)
-├── pricing-analysis.md           # Value-based pricing + tier design + competitive pricing (gtm-planner)
-├── growth-plan.md                # AARRR funnel + North Star + experiments + 90-day plan (growth-strategist)
-├── prioritized-initiatives.md    # ICE/RICE scored list of ALL strategic initiatives (growth-strategist)
-├── strategic-report.md           # Final compiled McKinsey-grade report (report-compiler)
-├── opportunity-map.md            # Opportunity Solution Tree (product-planner)
-├── features/                     # Individual feature specifications (product-planner)
-│   └── feature-NNN-[slug].md    # Per-feature Shape Up pitch with cross-references
-├── product-roadmap.md            # Now/Next/Later roadmap with feature links (product-planner)
-└── mvp-definition.md             # MVP scope, MoSCoW, validation plan (product-planner)
-```
-
-**Total: 18+ deliverable files per full analysis.**
-
-### File Ownership by Agent
-
-| File | Owner Agent | Corresponds to Command |
-|------|-------------|----------------------|
-| `docs/strategy/context-brief.md` | context-analyzer | (part of all flows) |
-| `docs/strategy/rat.md` | product-analyst | `/rat` |
-| `docs/strategy/segments.md` | product-analyst | `/b2b-segments` or `/b2c-segments` |
-| `docs/strategy/jobs-graph.md` | product-analyst | `/jobs-graph` |
-| `docs/strategy/market-analysis.md` | market-analyst | `/analyze-market` |
-| `docs/strategy/competitive-landscape.md` | market-analyst | `/competitive-map` |
-| `docs/strategy/customer-segments.md` | market-analyst | `/analyze-market` |
-| `docs/strategy/strategy-canvas.md` | strategy-architect | `/strategy-canvas` |
-| `docs/strategy/brand-positioning.md` | strategy-architect | `/strategy-canvas` |
-| `docs/strategy/business-model.md` | business-modeler | `/business-model` |
-| `docs/strategy/gtm-plan.md` | gtm-planner | `/gtm-plan` |
-| `docs/strategy/pricing-analysis.md` | gtm-planner | `/pricing-strategy` |
-| `docs/strategy/growth-plan.md` | growth-strategist | `/growth-audit` |
-| `docs/strategy/prioritized-initiatives.md` | growth-strategist | `/prioritize` |
-| `docs/strategy/strategic-report.md` | report-compiler | `/strategy-report` |
-| `docs/strategy/opportunity-map.md` | product-planner | `/product-plan` |
-| `docs/strategy/features/*.md` | product-planner | `/product-plan` |
-| `docs/strategy/product-roadmap.md` | product-planner | `/product-plan` |
-| `docs/strategy/mvp-definition.md` | product-planner | `/product-plan` |
+All strategy documents are written to `docs/strategy/` in the user's project, one file per analysis domain — no analysis is embedded or hidden inside another report. Paths, owner agents, and the commands that write each file: `strategy-documentation-criteria`, Storage Locations.
 
 **Rules**:
 - Create/edit files only through the owner agent
@@ -203,7 +114,7 @@ Phase 7: Product Plan
     [Stop: Review product plan — validate features, roadmap priorities, MVP scope]
 ```
 
-**CRITICAL**: Every file listed above MUST be created during a full /strategy-report run. The orchestrator must verify all 18+ files exist before proceeding to completion.
+**CRITICAL**: Every file listed above MUST be created during a full /strategy-report run. The orchestrator verifies each phase's files before the next phase starts, and all of them before the completion report.
 
 ### Quick Analysis Flow (User requests "quick" or "summary")
 
@@ -223,115 +134,19 @@ Phase 7: Product Plan
 Used when user invokes a single command (e.g., `/analyze-market`):
 ```
 1. context-analyzer → If no context-brief.md exists, run first
-2. [domain-specific agent] → Execute analysis, write ALL files owned by that agent
+2. [domain-specific agent] → Execute analysis, write the files the command names
 3. No report compilation needed
 ```
 
 ## How to Call Strategy Agents
 
 ### Execution Method
-Call agents using the Task tool:
+Call agents using the Agent tool:
 - subagent_type: Agent name
 - description: Concise task description (3-5 words)
 - prompt: Specific instructions with prior context
 
-### Call Pattern
-
-```yaml
-# Step 1
-subagent_type: context-analyzer
-prompt: |
-  Analyze this business/product/idea: [user input]
-  Extract business context and analysis goals.
-  Write to: docs/strategy/context-brief.md
-
-# Step 2
-subagent_type: product-analyst
-prompt: |
-  Perform complete AJTBD analysis based on docs/strategy/context-brief.md.
-  Read methodology from: ${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/
-  You MUST produce THREE separate files:
-  1. docs/strategy/rat.md — Top 5 risky assumptions with P×I scoring, validation methods
-  2. docs/strategy/segments.md — 5 most attractive segments (B2B or B2C based on context-brief) with Core Jobs, Big Job, criteria, TAM/SAM/SOM
-  3. docs/strategy/jobs-graph.md — Jobs graph below Core Job level for the primary segment
-  All three files are mandatory.
-
-# Step 3
-subagent_type: market-analyst
-prompt: |
-  Perform COMPLETE market intelligence for the business in docs/strategy/context-brief.md.
-  Read AJTBD analysis from docs/strategy/rat.md, docs/strategy/segments.md, docs/strategy/jobs-graph.md to inform segmentation and competitive analysis.
-  You MUST produce THREE separate files:
-  1. docs/strategy/market-analysis.md — TAM/SAM/SOM (hybrid methodology), industry trends, PESTLE, market growth
-  2. docs/strategy/competitive-landscape.md — Detailed competitor profiles, Porter's Five Forces, perceptual maps, SWOT with TOWS
-  3. docs/strategy/customer-segments.md — Behavioral, psychographic, value-based segmentation with attractiveness scoring
-  All three files are mandatory.
-
-# Step 4 (parallel)
-subagent_type: strategy-architect
-prompt: |
-  Create COMPLETE strategic analysis based on:
-  - docs/strategy/context-brief.md
-  - docs/strategy/rat.md
-  - docs/strategy/segments.md
-  - docs/strategy/jobs-graph.md
-  - docs/strategy/market-analysis.md
-  - docs/strategy/competitive-landscape.md
-  - docs/strategy/customer-segments.md
-  You MUST produce TWO separate files:
-  1. docs/strategy/strategy-canvas.md — Blue Ocean Strategy Canvas, Four Actions, Six Paths, Ansoff/BCG growth direction, Value Proposition Canvas
-  2. docs/strategy/brand-positioning.md — Perceptual maps on two axes, positioning statement, positioning strategy (Leader/Creator/Challenger/Niche/Value), competitive moat assessment
-  Both files are mandatory.
-
-subagent_type: business-modeler
-prompt: |
-  Create business model analysis based on:
-  - docs/strategy/context-brief.md
-  - docs/strategy/rat.md
-  - docs/strategy/segments.md
-  - docs/strategy/market-analysis.md
-  - docs/strategy/customer-segments.md
-  Write to: docs/strategy/business-model.md
-  Include: Lean Canvas or BMC (based on stage), revenue model, unit economics (LTV, CAC, payback, margins), innovation accounting, assumption risk register, 12-month and 36-month scenarios.
-
-# Step 5 (parallel)
-subagent_type: gtm-planner
-prompt: |
-  Create COMPLETE go-to-market strategy based on all docs in docs/strategy/.
-  You MUST produce TWO separate files:
-  1. docs/strategy/gtm-plan.md — ICP, messaging matrix (positioning + per-segment), GTM motion selection, channel strategy (primary 60%/secondary 30%/experimental 10%), partnership strategy (types + top 5 targets), content strategy (pillars + calendar), phased launch plan
-  2. docs/strategy/pricing-analysis.md — Value-based pricing (economic value calculation, 10:1 rule check), tier structure design (Starter/Pro/Enterprise), competitive pricing position, projected unit economics impact
-  Both files are mandatory.
-
-subagent_type: growth-strategist
-prompt: |
-  Create COMPLETE growth strategy based on all docs in docs/strategy/.
-  You MUST produce TWO separate files:
-  1. docs/strategy/growth-plan.md — AARRR funnel audit (each stage scored vs benchmarks), North Star metric definition, growth motion assessment (PLG/Sales-Led/CLG/Hybrid), 10-15 ICE-scored experiments, growth accounting (Quick Ratio), 90-day sprint plan
-  2. docs/strategy/prioritized-initiatives.md — Collect ALL recommended actions and initiatives from ALL prior docs (context-brief, rat, segments, jobs-graph, market-analysis, competitive-landscape, strategy-canvas, brand-positioning, business-model). Score each using ICE AND RICE frameworks. Produce a single prioritized master list with: do now / do next / defer / kill recommendations.
-  Both files are mandatory.
-
-# Step 6
-subagent_type: report-compiler
-prompt: |
-  Read ALL 14 strategy documents in docs/strategy/ directory.
-  Compile into a unified McKinsey-grade strategic report.
-  Write to: docs/strategy/strategic-report.md
-  Follow Pyramid Principle, MECE, action titles.
-  Include: Go/No-Go recommendation, executive summary, aggregated risk assessment, unified action plan, and references to all 14 source documents.
-  Verify all 14 source files exist before compiling.
-
-# Step 7
-subagent_type: product-planner
-prompt: |
-  Read ALL strategy documents in docs/strategy/.
-  Create complete product execution plan:
-  1. docs/strategy/opportunity-map.md — Opportunity Solution Tree
-  2. docs/strategy/features/feature-NNN-[slug].md — Individual feature specs (separate files)
-  3. docs/strategy/product-roadmap.md — Now/Next/Later roadmap with links
-  4. docs/strategy/mvp-definition.md — MVP scope with MoSCoW
-  All files mandatory. Each feature = separate file.
-```
+Each command holds its agents' prompts; a prompt names the files the agent reads and the files it must write. This guide holds the phases, stop points, and parallel rules the commands follow.
 
 ### Parallel Execution Rules
 
@@ -344,7 +159,7 @@ Agents that MUST be sequential:
 - product-analyst → market-analyst (market needs AJTBD insights)
 - market-analyst → strategy-architect/business-modeler (strategy needs market data)
 - strategy/model → gtm/growth (GTM needs strategic direction)
-- All agents → report-compiler (needs all outputs)
+- Phases 1–5 → report-compiler (it compiles the documents those phases produced; product-plan documents come after it, in Phase 7)
 
 ## Information Bridging
 
@@ -357,13 +172,12 @@ The orchestrator's key responsibility is passing context between agents. Each ag
 | market-analyst | `market-analysis.md`, `competitive-landscape.md`, `customer-segments.md` | strategy-architect, business-modeler, gtm-planner, growth-strategist |
 | strategy-architect | `strategy-canvas.md`, `brand-positioning.md` | gtm-planner, growth-strategist |
 | business-modeler | `business-model.md` | gtm-planner, growth-strategist |
-| gtm-planner | `gtm-plan.md`, `pricing-analysis.md` | growth-strategist (for prioritization), report-compiler |
+| gtm-planner | `gtm-plan.md`, `pricing-analysis.md` | report-compiler, product-planner |
 | growth-strategist | `growth-plan.md`, `prioritized-initiatives.md` | report-compiler |
 | report-compiler | `strategic-report.md` | User (final deliverable) |
 | All prior agents | all 15 docs | product-planner |
-| product-planner | opportunity-map.md, features/*.md, product-roadmap.md, mvp-definition.md | report-compiler |
 
-**CRITICAL**: growth-strategist for `prioritized-initiatives.md` must read ALL prior docs to collect every recommended action and score them.
+**CRITICAL**: growth-strategist for `prioritized-initiatives.md` reads every document from Phases 1–4 to collect each recommended action and score it. GTM actions run in parallel with it and reach the action plan through report-compiler.
 
 ## Structured Response Format
 
@@ -375,7 +189,7 @@ Each agent returns JSON. Key fields:
   "summary": "One-line executive summary",
   "confidence": "high|medium|low",
   "sourceTier": "Primary data tier used",
-  "outputFile": "docs/strategy/[file].md",
+  "outputFiles": ["docs/strategy/[file].md"],
   "keyFindings": ["finding1", "finding2", "finding3"],
   "questions": ["question for user if any"],
   "nextSteps": ["recommended next actions"]
@@ -384,9 +198,6 @@ Each agent returns JSON. Key fields:
 
 ## Constraints
 
-- **Pyramid Principle mandatory**: Every section leads with conclusion
-- **MECE mandatory**: All categorizations must be MECE
-- **Source tiers mandatory**: All data points tagged with credibility tier
 - **No guessing numbers**: If market data unavailable, state "Data unavailable — Tier 3 estimate: [range]"
 - **Structured JSON output**: All agents return structured responses
 - **File ownership**: Only owner agent writes to its file

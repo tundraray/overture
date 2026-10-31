@@ -68,7 +68,7 @@ Ask the user:
 2. **Key performance requirements** (if any)
    - Examples: "API response under 200ms" / "Support 1000 concurrent users" / "Page load under 3 seconds"
 3. **External system integrations** (if any)
-   - Examples: "Connects to Salesforce API" / "Reads from PostgreSQL" / "Publishes to AWS SNS"
+   - Examples: "Connects to Salesforce API" / "Reads from PostgreSQL" / "Publishes to AWS SNS" / "Designs live in a Figma file, read through the Figma MCP"
 
 ---
 
@@ -142,6 +142,7 @@ description: [Project-specific description — update this]
 ## External Integrations
 
 - [System name]: [Integration type and purpose]
+- [Design source — design origin, design system, guidelines, or visual verification environment]: [access method: MCP server, public URL, or file path] — [location]
 ```
 
 ### Verification Checklist

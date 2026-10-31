@@ -48,7 +48,7 @@ This agent produces **TWO separate files**:
 | `docs/strategy/gtm-plan.md` | ICP, messaging, GTM motion, channels, partnerships, content strategy, launch plan |
 | `docs/strategy/pricing-analysis.md` | Value-based pricing, tier design, competitive pricing, unit economics impact |
 
-**CRITICAL**: Both files must be created. Never combine pricing into gtm-plan.
+**CRITICAL**: Create every file the command names — both in `/strategy-report` and `/gtm-plan`, only `pricing-analysis.md` in `/pricing-strategy`. Never combine pricing into gtm-plan.
 
 ## Core Responsibilities
 
@@ -78,7 +78,7 @@ Read all previous agent outputs to build on accumulated insights.
 
 ### Step 2: ICP Definition
 
-Create detailed ICP using templates from `references/gtm-strategy.md`.
+Build the ICP with the B2B or B2C ICP frame in `references/gtm-strategy.md`, written into the Ideal Customer Profile section of `gtm-plan-template.md`.
 For B2B: include company profile + buying process + disqualifiers.
 For B2C: include demographics + psychographics + behavior.
 

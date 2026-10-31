@@ -12,7 +12,7 @@ argument-hint: <design doc name or path>
 
 **Execution Protocol**:
 1. **Delegate all work** to sub-agents (NEVER create plans yourself)
-2. **Follow workflow-orchestration skill planning flow exactly**:
+2. **Follow `workflow-execution`, "Planning", exactly**:
    - Execute steps defined below
    - **Stop and obtain approval** for plan content before completion
 3. **Scope**: Complete when work plan receives approval
@@ -22,6 +22,8 @@ argument-hint: <design doc name or path>
 Before executing, load these skill files for guidance:
 - `${CLAUDE_PLUGIN_ROOT}/skills/workflow-orchestration/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md`
+
+**gamedev-overture**: read every agent, skill, and document name in this command as `workflow-orchestration`, "Gamedev Substitutions", maps it — `gamedev-work-planner` writes the plan, and the feature spec's Delivery Parts stand in for the PRD's.
 
 ## Scope Boundaries
 
@@ -50,7 +52,7 @@ Follow the planning process below:
 
 3. **Work Plan Creation**
    - Create work plan with work-planner
-   - Utilize deliverables from previous process according to workflow-orchestration skill coordination specification
+   - Pass the Design Doc path, the part's test skeleton paths, and its ADR paths
 
 4. **Work Plan Review**
    - Submit the plan to `document-reviewer` before presenting it to the user. A plan that omits a Design Doc requirement looks complete — only a traceability check finds the gap.

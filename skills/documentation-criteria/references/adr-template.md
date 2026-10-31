@@ -7,7 +7,7 @@ Text inside these comments is guidance for the author; it is not copied into the
 
 ## Status
 
-[Proposed | Accepted | Deprecated | Superseded]
+[Proposed | Accepted | Deprecated | Superseded | Rejected]
 
 ## Decision
 
@@ -31,17 +31,13 @@ Text inside these comments is guidance for the author; it is not copied into the
 
 ### Options Considered
 
-<!-- Each pro and con is a sentence a newcomer can follow, not a keyword. -->
+<!-- At least two real options — each one a genuine choice that was weighed; an option invented to fill a count is not one. Each pro and con is a sentence a newcomer can follow, not a keyword. -->
 
 1. **Option 1**: [Description]
    - Pros: [advantages]
    - Cons: [disadvantages]
 
-2. **Option 2**: [Description]
-   - Pros: [advantages]
-   - Cons: [disadvantages]
-
-3. **Option 3 (Selected)**: [Description]
+2. **Option 2 (Selected)**: [Description]
    - Pros: [advantages]
    - Cons: [disadvantages]
 

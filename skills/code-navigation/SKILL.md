@@ -74,18 +74,6 @@ When falling back on a symbol question, treat the result as a **candidate set, n
    calculateTax in src/legacy/, and misses `import { calculateTax as ct }`
 ```
 
-**Checking for an existing implementation before writing a new one:**
-
-```
-✅ LSP workspaceSymbol query:"validateOrder" (anchor: any .ts file)
-   → finds OrderValidator.validateOrder even though the name differs
-   from what you searched for
-
-❌ Grep "validateOrder"
-   → misses it, because the method is defined on a class whose file
-     never spells the bare name
-```
-
 **Where text search is correct:**
 
 ```
@@ -115,18 +103,8 @@ Pass its JSON through to whatever consumes the agent's output rather than restat
 
 ## Escalation
 
-Stop and ask the user when:
+Stop and return `escalation_needed` with what was found — the orchestrator puts the question to the user — when:
 
 - LSP reports no server for a file type central to the task, and the answer depends on resolution the text cannot provide — for example, assessing rename impact across a language the server does not cover
 - LSP and text search disagree on whether a symbol is used, and the difference changes what you would do. Report both counts and the discrepancy rather than picking the convenient one.
 - A symbol resolves into generated or vendored code, so the real definition lives in a generator or upstream package rather than in this repository
-
-## Expert References (Reasoning Calibration)
-
-When choosing between semantic and textual lookup, calibrate against these principles:
-
-| Source | Key Principle | Apply When |
-|--------|--------------|------------|
-| Language Server Protocol | "The server resolves symbols; the editor renders them" | Deciding whether a question needs resolution or matching |
-| Refactoring — Martin Fowler | "Rename is safe only when every reference is known" | Assessing the impact of a rename or signature change |
-| Compiler design | "Names are scoped; strings are not" | A grep result and a reference list disagree |

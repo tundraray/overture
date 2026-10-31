@@ -65,7 +65,7 @@ This agent produces **TWO separate files**:
 | `docs/strategy/strategy-canvas.md` | Blue Ocean Strategy Canvas, Four Actions, Six Paths, Ansoff/BCG, Value Proposition Canvas, strategic synthesis |
 | `docs/strategy/brand-positioning.md` | Perceptual maps, positioning statement, positioning strategy, competitive moat assessment |
 
-**CRITICAL**: Both files must be created. Never combine into one file.
+**CRITICAL**: Create every file the command names (both, in `/strategy-report` and `/strategy-canvas`). Never combine into one file.
 
 ## Mandatory: Web Research & Current Practices
 

@@ -1,14 +1,14 @@
 ---
 name: strategy-overture
 version: 2.0.0
-description: McKinsey-grade business strategy and marketing frameworks. Loaded when agents need strategic analysis methodology — market sizing, competitive analysis, Blue Ocean, GTM, growth, pricing, business modeling. Covers Pyramid Principle, MECE, and consulting-quality deliverable standards.
+description: McKinsey-grade business strategy and marketing frameworks. Loaded when agents need strategic analysis methodology — market sizing, competitive analysis, Blue Ocean, GTM, growth, pricing, business modeling. Methods only; document structure and quality standards live in strategy-documentation-criteria.
 ---
 
 # Strategy Overture — Strategic Analysis Framework
 
 ## Purpose
 
-This skill provides the methodology backbone for all strategy agents. It codifies consulting-grade frameworks used by McKinsey, BCG, and Bain into actionable analysis templates.
+This skill provides the methodology backbone for all strategy agents. It codifies consulting-grade frameworks used by McKinsey, BCG, and Bain into analysis methods; the document templates live in `strategy-documentation-criteria`.
 
 ## When This Skill Applies
 
@@ -23,37 +23,14 @@ This skill provides the methodology backbone for all strategy agents. It codifie
 
 ## Core Principles
 
-### 1. Pyramid Principle (Barbara Minto)
+Document rules — Pyramid Principle, MECE, action titles, source credibility tiers, So what / Now what, and the reader rules — belong to `strategy-documentation-criteria`, "Quality Standards". This skill holds the analysis methods.
 
-Every deliverable follows this structure:
-1. **Governing thought** — the "so what" answer, stated first
-2. **Key arguments** — 3-5 MECE supporting points
-3. **Evidence** — data, examples, analysis backing each argument
-
-**Titles test**: An executive reads only section titles and understands the full argument.
-
-### 2. MECE (Mutually Exclusive, Collectively Exhaustive)
-
-All categorizations must be:
-- **ME**: No item belongs to two categories
-- **CE**: All items are covered by the categories
-
-### 3. Source Credibility Tiers
-
-| Tier | Description | Usage |
-|------|-------------|-------|
-| Tier 1 — Primary | Official filings, confirmed metrics, direct data, **TrustMRR** (Stripe-verified) | Hard numbers, quotes |
-| Tier 2 — Secondary | Industry reports, analyst estimates, reliable press | Market context, trends |
-| Tier 3 — Inference | AI estimates, pattern extrapolation, analogies | Gap-fill with disclosure |
-
-**Rule**: Never present Tier 3 as Tier 1. Always disclose estimation methodology.
-
-### Mandatory Data Source: TrustMRR
+### Data Source for Software and Subscription Products: TrustMRR
 
 **URL**: https://trustmrr.com/
 **What**: Database of Stripe-verified startup revenues (MRR, growth rates, multiples).
 **Tier**: 1 (Stripe-verified revenue data).
-**When to use**: EVERY market analysis, competitive analysis, and idea validation.
+**When to use**: market, competitive, and idea validation for a software or subscription product. For other businesses (offline, services, physical goods) it says nothing — skip it rather than report "not listed".
 
 | Use Case | How TrustMRR Helps |
 |----------|-------------------|
@@ -62,13 +39,6 @@ All categorizations must be:
 | Competitive analysis | Verified revenue for competitor profiles instead of Tier 2/3 guesses |
 | Benchmarking | Category median MRR, top quartile, growth rates |
 | Valuation | Revenue multiples from marketplace listings |
-
-### 4. Actionable Over Descriptive
-
-Every analysis section must end with:
-- **So what?** — Why this matters
-- **Now what?** — Specific next actions
-- **Confidence level** — How sure we are (High/Medium/Low)
 
 ## Framework Reference Map
 
@@ -89,7 +59,6 @@ Every analysis section must end with:
 | Content Marketing | `references/content-marketing.md` | gtm-planner |
 | Partnership Strategy | `references/partnership-strategy.md` | gtm-planner |
 | Innovation Accounting | `references/innovation-accounting.md` | business-modeler |
-| Deliverable Standards | `references/deliverable-standards.md` | report-compiler |
 
 ## Framework Pairing Rules
 

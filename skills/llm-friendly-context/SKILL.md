@@ -1,13 +1,13 @@
 ---
 name: llm-friendly-context
-description: Clarifies inputs, outputs, success criteria, decisions, and unresolved conditions so downstream agents can execute without guessing. Use when writing or revising LLM-facing prompts, handoffs, planning artifacts, reviews, reports, or generated instructions.
+description: Clarifies inputs, outputs, success criteria, decisions, and unresolved conditions so downstream agents can execute without guessing. Use when writing or revising LLM-facing prompts, agent handoffs, or generated instructions.
 ---
 
 # LLM-Friendly Context
 
 The goal is stable downstream execution: the next agent should know what to read, what to do, what counts as success, and when to stop or escalate.
 
-This skill governs the clarity of LLM-facing output — prompts, handoffs, and generated artifacts. The caller supplies the artifact type and any artifact-specific template or section contract; this skill makes that supplied contract executable for the downstream agent.
+This skill governs the clarity of LLM-facing output — prompts, handoffs, and generated instructions. Documents a person reads (PRD, Design Doc, plan) follow `documentation-criteria`, "Writing for the Reader", not this skill.
 
 ## Core Rules
 
@@ -34,8 +34,7 @@ This skill governs the clarity of LLM-facing output — prompts, handoffs, and g
 
 6. **Permit uncertainty explicitly**
    - If the source material is missing, contradictory, or not verifiable, state the uncertainty and the required escalation.
-   - Record unknown business, product, security, or compatibility decisions as blocking unresolved items, each stating the required input to resolve it and the escalation condition.
-   - Write every blocking unresolved item in one consistent shape, regardless of artifact: `Unresolved: <decision needed> — required input: <what or who resolves it> — escalation: <the condition under which the next agent stops rather than guesses>`.
+   - Record unknown business, product, security, or compatibility decisions as blocking unresolved items, each stating the required input to resolve it and the condition under which the next agent stops rather than guesses.
 
 7. **Keep constraints proportionate**
    - Add only constraints that reduce ambiguity or preserve a real requirement.
@@ -43,7 +42,7 @@ This skill governs the clarity of LLM-facing output — prompts, handoffs, and g
 
 ## Rewrite Patterns
 
-Use these rewrites before treating a prompt, handoff, or artifact as complete.
+Use these rewrites before treating a prompt or handoff as complete.
 
 | Ambiguous form | Rewrite as |
 |---|---|
@@ -68,13 +67,3 @@ Before sending a prompt or artifact to another agent, verify:
 - [ ] Success criteria are observable.
 - [ ] Ambiguous expressions have been rewritten or marked as unresolved.
 - [ ] The next agent can complete its scope with explicit choices, decision rules, or blocking unresolved items.
-
-## Generated Artifact Checklist
-
-Before writing or finalizing a generated document:
-
-- [ ] Each requirement, claim, task, test skeleton, or review finding has enough source context to trace why it exists.
-- [ ] Every executable instruction names the target, action, and expected result.
-- [ ] Verification steps say what to run or observe and what result proves success.
-- [ ] If an artifact is derived from another artifact, copied decisions stay consistent in wording and meaning.
-- [ ] If downstream work is blocked by missing information, the artifact records the missing input and escalation condition.

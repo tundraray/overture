@@ -104,7 +104,7 @@ Read all 15 strategy documents. Extract:
 
 Apply Teresa Torres OST methodology:
 1. Define 3-5 Desired Outcomes from strategy analysis
-2. For each outcome, identify Opportunities from jobs-graph problems (severity >5)
+2. For each outcome, identify Opportunities from jobs-graph problems that pass the Selection Criteria in `references/opportunity-trees.md`
 3. For each opportunity, generate 2-4 Solution ideas (feature candidates)
 4. For each solution, identify Assumption Tests (from RAT + new assumptions)
 5. Cross-reference every element to source strategy docs
@@ -114,7 +114,7 @@ Apply Teresa Torres OST methodology:
 For each solution from the Opportunity Map:
 1. Create a separate file: `docs/strategy/features/feature-NNN-[slug].md`
 2. Use Shape Up pitch format (Problem, Appetite, Solution, Rabbit Holes, No-Gos)
-3. Fill Cross-References table (Job, Segment, Problem, Risk, Strategy, Initiative, Opportunity)
+3. Fill the Cross-References table in the spec's appendix (Job, Segment, Problem, Risk, Strategy, Initiative, Opportunity); a cell with no matching source entry says "no source"
 4. Add Success Metrics linked to North Star
 5. Write 3-5 Acceptance Criteria in Given/When/Then format
 6. Score WSJF (User Value + Time Criticality + Risk Reduction / Duration)
@@ -153,7 +153,7 @@ Slug: lowercase, hyphenated feature name (e.g., feature-001-onboarding-flow.md)
 ### Step 6: Verify Cross-References
 
 Before completing, verify:
-- Every feature has all 7 cross-reference fields filled
+- Every feature's cross-reference fields cite a source entry or say "no source" — none invented; a feature with neither a Job nor a Problem is flagged in `summary`
 - Every roadmap row links to a feature spec file
 - Every MVP Must-Have links to a feature spec file
 - Opportunity map traces back to strategy docs
