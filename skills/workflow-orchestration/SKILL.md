@@ -199,9 +199,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | Any other plugin agent | denied | denied |
 | Main conversation (no `agent_type`) | denied | denied |
 
-A fork acts as the agent it was forked from — the hook reads the parent from the session's subagent metadata — so an owner may fan its work out to forks; a fork of the main conversation is the main conversation.
-
-The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan. The main conversation is denied, not asked: auto mode resolves an `ask` without the user.
+The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan. The main conversation is denied, not asked: auto mode resolves an `ask` without the user. A fork is denied too — it reports `agent_type: "fork"`, not whose work it does — so an owner that splits its work spawns itself (`<plugin>:<agent>`), which the spawn check below allows.
 
 Human documents change only through `Write`/`Edit`. A `Bash` or `PowerShell` command that writes one — `sed -i`, `perl -i`, a redirect, `tee`, `rm`, `mv`, `touch`, a copy destination, `git checkout`/`restore`/`clean`, `Set-Content`, `Remove-Item` — is denied for every caller, owner included, because a shell edit cannot be attributed to an owner. Work plans and task files are temporary and may be changed or deleted from the shell.
 
