@@ -45,7 +45,7 @@
  */
 
 import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -309,6 +309,48 @@ function pluginAgents() {
   });
 }
 
+/**
+ * A fork reports `agent_type: "fork"` but carries its parent's context and
+ * task, so it acts as the parent. The session's `subagents/agent-<id>.meta.json`
+ * records `parentAgentId`; a fork without one was forked from the main
+ * conversation. Returns the parent's type, '' for the main conversation, or
+ * null when the lineage cannot be read (the caller then stays "fork").
+ */
+function forkParentType(input) {
+  const tp = typeof input.transcript_path === 'string' ? input.transcript_path : '';
+  if (!tp) return null;
+  const base = dirname(tp);
+  const dirs = basename(base) === 'subagents'
+    ? [base]
+    : [input.session_id, basename(tp, '.jsonl')].filter((s) => typeof s === 'string' && s)
+      .map((s) => join(base, s, 'subagents'));
+  const read = (id) => {
+    if (typeof id !== 'string' || !/^[\w-]+$/.test(id)) return null;
+    for (const dir of dirs) {
+      try {
+        return JSON.parse(readFileSync(join(dir, `agent-${id}.meta.json`), 'utf8'));
+      } catch { /* try the next location */ }
+    }
+    return null;
+  };
+  let id = input.agent_id;
+  for (let depth = 0; depth < 8; depth++) {
+    const meta = read(id);
+    if (!meta) return null;
+    const isFork = meta.isFork === true || normalise(meta.agentType ?? '') === 'fork';
+    if (!isFork) return typeof meta.agentType === 'string' ? meta.agentType : null;
+    if (!meta.parentAgentId) return '';
+    id = meta.parentAgentId;
+  }
+  return null;
+}
+
+function effectiveAgentType(input) {
+  const type = typeof input.agent_type === 'string' ? input.agent_type : '';
+  if (normalise(type) !== 'fork') return type;
+  return forkParentType(input) ?? type;
+}
+
 /** Every agent named in the table or shipped by the plugin — used to tell "wrong agent" from "unknown name". */
 const KNOWN_AGENTS = new Set(
   [...RULES.flatMap((r) => [...r.authors, ...r.updaters]), ...pluginAgents()].map(normalise),
@@ -410,7 +452,7 @@ function main() {
 
   if (!input || typeof input !== 'object') process.exit(0);
   const toolName = input.tool_name || '';
-  const agentType = typeof input.agent_type === 'string' ? input.agent_type : '';
+  const agentType = effectiveAgentType(input);
 
   let verdict = null;
   if (SPAWN_TOOLS.has(toolName)) {
