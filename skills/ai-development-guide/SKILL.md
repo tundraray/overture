@@ -200,7 +200,7 @@ Universal quality assurance phases applicable to all languages:
 4. **E2E Tests**: Run end-to-end tests
 
 ### Phase 4: Final Quality Gate
-All checks must pass before proceeding:
+Runs only after a fix in Phases 1–3, re-running the phases that passed before it; with no fixes, Phases 1–3 are the gate. All must pass:
 - Zero static analysis errors
 - Build succeeds
 - All tests pass
@@ -211,7 +211,7 @@ All checks must pass before proceeding:
 Workflow:
 1. Format check → 2. Lint/Style → 3. Static analysis →
 4. Build/Compile → 5. Unit tests → 6. Coverage check →
-7. Integration tests → 8. Final gate
+7. Integration tests → 8. Final gate (after a fix)
 
 Auto-fix capabilities (when available):
 - Format auto-fix

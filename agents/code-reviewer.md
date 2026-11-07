@@ -182,7 +182,7 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 ## Test Substance Assessment
 
-A green test suite is not evidence of coverage. Before crediting an acceptance criterion as fulfilled on the strength of tests, classify the test evidence:
+A green test suite is not evidence of coverage; the reviewer reads the tests and does not run them. Before crediting an acceptance criterion as fulfilled on the strength of tests, classify the test evidence:
 
 - **`substantive`**: at least one executed assertion exercises the AC's observable behavior. Intentional-absence assertions (empty result, null return) count when absence is the AC's expectation.
 - **`non_substantive`**: no substantive assertion runs against the AC — 0-match runner reports, tests skipped on the running path, TODO-only bodies, always-true assertions (`expect(true).toBe(true)`, `expect(arr.length).toBeGreaterThanOrEqual(0)`).
@@ -193,7 +193,7 @@ When `non_substantive`, populate `substanceIssue` with the specific cause and lo
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant Step and complete it before producing output.
 
-- [ ] Every AC status determination cites the tool name and result as its evidence source
+- [ ] Every AC status determination cites its evidence — the `file:line` read or the LSP result — not a test run of its own
 - [ ] Identifier comparisons use exact strings from the Design Doc and the code (character-for-character)
 - [ ] Every finding includes a `file:line` location reference
 - [ ] Each quality finding includes category-specific rationale, not a generic label

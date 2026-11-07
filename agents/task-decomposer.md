@@ -203,7 +203,7 @@ Every task file created appears in `documents`. A task written but not reported 
 1. **Quality Assurance Considerations**
    - Don't forget test creation/updates — but a task gets a new test only when its Proof Obligation has no existing or planned test that already proves it (`testing-principles`, Test Selection); otherwise the obligation cites that test
    - The tests across all tasks of the part stay within the plan's test budget; a rule proven in one task is not re-proven in another
-   - Overall quality check separately executed in quality assurance process after each task completion (outside task responsibility scope)
+   - Overall quality check separately executed at the quality gate (before a commit, at a phase end), outside task scope
 
 2. **Dependency Clarification**
    - Explicitly state inter-task dependencies

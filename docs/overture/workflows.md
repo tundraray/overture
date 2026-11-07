@@ -16,7 +16,7 @@ The main workflow triggered by `/implement`. Analyzes your request, determines c
    - **Small** — a lite PRD and a simplified work plan, no Design Doc
 4. **Expert analysis** (optional, once per feature) — for complex tasks, 3-5 expert-analyst agents evaluate the problem in parallel from different perspectives before design begins
 5. **For each part, in dependency order**: **codebase-analyzer** (or **ui-analyzer**) gathers facts, **technical-designer** (or **technical-designer-frontend**) produces `design-{part}.md`, **document-reviewer** and **design-sync** verify it, **acceptance-test-generator** creates that part's test skeletons. Every part is designed before any is planned
-6. **For each part, in dependency order**: **work-planner** breaks the part into phased tasks, **document-reviewer** checks traceability, **task-decomposer** splits phases into single-commit tasks, then **task-executor** and **quality-fixer** handle each task autonomously until the part's completion report
+6. **For each part, in dependency order**: **work-planner** breaks the part into phased tasks, **document-reviewer** checks traceability, **task-decomposer** splits phases into single-commit tasks, then **task-executor** handles each task and **quality-fixer** gates each commit and phase end, autonomously until the part's completion report
 
 **Stop points** (workflow pauses for your approval):
 - After requirement-analyzer — confirm scope and scale (once)
@@ -59,7 +59,7 @@ graph TB
     SP --> H
 
     H --> I[task-executor]
-    I --> J[quality-fixer]
+    I --> J[quality gate: quality-fixer]
     J --> K{More tasks?}
     K --> |Yes| I
     K --> |No| L{More parts to build?}

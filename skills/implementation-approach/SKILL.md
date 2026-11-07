@@ -108,8 +108,8 @@ The decision is recorded as one line in the work plan's Overview (the approach a
 Priority for completion verification of each task:
 
 - **L1: Functional Operation Verification** - Operates as end-user feature (e.g., search executable)
-- **L2: Test Operation Verification** - The tests that prove the task's obligations pass, new or existing
-- **L3: Build Success Verification** - Code builds/runs without errors
+- **L2: Test Operation Verification** - The tests that prove the task's obligations pass, new or existing — those test files, not the suite
+- **L3: Build Success Verification** - The touched package typechecks without errors
 
 **Priority**: L1 > L2 > L3 in order of verifiability importance
 

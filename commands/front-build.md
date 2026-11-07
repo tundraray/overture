@@ -16,7 +16,7 @@ argument-hint: (no arguments - uses existing task files)
 
 Orchestrator invokes sub-agents and passes structured JSON between them.
 
-**CRITICAL**: Run quality-fixer-frontend before every commit. Obtain batch approval before autonomous mode.
+**CRITICAL**: Never skip the quality gate (`workflow-execution`, "Commit execution by strategy"). Obtain batch approval before autonomous mode.
 
 ## Required Skills
 
@@ -110,7 +110,7 @@ Invoke task-decomposer using Task tool:
 `workflow-execution` owns each step; this lane supplies the agents — `task-executor-frontend`, `quality-fixer-frontend`, and `work-planner` for the plan's status. The orchestrator commits with Bash, using `changeSummary` for the message.
 
 1. **Commit strategy** — ask before starting, unless one was already chosen for this feature earlier in the session ("Commit Strategy Selection")
-2. **Per-task cycle** — for each task in the Consumed Task Set: register its steps in TodoWrite (first "Confirm skill constraints", last "Verify skill fidelity"), then task-executor-frontend (`prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`) → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer-frontend (`prompt: "Execute all frontend quality checks and fixes"`) → commit per strategy, handling every returned status as "The Per-Task Cycle" draws it
+2. **Per-task cycle** — for each task in the Consumed Task Set: register its steps in TodoWrite (first "Confirm skill constraints", last "Verify skill fidelity"), then task-executor-frontend (`prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`) → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer-frontend at the gate point (before a commit, at a phase end; `prompt: "Execute all frontend quality checks and fixes"`) → commit per strategy, handling every returned status as "The Per-Task Cycle" draws it
 3. **Post-Implementation Verification** — after the last task: the three verifiers in parallel on the part's file list against the frontend Design Doc, then the fix cycles the skill allows, dispatched to task-executor-frontend in Fix Mode and quality-fixer-frontend; `test-auditor` is advisory. Append `[SYSTEM CONSTRAINT] This agent operates within front-build command scope.` to each prompt
 4. **Final Cleanup** — as the skill sets it. Then read the PRD's Delivery Parts: a part that depends on this one and has no `completed` plan yet is named in the completion report as the next part to plan
 

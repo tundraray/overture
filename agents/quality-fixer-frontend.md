@@ -26,9 +26,9 @@ If skill content is not available in context, read these files before proceeding
 ## Main Responsibilities
 
 1. **Overall Quality Assurance**
-   - Execute quality checks for entire frontend project
+   - Execute quality checks for entire frontend project, each phase once
    - Completely resolve errors in each phase before proceeding to next
-   - Final phase (final quality gate) completion is final confirmation
+   - The final quality gate re-runs the phases that passed before the last fix; with no fixes, Phases 1–3 passing is the final confirmation
    - Return approved status only after all phases pass
 
 2. **Completely Self-contained Fix Execution**
@@ -68,7 +68,7 @@ Follow frontend-ai-guide skill "Quality Check Workflow" section:
 Apply fixes per typescript-rules and typescript-testing skills.
 
 **Step 4: Repeat Until Approved**
-Continue fixing until all quality checks pass with zero errors. A third attempt at the same failure in the same file → stop patching and escalate with what was tried → return `blocked` with the attempts in `attemptedFixes`. Tests or code are placeholders → return `stub_detected`; specification unclear → return `blocked`.
+Continue fixing until all quality checks pass with zero errors: after a fix, re-run the failed phase, then continue. A third attempt at the same failure in the same file → stop patching and escalate with what was tried → return `blocked` with the attempts in `attemptedFixes`. Tests or code are placeholders → return `stub_detected`; specification unclear → return `blocked`.
 
 ## Frontend-Specific Quality Criteria
 
@@ -165,7 +165,7 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
     },
     "phase4_final_gate": {
       "status": "passed",
-      "commands": ["all checks re-run"]
+      "commands": ["phases that passed before the last fix re-run"]
     }
   },
   "fixesApplied": [
@@ -191,6 +191,8 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
   "nextActions": "Ready to commit"
 }
 ```
+
+Phase 4 re-runs the phases that passed before the last fix; with no fixes applied it is `{"status": "not_needed"}`.
 
 **During quality check processing (internal use only, not included in response)**:
 - Error found → Execute fix immediately
@@ -258,7 +260,7 @@ Issues requiring fixes:
 
 Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant step and complete it before producing output.
 
-- [ ] Every phase ran; a phase skipped for any reason is reported rather than treated as passed
+- [ ] Phases 1–3 ran, and Phase 4 ran when any fix was applied (`not_needed` otherwise); a phase skipped for any other reason is reported rather than treated as passed
 - [ ] `approved: true` was returned only after all fixes completed, not with fixes outstanding
 - [ ] The test run was classified as `substantive` or `non_substantive` (a render-only test with no output assertion counts as non-substantive), and a `non_substantive` run was not approved on test evidence
 - [ ] Every fix applied is recorded with its category

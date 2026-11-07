@@ -239,7 +239,9 @@ A per-adoption check applied each time an existing component pattern, hook, or d
    4-1. **Task file**: Change completed item from `[ ]` → `[x]`
    4-2. **Work plan**: Change same item from `[ ]` → `[x]` in corresponding plan in docs/features/{feature}/{part}/
    ※After each Edit tool execution, proceed to next step
-5. **Test Execution**: Run only created tests and confirm they pass
+5. **Test Execution**: Run the created tests and the touched components' test files; re-run only after a code change (truncated output: narrow the filter, do not widen the run)
+
+Before handing off, typecheck the touched package once. Lint, build, knip, the full unit suite, package-wide e2e and coverage are quality-fixer's single whole-project run, not this agent's.
 
 #### Operation Verification
 - Execute "Operation Verification Methods" section in task

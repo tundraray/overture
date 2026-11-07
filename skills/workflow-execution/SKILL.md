@@ -83,7 +83,7 @@ Autonomous mode starts after batch approval and decomposition. Before entering t
 **Principle**: verify subagents can complete their responsibilities.
 
 **Required environments**:
-- Commit capability (for the per-task commit cycle)
+- Commit capability (for the commit cycle)
 - Quality check tools (quality-fixer detects and escalates if missing)
 - Test runner (task-executor detects and escalates if missing)
 
@@ -112,9 +112,9 @@ The orchestrator itself gains no write authority: it still coordinates only.
 | **per-feature** | Single commit at feature completion | Clean history, squash-like |
 | **manual** | User explicitly requests | Full control, interactive workflow |
 
-**Default**: `per-task`.
+**Default**: `per-phase`.
 
-The strategy affects when `git commit` runs, how quality-fixer cycles are grouped, and commit message granularity. It never affects **whether** quality-fixer runs.
+The strategy sets when `git commit` runs and commit message granularity.
 
 ## The Per-Task Cycle
 
@@ -122,15 +122,19 @@ The strategy affects when `git commit` runs, how quality-fixer cycles are groupe
 flowchart TD
     TE[task-executor] -->|escalation_needed / blocked| U[Escalate to user]
     TE -->|int/e2e tests added| ITR[integration-test-reviewer]
-    TE -->|completed| QF[quality-fixer]
+    TE -->|completed| G{Commit point or phase end?}
     ITR -->|needs_revision: requiredFixes| FIX_ITR[task-executor Fix Mode]
     ITR -->|blocked| U
-    ITR -->|approved| QF
+    ITR -->|approved| G
+    G -->|no| N[Next task]
+    G -->|yes| QF[quality-fixer]
+    QF -->|approved| CP{Commit point?}
+    CP -->|yes| C[Commit]
+    CP -->|no| N
     FIX_ITR --> ITR
     FIX_ITR -->|escalation_needed| U
     QF -->|stub_detected: incompleteImplementations| FIX_QF[task-executor Fix Mode]
     QF -->|blocked| U
-    QF -->|approved| C[Commit per strategy]
     FIX_QF --> QF
     FIX_QF -->|escalation_needed| U
 ```
@@ -141,12 +145,12 @@ Never commit on `stub_detected`: a stub can pass every other check while impleme
 
 | Strategy | Commit Trigger |
 |----------|----------------|
-| **per-task** | quality-fixer returns `approved: true` → commit immediately |
-| **per-phase** | All tasks in the phase complete + `approved: true` → commit |
-| **per-feature** | All phases complete + final `approved: true` → single commit |
-| **manual** | User says "commit" or "save progress" → commit staged changes |
+| **per-task** | Each task → quality-fixer `approved: true` → commit immediately |
+| **per-phase** | All tasks in the phase complete → quality-fixer `approved: true` → commit |
+| **per-feature** | quality-fixer at each phase end; after post-implementation verification → single commit |
+| **manual** | quality-fixer at each phase end; user says "commit" or "save progress" → quality-fixer (skipped if nothing changed since its last run) → commit staged changes |
 
-**quality-fixer runs after every task regardless of strategy.** Batching commits does not batch quality gates.
+**quality-fixer runs before every commit and at the end of every phase.**
 
 ## Post-Implementation Verification
 
@@ -283,7 +287,7 @@ graph TD
     AUTO --> LOOP[Task execution loop]
     LOOP --> CYCLE[Per-task cycle, see The Per-Task Cycle]
     CYCLE -->|escalation| USERESC[Escalate to user]
-    CYCLE -->|committed| CHECK{Remaining tasks?}
+    CYCLE -->|task done| CHECK{Remaining tasks?}
     CHECK -->|Yes| LOOP
     CHECK -->|No| PIV[Post-Implementation Verification]
     PIV --> VERIFY{code-verifier and security-reviewer; test-auditor advisory}

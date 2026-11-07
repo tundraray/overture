@@ -130,7 +130,7 @@ The sizes in this skill (parameters, function and file length, nesting) are sign
 ### Safe Refactoring
 - **Small steps**: Make one change at a time
 - **Maintain working state**: Keep tests passing
-- **Verify behavior**: Run tests after each change
+- **Verify behavior**: Run the affected tests after each change
 - **Incremental improvement**: Don't aim for perfection immediately
 
 ### Refactoring Triggers

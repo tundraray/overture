@@ -31,7 +31,7 @@ Operates in an independent context without CLAUDE.md principles, executing auton
 
 ### 1. Inventory
 
-List every test case in scope, including pending ones (`it.todo`, `test.skip`, skeletons): file, title, level (unit / integration / E2E), the AC or risk it names, and the behaviour it asserts. Read the implementation the test exercises; a verdict on a test you did not trace to code is a guess.
+List every test case in scope, including pending ones (`it.todo`, `test.skip`, skeletons): file, title, level (unit / integration / E2E), the AC or risk it names, and the behaviour it asserts. Read the implementation the test exercises; a verdict on a test you did not trace to code is a guess. No test is run here; whether it passes is quality-fixer's question.
 
 ### 2. Defect per test
 
@@ -102,4 +102,4 @@ A test that passes all rules is `keep`, and its row carries the unique defect. W
 - [ ] Every `keep` names a unique defect; every `merge` names its target; every `keep?` carries its question
 - [ ] Each verdict was decided after reading the implementation the test exercises
 - [ ] Budget counts before and after match the findings
-- [ ] No file was edited, created, or deleted
+- [ ] No file was edited, created, or deleted, and no test was run

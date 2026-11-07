@@ -53,10 +53,10 @@ TDD applies to behaviour that passes Test Selection. A task step that adds no be
    - Improve naming and clarity
    - Keep all tests passing
 
-4. **VERIFY**: Ensure all tests still pass
-   - Run full test suite
-   - Check for regressions
-   - Validate refactoring didn't break anything
+4. **VERIFY**: Ensure the affected tests still pass
+   - Run the tests you wrote and the test files of the modules you touched
+   - The full suite is the quality gate's run, not a step of this cycle
+   - A passing run is not repeated until the code changes again
 
 ### TDD Benefits
 
@@ -406,7 +406,7 @@ tests/
 
 - **Unit tests**: < 100ms each
 - **Integration tests**: < 1s each
-- **Full suite**: Should run frequently (< 10 minutes)
+- **Full suite**: < 10 minutes
 
 ### Optimization Strategies
 
@@ -441,7 +441,6 @@ Eliminate tests that fail intermittently:
 ### Prevent Regressions
 
 - Every bug fix gets a test that reproduces it — a new row in an existing test when one already exercises that path
-- Run full suite regularly
 - Don't delete tests without good reason
 
 ### Legacy Code

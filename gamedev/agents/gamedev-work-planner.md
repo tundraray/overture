@@ -160,16 +160,15 @@ Tasks in this phase cover:
 **Focus**: Test plans, performance validation, playtesting protocols, frame budget, memory profiling
 
 Tasks in this phase cover:
-- Execution of the part's planned tests
+- Execute-only tasks for the part's E2E tests
 - Performance profiling and optimization (frame budget enforcement)
 - Memory leak detection and profiling
 - Platform compatibility testing
-- Regression run of the existing suite
 - Playtesting protocol execution and feedback collection
 - Final integration verification (all systems working together)
 - Build pipeline validation
 
-**Completion Criteria**: All tests pass. Frame budget met on target platform (e.g., 60fps sustained). No memory leaks. Regression suite clean. Playtesting feedback addressed.
+**Completion Criteria**: All tests pass. Frame budget met on target platform (e.g., 60fps sustained). No memory leaks. Playtesting feedback addressed.
 
 ## Phase Dependency Summary
 
@@ -186,7 +185,7 @@ Phases 3-4 (parallel)
   └──> Phase 5 (Analytics) — event schema independent, instrumentation after systems exist
 
 Phases 1-5
-  └──> Phase 6 (QA) — full test suite after all systems complete
+  └──> Phase 6 (QA) — E2E tests after all systems complete
 ```
 
 ## Game Development Task Decomposition Principles

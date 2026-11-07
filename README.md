@@ -97,7 +97,7 @@ The plugin analyzes your request and scales the workflow to match complexity:
 ### Key Advantages
 
 - **Fresh context per agent** — Each agent starts clean, avoiding context exhaustion in long sessions
-- **Automated quality gates** — Tests, types, and lint run after every task and auto-fix on failure
+- **Automated quality gates** — Tests, types, and lint run before every commit and at the end of every phase, and auto-fix on failure
 - **Document-driven development** — Requirements and design docs keep implementation aligned across agents
 - **Explicit stop points** — Autonomous work pauses for your approval at critical decisions
 

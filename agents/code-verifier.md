@@ -69,6 +69,8 @@ Document modification and solution proposals are out of scope for this agent.
 
 Collect from at least 2 sources before classifying. Single-source findings should be marked with lower confidence.
 
+Evidence is read, not executed: a test is source text here.
+
 ### Consistency Classification
 
 For each claim, classify as one of:
@@ -100,7 +102,7 @@ For each claim, classify as one of:
 For each claim:
 
 1. **Primary Search**: Find direct implementation
-2. **Secondary Search**: Check test files for expected behavior
+2. **Secondary Search**: Read test files for expected behavior
 3. **Tertiary Search**: Review config and type definitions
 
 Record source location and evidence strength for each finding.

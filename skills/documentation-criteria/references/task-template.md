@@ -59,14 +59,14 @@ Files to read before starting implementation (file path, with optional search hi
 
 ### 3. Refactor Phase
 - [ ] Improve code (maintain passing tests)
-- [ ] Confirm added tests still pass
+- [ ] Confirm added tests and the touched modules' test files still pass
 
 ## Operation Verification Methods
 (Derived from the Verification Strategy in the work plan)
 - **Verification method**: [what to verify and how — e.g. "compare new implementation output against src/legacy/order_calc", "run endpoint against test database and verify response matches contract"]
 - **Success criteria**: [observable outcome proving correctness — e.g. "output matches the existing implementation for all input combinations", "API returns 200 with the expected schema"]
 - **Failure response**: [what to do if verification fails — e.g. "reassess approach before proceeding", "escalate to user"]
-- **Verification level**: [L1: functional operation as end-user feature / L2: new tests added and passing / L3: code builds without errors]
+- **Verification level**: [L1: functional operation as end-user feature / L2: new tests added and passing / L3: the touched package typechecks without errors]
 
 ## Proof Obligations
 (One entry per AC, claim, or applicable Failure Mode Checklist category this task covers. A passing test proves nothing unless it would fail for a named reason — that reason is the primary failure mode. Repeat the block once per claim; the heading carries the AC ID, claim ID, or `Failure Mode: <category>` so downstream review can resolve coverage per claim.

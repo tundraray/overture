@@ -80,7 +80,7 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 11. data-scientist → analytics design, KPIs, A/B test framework
 12. technical-designer → Design Doc integrating all specialist outputs
 13. gamedev-work-planner → 6-phase plan with dependencies
-14. Autonomous execution: task-decomposer → (task-executor → quality-fixer → commit) loop
+14. Autonomous execution: task-decomposer → (task-executor → quality gate → commit) loop
 
 ```mermaid
 graph TB
@@ -111,7 +111,7 @@ graph TB
     WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
 
     AUTO --> TDECOMP[task-decomposer]
-    TDECOMP --> LOOP[task-executor → quality-fixer → commit]
+    TDECOMP --> LOOP[task-executor → quality gate → commit]
     LOOP --> DONE[Completion Report]
 ```
 
@@ -302,16 +302,20 @@ Every task in every phase goes through the same quality cycle. This is the share
 
 1. **task-executor** implements the task following the Design Doc and task specification
 2. **Escalation check** — if the task requires design deviations (interface changes, new dependencies, layer violations), execution stops and escalates to the user
-3. **quality-fixer** runs tests, type checks, and linting. If anything fails, it fixes the issues automatically. If fixes fail, the task loops back to task-executor
-4. **git commit** — on success, the task is committed (strategy chosen by user: per-task, per-phase, per-feature, or manual)
+3. **quality-fixer** runs tests, type checks, and linting — before every commit and at the end of every phase. If anything fails, it fixes the issues automatically. If fixes fail, the task loops back to task-executor
+4. **git commit** — on success, the work is committed (strategy chosen by user: per-phase by default, or per-task, per-feature, manual)
 5. Move to the next task or produce a completion report
 
 ```mermaid
 graph LR
     TE[task-executor] --> ESC{Escalation?}
-    ESC --> |No| QF[quality-fixer]
+    ESC --> |No| GATE{Commit point or phase end?}
     ESC --> |Yes| USER[Escalate to User]
-    QF --> |approved| COMMIT[git commit]
+    GATE --> |No| NEXT
+    GATE --> |Yes| QF[quality-fixer]
+    QF --> |approved| CP{Commit point?}
+    CP --> |Yes| COMMIT[git commit]
+    CP --> |No| NEXT
     QF --> |failed| TE
     COMMIT --> NEXT{More tasks?}
     NEXT --> |Yes| TE
