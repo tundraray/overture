@@ -36,13 +36,17 @@ ls docs/features/*/design-*.md | grep -v template | tail -1
 
 # Check implementation files
 git diff --name-only main...HEAD
+
+# Code system, when the project has one
+ls docs/code-system/README.md 2>/dev/null
 ```
 
 ### 2. Execute code-reviewer
-`prompt: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list from Step 1]"` — validates:
+`prompt: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list from Step 1]. Code System Path: docs/code-system/ (when Step 1 found it)"` — validates:
 - Acceptance criteria fulfillment
 - Code quality check
 - Implementation completeness assessment
+- Conformance to the code system — duplicate blocks, boundaries, cited patterns — with candidate patterns reported, not fixed
 
 ### 3. Verdict and Response
 
@@ -69,7 +73,7 @@ If user selects `y`:
 
 1. **Execute rule-advisor**: Understand fix essence (symptomatic treatment vs root solution)
 2. **Update TodoWrite**: Register work steps. Always include: first "Confirm skill constraints", final "Verify skill fidelity"
-3. **Execute task-executor-frontend** in Fix Mode, no task file: `Design Doc: [path]` and `requiredFixes` built from code-reviewer's `unfulfilledItems` and `qualityIssues` (`{location, issue, fix}`)
+3. **Execute task-executor-frontend** in Fix Mode, no task file: `Design Doc: [path]` and `requiredFixes` built from code-reviewer's `unfulfilledItems` and `qualityIssues` (`{location, issue, fix}`); `candidatePatterns` stay out of `requiredFixes`
 4. **Execute quality-fixer-frontend**: Confirm quality gate passage
 5. **Re-validate**: Measure improvement with code-reviewer
 
@@ -81,6 +85,9 @@ Improvement: [Y-X]%
 
 Remaining issues:
 - [items requiring manual intervention]
+
+Candidate patterns (confirm to add via /update-doc, code system):
+- [name — shape — locations]
 ```
 
 ## Auto-fixable Items
@@ -88,10 +95,12 @@ Remaining issues:
 - Error handling additions
 - Contract definition fixes
 - Function splitting (length/complexity improvements)
+- Conformance fixes with a named target: a duplicate block replaced by the existing one, an instance brought to its cited pattern
 
 ## Non-fixable Items
 - Fundamental business logic changes
 - Architecture-level modifications
 - Design Doc deficiencies
+- Code-system changes — a candidate pattern reaches the catalogue only through `/update-doc`
 
 **Scope**: Design Doc compliance validation and auto-fixes.

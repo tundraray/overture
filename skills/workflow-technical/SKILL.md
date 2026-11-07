@@ -20,6 +20,7 @@ Run before invoking any agent in this phase. These are the product phase's outpu
 ☐ Requirements are user-confirmed (`workflow-product` or `workflow-gamedev` exit gate passed)
 ☐ Product document received: the PRD path (`workflow-product`), or the feature spec path with the GDD as context (`workflow-gamedev`). This is the source of acceptance criteria for traceability below
 ☐ UX document received: the UXRD path and `docs/design-system/` when it exists, or the `game-ui-designer` output path on the gamedev path, or an explicit "no UI surface"
+☐ Code system checked: `docs/code-system/` when it exists, or an explicit "none yet" — the first Design Doc then creates what its part needs (`code-system`, "Part A")
 ☐ Parts list received — every part with a name, the requirements it covers, its `cutAlong` seam, and `dependsOn`, in an order where each part follows the parts it depends on. A design cannot start without a part name, and this phase does not invent one
 ☐ Scale and `decidingAxis` received
 ☐ Open questions received, and none of them blocks a decision this phase must make — when one does, return to the product phase rather than deciding it here
@@ -38,8 +39,8 @@ The flow runs **once per part**, in the dependency order of the parts list, and 
 
 **For each part, in dependency order:**
 
-2. **codebase-analyzer** (**ui-analyzer** for a frontend part) → read-only fact gathering, with the part's requirements passed as `requirements` → `focusAreas[]`
-3. **technical-designer(-frontend)** → `design-{part}.md`, consuming `focusAreas` into its **Appendix: Fact Disposition**, the expert synthesis when one was produced, and the approved designs of every part in `dependsOn` as contracts to consume rather than redefine, with its draft check (`document-reviewer`, including part scope)
+2. **codebase-analyzer** (**ui-analyzer** for a frontend part) → read-only fact gathering, with the part's requirements passed as `requirements` → `focusAreas[]`; `codebase-analyzer` reads `docs/code-system/` first and reports `conformance`
+3. **technical-designer(-frontend)** → `design-{part}.md`, consuming `focusAreas` into its **Appendix: Fact Disposition** and `conformance` into its code-system reading, the expert synthesis when one was produced, and the approved designs of every part in `dependsOn` as contracts to consume rather than redefine, with its draft check (`document-reviewer`, including part scope). Code-system files it creates or changes are approved with the Design Doc
 4. **design-sync** → explicit-conflict check against the already-approved Design Docs of sibling parts — the `dependsOn` designs first, since a contract mismatch there is the costliest to find later. Traceability to the PRD and UXRD is the draft check's job in step 3, not design-sync's
    **[Stop: Design Doc approval — part `{part}`]**
 5. *[Conditional]* **technical-designer(-frontend)** → ADR, when a decision this design made passes the three-part test in `documentation-criteria`, with its draft check
@@ -108,5 +109,6 @@ Run before handing off to `workflow-execution`. When any item is unsatisfied, st
 | ADRs | Paths of any written here, plus existing prerequisites; or "none passed the test" — per part |
 | Test skeletons | Generated file paths, per part |
 | PRD / UXRD and `docs/design-system/` (or feature spec / GDD) | Carried through for plan traceability |
+| `docs/code-system/` | Carried through: the patterns each Design Doc cites reach its task files |
 
 **ENFORCEMENT**: an unchecked item means the phase is not finished. A design item missing from the payload cannot appear in the plan's task lines, and a requirement reaching neither is how work silently disappears between phases.

@@ -25,9 +25,9 @@ You gather **facts**, not conclusions. A designer who receives prose about "the 
 
 ## Input Parameters
 
-- **requirement_analysis** (required): requirement-analyzer JSON output, providing `affectedFiles`, `scale`, `purpose`, `technicalConsiderations`
+- **requirement_analysis** (required for a feature): requirement-analyzer JSON output, providing `affectedFiles`, `scale`, `purpose`, `technicalConsiderations`. `/code-context` passes none: the scope is then the whole codebase, read for layers, boundaries and recurring structures rather than for one change
 - **prd_path** (optional): path to the PRD
-- **requirements** (required): original user requirements text
+- **requirements** (required): original user requirements text, or the `/code-context` task
 - **focus_areas** (optional): specific areas for deeper analysis
 
 ## Output Scope
@@ -38,7 +38,9 @@ This agent outputs **codebase analysis results and design guidance only**. Desig
 
 ### Step 1: Requirement Context Parsing
 
-1. Parse `requirement_analysis` to extract `affectedFiles` and `purpose`
+Read the project code system first: when `docs/code-system/` exists, read its `README.md` (layers, dependency rules, module boundaries) and the `patterns/*.md` whose Reference paths touch the affected files (all of them on a whole-codebase run). It is the project's agreed record of how code is structured, so it comes before the code itself; where the code disagrees with it, record both under `conformance`.
+
+1. Parse `requirement_analysis`, when passed, to extract `affectedFiles` and `purpose`; without it, the layers, boundaries and recurring structures of the whole codebase are the scope, reported under `constraints` with file:line
 2. When `prd_path` is provided, read the PRD and extract feature scope
 3. Determine relevant analysis categories from the affected files:
    - **Data layer**: data access operations (repository, DAO, model, query patterns)
@@ -129,19 +131,21 @@ Final message: exactly one JSON object matching the schema below (begins with `{
     {"entryPoint": "ClassName.methodName (file:line)", "steps": [{"order": 1, "method": "methodName (file:line)", "input": "input data/format", "output": "output data/format", "externalLookups": ["MasterTable.getData() for code conversion"], "transformation": "what changes"}], "intermediateFormats": ["intermediate representation, if any"], "finalOutput": "final output data/format"}
   ],
   "constraints": [
-    {"type": "validation|business_rule|configuration|assumption", "description": "What the constraint enforces", "location": "path/to/file:lineNumber", "impact": "What breaks if violated"}
+    {"type": "validation|business_rule|configuration|assumption|architecture", "description": "What the constraint enforces (architecture: a layer, a dependency direction, a module boundary, a recurring structure)", "location": "path/to/file:lineNumber", "impact": "What breaks if violated"}
   ],
   "focusAreas": [
     {"fact_id": "src/auth/createUser.ts:createUser", "area": "Brief area name (one coherent unit of facts)", "evidence": "existingElements[name='createUser']", "relatedFiles": ["src/auth/createUser.ts", "src/api/routes/users.ts"], "factsToAddress": "Concrete facts the designer must address (e.g. 'createUser is called by [a, b, c]'; 'validate branches into 4 outcome cases: ...'; 'status accepts [v1, v2, v3]')", "risk": "What goes wrong when these facts are omitted or contradicted by the design"}
   ],
   "testCoverage": {"testedElements": ["elements with test files found"], "untestedElements": ["elements with no test files found"]},
+  "conformance": {"status": "read|absent", "matches": [{"pattern": "docs/code-system/patterns/name.md", "location": "path/to/file:lineNumber"}], "deviations": [{"pattern": "docs/code-system/patterns/name.md", "location": "path/to/file:lineNumber", "difference": "what the code does instead"}], "uncatalogued": [{"structure": "what recurs", "locations": ["path/to/file:lineNumber", "path/to/other:lineNumber"]}]},
   "limitations": ["What could not be analyzed, and why"]
 }
 ```
 
 ## Completion Criteria
 
-- [ ] Parsed requirement analysis output and identified analysis categories
+- [ ] Read `docs/code-system/` when present, or recorded `conformance.status: absent`
+- [ ] Parsed requirement analysis output, when passed, and identified analysis categories
 - [ ] Read all affected files in full and extracted every interface, type, function, method, and class with file:line references — or recorded incomplete files in `limitations`
 - [ ] Traced call chains per the scope rules — or recorded incomplete traces in `limitations`
 - [ ] Identified data transformation pipelines with step-by-step input→output mapping per entry point
@@ -161,6 +165,7 @@ Completion Criteria confirm the steps ran. These confirm the output is *correct*
 - [ ] Schema field names match actual definitions rather than being inferred from a similarly-named table
 - [ ] Each focus area has a stable `fact_id` (shared concepts anchored to the canonical source file), cites `evidence`, lists every file the designer must read in `relatedFiles`, enumerates `factsToAddress`, and states the `risk` of omission
 - [ ] `dataModel.detected` accurately reflects whether data operations were found
+- [ ] Every `conformance` entry cites a pattern path that exists and a code location that was read; an `uncatalogued` structure has two or more locations
 - [ ] `dataTransformationPipelines` is populated for every entry point that transforms data — an empty array only when no transformations exist
 - [ ] Each pipeline step's `externalLookups` lists all master table / config / constant references that modify output values
 - [ ] `limitations` documents every file that could not be read and every pattern that could not be traced

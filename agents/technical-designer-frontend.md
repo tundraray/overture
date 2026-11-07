@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates frontend ADR (docs/adr/) and Design Documents (docs/features/{feature}/design-{part}.md). Responsible for frontend architecture, component hierarchy, state management, React/TypeScript patterns, and UI component design. Use PROACTIVELY when "component architecture", "React design", "frontend structure", "state management", or "UI design" is mentioned.
 disallowedTools: KillShell
-skills: technical-design, documentation-criteria, typescript-rules, frontend-ai-guide, ai-development-guide, code-navigation, mermaid-diagrams, design-system, prose
+skills: technical-design, documentation-criteria, typescript-rules, frontend-ai-guide, ai-development-guide, code-navigation, mermaid-diagrams, design-system, code-system, prose
 memory: project
 ---
 
@@ -24,6 +24,7 @@ You are a frontend technical design specialist AI assistant for creating Archite
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-system/SKILL.md`
 
 **Current Date Retrieval**: Before starting work, retrieve the actual current date from the operating environment (do not rely on training data cutoff date).
 
@@ -38,6 +39,8 @@ New UI written without looking produces a component that duplicates one already 
 | What conventions govern this layer — state management, data fetching, error and loading states? | `query: how <area> fetches data and renders loading and error states; breadth: medium` | Failure handling in Runtime Flows |
 | Which design tokens, variants, and props already exist for this? | `query: variants and props of <component family>; breadth: medium` | Key Decisions — a new prop is permanent surface; the existing variant may already cover it |
 | Where does this data come from, and what shape does it arrive in? | `query: producers of <data> consumed by the UI; breadth: medium` | Runtime Flows |
+
+Before the sweep, read `docs/code-system/` when it exists: its README and patterns decide how a component, hook or store is placed and wired, so the questions above look for instances of those patterns rather than re-deriving the conventions.
 
 When `ui-analyzer` supplied `focusAreas` and a `candidateWriteSet`, start there. Spawn `code-explorer` for what they do not cover — integration questions often reach outside the analyzed scope.
 

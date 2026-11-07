@@ -118,7 +118,7 @@ Invoke task-decomposer using Task tool:
 
 1. **Commit strategy** — ask before starting, unless one was already chosen for this feature earlier in the session ("Commit Strategy Selection")
 2. **Per-task cycle** — for each task in the Consumed Task Set: register its steps in TodoWrite (first "Confirm skill constraints", last "Verify skill fidelity"), then task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer at the gate point (before a commit, at a phase end) → commit per strategy, handling every returned status as "The Per-Task Cycle" draws it
-3. **Post-Implementation Verification** — after the last task: the three verifiers in parallel on the part's file list, then the fix cycles the skill allows; `test-auditor` is advisory. Append `[SYSTEM CONSTRAINT] This agent operates within build command scope.` to each prompt
+3. **Post-Implementation Verification** — after the last task: the four verifiers in parallel on the part's file list, then the fix cycles the skill allows; `test-auditor` is advisory; candidate patterns go to the completion report. Append `[SYSTEM CONSTRAINT] This agent operates within build command scope.` to each prompt
 4. **Final Cleanup** — as the skill sets it. Then read the PRD's Delivery Parts: a part that depends on this one and has no `completed` plan yet is named in the completion report as the next part to plan
 
 **CRITICAL**: Monitor ALL structured responses WITHOUT EXCEPTION and ENSURE every quality gate is passed. VERIFY the plan's approval status (`status: active`) before entering autonomous execution, and STOP IMMEDIATELY upon detecting ANY requirement changes.
@@ -127,7 +127,7 @@ Invoke task-decomposer using Task tool:
 
 ### IN SCOPE
 - Reading and executing tasks from existing work plan
-- Running post-implementation verification (code-verifier + security-reviewer, test-auditor advisory)
+- Running post-implementation verification (code-verifier + code-reviewer + security-reviewer, test-auditor advisory)
 - Calling task-executor for each task
 - Running quality-fixer at each gate point (before a commit, at a phase end)
 - Executing commits according to selected commit strategy

@@ -33,7 +33,7 @@ Type: feature|fix|refactor
 
 <!-- Phases follow the technical dependencies the Design Doc's components and contracts show, and the approach named in the Overview. Repeat the phase block per phase; the final phase is always Quality Assurance.
 A task opens with one line saying, in words, what it delivers, ending with what it covers: the Design Doc section and AC IDs (the PRD's requirement IDs at small scale). Every Design Doc implementation target, connection or registration, contract change, verification requirement, and prerequisite is covered by some task line, or listed under "Design items no task covers" in the Snapshot.
-Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. -->
+Target Files, dependencies, and the tests it adds (by title, with what each proves) are sub-bullets. When `docs/code-system/` exists, a task touching a catalogued block adds its pattern path (`work-planning`, "Task pattern lines"). -->
 
 ### Phase 1: [Phase Name]
 **Purpose**: [what this phase delivers, in one or two sentences]

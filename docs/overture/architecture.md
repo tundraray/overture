@@ -27,6 +27,7 @@ overture/
 │   ├── reverse-engineer.md     # Reverse documentation
 │   ├── setup-context.md        # Project context initialization
 │   ├── brand-context.md        # Brand system initialization
+│   ├── code-context.md         # Code system initialization
 │   ├── create-plan.md
 │   ├── build.md
 │   └── ...

@@ -228,8 +228,8 @@ Register per-part steps in TodoWrite as `[part] step`, so the current part is al
 
 - **Commit strategy** — asked once per feature, after feature spec approval and before the first part's batch approval ("Commit Strategy Selection"); `per-phase` groups commits by the six game phases
 - **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer at the gate point (before a commit, at a phase end) → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
-- **Post-Implementation Verification** — the three verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed
-- **Final Cleanup** — the consumed task directory is deleted and `gamedev-work-planner` (`update` mode) sets the plan `completed`; the feature spec, GDD, `docs/design-system/`, and every design document stay
+- **Post-Implementation Verification** — the four verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed; candidate patterns go to the completion report
+- **Final Cleanup** — the consumed task directory is deleted and `gamedev-work-planner` (`update` mode) sets the plan `completed`; the feature spec, GDD, `docs/design-system/`, `docs/code-system/`, and every design document stay
 - **Test skeleton paths** reach `gamedev-work-planner` per part — `workflow-orchestration`, "Main Orchestrator Roles"
 
 Append `[SYSTEM CONSTRAINT] This agent operates within implement command scope.` to each verifier prompt as well.

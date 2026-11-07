@@ -25,10 +25,10 @@ How `technical-designer` and `technical-designer-frontend` author a Design Doc a
 - **Operation Mode**: `create` (default) or `update`
 - **Requirements Analysis Results**: scale determination, technical requirements
 - **PRD**: the PRD document (if it exists)
-- **focusAreas**: the fact-gathering output (`codebase-analyzer`, or `ui-analyzer` for a frontend part) — each entry is disposed of in the template's "Appendix: Fact Disposition"; the evidence stays in the analyzer output
+- **focusAreas**: the fact-gathering output (`codebase-analyzer`, or `ui-analyzer` for a frontend part) — each entry is disposed of in the template's "Appendix: Fact Disposition"; the evidence stays in the analyzer output. `codebase-analyzer` also returns `conformance` — where the code and `docs/code-system/` disagree — read in `code-system`, "Part A", step 1
 - **Part**: the part this design covers, from the PRD's Delivery Parts — its name, the requirements it owns, and `dependsOn` with the approved `design-{part}.md` path of each. The design covers exactly these requirements; a sibling part's requirement appears only as a consumed contract, never as a redesign. A missing part name is a blocking input — do not invent one.
 - **Documents to Create**: Design Doc, or ADR
-- **Existing Architecture Information**: current technology stack, adopted architecture patterns, technical constraints, and the list of existing common ADRs (mandatory verification)
+- **Existing Architecture Information**: current technology stack, the adopted architecture patterns as `docs/code-system/` records them (README and the patterns the part may use; `code-system`, "Reading the System"), technical constraints, and the list of existing common ADRs (mandatory verification)
 - **Update Context** (update mode only): path to the existing document, reason for changes, sections needing updates
 
 ## Existing Code Investigation【Required】
@@ -48,7 +48,7 @@ prompt: "query: how outbound webhooks are registered and dispatched today; bread
 - **Similar functionality is technical debt** → propose the improvement as a Key Decision before building alongside it
 - **None found** → proceed with a new implementation, and record `coverage.searched` as the evidence
 
-"No existing abstraction fits" is a claim, and the sweep's coverage is what supports it. Without that evidence a second way of doing the same thing enters the codebase by default rather than by decision.
+"No existing abstraction fits" is a claim, and the sweep's coverage is what supports it. Without that evidence a second way of doing the same thing enters the codebase by default rather than by decision. The Building-block Inventory holds the outcome per block — reused, extended or new, with what was searched — and the draft check covers it like any other section.
 
 **Existing interface** (when changing an existing feature). List the target unit's public surface — the 5 most significant when there are more than 10. Its consumers come from the Change Impact sweep.
 
@@ -82,7 +82,7 @@ Confirm and document conflicts with existing systems (priority, naming conventio
 
 ## Design Principles
 
-1. **Consistency first**: follow existing patterns; document clear reasons when introducing a new one
+1. **Consistency first**: follow the patterns `docs/code-system/` catalogues, and the existing code where it is silent; a new pattern is a Key Decision and a new pattern file (`code-system`, "Part A")
 2. **Appropriate abstraction**: design for the current requirements and apply YAGNI (follow project rules)
 3. **Testability**: parameterized dependencies (dependency injection, function parameters, props) and mockable boundaries
 4. **Test derivation from acceptance criteria**: use cases that prove each acceptance criterion through observable behaviour
@@ -118,7 +118,7 @@ Read `mermaid-diagrams` `references/c4-levels.md` before drawing the first diagr
 
 ## Draft Check
 
-After the Write and the `check-mermaid.mjs` run, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", with `doc_type: DesignDoc` or `ADR`, and return it as `draftCheck`. On an update or revision it runs on the diff against the saved copy.
+After the Write and the `check-mermaid.mjs` run, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check", with `doc_type: DesignDoc` or `ADR`, and return it as `draftCheck`. On an update or revision it runs on the diff against the saved copy. On a code-system-only run (`/code-context`, no Design Doc) it checks the README and pattern files against `code-system-template.md` instead.
 
 ## Response to Caller
 
@@ -144,7 +144,7 @@ Return the path even when the run ends in `blocked`.
 
 ## Self-Validation [BLOCKING — before output]
 
-The agent adds the items of its layer.
+The agent adds the items of its layer. On a code-system-only run (`/code-context`, no Design Doc) only the items that apply to the README and pattern files hold — identifiers, no code, Writing for the Reader, `prose`, the returned paths.
 
 - [ ] Every `focusAreas` entry is disposed of per the template's "Appendix: Fact Disposition"
 - [ ] The design covers exactly the requirements assigned to its part; every `dependsOn` contract is cited by link to the upstream design's contract section, not restated, and an insufficiency there is recorded as an open question against that design rather than redefined here

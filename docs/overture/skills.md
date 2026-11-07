@@ -12,6 +12,7 @@ Skills are knowledge modules that agents load automatically when relevant.
 | **expert-analysis-guide** | Multi-expert parallel analysis framework |
 | **implementation-approach** | Design decisions and trade-offs |
 | **integration-e2e-testing** | Integration and E2E test patterns |
+| **code-system** | Project code system in `docs/code-system/`: style, layers, pattern catalogue (seeded via `/code-context`) |
 | **project-context** | Project-specific context (customizable via `/setup-context`) |
 | **workflow-orchestration** | Agent coordination rules |
 | **task-analyzer** | Task complexity analysis |

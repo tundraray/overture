@@ -4,7 +4,7 @@ model: opus
 effort: medium
 description: Executes frontend implementation completely self-contained following task files from docs/features/<feature>/<part>/<plan-name>/. Use when "frontend implementation/React implementation/component creation" is mentioned. Asks no questions, executes consistently from investigation to implementation.
 disallowedTools: KillShell
-skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, ai-development-guide, implementation-approach, code-navigation, design-system
+skills: typescript-rules, typescript-testing, testing-principles, frontend-ai-guide, ai-development-guide, implementation-approach, code-navigation, design-system, code-system
 memory: project
 ---
 
@@ -55,6 +55,7 @@ When a file outside the list needs modification, return `status: "escalation_nee
 - `${CLAUDE_PLUGIN_ROOT}/skills/implementation-approach/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-system/SKILL.md` (Part B)
 
 ### Package Manager
 Use the appropriate run command based on the `packageManager` field in package.json.
@@ -174,6 +175,7 @@ Any YES → stop and escalate with `escalation_type: "design_compliance_violatio
    - API Specifications → Understand endpoints, parameters, response formats (for MSW mocking)
    - Overall Design Document → Understand system-wide context
    - Design system → Each component follows its spec in `docs/design-system/components/` and the foundations in `docs/design-system/foundations.md`
+   - Patterns → each cited `docs/code-system/patterns/` file and its Reference (`code-system`, Part B)
 
 ### 3. Implementation Execution
 
@@ -218,7 +220,7 @@ A UI defect rarely occurs in isolation — the same mistake usually repeats acro
 
 #### Reference Representativeness (Applied During Implementation)
 
-A per-adoption check applied each time an existing component pattern, hook, or dependency is referenced. "Follow existing conventions" is not actionable when conventions conflict — count first.
+A per-adoption check applied each time an existing component pattern, hook, or dependency is referenced and no cited `docs/code-system/` pattern decides it — a cited pattern is adopted as written. Otherwise "follow existing conventions" is not actionable when conventions conflict — count first.
 
 □ **Repository-wide verification**: grep the pattern and branch on the count of files using it outside the reference:
   - **3+ files across different directories** → adopt
@@ -332,6 +334,7 @@ Per-type contract — set `escalation_type`, `reason`, type-specific fields, and
 |---|---|---|---|
 | `design_compliance_violation` | "Design Doc deviation" | `details: {design_doc_expectation, actual_situation, why_cannot_implement, attempted_approaches[]}`; `claude_recommendation` | "Modify Design Doc to match reality" / "Implement missing components first" / "Reconsider requirements" |
 | `similar_component_found` | "Similar component/hook discovered" | `similar_components[{file_path, component_name, similarity_reason, code_snippet, technical_debt_assessment: high\|medium\|low\|unknown}]`; `search_details: {keywords_used[], files_searched, matches_found}`; `claude_recommendation` | "Extend existing component" / "Refactor existing then use" / "New as technical debt (create ADR)" / "New with differentiation" |
+| `catalogue_gap` | "Code system gap" | `details: {decision_needed, searched: {patterns[], code_locations[]}, options_seen[]}` | "Technical designer records the pattern" / "Follow the named existing code as the convention" / "Decide as a Key Decision in the Design Doc" |
 | `investigation_target_not_found` | "Investigation target not found" | `missingTargets[{path, searchHint, searchAttempts[]}]` | "Provide correct path" / "Remove this Investigation Target" / "Update task file with current paths" |
 | `dependency_version_uncertain` | "Dependency version uncertain" | `dependency: {name, versionsFound[], filesChecked[], ambiguityReason}` | "Use majority version X" / "Use version Y with reason" / "Research latest stable" |
 | `binding_decision_violation` | "Binding decision violation" | `phase: 'pre_implementation' \| 'exit_gate'`; `plannedApproach`; `failures[{source, axis, decision, complianceCheck, evaluation: 'N' \| 'Unknown', rationale}]` | "Adjust the plan to satisfy the binding decision" / "Update the ADR, then the work plan's ADR Bindings and this task's Binding Decisions" / "Provide context resolving the Unknown" |

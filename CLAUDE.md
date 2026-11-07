@@ -140,6 +140,7 @@ Skills contain structured guidance used by agents:
 - **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
 - **documentation-criteria**: Which documents each scale needs, their definitions, storage and parts, templates; `references/authoring-rules.md` holds the rules every author and reviewer follows — Writing for the Reader, Revising a Document, Draft Check
 - **technical-design**: The part `technical-designer` and `technical-designer-frontend` share — investigation, contracts, ADR process, update mode, draft check, response to caller
+- **code-system**: The project code system in `docs/code-system/` — architecture style, layer map, module boundaries, pattern catalogue; designing it, building to it, reviewing against it
 - **work-planning**: The part `work-planner` and `gamedev-work-planner` share — the plan file, task design, test placement, draft check, response to caller, update mode
 - **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels (drawn per task) and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards

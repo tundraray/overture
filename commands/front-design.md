@@ -37,7 +37,7 @@ Before executing, load these skill files for guidance:
 - Requirement analysis with requirement-analyzer
 - PRD creation or update with prd-creator (`full` at large scale, `lite` otherwise), carrying the Delivery Parts
 - UXRD creation with ux-designer, creating or extending `docs/design-system/` with it
-- Design Doc creation with technical-designer-frontend, one per frontend part, after ui-analyzer fact gathering
+- Design Doc creation with technical-designer-frontend, one per frontend part, after ui-analyzer fact gathering, creating or extending `docs/code-system/` with it
 - Consistency verification with design-sync; independent review with document-reviewer when the user asks for it
 - ADR creation only when a decision the design made passes the three-part test in `documentation-criteria`
 - Test skeleton generation with acceptance-test-generator, per part
@@ -73,7 +73,7 @@ Create one Design Doc per frontend part, in dependency order. A frontend part th
 - Invoke **technical-designer-frontend** using Task tool
   - For Design Doc: `subagent_type: "technical-designer-frontend"`, `description: "Design Doc creation"`, `prompt: "Create Design Doc for part [part] covering [requirements]; depends on [approved design paths]; focusAreas: [...]"`
 - Invoke **design-sync** with `source_design` set to the new design, comparing against the sibling designs of the feature (the `Depends on` designs first); conflicts go back through the `revision_agent` for one fix round, whose draft check covers the diff, then design-sync once; anything left goes to the user (`workflow-orchestration`, "Revision Loop")
-- **[STOP]**: Present design alternatives and trade-offs, obtain user approval — one stop per part
+- **[STOP]**: Present design alternatives and trade-offs, obtain user approval — one stop per part, with the code-system files the design created or changed
 - When a decision the design made passes the three-part test: `subagent_type: "technical-designer-frontend"`, `description: "ADR creation"`, `prompt: "Create ADR for [technical decision]; part [part]; approved design [path]"` → **[STOP]**: ADR approval
 - Invoke **acceptance-test-generator** for the part → skeleton paths
 
@@ -81,7 +81,7 @@ Create one Design Doc per frontend part, in dependency order. A frontend part th
 
 ## Output Example
 Frontend design phase completed.
-- PRD: docs/features/[feature]/prd.md (lite); UXRD: docs/features/[feature]/uxrd.md; Design System: docs/design-system/
+- PRD: docs/features/[feature]/prd.md (lite); UXRD: docs/features/[feature]/uxrd.md; Design System: docs/design-system/; Code System: docs/code-system/
 - Parts: web (depends on api, approved)
 - Design document: docs/features/[feature]/design-web.md; ADR: docs/adr/ADR-[number]-[title].md or "none passed the test"
 - Test skeletons: tests/[feature]-web.int.test.tsx

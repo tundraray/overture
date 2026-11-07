@@ -156,17 +156,18 @@ Never commit on `stub_detected`: a stub can pass every other check while impleme
 
 The per-task cycle checks each task in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After **all** task cycles finish — before the completion report — run a whole-implementation pass.
 
-**Invoke the verifiers in parallel** (single message, three Agent calls):
+**Invoke the verifiers in parallel** (single message, four Agent calls):
 
 | Verifier | Inputs |
 |----------|--------|
-| `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths`: the part's file list |
+| `code-verifier` | `doc_type: design-doc`, Design Doc path, `code_paths`: the part's file list; it reads `docs/code-system/` itself when the project has one |
+| `code-reviewer` | `Design Doc Path`, `Implementation Files`: the part's file list, `Code System Path: docs/code-system/` when it exists, `Review Mode: architecture` — conformance of the code to the cited patterns and the codebase |
 | `security-reviewer` | Design Doc path, the part's file list |
 | `test-auditor` | `testPaths`: the test files in the part's file list; Design Doc path |
 
 **The part's file list** is the union of `filesModified` and `testsAdded` from this run's task results, committed or not, plus the Target Files of this part's tasks completed before this run (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
 
-**Small scale** (and gamedev Prototype mode) has no Design Doc: `code-verifier` runs with `doc_type: prd` against the lite PRD (skipped on the gamedev path — the lite feature spec is not a `code-verifier` document type), `security-reviewer` and `test-auditor` take the lite PRD or feature spec in place of the Design Doc, and Fix Mode below receives the same path.
+**Small scale** (and gamedev Prototype mode) has no Design Doc: `code-verifier` runs with `doc_type: prd` against the lite PRD (skipped on the gamedev path — the lite feature spec is not a `code-verifier` document type), `code-reviewer`, `security-reviewer` and `test-auditor` take the lite PRD or feature spec in place of the Design Doc, and Fix Mode below receives the same path.
 
 **`test-auditor` is advisory, never a gate.** Its findings are not converted into `requiredFixes[]` and never dispatched to `task-executor`: deleting or merging an existing test is the user's decision. A `bloated` verdict goes into the completion report as a table of `merge` / `drop` / `move` rows with their reasons, plus the `gaps` list, and the user decides which to apply.
 
@@ -175,14 +176,18 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 | Verifier | Pass | Fail | Blocked |
 |----------|------|------|---------|
 | `code-verifier` | `consistent` or `mostly_consistent` | `needs_review` or `inconsistent` | — |
+| `code-reviewer` | no `qualityIssues` of type `duplicate-block`, `boundary-violation` or `pattern-mismatch` | any such issue | — |
 | `security-reviewer` | `approved` or `approved_with_notes` | `needs_revision` | `blocked` → escalate to user |
 
 **Normalizing output into one `requiredFixes[]`** — the verifiers emit different shapes and must be reconciled before invoking task-executor:
 
 - `security-reviewer.findings[]` → each `confirmed_risk` or `defense_gap` becomes `{location, issue: description, fix: remediation}`
 - `code-verifier.discrepancies[]` → each `gap` or `conflict` becomes `{location: discrepancy.codeLocation, issue: discrepancy.claim, fix: "<correction restoring Design Doc consistency, derived from classification and evidence>"}`
+- `code-reviewer.qualityIssues[]` → each `duplicate-block`, `boundary-violation` or `pattern-mismatch` becomes `{location, issue: type, fix: suggestion}`; its other findings overlap `code-verifier` and go to the completion report only
 - When `discrepancy.codeLocation` is `null` (the claim is unimplemented), set `location` to the planned target file. If no target file can be determined, escalate rather than dispatching Fix Mode with an unresolvable location.
 - `drift` means the code moved past the document (code-verifier: "document update needed") — it goes to the completion report, not to the executor.
+
+**Candidate patterns.** The completion report lists, under one heading, code-verifier's `drift` whose `classification` begins `architectural:` and code-reviewer's `candidatePatterns`. The user confirms which become catalogue entries; each confirmed one goes to the technical designer through `/update-doc` (code system) at the completion stop, outside the autonomous run. A candidate is not a defect: it is never dispatched to Fix Mode, and nothing in the run writes to `docs/code-system/`.
 
 **Fix cycle** (any verifier failed — maximum 2 cycles; when normalization yields no items, e.g. only `drift`, skip it and report the verdict and drift in the completion report):
 
@@ -198,7 +203,7 @@ Before the completion report, delete the task directory this run consumed. The d
 - Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `analysis/` (a Bash `rm` of working state, not a document edit)
 - Invoke `{planner}` in `update` mode to set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
 - **Preserve** sibling plans and their directories — a part may hold several, and only the executed one is finished
-- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/` and `docs/design-system/` — on the gamedev path also the feature spec and GDD under `docs/game-design/`
+- **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`, `docs/design-system/` and `docs/code-system/` — on the gamedev path also the feature spec and GDD under `docs/game-design/`
 
 If deletion fails, report the failure but do not block the completion report.
 
@@ -210,7 +215,7 @@ If deletion fails, report the failure but do not block the completion report.
 2. **Requirement change detected** — any match in the requirement-change checklist; stop and re-analyze with integrated requirements via requirement-analyzer
 3. **User explicitly stops** — direct instruction or interruption
 
-**Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc, the plan, or task files, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the per-task cycle resumes at the task that escalated.
+**Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc or the code system, the plan, or task files, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the per-task cycle resumes at the task that escalated.
 
 ### Quantitative Auto-Stop Triggers
 
@@ -266,6 +271,7 @@ Run before the completion report.
 ☐ When the parts list has a further part, it is reported as the next part to plan — its `dependsOn` parts are now built, not only designed
 ☐ The completion report states what was built, what was verified, anything left escalated, and `security-reviewer` notes from an `approved_with_notes` verdict
 ☐ The completion report lists acceptance criteria proven only against mocks (no real-dependency check yet) and any verification deferred to another part
+☐ The completion report lists candidate patterns and architectural drift under one heading, for the user to confirm into the code system — or states there were none
 
 **ENFORCEMENT**: an unchecked item means the run is not finished. Reporting completion with an unverified item is worse than reporting the gap, because it removes the reader's reason to look.
 
@@ -290,7 +296,7 @@ graph TD
     CYCLE -->|task done| CHECK{Remaining tasks?}
     CHECK -->|Yes| LOOP
     CHECK -->|No| PIV[Post-Implementation Verification]
-    PIV --> VERIFY{code-verifier and security-reviewer; test-auditor advisory}
+    PIV --> VERIFY{code-verifier, code-reviewer, security-reviewer; test-auditor advisory}
     VERIFY -->|Fail, cycles left| FIXMODE[task-executor Fix Mode → quality-fixer → commit]
     FIXMODE --> VERIFY
     VERIFY -->|Fail, no progress or cycle 2| USERESC

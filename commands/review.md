@@ -39,18 +39,22 @@ ls docs/features/*/design-*.md | grep -v template | tail -1
 
 # Check implementation files
 git diff --name-only main...HEAD
+
+# Code system, when the project has one
+ls docs/code-system/README.md 2>/dev/null
 ```
 
 ### Step 2: Execute code-reviewer
 Invoke code-reviewer using Task tool:
 - `subagent_type`: "code-reviewer"
 - `description`: "Validate compliance"
-- `prompt`: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list from Step 1]"
+- `prompt`: "Design Doc Path: [path from Step 1]. Implementation Files: [git diff list from Step 1]. Code System Path: docs/code-system/ (when Step 1 found it)"
 
 Validate:
 - Acceptance criteria fulfillment
 - Code quality check
 - Implementation completeness assessment
+- Conformance to the code system — duplicate blocks, boundaries, cited patterns — with candidate patterns reported, not fixed
 
 ### Step 2.5: Execute security-reviewer
 
@@ -88,6 +92,8 @@ Invoke task-executor in Fix Mode — no task file; scope comes from the fix loca
 - `description`: "Execute review fixes"
 - `prompt`: "Design Doc: [path]. requiredFixes: [each unfulfilledItems entry as {location, issue: item, fix: solution} and each qualityIssues entry as {location, issue: type, fix: suggestion}]"
 
+`candidatePatterns` stay out of `requiredFixes`.
+
 **Expected output**: `status`, `filesModified`
 
 ### Step 5: Quality Check
@@ -115,6 +121,9 @@ Improvement: [Y-X]%
 
 Remaining issues:
 - [items requiring manual intervention]
+
+Candidate patterns (confirm to add via /update-doc, code system):
+- [name — shape — locations]
 ```
 
 ## Auto-fixable Items
@@ -122,10 +131,12 @@ Remaining issues:
 - Error handling additions
 - Contract definition fixes
 - Function splitting (length/complexity improvements)
+- Conformance fixes with a named target: a duplicate block replaced by the existing one, an instance brought to its cited pattern
 
 ## Non-fixable Items
 - Fundamental business logic changes
 - Architecture-level modifications
 - Design Doc deficiencies
+- Code-system changes — a candidate pattern reaches the catalogue only through `/update-doc`
 
 **Scope**: Design Doc compliance validation and auto-fixes.

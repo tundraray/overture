@@ -19,6 +19,11 @@ Metadata:
 
 <!-- Every file the task touches, implementation and test alike: this list is the executor's File Scope Constraint. -->
 
+## Patterns
+(Include when `docs/code-system/` exists and the Design Doc's Building-block Inventory cites a pattern for this task's files. Omit otherwise.)
+
+- [docs/code-system/patterns/{pattern-name}.md — the block in this task it shapes; a `new` block cites the Design Doc Key Decision, plus the pattern path when the Key Decision created one]
+
 ## Investigation Targets
 Files to read before starting implementation (file path, with optional search hint):
 - [e.g., src/orders/checkout (processOrder function) — taken from the plan's Target Files and Connection Map owners, and the paths the Design Doc names in its Appendix: Fact Disposition and the text under a diagram]
@@ -85,6 +90,7 @@ An obligation is not a test. It is discharged by the one lowest-level test that 
 - [ ] All added tests pass, and the run is substantive (no always-true assertions, no 0-match runner reports, no skipped tests on the running path)
 - [ ] Operation verified per Operation Verification Methods above
 - [ ] Each Proof Obligation is met: the test turns red under its primary failure mode and exercises the stated boundary
+- [ ] Implementation follows the cited patterns; any mismatch was reported, not resolved locally
 - [ ] Deliverables created (for research/design tasks)
 
 ## Notes
