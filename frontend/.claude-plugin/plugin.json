@@ -1,6 +1,6 @@
 {
   "name": "frontend-overture",
-  "version": "0.18.19",
+  "version": "0.18.20",
   "description": "React/TypeScript frontend with orchestrated agents, component design skills, and MCP integration (context7, playwright)",
   "author": {
     "name": "Mikhail Andreev",
@@ -35,6 +35,7 @@
     "./commands/front-review.md",
     "./commands/implement.md",
     "./commands/create-plan.md",
+    "./commands/code-context.md",
     "./commands/setup-context.md",
     "./commands/reverse-engineer.md",
     "./commands/review.md",
@@ -99,6 +100,7 @@
     "./skills/llm-friendly-context",
     "./skills/mermaid-diagrams",
     "./skills/prose",
+    "./skills/code-system",
     "./skills/technical-design",
     "./skills/work-planning"
   ],

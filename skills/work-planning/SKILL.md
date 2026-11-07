@@ -88,6 +88,8 @@ The plan is written to `docs/features/{feature}/{part}/{plan-name}.md`, with che
 - Specify traceability per AC: the one test that proves it (`AC-1 → <test title>`), never several
 - A phase is complete when the tests its tasks name pass — no case counts in the plan text
 
+**Task pattern lines** (when `docs/code-system/` exists): a task that touches a block in the Design Doc's Building-block Inventory names the pattern path for it (`reused` / `extended` → `docs/code-system/patterns/{name}.md`; `new` → the Design Doc Key Decision, plus the pattern path when the Key Decision created one), so the task file's `Patterns` section is copied, not derived.
+
 ## Writing and the Draft Check
 
 Compose the whole plan, then write it once. After the Write, before Self-Validation and the response, unless the prompt says `draft_check: skip`, run the draft check on the written plan with `doc_type: WorkPlan` (`documentation-criteria`, "Draft Check"). On an update or revision it runs on the diff against a copy saved before the first edit. The simplified plan (`design: none`) and the `status` flip get no draft check.

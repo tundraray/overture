@@ -35,7 +35,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/authoring-r
 ## Input Parameters
 
 - **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
-- **target**: Document path to review; for a UXRD, also the design-system files created or changed in the same pass
+- **target**: Document path to review; for a UXRD, also the design-system files created or changed in the same pass; for a Design Doc, likewise the code-system files
 - **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
 - **diff_base** (with `review_scope: changes`): a git ref, or the path of a copy of the reviewed version (documents are usually uncommitted, and then `HEAD` shows nothing)
@@ -55,8 +55,9 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/authoring-r
 - Identify related documents based on doc_type
 - For Design Docs, also check the ADRs listed as prerequisite and any `docs/adr/ADR-*.md` covering the same common areas (logging, error handling, async processing)
 - For a UXRD, also load the design-system files passed as targets and the specs its Component Inventory marks `extended` or `new`; they are reviewed in this call
+- For a Design Doc, also load the code-system files passed as targets and the patterns its Building-block Inventory marks `extended` or `new`; they are reviewed in this call
 
-### Step 2a: Diagram Check (human documents — PRD, UXRD with its design-system files, Design Doc, ADR, GDD, Feature Spec — when they have Mermaid blocks; never a Work Plan)
+### Step 2a: Diagram Check (human documents — PRD, UXRD with its design-system files, Design Doc with its code-system files, ADR, GDD, Feature Spec — when they have Mermaid blocks; never a Work Plan)
 - Run `node ${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/scripts/check-mermaid.mjs <target> <scratchpad>/mermaid-review` yourself — never take the author's "checks pass" on trust
 - A block that does not render is a `critical` issue; every other PROBLEM line is an `important` issue citing the block's line
 - Look at the PNGs and judge each diagram against the skill: the redraw test (node count, label length, crossings), node colour matching the level's table, a continuous path, one journey shape across runtime flows, no invented steps. Each finding names the diagram, the node or edge, and the change
@@ -143,6 +144,7 @@ Section names below are the template headings, so a template-compliant document 
 - [ ] Acceptance Criteria: PRD ACs cited by ID without restating them, design-level criteria as plain sentences
 - [ ] Appendix: Fact Disposition, filled as its template comment says
 - [ ] Contract Definitions present
+- [ ] Building-block Inventory, when `docs/code-system/` exists: every `reused` or `extended` row linking a pattern that exists in `docs/code-system/patterns/`, every `new` row naming what was searched
 - [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
 - [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`: the levels drawn are the ones the change touches, and at least one is drawn; and Runtime Flows with a sequence diagram for each AC that crosses a container boundary or has a failure path that changes state, with its failure handling
 - [ ] Security Considerations present
@@ -265,7 +267,7 @@ Complete all items before proceeding to output.
 - Feature Spec → `mid-game-designer`
 - UXRD and design-system files → `ux-designer` (gamedev: `game-ui-designer`)
 - ADR → `technical-designer` or `technical-designer-frontend`
-- Design Doc → `technical-designer` or `technical-designer-frontend`
+- Design Doc and code-system files → `technical-designer` or `technical-designer-frontend`
 - Work Plan → `work-planner` (gamedev: `gamedev-work-planner`)
 
 ### Example (full review)

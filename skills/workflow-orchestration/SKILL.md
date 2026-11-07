@@ -65,6 +65,7 @@ The following subagents are available:
 5. **security-reviewer**: Security compliance review against Design Doc and coding-principles (read-only)
 6. **code-explorer**: Searches the codebase — locates a named thing and what touches it, or sweeps for what is unused (read-only)
 7. **test-auditor**: Post-implementation audit of the part's tests — advisory, never a gate (read-only)
+8. **code-reviewer**: Post-implementation review of the code against the Design Doc and the code system it cites — conformance findings and candidate patterns (read-only)
 
 ### Document Creation Agents
 1. **requirement-analyzer**: Requirement analysis and work scale determination
@@ -132,7 +133,7 @@ Pass **what to accomplish** and **where to work**. Each specialist determines **
 
 **Pass to specialists** (what / where / constraints):
 - Task file path — executor agents (task-executor, task-decomposer); broader scope requires an explicit user request
-- Target directory or package scope — discovery and review agents (code-verifier, security-reviewer, integration-test-reviewer)
+- Target directory or package scope — discovery and review agents (code-verifier, code-reviewer, security-reviewer, integration-test-reviewer)
 - Acceptance criteria and hard constraints from the user or design artifacts
 
 **Let specialists determine** (how):
@@ -180,6 +181,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | `docs/features/*/prd.md` | prd-creator |
 | `docs/features/*/uxrd.md` | ux-designer (gamedev: game-ui-designer) |
 | `docs/design-system/**` (project design system) | ux-designer (gamedev: game-ui-designer) — created and extended through a UXRD |
+| `docs/code-system/**` (project code system) | technical-designer(-frontend) — created by `/code-context` or a Design Doc, extended through a Design Doc |
 | `docs/game-design/*.md` (GDD) | sr-game-designer (gamedev) |
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
@@ -222,7 +224,7 @@ Autonomous execution MUST stop and wait for user input at these points.
 | Product | After requirement-analyzer completes | feature | Confirm requirements and scale / answer questions |
 | Product | After prd-creator returns the PRD (with its draft check) | feature | Approve PRD, including the Delivery Parts split — every scale |
 | Product | After ux-designer (gamedev: game-ui-designer) returns the UXRD (with its draft check; frontend/UI work) | feature | Approve UXRD, with the design-system files it created or changed |
-| Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc |
+| Technical | After design-sync completes consistency verification | part | Approve that part's Design Doc, with the code-system files it created or changed |
 | Technical | After technical-designer(-frontend) returns the ADR (with its draft check; only when an ADR was written) | ADR | Approve ADR |
 | Execution | After the planner returns the work plan (with its draft check; small scale and gamedev Prototype: the simplified plan, which is not reviewed) | part | Batch approval for that part's implementation |
 
@@ -263,7 +265,7 @@ Call subagents using the Agent tool:
 
 ### Reviewers Are Cold Readers
 
-A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref, or a copy of the reviewed version — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
+A reviewer call (`document-reviewer`, `design-sync`, `code-verifier`, `code-reviewer`, `security-reviewer`, `integration-test-reviewer`) carries the artifact's **coordinates and nothing else**: the document path (or directory scope), its `doc_type` / `mode`, and on a re-review `review_scope: changes`, the `diff_base` (a git ref, or a copy of the reviewed version — a coordinate, not an account of the change), and the previous verdict's `issues` list verbatim so resolution can be checked.
 
 Never passed to a reviewer:
 - the author agent's `summary` or rationale for what it wrote
@@ -282,7 +284,7 @@ One exception: when a document is reviewed against existing code (`reverse-engin
 
 ### Revision Loop
 
-Shared by every phase, for the reviews the orchestrator runs: an independent review the user picked at a document stop (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc, ADR, work plan), and the review round over a set one change touched (below). The author's draft check is not part of this loop. A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
+Shared by every phase, for the reviews the orchestrator runs: an independent review the user picked at a document stop (PRD, GDD, Feature Spec, UXRD with its design-system files, Design Doc with its code-system files, ADR, work plan), and the review round over a set one change touched (below). The author's draft check is not part of this loop. A loop converges only when each round is narrower than the last: a fresh full read after every fix always finds something new, so the loop is bounded by rounds and by scope, never by waiting for a clean report.
 
 **What each verdict sends to the owner** (`revision_agent`, `mode: update`; a pass a re-review follows carries `draft_check: skip`, since the re-review is the check):
 
@@ -304,7 +306,7 @@ Shared by every phase, for the reviews the orchestrator runs: an independent rev
 
 **Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again.
 
-**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs → ADR → work plan → task files), with `draft_check: skip` in its prompt. Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs + code system → ADR → work plan → task files), with `draft_check: skip` in its prompt. Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
 The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. An author's `draftCheck.open` items are findings too: they go to the user at the stop, never dropped. Only the user's explicit accept advances a gate past an open finding.
 
@@ -323,6 +325,7 @@ Each subagent responds in JSON format. A document-producing agent returns the pa
 - **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
 - **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
 - **test-auditor**: status, verdict (lean/bloated/blocked), findings (per-test `merge` / `drop` / `move` verdicts), budget, gaps — advisory, reported to the user
+- **code-reviewer**: status, verdict (pass/needs-improvement/needs-redesign), unfulfilledItems, qualityIssues (conformance types enter Fix Mode), candidatePatterns (completion report), testEvidence
 
 
 ## Handling Requirement Changes

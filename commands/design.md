@@ -39,7 +39,7 @@ Requirements → requirement-analyzer → [Stop: requirement confirmation]
    for each part in the PRD's Delivery Parts, in dependency order:
              codebase-analyzer (ui-analyzer for a frontend part)
                      ↓
-             technical-designer(-frontend) → design-sync → [Stop: Design Doc approval — part X]
+             technical-designer(-frontend) (Design Doc + code system) → design-sync → [Stop: Design Doc approval — part X]
                      ↓
              technical-designer(-frontend) → ADR → [Stop: ADR approval]   (only when the three-part test passes)
                      ↓
@@ -57,7 +57,7 @@ A PRD is written at every scale (`full` at large, `lite` at medium and small) �
 - PRD creation or update with prd-creator
 - UXRD creation with ux-designer when the work has a UI surface, creating or extending `docs/design-system/` with it
 - Fact gathering with codebase-analyzer / ui-analyzer, per part
-- Design Doc creation with technical-designer(-frontend), per part
+- Design Doc creation with technical-designer(-frontend), per part, creating or extending `docs/code-system/` with it
 - Independent review with document-reviewer, when the user asks for it at a stop
 - Design Doc consistency verification with design-sync, per part
 - ADR creation only when a decision the design made passes the three-part test in `documentation-criteria`

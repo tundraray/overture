@@ -47,6 +47,18 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 - [each agreed constraint — parallel operation, backward compatibility, performance measurement — in a sentence, with how the design meets it]
 
+## Building-block Inventory
+
+<!-- Answers: which modules, services, utilities and components does this part touch, and is each one reused, extended or new? Present when docs/code-system/ exists. Workflow (reuse, extend, new pattern): `code-system`, "Part A". A row marked `new` where a catalogued pattern or an existing block fits is a Key Decision — cite its ID here. -->
+
+Follows the [code system](../../code-system/README.md).
+
+| Building block | Pattern | Status | Note |
+|---|---|---|---|
+| [OrderService] | [service-module.md](../../code-system/patterns/service-module.md) | reused | — |
+| [PaymentGateway client] | [outbound-adapter.md](../../code-system/patterns/outbound-adapter.md) | extended | [what was added — a method, a port] |
+| [Refund scheduler] | [new pattern — KD-2](../../code-system/patterns/scheduled-job.md) | new | [what was searched in the catalogue and the code, and why nothing fit] |
+
 ## Acceptance Criteria
 
 <!--

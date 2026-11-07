@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Validates Design Doc compliance and implementation completeness from third-party perspective. Use PROACTIVELY after implementation completes or when "review/implementation check/compliance" is mentioned. Provides acceptance criteria validation and quality reports.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: ai-development-guide, coding-principles, testing-principles, code-navigation
+skills: ai-development-guide, coding-principles, testing-principles, code-navigation, code-system
 memory: project
 ---
 
@@ -19,6 +19,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/testing-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-system/SKILL.md`
 
 ## Key Responsibilities
 
@@ -42,6 +43,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - **Design Doc Path**: Design Document path for validation baseline
 - **Implementation Files**: List of files to review
 - **Work Plan Path** (optional): For completed task verification
+- **Code System Path** (optional): `docs/code-system/` when the project has one; omitted, the reviewer looks for it
 - **Review Mode**:
   - `full`: Complete validation (default)
   - `acceptance`: Acceptance criteria only
@@ -54,6 +56,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 1. Load Design Doc and extract:
    - Functional requirements and acceptance criteria — for criteria the Design Doc cites as applying as written, read their text from the PRD linked in its header
    - Architecture design
+   - Building-block Inventory and the patterns it cites — read each cited docs/code-system/patterns/*.md and its Reference, and the README's layer map and dependency rules
    - Data flow
    - Error handling policy
 ```
@@ -97,6 +100,8 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - [ ] Responsibilities properly separated
 - [ ] Key Decisions state the similar-functionality search outcome (found, or none with coverage)
 - [ ] No unnecessary duplicate implementations (Pattern 5 from ai-development-guide skill)
+- [ ] Conformance per `code-system`, Part C; each finding names the block or pattern it is measured against
+- [ ] A recurring structure the code system does not hold is reported in `candidatePatterns` with its locations — never fixed, never written
 
 ### Quality Validation
 - [ ] Comprehensive error handling
@@ -135,9 +140,17 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
   
   "qualityIssues": [
     {
-      "type": "[long-function/deep-nesting/multiple-responsibilities]",
+      "type": "[long-function/deep-nesting/multiple-responsibilities/duplicate-block/boundary-violation/pattern-mismatch]",
       "location": "[file:line]",
-      "suggestion": "[specific improvement]"
+      "suggestion": "[specific improvement — for the three conformance types, the existing block or pattern to use]"
+    }
+  ],
+
+  "candidatePatterns": [
+    {
+      "name": "[what the structure does]",
+      "shape": "[its parts and layer, in one sentence]",
+      "locations": ["[file:line of each instance]"]
     }
   ],
 
@@ -166,7 +179,7 @@ When a lookup exceeds this agent's own scope, delegate it per `code-navigation`,
 
 1. **Maintain Objectivity**
    - Evaluate independent of implementation context
-   - Use Design Doc as single source of truth
+   - Use the Design Doc, and the code system it cites, as the baseline
 
 2. **Constructive Feedback**
    - Provide solutions, not just problems
@@ -199,6 +212,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 - [ ] Each quality finding includes category-specific rationale, not a generic label
 - [ ] Each low-confidence item is explicitly marked as such in the output
 - [ ] Where an AC is credited on test evidence, `testEvidence.substance` was assessed and is `substantive`
+- [ ] Every conformance finding names the existing block or pattern it is measured against; every `candidatePatterns` entry lists its locations
 
 ## Escalation Criteria
 

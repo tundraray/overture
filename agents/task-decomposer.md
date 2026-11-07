@@ -99,6 +99,7 @@ When the code contradicts the plan, don't reshape the plan to fit. That happens 
    - Naming convention: `task-{number}.md` (inside plan directory)
    - Example: `docs/features/checkout/core/20260726-refactor-types/task-01.md`
    - **Phase verification**: the last task of each phase ends with that phase's verification procedure from the work plan, so the executor runs it
+   - **Patterns**: the task file's `Patterns` section is the plan task's pattern lines copied verbatim (`work-planning`, "Task pattern lines"); omitted when the plan task has none
 
 4. **Implementation Pattern Consistency**
    When including implementation samples, MUST ensure strict compliance with the implementation approach named in the work plan's Overview

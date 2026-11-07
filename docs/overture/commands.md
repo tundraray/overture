@@ -15,6 +15,7 @@
 | `/add-integration-tests` | Add integration/E2E tests to existing code | Test coverage for existing implementations |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
 | `/setup-context` | Initialize project-context skill | New project setup |
+| `/code-context` | Write the architecture style and pattern catalogue into docs/code-system/ | Code system setup for an existing codebase |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 
 ## Frontend Development (frontend-overture)
@@ -30,6 +31,7 @@
 | `/diagnose` | Investigate problems and derive solutions | Bug investigation, root cause analysis |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene, removing dead code |
 | `/setup-context` | Initialize project-context skill | New project setup |
+| `/code-context` | Write the architecture style and pattern catalogue into docs/code-system/ | Code system setup for an existing codebase |
 | `/brand-context` | Write the brand into docs/design-system/ | Brand/design system setup |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 
@@ -48,8 +50,9 @@
 | `/add-integration-tests` | Add integration/E2E tests to existing code | Test coverage for existing implementations |
 | `/audit` | Interactive dead code detection and cleanup | Codebase hygiene |
 | `/setup-context` | Initialize project-context skill | New project setup |
+| `/code-context` | Write the architecture style and pattern catalogue into docs/code-system/ | Code system setup for an existing codebase |
 | `/uxdoc` | Create UX documentation | Game UI/UX documentation |
 | `/sync-skills` | Synchronize skills across plugins | Skill management |
 | `/update-doc` | Update existing documentation | Document maintenance |
 
-> **Tip**: All plugins share `/task`, `/diagnose`, `/audit`, `/setup-context`, and `/sync-skills`. `/brand-context` is only in frontend-overture. The gamedev plugin uses the same `/implement` command name as backend, but with game-specific orchestration (market analysis, GDD, art direction, 6-phase planning). For reverse engineering, use `/reverse-engineer` (backend-overture) to generate PRD, then `/front-reverse-design` (frontend-overture) to generate frontend Design Docs from that PRD.
+> **Tip**: All plugins share `/task`, `/diagnose`, `/audit`, `/setup-context`, and `/sync-skills`. `/brand-context` is only in frontend-overture; `/code-context` is in all of them. The gamedev plugin uses the same `/implement` command name as backend, but with game-specific orchestration (market analysis, GDD, art direction, 6-phase planning). For reverse engineering, use `/reverse-engineer` (backend-overture) to generate PRD, then `/front-reverse-design` (frontend-overture) to generate frontend Design Docs from that PRD.

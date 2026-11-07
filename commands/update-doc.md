@@ -1,6 +1,6 @@
 ---
 name: update-doc
-description: Update existing design documents (Design Doc, PRD, UXRD, design system, ADR) with review workflow
+description: Update existing design documents (Design Doc, PRD, UXRD, design system, code system, ADR) with review workflow
 argument-hint: <document-path-or-type>
 ---
 
@@ -18,7 +18,7 @@ Register execution steps to TodoWrite before any execution:
 3. Change clarification (STOP for user input)
 4. Document update via layer-appropriate agent
 5. Code verification via code-verifier (Design Doc only)
-6. Approval, with review via document-reviewer on request or for a design-system change (STOP for approval)
+6. Approval, with review via document-reviewer on request or for a design-system or code-system change (STOP for approval)
 7. Consistency verification via design-sync (STOP if Design Doc)
 
 ## Requirements
@@ -40,6 +40,7 @@ Design Doc: docs/features/*/design-*.md
 PRD: docs/features/*/prd.md
 UXRD: docs/features/*/uxrd.md
 Design System: docs/design-system/**/*.md
+Code System: docs/code-system/**/*.md
 ADR: docs/adr/*.md
 ```
 
@@ -56,6 +57,7 @@ Determine the document type from path or content, then determine the layer to se
 | `docs/features/*/prd.md` | PRD | prd-creator | document-reviewer on request |
 | `docs/features/*/uxrd.md` | UXRD | ux-designer | document-reviewer on request |
 | `docs/design-system/**` | Design System | ux-designer | document-reviewer, as part of a UXRD |
+| `docs/code-system/**` | Code System | technical-designer or technical-designer-frontend | document-reviewer, as part of a Design Doc |
 | `docs/adr/*.md` | ADR | technical-designer or technical-designer-frontend | document-reviewer on request |
 
 **Layer detection** (Design Doc and ADR only):
@@ -66,9 +68,11 @@ Read the document and determine its layer from content signals:
 
 Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 
-**gamedev-overture**: read every agent, skill, and document name in this command as `workflow-orchestration`, "Gamedev Substitutions", maps it: a feature spec (`docs/game-design/features/*-spec.md`, `doc_type: FeatureSpec`) goes to `mid-game-designer`, a UXRD and the design system to `game-ui-designer`, and every Design Doc or ADR to `technical-designer`.
+**gamedev-overture**: read every agent, skill, and document name in this command as `workflow-orchestration`, "Gamedev Substitutions", maps it: a feature spec (`docs/game-design/features/*-spec.md`, `doc_type: FeatureSpec`) goes to `mid-game-designer`, a UXRD and the design system to `game-ui-designer`, and every Design Doc, ADR, or code-system file to `technical-designer`.
 
 **Design system**: there is no separate review type for it. A change to `docs/design-system/` is reviewed as part of the UXRD it serves — the one whose Component Inventory links the changed file; when several do, ask the user in Step 3 which one carries the change. That UXRD records the change as a Key Decision.
+
+**Code system**: likewise. A change to `docs/code-system/` is reviewed as part of the Design Doc it serves — the one whose Building-block Inventory links the changed pattern, or, for a candidate pattern confirmed from a completion report, the Design Doc of the part that introduced it; when several do, ask the user in Step 3 which one carries the change. That Design Doc records the change as a Key Decision, and the layer of that Design Doc picks `$UPDATE_AGENT`.
 
 ### Step 3: Change Clarification
 
@@ -78,7 +82,7 @@ Record the resolved agent as `$UPDATE_AGENT` and use it in Step 4.
 - Are there new requirements driving this change?
 
 Record the user's response for the update agent.
-Before Step 4, copy the document outside the repository — a review in Step 5 diffs against that copy; the update agent's draft check uses its own. For a design-system change, copy the UXRD and the design-system files being changed.
+Before Step 4, copy the document outside the repository — a review in Step 5 diffs against that copy; the update agent's draft check uses its own. For a design-system change, copy the UXRD and the design-system files being changed; for a code-system change, the Design Doc and the code-system files.
 
 ### Step 4: Document Update
 
@@ -106,6 +110,12 @@ prompt: "Operation Mode: update. Update the UXRD at [path]. Required changes: [u
 ```yaml
 subagent_type: ux-designer
 prompt: "Operation Mode: update. draft_check: skip. Update the design system at [path(s) under docs/design-system/]. Required changes: [user's changes from Step 3]. Record the change as a Key Decision in the UXRD at [uxrd path]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
+```
+
+**For Code System:**
+```yaml
+subagent_type: $UPDATE_AGENT   # technical-designer or technical-designer-frontend, resolved in Step 2
+prompt: "Operation Mode: update. draft_check: skip. Update the code system at [path(s) under docs/code-system/]. Required changes: [user's changes from Step 3]. Record the change as a Key Decision in the Design Doc at [design doc path]. [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
 **For ADR:**
@@ -140,14 +150,14 @@ prompt: |
 
 Store output as `$CODE_VERIFICATION_OUTPUT`; show it at the stop, and pass it to `document-reviewer` when a review runs, as evidence about the code (the one exception to cold reading — `workflow-orchestration`, "Reviewers Are Cold Readers").
 
-**STOP** — Present the updated document at the stop per `workflow-orchestration`, "Explicit Stop Points", with `$CODE_VERIFICATION_OUTPUT` (Design Doc only). A design-system change is reviewed without asking: it touches several documents, and such a change gets one review round over the set. Review call:
+**STOP** — Present the updated document at the stop per `workflow-orchestration`, "Explicit Stop Points", with `$CODE_VERIFICATION_OUTPUT` (Design Doc only). A design-system or code-system change is reviewed without asking: it touches several documents, and such a change gets one review round over the set. Review call:
 
 ```yaml
 subagent_type: document-reviewer
 prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. depth: [PRD depth] (PRD only). review_scope: changes. diff_base: [copy of the document taken before Step 4]. Code verification evidence: $CODE_VERIFICATION_OUTPUT (Design Doc only). [SYSTEM CONSTRAINT] This agent operates within update-doc command scope."
 ```
 
-For a design-system change: `target: [uxrd path]; design-system files: [changed paths]`, `doc_type: UXRD`, and `diff_base` covers the copies of all of them.
+For a design-system change: `target: [uxrd path]; design-system files: [changed paths]`, `doc_type: UXRD`, and `diff_base` covers the copies of all of them. For a code-system change: `target: [design doc path]; code-system files: [changed paths]`, `doc_type: DesignDoc`, likewise.
 
 `approved_with_conditions` or `needs_revision` → call the update agent again with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
 A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").

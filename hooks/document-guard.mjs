@@ -73,6 +73,13 @@ const RULES = [
     updaters: [],
   },
   {
+    // project-wide: README, patterns/*; created by /code-context or a Design Doc, extended by Design Docs
+    name: 'code system',
+    test: /^docs\/code-system\/.+\.md$/,
+    authors: ['technical-designer', 'technical-designer-frontend'],
+    updaters: [],
+  },
+  {
     name: 'Design Doc',
     test: /^docs\/features\/[^/]+\/design-[^/]+\.md$/,
     authors: ['technical-designer', 'technical-designer-frontend'],
@@ -124,8 +131,8 @@ const SPAWN_TOOLS = new Set(['Agent', 'Task']);
 
 // --- shell guard ------------------------------------------------------------
 //
-// Human documents — PRD, UXRD, design system, Design Doc, ADR, GDD, feature
-// spec — change only through Write/Edit. Work plans and task files (a part
+// Human documents — PRD, UXRD, design system, code system, Design Doc, ADR,
+// GDD, feature spec — change only through Write/Edit. Work plans and task files (a part
 // directory under docs/features/<feature>/) are temporary working state: the
 // shell may touch them, and Final Cleanup deletes them with `rm`.
 
@@ -137,7 +144,7 @@ function isHumanDocPath(p) {
   if (!p.startsWith('docs/')) return false;
   const rest = p.slice('docs/'.length);
   if (/^features\/[^/]+\/[^/.]+(\/|$)/.test(rest)) return false; // part directory: plans and task files
-  return /^(features|adr|design-system|game-design)(\/|$)/.test(rest);
+  return /^(features|adr|design-system|code-system|game-design)(\/|$)/.test(rest);
 }
 
 /** Heredoc bodies are data, not commands. */
@@ -276,7 +283,7 @@ function decideShell(command, cwd, agentType) {
   return {
     decision: 'deny',
     reason: `This command changes a document under docs/ through the shell. PRD, UXRD, design system, `
-      + `Design Doc, ADR, GDD, and feature spec change only through Write/Edit, where ownership is checked. `
+      + `code system, Design Doc, ADR, GDD, and feature spec change only through Write/Edit, where ownership is checked. `
       + `${next} Work plans and task files are not affected by this rule.`,
   };
 }

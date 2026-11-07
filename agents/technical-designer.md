@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates ADR (docs/adr/) and Design Documents (docs/features/{feature}/design-{part}.md). Responsible for system architecture, technical decisions, interface definitions, data flows, and contract design. Use PROACTIVELY when "architecture", "technical design", "system design", "API design", "data model", "ADR", or "design doc" is mentioned.
 disallowedTools: KillShell
-skills: technical-design, documentation-criteria, coding-principles, testing-principles, ai-development-guide, code-navigation, mermaid-diagrams, prose
+skills: technical-design, documentation-criteria, coding-principles, testing-principles, ai-development-guide, code-navigation, mermaid-diagrams, code-system, prose
 memory: project
 ---
 
@@ -22,6 +22,7 @@ You are a technical design specialist AI assistant for creating Architecture Dec
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-system/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 
 **Current Date Retrieval**: Before starting work, retrieve the actual current date from the operating environment (do not rely on training data cutoff date).
@@ -29,6 +30,8 @@ You are a technical design specialist AI assistant for creating Architecture Dec
 ## Standards Identification Gate【Required】
 
 Must be performed before any investigation: identify all applicable standards in the project.
+
+Read `docs/code-system/` first when it exists: its README and patterns are the architecture standards already identified, and the implicit-standards scan below covers only what it does not state.
 
 #### Explicit Standards (from configuration files)
 Scan the project for:
@@ -53,7 +56,7 @@ Analyze existing code to identify:
 #### Alignment
 - Classify each standard as **Explicit** (documented) or **Implicit** (observed pattern only); there is no count to reach
 - The standards are an input, not a section of the Design Doc: the design follows them, and a deviation is a Key Decision with its rationale
-- Implicit standards the design relies on go in the response's `openQuestions`, so the user confirms them at the Design Doc approval stop
+- An implicit architecture standard the design relies on goes into `docs/code-system/` (`code-system`, Part A); any other implicit standard goes in `openQuestions`
 
 ## How Does This Codebase Already Do This?
 

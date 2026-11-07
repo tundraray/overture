@@ -4,7 +4,7 @@ model: sonnet
 effort: medium
 description: Validates consistency between PRD/Design Doc and code implementation. Use PROACTIVELY after implementation completes, or when "document consistency/implementation gap/as specified" is mentioned. Uses multi-source evidence matching to identify discrepancies.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: documentation-criteria, ai-development-guide, coding-principles, code-navigation
+skills: documentation-criteria, ai-development-guide, coding-principles, code-navigation, code-system
 memory: project
 ---
 
@@ -19,6 +19,7 @@ You are an AI assistant specializing in document-code consistency verification.
 - `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
+- `${CLAUDE_PLUGIN_ROOT}/skills/code-system/SKILL.md`
 
 ## Input Parameters
 
@@ -82,11 +83,13 @@ For each claim, classify as one of:
 | gap | Document describes intent not yet implemented | Implementation needed |
 | conflict | Code behavior contradicts document | Review required |
 
+A `drift` about structure — a module outside the layer the code system's README assigns it, a dependency against its rules, a block that duplicates one the code system holds (`code-system`, Part C) — has a `classification` that begins `architectural:`; the orchestrator lists these with candidate patterns in the completion report.
+
 ## Execution Steps
 
 ### Step 1: Document Analysis
 
-1. Read the target document
+1. Read the target document — for `design-doc`, when `docs/code-system/` exists, also the README's layer map and dependency rules and the patterns the Building-block Inventory cites; they are Constraint claims on the part's code
 2. Extract specific, testable claims
 3. Categorize each claim
 4. Note ambiguous claims that cannot be verified

@@ -16,6 +16,7 @@ Read [authoring-rules.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/re
 - **[task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md)** - Task file template for implementation tasks
 - **[uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md)** - UX Requirements Document template
 - **[design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md)** - Design system templates: README, foundations, component spec
+- **[code-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/code-system-template.md)** - Code system templates: README, pattern spec
 
 ## Creation Decision Matrix
 
@@ -130,9 +131,25 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 **Lifecycle**: the `design-system` skill, "Workflow".
 
+### Code System
+
+**Purpose**: Hold the project's way of structuring code — its architecture style, layer map, module boundaries, and the canonical pattern for each recurring problem — without code. It lives in `docs/code-system/`, is shared by every feature, and is owned by `technical-designer` and `technical-designer-frontend`. It is created by `/code-context` or by the first Design Doc that needs it, extended through the Design Docs that cite it, and approved and reviewed only as part of such a Design Doc.
+
+**Includes**:
+- `README.md`: the source (derived from the code, a reference architecture, or defined here), the style in one paragraph, the layer map with its dependency rule, the module boundaries, and an index
+- `patterns/{pattern-name}.md`: problem, shape, the reference implementation's path, what it is not for, and the Design Docs it is used in
+
+**Excludes**:
+- Feature-specific wiring, contracts, and flows (→Design Doc)
+- Code of any kind — snippets, signatures, config (→implementation; the Reference path points at it)
+- A single decision taken against alternatives (→ADR, or a Key Decision in the Design Doc)
+- What a framework convention or reference architecture already defines (cite it; fill only its gaps)
+
+**Lifecycle**: the `code-system` skill, "Workflow".
+
 ## Storage Locations
 
-Documents are grouped **by feature**, not by document type. Everything a feature produces lives under one directory, so the whole record of a change is readable in one place. ADRs and the design system are the exceptions: a decision usually outlives and spans features, and every feature's UI shares one design system, so both stay global.
+Documents are grouped **by feature**, not by document type. Everything a feature produces lives under one directory, so the whole record of a change is readable in one place. ADRs, the design system, and the code system are the exceptions: a decision usually outlives and spans features, and every feature shares one design system and one code system, so all three stay global.
 
 ```
 docs/
@@ -143,6 +160,10 @@ docs/
 │   ├── foundations.md
 │   └── components/
 │       └── {component-name}.md
+├── code-system/
+│   ├── README.md
+│   └── patterns/
+│       └── {pattern-name}.md
 └── features/
     └── {feature}/
         ├── prd.md
@@ -162,6 +183,7 @@ docs/
 | PRD | `docs/features/{feature}/` | `prd.md` | [prd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/prd-template.md) |
 | UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 | Design System | `docs/design-system/` | `README.md`, `foundations.md`, `components/{component-name}.md` | [design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md) |
+| Code System | `docs/code-system/` | `README.md`, `patterns/{pattern-name}.md` | [code-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/code-system-template.md) |
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
@@ -254,6 +276,7 @@ The frontmatter is the single source of truth for plan sequencing.
 | Every PRD | `docs/features/*/prd.md` |
 | Every UXRD | `docs/features/*/uxrd.md` |
 | Every component spec | `docs/design-system/components/*.md` |
+| Every pattern spec | `docs/code-system/patterns/*.md` |
 | Parts list of a feature | `docs/features/{feature}/prd.md`, section "Delivery Parts" |
 | Every Design Doc | `docs/features/*/design-*.md` |
 | Design for one part | `docs/features/{feature}/design-{part}.md` |
