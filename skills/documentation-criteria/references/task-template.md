@@ -64,7 +64,7 @@ Files to read before starting implementation (file path, with optional search hi
 
 ### 3. Refactor Phase
 - [ ] Improve code (maintain passing tests)
-- [ ] Confirm added tests and the touched modules' test files still pass
+- [ ] Confirm added tests and the touched modules' unit test files still pass
 
 ## Operation Verification Methods
 (Derived from the Verification Strategy in the work plan)
