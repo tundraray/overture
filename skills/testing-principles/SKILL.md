@@ -54,7 +54,7 @@ TDD applies to behaviour that passes Test Selection. A task step that adds no be
    - Keep all tests passing
 
 4. **VERIFY**: Ensure the affected tests still pass
-   - Run the tests you wrote and the test files of the modules you touched
+   - Run the tests you wrote and the unit test files of the modules you touched; an integration or e2e file only when you wrote or edited it
    - The full suite is the quality gate's run, not a step of this cycle
    - A passing run is not repeated until the code changes again
 

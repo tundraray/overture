@@ -106,7 +106,7 @@ Assign work based on each subagent's responsibilities:
 
 **What to delegate to task-executor**:
 - Implementation work and test addition
-- Confirmation that the added tests and the touched modules' test files pass, the touched package typechecks, and the task's Operation Verification
+- Confirmation that the added tests and the touched modules' unit test files pass, the touched package typechecks, and the task's Operation Verification
 - Do not delegate quality assurance
 
 **What to delegate to quality-fixer**:

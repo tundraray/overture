@@ -241,7 +241,7 @@ A per-adoption check applied each time an existing component pattern, hook, or d
    4-1. **Task file**: Change completed item from `[ ]` → `[x]`
    4-2. **Work plan**: Change same item from `[ ]` → `[x]` in corresponding plan in docs/features/{feature}/{part}/
    ※After each Edit tool execution, proceed to next step
-5. **Test Execution**: Run the created tests and the touched components' test files; re-run only after a code change (truncated output: narrow the filter, do not widen the run)
+5. **Test Execution**: Run the created tests and the touched components' unit test files; an integration or e2e file only when this task writes or edits it; re-run only after a code change (truncated output: narrow the filter, do not widen the run)
 
 Before handing off, typecheck the touched package once. Lint, build, knip, the full unit suite, package-wide e2e and coverage are quality-fixer's single whole-project run, not this agent's.
 
