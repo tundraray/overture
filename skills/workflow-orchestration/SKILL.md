@@ -105,11 +105,11 @@ Assign work based on each subagent's responsibilities:
 
 **What to delegate to task-executor**:
 - Implementation work and test addition
-- Confirmation of added tests passing (existing tests are not covered)
+- Confirmation that the added tests and the touched modules' test files pass, the touched package typechecks, and the task's Operation Verification
 - Do not delegate quality assurance
 
 **What to delegate to quality-fixer**:
-- Overall quality assurance (static analysis, style check, all test execution, etc.)
+- Overall quality assurance, once for the whole project (lint, unused-code check, build, full test suite, e2e, coverage)
 - Complete execution of quality error fixes
 - Self-contained processing until fix completion
 - Final approved judgment (only after fixes are complete)
@@ -433,7 +433,7 @@ Load `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md` before entering 
 
    **On error**: Escalate to user if files are not generated
 
-3. **Quality Assurance and Commit Execution**: After confirming approved=true, immediately execute git commit
+3. **Quality Assurance and Commit Execution**: After `approved: true` at a commit point of the chosen strategy, execute git commit
 4. **Autonomous Execution Mode Management**: Start/stop autonomous execution after approval, escalation decisions
 5. **ADR Status Management**: After the user's decision, have `technical-designer(-frontend)` set the ADR's status in `update` mode
 

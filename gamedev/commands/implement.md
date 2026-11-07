@@ -192,12 +192,12 @@ scopeDependencies:
 - [ ] Recognized stopping points
 - [ ] Detected development mode (Full/Design Only/Prototype)
 - [ ] Detected scenario (New Project/Existing Project)
-- [ ] **Environment check**: Can I execute per-task commit cycle?
+- [ ] **Environment check**: Can I execute the commit cycle?
   - If commit capability unavailable → Escalate before autonomous mode
   - Other environments (tests, quality tools) → Subagents will escalate
 
 **Required Flow Compliance**:
-- Run quality-fixer before every commit
+- Never skip the quality gate (`workflow-execution`, "Commit execution by strategy")
 - Obtain user approval before Edit/Write/MultiEdit outside autonomous mode
 - **All document operations (create/edit) MUST go through agents** — orchestrator never writes directly
 
@@ -227,7 +227,7 @@ Register per-part steps in TodoWrite as `[part] step`, so the current part is al
 `workflow-execution` owns every step below, with `gamedev-work-planner` as `{planner}`; follow it there rather than from memory:
 
 - **Commit strategy** — asked once per feature, after feature spec approval and before the first part's batch approval ("Commit Strategy Selection"); `per-phase` groups commits by the six game phases
-- **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
+- **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer at the gate point (before a commit, at a phase end) → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
 - **Post-Implementation Verification** — the three verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed
 - **Final Cleanup** — the consumed task directory is deleted and `gamedev-work-planner` (`update` mode) sets the plan `completed`; the feature spec, GDD, `docs/design-system/`, and every design document stay
 - **Test skeleton paths** reach `gamedev-work-planner` per part — `workflow-orchestration`, "Main Orchestrator Roles"

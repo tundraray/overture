@@ -69,14 +69,14 @@ After a part's batch approval: full autonomy until that part's completion report
 Each task execution follows cycle:
 1. task-executor → Implementation
 2. Escalation judgment → Check status
-3. quality-fixer → Tests, linting, build
+3. quality-fixer → Tests, linting, build — before every commit and at the end of every phase
 4. git commit → Based on selected commit strategy
 
 ### Commit Strategy (User Choice)
 
 Ask user before implementation phase:
-- **per-task** (default): Commit after each task
-- **per-phase**: Commit after each phase completes
+- **per-task**: Commit after each task
+- **per-phase** (default): Commit after each phase completes
 - **per-feature**: Single commit at the end
 - **manual**: User decides when to commit
 

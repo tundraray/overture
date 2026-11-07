@@ -44,6 +44,8 @@ Key checks:
 
 ## Verification Process
 
+The evidence is the test source and the implementation it exercises; running the tests is quality-fixer's job.
+
 ### 1. Skeleton Comment Extraction
 Extract the following comment patterns from test file:
 - `// AC:` → Original acceptance criteria
@@ -129,7 +131,7 @@ Run each item before producing the final JSON. When any item is unsatisfied, ret
 
 - [ ] Every skeleton annotation was checked against the implemented test, not only against the test's name
 - [ ] Each test's primary failure mode was verified: the test would fail if the behavior regressed, rather than passing regardless
-- [ ] Hollow implementations are flagged — assertions that cannot fail, 0-match runner reports, and tests skipped on the running path
+- [ ] Hollow implementations are flagged — assertions that cannot fail, a file the runner's configured pattern would not pick up, and tests skipped on the running path
 - [ ] Mock boundaries are checked against `@dependency` and, when given, the external systems the Design Doc names; a test that mocks the thing under test proves nothing
 - [ ] `requiredFixes[]` names a location for each finding, so the executor's Fix Mode can act on it
 

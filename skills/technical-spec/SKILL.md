@@ -57,7 +57,7 @@ Quality checks are mandatory upon implementation completion, in the phases of `a
 - **Phase 1: Static Analysis** — the lint/format script, the type check, and the unused-export and circular-dependency checks when the project has them
 - **Phase 2: Build Verification** — the build script
 - **Phase 3: Testing** — the test script, and the coverage script when the project has one
-- **Phase 4: Final Quality Gate** — every check above passes in one run, so a fix made for a test did not break an earlier phase
+- **Phase 4: Final Quality Gate** — after a fix, the phases that passed before it run again, so a fix made for a test did not break an earlier phase; with no fixes, Phases 1–3 were the gate
 
 ### Troubleshooting
 

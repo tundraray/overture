@@ -239,12 +239,14 @@ A per-adoption check applied each time an existing pattern or dependency is refe
 2. **GREEN**: Minimal implementation to pass
 3. **REFACTOR**: Improve code quality
 4. **Progress Update**: `[ ]` → `[x]` in task file and work plan
-5. **Verify**: Run created tests
+5. **Verify**: Run the created tests and the touched modules' test files; re-run only after a code change (truncated output: narrow the filter, do not widen the run)
+
+Before handing off, typecheck the touched package once. Lint, build, knip, the full unit suite, package-wide e2e and coverage are quality-fixer's single whole-project run, not this agent's.
 
 **Test types**:
 - Unit tests: RED-GREEN-REFACTOR cycle
 - Integration tests: Create and execute with implementation
-- E2E tests: Execute only (in final phase)
+- E2E tests: the part's planned ones, execute-only task in the final phase
 
 #### Operation Verification
 - Execute "Operation Verification Methods" section in task

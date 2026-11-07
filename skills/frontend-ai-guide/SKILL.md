@@ -46,7 +46,7 @@ The phases match `ai-development-guide` "Quality Check Workflow". Commands come 
 - **Phase 1: Static Analysis** — the lint/format script (ESLint, Biome, Prettier) and the type check (the project's type-check script, or `tsc --noEmit`)
 - **Phase 2: Build Verification** — the production build script
 - **Phase 3: Testing** — the test script (React Testing Library), and the coverage script when the project has one
-- **Phase 4: Final Quality Gate** — every check above passes in one run; the project's aggregate check script, when it has one
+- **Phase 4: Final Quality Gate** — after a fix, the phases that passed before it run again (the project's aggregate check script, when it has one); with no fixes, Phases 1–3 were the gate
 
 ### Troubleshooting
 - **Port in use or hanging test processes**: stop the leftover runner processes (the project's cleanup script, when it has one)
