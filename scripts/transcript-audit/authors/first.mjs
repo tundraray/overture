@@ -1,0 +1,7 @@
+import fs from 'fs'; import readline from 'readline'; import path from 'path';
+const ROOT='C:/Users/tundr/.claude/projects/D--git-github-ai-agent-os';
+const S=['28626df2-d3ad-48f3-9042-0ea1a6ebb1f9','eae5f417-51c8-495d-8f00-5ecd3d2d6117','bb45672c-c0b7-4a03-b437-47f4b8c086ef'];
+const m={};
+for(const s of S){const d=ROOT+'/'+s+'/subagents';for(const f of fs.readdirSync(d)){if(!f.endsWith('.meta.json'))continue;const meta=JSON.parse(fs.readFileSync(d+'/'+f,'utf8'));const t=(meta.agentType||'').replace('fullstack-overture:','');if(!/prd-creator|ux-designer|technical-designer|work-planner|acceptance-test-generator|document-reviewer/.test(t))continue;
+const rl=readline.createInterface({input:fs.createReadStream(d+'/'+f.replace('.meta.json','.jsonl'))});let pl=0;for await(const line of rl){let o;try{o=JSON.parse(line)}catch{continue}if(o.type==='user'&&!pl){const c=o.message.content;pl=(typeof c==='string'?c:c.map(x=>x.text||'').join('')).length}if(o.type==='assistant'&&o.message?.usage){const u=o.message.usage;const tot=(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0);(m[t]=m[t]||[]).push([tot,pl]);break}}rl.close()}}
+for(const[k,v]of Object.entries(m)){const a=v.map(x=>x[0]).sort((x,y)=>x-y);console.log(k,'n',v.length,'firstTurnInput median',a[a.length>>1],'min',a[0],'max',a[a.length-1],'median task prompt ch',v.map(x=>x[1]).sort((x,y)=>x-y)[v.length>>1])}

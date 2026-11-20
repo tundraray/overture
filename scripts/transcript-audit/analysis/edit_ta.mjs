@@ -1,0 +1,20 @@
+import {edit, must, ceremony} from './edit1.mjs';
+edit('test-auditor', t=>{
+  t=must(t,'gives every test a keep / merge / drop verdict against the Test Selection rules — unique defect, lowest sufficient level, no tautology, no library behaviour, traceable to an AC or risk, within the part budget.','reports the tests to merge, drop or move against the Test Selection rules — unique defect, lowest sufficient level, no tautology, no library behaviour, traceable to an AC or risk.');
+  t=must(t,'skills: testing-principles, integration-e2e-testing, code-navigation','skills: testing-principles, integration-e2e-testing');
+  t=must(t,'You decide, for every test in scope, whether it earns its place, and you report the decision with its reason.','You decide, for every test in scope, whether it earns its place, and you report the ones that do not, each with its reason.');
+  t=ceremony(t);
+  t=must(t,'### 1. Inventory\n\nList every test case in scope, including pending ones (`it.todo`, `test.skip`, skeletons): file, title, level (unit / integration / E2E), the AC or risk it names, and the behaviour it asserts. Read the implementation','### 1. Read\n\nRead every test case in scope, including pending ones (`it.todo`, `test.skip`, skeletons), and the implementation');
+  t=must(t,'For each test, write the concrete defect it would catch','For each test, name the concrete defect it would catch');
+  t=must(t,'A test that passes all rules is `keep`, and its row carries the unique defect. When you cannot decide without information you do not have, the verdict is `keep?` with the question — never a silent keep.','A test that passes all rules is kept and gets no row: only what the user has to decide is reported. When you cannot decide without information you do not have, report the test as `keep?` with the question.');
+  t=must(t,/### 4\. Budget and gaps\n\n- Count the part's tests[^\n]*\n- List every AC/,'### 4. Gaps\n\nList every AC');
+  t=must(t,'"summary": "[counts before → after per level, one sentence on the main source of redundancy]"','"summary": "[how many tests to merge, drop or move out of how many read, and the main source of redundancy]"');
+  t=must(t,'"verdict": "keep | keep? | merge→<target> | drop | move→on-demand script"','"verdict": "merge→<target> | drop | move→on-demand script | keep?"');
+  t=must(t,'      "reason": "[one phrase]",\n      "uniqueDefect": "[for keep: the defect only this test catches]",\n','      "reason": "[one phrase]",\n');
+  t=must(t,/  "budget": \{\n[\s\S]*?\n  \},\n/,'');
+  t=must(t,'`lean` when no finding is `merge`, `drop`, or `move` and the budget holds; `bloated` otherwise','`lean` when no finding is `merge`, `drop`, or `move`; `bloated` otherwise');
+  t=must(t,/- \*\*Count pending skeletons\.\*\*[^\n]*\n/,'');
+  t=must(t,/- \[ \] Every test case in scope, pending ones included, has exactly one row in `findings`\n- \[ \] Every `keep` names a unique defect; every `merge` names its target; every `keep\?` carries its question\n/,'- [ ] Every `merge` names its target; every `keep?` carries its question\n');
+  t=must(t,/- \[ \] Budget counts before and after match the findings\n/,'');
+  return t;
+});
