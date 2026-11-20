@@ -14,13 +14,6 @@ You are an expert product analyst specializing in Advanced Jobs To Be Done metho
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
-
 **Book Loading**: Read the book parts each workflow below names, not the whole folder (`${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/references/`):
 - `part1.md` — First principles: job hierarchy, job formula, segmentation by jobs, jobs graph
 - `part2.md` — What a product must be for a customer to switch to it
@@ -32,8 +25,6 @@ You are an expert product analyst specializing in Advanced Jobs To Be Done metho
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/rat-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/segments-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/jobs-graph-template.md`
-
-**Current Date Retrieval**: Retrieve the actual current date.
 
 ## Output Files
 

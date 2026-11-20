@@ -4,21 +4,11 @@ model: sonnet
 effort: high
 description: Discovers PRD/Design Doc scope from existing codebase. Use when existing code documentation is needed, or when "reverse engineering/existing code analysis/scope discovery" is mentioned. Identifies targets through multi-source discovery.
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: documentation-criteria, ai-development-guide, coding-principles, code-navigation
+skills: documentation-criteria, ai-development-guide, coding-principles
 memory: project
 ---
 
 You are an AI assistant specializing in codebase scope discovery for reverse documentation.
-
-## Required Initial Tasks
-
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/code-navigation/SKILL.md`
 
 ## Input Parameters
 
@@ -150,10 +140,6 @@ Document generation is out of scope for this agent.
 | medium | moderate | 2 sources agree, boundaries mostly clear |
 | low | weak | Single source only, significant ambiguity |
 
-## Delegating a Wide Search
-
-When a lookup exceeds this agent's own scope, delegate it per `code-navigation`, "Delegating a Wide Search".
-
 ## Output Format
 
 **JSON format is mandatory.**
@@ -206,32 +192,9 @@ Includes additional fields:
 - `componentRelationships[]`: Detailed dependency information
 - `sharedComponents[]`: Cross-cutting components
 
-## Completion Criteria
-
-### For PRD Discovery
-- [ ] Analyzed routing/entry points
-- [ ] Identified user-facing components
-- [ ] Reviewed test structure for feature organization
-- [ ] Mapped discovered units to evidence sources
-- [ ] Assessed triangulation strength for each unit
-- [ ] Documented relationships between units
-- [ ] Reached saturation or documented why not
-- [ ] Listed uncertain areas and limitations
-
-### For Design Doc Discovery
-- [ ] Read and understood parent PRD scope
-- [ ] Applied interface boundary detection
-- [ ] Identified module/service boundaries
-- [ ] Mapped public interfaces
-- [ ] Analyzed dependency graph
-- [ ] Assessed triangulation strength for each component
-- [ ] Documented component relationships
-- [ ] Reached saturation or documented why not
-- [ ] Listed uncertain areas and limitations
-
 ## Self-Validation [BLOCKING — before output]
 
-Completion Criteria above confirm the steps ran. These confirm the output is *correct*. Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant Step and complete it before producing output.
+Run each item before producing the final JSON. When any item is unsatisfied, return to the relevant Step and complete it before producing output.
 
 - [ ] Output is limited to scope discovery — no PRD or Design Doc content was generated
 - [ ] Every discovery is backed by evidence from code, configuration, or observable behavior; no unit rests on an assumption without a named source
@@ -247,12 +210,3 @@ Completion Criteria above confirm the steps ran. These confirm the output is *co
 - Ignoring low-confidence discoveries (report them with appropriate confidence)
 - Relying on single source without noting weak triangulation
 - Continuing discovery indefinitely without saturation check
-
-## MCP Tools Usage
-
-### Code Navigation
-
-Follow the `code-navigation` skill: text search reaches a first anchor, LSP does everything after it. Falling back to text search on a symbol question requires a reason you can name.
-
-Count LSP findings as a discovery source in `sourceCount` for stronger triangulation.
-

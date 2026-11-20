@@ -103,7 +103,7 @@ prompt: "target: [document path]; design-system files: [paths from documents[], 
 
 **Document Revision Flow**:
 - **IF document-reviewer returns `approved_with_conditions` or `needs_revision`** (`rejected` goes straight to the user):
-  1. Extract the `critical` and `important` issues from reviewer output; `recommended` ones are listed at the approval stop for the user to pick
+  1. Extract the `critical` and `important` issues from reviewer output
   2. Call ux-designer to revise the UXRD:
      ```yaml
      subagent_type: ux-designer
@@ -121,7 +121,7 @@ An existing Design Doc of the feature is updated through `/update-doc` after UXR
 
 - [ ] Executed requirement-analyzer and confirmed UX scope
 - [ ] Created UXRD with ux-designer (appropriate operation mode)
-- [ ] Presented the draft check's `open` items; an independent review, when chosen, had its `critical` and `important` issues resolved or accepted by the user, `recommended` ones shown to the user
+- [ ] Presented the draft check's verdict (`skipped` and `not_run` included) and `open` items; an independent review, when chosen, had its `critical` and `important` issues resolved or accepted by the user
 - [ ] Obtained user approval for UXRD
 
 ## Output Example

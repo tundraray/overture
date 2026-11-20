@@ -8,37 +8,22 @@
 
 ## Decision
 
-[Three to five plain sentences: the problem in one line, what is decided, and what it replaces or rules out]
+[Three to five plain sentences: the problem in one line, what is decided and what it buys, and what it replaces or rules out]
 
 ## Context
 
 [The background a cold reader needs: the problem, the current state, and the constraints the options had to meet]
 
-## Rationale
+## Options Considered
 
-[Why this option over the others, in a short paragraph]
+<!-- Each real option, and why it lost. An option invented to fill a count is not one. -->
 
-### Options Considered
-
-<!-- At least two real options — each one a genuine choice that was weighed; an option invented to fill a count is not one. Each pro and con is a sentence a newcomer can follow, not a keyword. -->
-
-1. **Option 1**: [Description]
-   - Pros: [advantages]
-   - Cons: [disadvantages]
-
-2. **Option 2 (Selected)**: [Description]
-   - Pros: [advantages]
-   - Cons: [disadvantages]
+- **[Option] (selected)** — [why it won, in sentences a newcomer can follow]
+- **[Option]** — [why it lost]
 
 ## Consequences
 
-### Positive Consequences
-
-- [Positive impacts on the project or system]
-
-### Negative Consequences
-
-- [Negative impacts or trade-offs that need to be accepted]
+[What we accept by choosing this: the costs and limits that come with the decision]
 
 ## Implementation Guidance
 

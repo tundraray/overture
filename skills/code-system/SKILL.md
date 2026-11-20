@@ -52,12 +52,12 @@ A pattern file is precise enough to build a new instance from, and still contain
 
 ## Part B — Implementing (task-executor, task-executor-frontend)
 
-The task file carries the patterns its Design Doc cites. Before writing, read each cited pattern and its Reference, and build the new instance to that shape: same layer, same dependency direction, same names for the same parts. The Building-block Inventory decides whether a block is reused, extended or new; an executor does not reopen that decision. Where the catalogue is silent, the existing code around the change is the convention to follow.
+The plan phase's `#### Patterns` section carries the patterns its Design Doc cites. Before writing, read each cited pattern and its Reference, and build the new instance to that shape: same layer, same dependency direction, same names for the same parts. The Building-block Inventory decides whether a block is reused, extended or new; an executor does not reopen that decision. Where the catalogue is silent, the existing code around the change is the convention to follow.
 
 ### Mismatch or Gap
 
 - **Mismatch with the pattern** — the implementation diverges from a cited pattern or its Reference: fix it as a defect.
-- **Gap in the catalogue** — no pattern decides something the task needs (a boundary crossing, a module shape, where a shared piece belongs), and the surrounding code gives no convention: don't invent architecture. Report it in your response (executor: escalation), and the orchestrator routes it to the technical designer, who decides and records it.
+- **Gap in the catalogue** — no pattern decides something the phase needs (a boundary crossing, a module shape, where a shared piece belongs), and the surrounding code gives no convention: don't invent architecture. Report it in your response (executor: escalation), and the orchestrator routes it to the technical designer, who decides and records it.
 
 ## Part C — Reviewing (code-reviewer, code-verifier)
 

@@ -97,7 +97,7 @@ The plugin analyzes your request and scales the workflow to match complexity:
 ### Key Advantages
 
 - **Fresh context per agent** — Each agent starts clean, avoiding context exhaustion in long sessions
-- **Automated quality gates** — Tests, types, and lint run before every commit and at the end of every phase, and auto-fix on failure
+- **Automated quality gates** — Each plan phase is implemented test-first, running only the unit tests of what it touches, and ends with static checks and the unit tests of the changed files; one full run — whole suite, integration, e2e, coverage — closes the feature. Failures are auto-fixed
 - **Document-driven development** — Requirements and design docs keep implementation aligned across agents
 - **Explicit stop points** — Autonomous work pauses for your approval at critical decisions
 
@@ -107,7 +107,7 @@ The gamedev plugin adds game-specific phases on top of the shared workflow:
 
 - Market analysis with Go/No-Go gate before committing to a project
 - GDD as first-class artifact driving all design decisions
-- 6-phase work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
+- 6-stage work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
 - 12 specialized game agents (designers, artists, mechanics, QA, analytics)
 
 See [workflow diagrams](docs/overture/workflows.md) and [gamedev workflow diagrams](docs/overture/gamedev-workflows.md) for detailed flows.
@@ -142,7 +142,7 @@ See [workflow diagrams](docs/overture/workflows.md) and [gamedev workflow diagra
 
 | Command | Purpose |
 |---------|---------|
-| `/implement` | End-to-end game development with market analysis, GDD, and 6-phase planning |
+| `/implement` | End-to-end game development with market analysis, GDD, and 6-stage planning |
 | `/task` | Single task with precision |
 | `/diagnose` | Root cause analysis |
 | `/design` | Create design documentation |
@@ -208,7 +208,7 @@ The gamedev plugin is built for game development with Phaser 3:
 - Market analysis with Go/No-Go gate before committing to a project
 - GDD (Game Design Document) as first-class artifact driving all design decisions
 - 12 specialized game agents: designers, mechanics engineer, game feel developer, artists, QA, analytics
-- 6-phase work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
+- 6-stage work planning: Core Mechanics → Game Feel → Art → UI → Analytics → QA
 - Three development modes: Full Development, Design Only, Prototype
 
 ---

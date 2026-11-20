@@ -363,19 +363,11 @@ function checkFeatureDocs() {
       }
       if (plans.length === 0) continue;
 
-      const active = plans.filter((p) => p.status === 'active');
-      if (active.length > 1) {
-        fail('features', `docs/features/${feature.name}/${part.name}/: ${active.length} plans claim status: active (${active.map((p) => p.file).join(', ')})`);
-      }
-
       for (const p of plans) {
         const m = /^(\d+)\s+of\s+(\d+)$/.exec(p.plan || '');
-        if (!m) {
-          fail('features', `${feature.name}/${part.name}/${p.file}: "plan" must read "N of M", got ${JSON.stringify(p.plan ?? null)}`);
-          continue;
-        }
-        const total = Number(m[2]);
-        if (total !== plans.length) {
+        if (!m && (plans.length > 1 || p.plan)) {
+          fail('features', `${feature.name}/${part.name}/${p.file}: "plan" must read "N of M" when the part holds more than one plan, got ${JSON.stringify(p.plan ?? null)}`);
+        } else if (m && Number(m[2]) !== plans.length) {
           fail('features', `${feature.name}/${part.name}/${p.file}: declares "${p.plan}" but the part holds ${plans.length} plan file(s)`);
         }
         if (p['depends-on'] && !planFiles.includes(p['depends-on'])) {

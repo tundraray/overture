@@ -1,37 +1,34 @@
 # UXRD: [Feature Name]
 
 <!--
-The PRD (gamedev: feature spec) owns the summary, background, users, use cases, and requirements. This document cites them by ID (UC-2, AC-01.3) and never restates them.
-The design system (docs/design-system/) owns foundations and component specs. This document links to them and keeps only feature-level UX: flows, screens, global accessibility, responsive behaviour, and copy. A component spec is never written inside this document.
+What this document owns, and what belongs to the PRD (gamedev: feature spec) or the design system: documentation-criteria, UXRD "Includes" and "Excludes".
 Later documents cite this one by ID: KD-n, MC-n, and any screen element ID the author assigns (TH-10).
-Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
+Reader rules: documentation-criteria, "Writing for the Reader".
 -->
 
-| Status | Date | PRD (gamedev: feature spec) | Designs |
-|---|---|---|---|
-| Draft / Approved | YYYY-MM-DD | [prd.md](./prd.md) | [design-[part].md] or — |
+| Date | PRD (gamedev: feature spec) |
+|---|---|
+| YYYY-MM-DD | [prd.md](./prd.md) |
 
 ## Snapshot
 
-<!-- At most ten lines. -->
-
-**Overview.** [Three to five plain sentences: what the user sees and does in this feature, which screens and surfaces it covers, and the experience it aims for. No IDs.]
+**Overview.** [Three to five plain sentences: the user need this interface answers, what the user sees and does, and which screens and surfaces it covers. No IDs.]
 
 - **Does not change**: [the one or two surfaces a reader would otherwise assume change]
 - **Biggest UX risk**: [one line]
-- **Open questions**: [a link to Undetermined Items, or "none"]
+- **Open questions**: [a link to Undetermined Items — delete the line when there are none]
 
 ### Key Decisions
 
-<!-- Three to seven rows: the UX decisions a reviewer would argue about. Other sections cite KD-n. The Why column is the rationale; no paragraph after the table repeats it. -->
+<!-- The UX decisions a reviewer would argue about. Other sections cite KD-n; no paragraph after the table repeats the Why. -->
 
-| ID | Decision | Why | Rejected alternative |
-|---|---|---|---|
-| KD-1 | [what was decided] | [the reason, in words a newcomer follows] | [the option not taken] |
+| ID | Decision | Why |
+|---|---|---|
+| KD-1 | [what was decided] | [the user need or problem it answers, in words a newcomer follows] |
 
 ## Terms
 
-<!-- When applicable: the document leans on five or more UX words a newcomer may not know that the PRD's Terms do not already explain. One line each. -->
+<!-- When applicable: UX words the PRD's Terms do not already explain. -->
 
 - **[Term]**: [what it means here, in a few plain words]
 
@@ -51,13 +48,9 @@ Follows the [design system](../../design-system/README.md).
 
 ## User Flows
 
-<!-- Each flow names the use cases and acceptance criteria it delivers. -->
-
 ### Primary User Flow
 
 **Implements:** [UC and AC ids from the PRD (gamedev: AC ids from the feature spec)]
-
-[The path through the screens — what the user sees and does at each step. The use case's goal and outcome are in the PRD and are not repeated here.]
 
 ```mermaid
 ---
@@ -81,17 +74,19 @@ flowchart TD
     E --> F
 ```
 
+[Why the path goes this way, and its limits]
+
 ### Alternative Flows
 
 [Edge cases and alternative paths, each naming the UC or AC ids it serves]
 
 ### Error Flows
 
-[Describe how errors are handled in the user flow]
+[Each error path, naming the screen state and MC ids that show it]
 
 ## Screens
 
-<!-- Each screen is a composition of inventory components. Write what is specific to this screen — layout, placement, which variant is used, the screen's own states. A component's states and accessibility are in its spec and are not repeated here. -->
+<!-- Each screen is a composition of inventory components. Write what is specific to this screen — layout, placement, which variant is used, the screen's own states. -->
 
 ### Screen 1: [Screen Name]
 
@@ -140,11 +135,7 @@ flowchart TD
 
 ## Responsive Behavior
 
-| Breakpoint | Width | Screen | What changes |
-|---|---|---|---|
-| Mobile | < 640px | [screen] | [one phrase] |
-| Tablet | 640px - 1024px | [screen] | [one phrase] |
-| Desktop | > 1024px | [screen] | [one phrase] |
+[Per screen, what changes at which width]
 
 ## Content and Microcopy
 
@@ -156,15 +147,11 @@ flowchart TD
 
 ## Undetermined Items
 
-<!-- Only UX questions this document must settle. A product question goes back to the PRD; a technical one goes to the Design Doc. -->
+<!-- When applicable: a UX question is open. A product question goes back to the PRD; a technical one goes to the Design Doc. -->
 
 - [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
-<!-- _Discuss with stakeholders until this section is empty, then delete after confirmation_ -->
-
 ## Update History
-
-<!-- One line per version, newest last, a phrase per change. No reviewer IDs. -->
 
 | Version | Date | Change |
 |---------|------|--------|

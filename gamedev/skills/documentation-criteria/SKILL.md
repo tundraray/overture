@@ -1,6 +1,6 @@
 ---
 name: documentation-criteria
-description: This skill should be used when the user asks to "write a GDD", "write a feature spec", "write a market analysis", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "create task files", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
+description: This skill should be used when the user asks to "write a GDD", "write a feature spec", "write a market analysis", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
 ---
 
 # Documentation Creation Criteria
@@ -12,7 +12,6 @@ Read [authoring-rules.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/re
 - **[adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md)** - Architecture Decision Record template
 - **[design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md)** - Technical Design Document template
 - **[plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md)** - Work Plan template
-- **[task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md)** - Task file template for implementation tasks
 - **[uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md)** - UX Requirements Document template
 - **[design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md)** - Design system templates: README, foundations, component spec
 - **[gdd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md)** - Game Design Document template
@@ -154,7 +153,7 @@ docs/
     ├── design-{part}.md
     └── {part}/
         ├── {plan-name}.md
-        └── {plan-name}/{_overview,task-01}.md, analysis/{topic}.md
+        └── analysis/{topic}.md
 ```
 
 | Document | Path | Naming Convention | Template |
@@ -162,8 +161,7 @@ docs/
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
-| Task File | `docs/features/{feature}/{part}/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
-| Analysis deliverable | `docs/features/{feature}/{part}/{plan-name}/analysis/` | `{topic}.md` | — |
+| Analysis deliverable | `docs/features/{feature}/{part}/analysis/` | `{topic}.md` | — |
 | UXRD | `docs/features/{feature}/` | `uxrd.md` | [uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md) |
 | Design System | `docs/design-system/` | `README.md`, `foundations.md`, `components/{component-name}.md` | [design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md) |
 | GDD | `docs/game-design/` | `[project-name]-gdd.md` | [gdd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/gdd-template.md) |
@@ -177,9 +175,9 @@ docs/
 
 A **part** is one independently designable slice of a feature — `core`, `combat`, `hud`, `save-migration`. Every feature has at least one, so every agent resolves paths with a single glob. `design-{part}.md` and the directory `{part}/` share the part name and are read as a pair.
 
-The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Every part takes `technical-designer` in the technical phase — the gamedev plugin ships no frontend designer; a part cut along `ui`, `hud`, or `menu` adds `ui-analyzer` to `codebase-analyzer`. Do not split by schedule — the six game phases are phases within one plan, not parts. Every Must Have acceptance criterion belongs to exactly one part, and a Should Have or Could Have belongs to a part or is explicitly deferred; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; an already implemented part is frozen.
+The split is a product-phase decision: `requirement-analyzer` proposes it in `parts[]`, `mid-game-designer` refines it into the feature spec's Delivery Parts section, and the user confirms it at Feature Spec approval, before any design begins. The confirmed Delivery Parts are the only source of part names — a designer does not invent one. Cut along a real seam (engine systems versus HUD, a save-format migration versus the feature it enables, two mechanics with separate state owners); keep one part when one Design Doc holds the feature coherently. Every part takes `technical-designer` in the technical phase — the gamedev plugin ships no frontend designer; a part cut along `ui`, `hud`, or `menu` adds `ui-analyzer` to `codebase-analyzer`. Do not split by schedule — the six game stages are stages within one plan, not parts. Every Must Have acceptance criterion belongs to exactly one part, and a Should Have or Could Have belongs to a part or is explicitly deferred; `dependsOn` is acyclic and fixes the order parts are designed and built in; a change to the list goes back through `mid-game-designer` in `update` mode and Feature Spec re-approval; an already implemented part is frozen.
 
-A part may hold several plans, each paired with a directory of the same name holding its decomposition. Each plan declares its position in frontmatter:
+A part may hold several plans. When it does, each plan declares its position in frontmatter; a part with one plan carries neither `plan` nor `depends-on`:
 
 ```yaml
 ---
@@ -187,7 +185,6 @@ feature: combat-rework
 part: core
 design: design-core.md
 plan: 1 of 2
-status: active                # draft | active | completed
 depends-on:                   # previous plan filename; omit for the first
 temporary: true               # AI working file (documentation-criteria)
 ---
@@ -195,7 +192,7 @@ temporary: true               # AI working file (documentation-criteria)
 
 `design` is `none` only for a simplified plan — small scale, or Prototype mode at any scale (`workflow-gamedev`) — where the lite feature spec is the specification and the plan traces to its acceptance criteria.
 
-Exactly one plan per part may be `active`. Escalate rather than guess when two claim it, when the file count disagrees with the `M` in `plan: N of M`, or when a `depends-on` names a missing file.
+Escalate rather than guess when the file count disagrees with the `M` in `plan: N of M`, or when a `depends-on` names a missing file.
 
 ## Diagram Requirements
 

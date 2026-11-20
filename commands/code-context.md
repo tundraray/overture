@@ -48,6 +48,6 @@ Read the files the designer returned and confirm:
 - [ ] Every Reference path exists in the codebase
 - [ ] Nothing is both cited and restated, and the files contain no code
 
-Show the user the paths, a short summary of Source, Style, the layers and the pattern index, and the designer's `draftCheck.open` items. Revisions go back through the designer in update mode.
+Show the user the paths, a short summary of Source, Style, the layers and the pattern index, and the designer's draft-check verdict (`skipped` and `not_run` included) and `draftCheck.open` items. Revisions go back through the designer in update mode.
 
 **Scope**: Write `docs/code-system/README.md` and `docs/code-system/patterns/*.md` only, through the technical designer. Patterns a feature introduces come with the Design Doc that needs them; project context and technical specifications belong to other commands.

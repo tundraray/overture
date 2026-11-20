@@ -11,15 +11,13 @@ argument-hint: <document-path-or-type>
 ### Core Identity
 This command orchestrates the update of existing design documents. It NEVER edits documents directly — all modifications are delegated to specialized agents.
 
-### First Action
-Register execution steps to TodoWrite before any execution:
+### Steps
 1. Target document identification
 2. Document type and layer determination
 3. Change clarification (STOP for user input)
 4. Document update via layer-appropriate agent
-5. Code verification via code-verifier (Design Doc only)
-6. Approval, with review via document-reviewer on request or for a design-system or code-system change (STOP for approval)
-7. Consistency verification via design-sync (STOP if Design Doc)
+5. Code verification via code-verifier (Design Doc only), then approval, with review via document-reviewer on request or for a design-system or code-system change (STOP for approval)
+6. Consistency verification via design-sync (STOP if Design Doc)
 
 ## Requirements
 
@@ -141,6 +139,7 @@ subagent_type: code-verifier
 prompt: |
   doc_type: design-doc
   document_path: [path from Step 1]
+  code_paths: [the Target Files of the part's work plan; without a plan, the paths the user's change names]
   Verify the updated Design Doc against the current codebase.
 
   Verification focus: literal identifier referential integrity in the updated
@@ -160,7 +159,7 @@ prompt: "target: [path]. doc_type: [DesignDoc|PRD|UXRD|ADR]. depth: [PRD depth] 
 For a design-system change: `target: [uxrd path]; design-system files: [changed paths]`, `doc_type: UXRD`, and `diff_base` covers the copies of all of them. For a code-system change: `target: [design doc path]; code-system files: [changed paths]`, `doc_type: DesignDoc`, likewise.
 
 `approved_with_conditions` or `needs_revision` → call the update agent again with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`, a `diff_base` copied before that revision pass, and the prior issues verbatim.
-A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. `recommended` issues are listed for the user, not sent back on their own (`workflow-orchestration`, "Revision Loop").
+A re-review that is not `approved`, or a `rejected` verdict → **STOP** and present issues to user. See `workflow-orchestration`, "Revision Loop".
 
 ### Step 6: Consistency Verification (Design Doc only)
 
@@ -190,7 +189,7 @@ prompt: "source_design: [path]"
 Updated: [document path]
 Type: [Design Doc / PRD / UXRD / Design System / ADR]
 Changes: [summary of changes made]
-Review: [draft check only / independent review approved / approved with notes]
+Review: [draft check only / draft check skipped / independent review approved / approved with notes]
 Consistency: [verified / N/A]
 ```
 

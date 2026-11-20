@@ -26,9 +26,9 @@ Commands like `/implement` act as orchestrators:
 ### Scale-Based Workflow Routing
 
 Scale is the highest level any of five axes triggers in `requirement-analyzer` (files, observable outcomes, contracts/data, boundaries, decision risk); file count alone never decides it. A PRD is written at every scale.
-- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Tasks → Implementation → quality-fixer → commit → post-implementation verification
-- **Medium (typically 3-5 files)**: PRD (lite) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
-- **Large (typically 6+ files)**: PRD (full) → [UXRD] → Design Doc per part → Work Plan per part → Tasks → Implementation → Review
+- **Small (typically 1-2 files)**: PRD (lite) → simplified Work Plan → Implementation → quality-fixer → commit → post-implementation verification → full run
+- **Medium (typically 3-5 files)**: PRD (lite) → [UXRD] → Design Doc per part → Work Plan per part → Implementation → Review
+- **Large (typically 6+ files)**: PRD (full) → [UXRD] → Design Doc per part → Work Plan per part → Implementation → Review
 
 All parts are designed before any is planned; then parts are planned and built one at a time, in dependency order.
 
@@ -47,8 +47,7 @@ Progressive document creation based on complexity:
 - **PRD** (every scale; `full` at large, `lite` at medium and small): Business requirements, user value, success criteria, Delivery Parts
 - **ADR** (rare, after the Design Doc): Only when a decision the design made is costly to reverse, binds beyond the feature, and was taken against real alternatives
 - **Design Doc** (medium and large, one per part): Technical specifications, interfaces, acceptance criteria
-- **Work Plan** (every scale, per part; simplified at small): Phased task breakdown with dependencies
-- **Task Files** (at execution): Single-commit granularity work units
+- **Work Plan** (every scale, per part; simplified at small): Phases with dependencies, each carrying its work items — a phase is what one executor run finishes and one commit holds
 
 ### Explicit Stop Points for User Approval
 
@@ -60,22 +59,23 @@ Autonomous flow halts at (once per feature unless stated):
 - After technical-designer returns the ADR with its draft check (only when an ADR was written, after that part's design)
 - After the planner returns a part's work plan with its draft check (batch approval, once per part; at small scale and in gamedev Prototype the simplified plan is not reviewed)
 
-At each document stop the orchestrator shows the author's `draftCheck.open` items and offers independent review (a cold `document-reviewer` run) as an option, never the default; it is the recommended option only when the draft check did not run.
+At each document stop the orchestrator states the draft-check verdict, shows the author's `draftCheck.open` items and offers independent review (a cold `document-reviewer` run) as an option, never the default; it is the recommended option only when the draft check should have run and did not (`draftCheck.verdict: not_run`). A revision that changes no requirement, decision or contract deliberately skips the draft check (`skipped`).
 
 After a part's batch approval: full autonomy until that part's completion report or an escalation; the next part starts with its own plan and batch approval.
 
-### Per-Task Quality Cycle
+### Phase Cycle and Test Cadence
 
-Each task execution follows cycle:
-1. task-executor → Implementation
+Each plan phase follows the cycle:
+1. task-executor → Implements the whole phase test-first (TDD), running only the unit tests of the units it touches and one typecheck of the touched package; it writes the phase's integration and e2e test files without running them
 2. Escalation judgment → Check status
-3. quality-fixer → Tests, linting, build — before every commit and at the end of every phase
+3. quality-fixer (`scope: phase`) → Static checks and the unit tests of the files the phase changed
 4. git commit → Based on selected commit strategy
+
+One full run (`scope: feature`) — whole unit suite, integration, e2e, coverage — happens once per feature, after the last part's post-implementation verification and before the completion report.
 
 ### Commit Strategy (User Choice)
 
 Ask user before implementation phase:
-- **per-task**: Commit after each task
 - **per-phase** (default): Commit after each phase completes
 - **per-feature**: Single commit at the end
 - **manual**: User decides when to commit
@@ -128,20 +128,20 @@ All three plugins symlink to shared agents/commands/skills:
 
 **Analysis & Review**: code-reviewer, document-reviewer, design-sync, integration-test-reviewer, code-verifier, code-explorer, codebase-analyzer, test-auditor
 
-**Specialized Workflows**: task-decomposer, investigator, verifier, solver, scope-discoverer, rule-advisor
+**Specialized Workflows**: investigator, verifier, solver, scope-discoverer, rule-advisor
 
 ### Skills (Knowledge Base)
 
 Skills contain structured guidance used by agents:
-- **workflow-orchestration**: Shared mechanics — agent invocation, response contracts, delegation boundary, conflict precedence, file ownership, TodoWrite
+- **workflow-orchestration**: Shared mechanics — agent invocation, response contracts, delegation boundary, conflict precedence, file ownership
 - **workflow-product**: Product phase — requirement analysis, PRD, UXRD, ending at UXRD approval
 - **workflow-technical**: Technical phase — codebase fact gathering, Design Doc, conditional ADR, test skeletons, ending at Design Doc approval
-- **workflow-execution**: Planning and execution — work plan, draft check, batch approval, decomposition, per-task cycle, commit strategies, post-implementation verification, auto-stop triggers. Parameterized by planner agent.
+- **workflow-execution**: Planning and execution — work plan, draft check, batch approval, the phase cycle, commit strategies, post-implementation verification, the feature's full run, auto-stop triggers. Parameterized by planner agent.
 - **workflow-gamedev** (gamedev only): Replaces workflow-product — scenario detection, development modes, GDD, game design disciplines. Reuses workflow-technical unchanged.
 - **documentation-criteria**: Which documents each scale needs, their definitions, storage and parts, templates; `references/authoring-rules.md` holds the rules every author and reviewer follows — Writing for the Reader, Revising a Document, Draft Check
 - **technical-design**: The part `technical-designer` and `technical-designer-frontend` share — investigation, contracts, ADR process, update mode, draft check, response to caller
 - **code-system**: The project code system in `docs/code-system/` — architecture style, layer map, module boundaries, pattern catalogue; designing it, building to it, reviewing against it
-- **work-planning**: The part `work-planner` and `gamedev-work-planner` share — the plan file, task design, test placement, draft check, response to caller, update mode
+- **work-planning**: The part `work-planner` and `gamedev-work-planner` share — the plan file, phase design, test placement, draft check, response to caller, update mode
 - **mermaid-diagrams**: How every document diagram is drawn and checked — C1–C4 levels (drawn per task) and runtime flow diagrams for the Design Doc, palette, redraw test, path animation, `check-mermaid.mjs` render check
 - **coding-principles**: Language-agnostic code quality standards
 - **testing-principles**: Test Selection (which tests earn their place), TDD practices, test patterns
@@ -170,7 +170,7 @@ This holds regardless of what the agent produces. What varies is what goes *in* 
 
 Reviewers are the one exception to the `status` enum: `document-reviewer` returns its verdict as the top-level `status` (`approved | approved_with_conditions | needs_revision | rejected`) together with `revision_agent`, because the orchestrator's revision loop keys on exactly those two fields.
 
-**Agents that produce documents** — prd-creator, technical-designer, work-planner, ux-designer, task-decomposer:
+**Agents that produce documents** — prd-creator, technical-designer, work-planner, ux-designer:
 
 ```json
 {
@@ -186,13 +186,6 @@ Reviewers are the one exception to the `status` enum: `document-reviewer` return
 `draftCheck` comes from each author that runs a draft check (see `documentation-criteria`, "Draft Check"). The document goes to disk; the response carries its **path**, not its contents. A caller that receives the document inline pays for it twice — once when the agent wrote it, again in its own context — and still has no path to hand to the next agent.
 
 **A document written without a returned path is invisible to the flow.** The orchestrator's revision loops key on `status`, and its handoffs key on `documents[].path`; an agent that writes a file and returns prose breaks both.
-
-### TodoWrite Integration
-
-All agents, when TodoWrite is available, must:
-- First todo: "Confirm skill constraints"
-- Final todo: "Verify skill fidelity"
-- Update status in real-time: pending → in_progress → completed
 
 ### Mandatory Escalation Triggers (task-executor)
 
@@ -217,9 +210,8 @@ Immediate escalation required:
 
 1. Edit or create agent file in `/agents/`
 2. Agent must output mandatory JSON format
-3. Include TodoWrite integration
-4. Register agent in both `backend/.claude-plugin/plugin.json` and `frontend/.claude-plugin/plugin.json` (or just one if plugin-specific)
-5. Create symlinks in `backend/agents/` and `frontend/agents/`
+3. Register agent in both `backend/.claude-plugin/plugin.json` and `frontend/.claude-plugin/plugin.json` (or just one if plugin-specific)
+4. Create symlinks in `backend/agents/` and `frontend/agents/`
 
 ### Adding/Modifying Commands
 
@@ -249,7 +241,7 @@ Only one bump per PR — if the version was already bumped in this branch, do no
 - `/implement` - Full-cycle feature development
 - `/design` - Design document creation
 - `/create-plan` - Work plan generation
-- `/build` - Execute from existing task plan
+- `/build` - Execute from an approved work plan (started on its own, asks plan approval and commit strategy once)
 - `/task` - Single task with precision
 - `/review` - Design compliance check
 - `/diagnose` - Root cause analysis

@@ -9,6 +9,8 @@ The Design Doc zooms in up to four steps, after the C4 model (Simon Brown, c4mod
 | C3 · Components | What inside one container does the work? | components of **one** container in call order | `flowchart TB` | 10 | one subsection per container whose components change; inside it one diagram per flow the part touches |
 | C4 · Code flow | How does data pass through the modules, step by step? | classes / functions / components as a vertical step chain | `flowchart TB` | 10 | a component's internals are the point of the change |
 
+On C3 and C4 a unit that does not exist yet is named by its role; its name and the order of its internal steps on the diagram do not bind the implementer.
+
 Every level carries a frontmatter `title:` of the form `"C2 · Containers — <scope>"`, the shared `config:` block, and path animation (SKILL.md sections 4–5).
 
 ## Reading the levels for backend and frontend
@@ -29,7 +31,7 @@ Every level carries a frontmatter `title:` of the form `"C2 · Containers — <s
 ## C2 · Containers
 
 - A dashed boundary subgraph named after the product holds the containers and stores the change touches; actors and external systems sit outside it. The subgraph has no inner `direction`.
-- Under the diagram, a sentence per container the part touches: what it does in this part — "`api` serves the threads and chat endpoints".
+- Under the diagram, only what the node labels do not say about a container's job in this part.
 
 ## C3 · Components
 

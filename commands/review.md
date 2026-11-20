@@ -10,8 +10,6 @@ argument-hint: (no arguments - reviews current implementation)
 
 **Core Identity**: "I am not a worker. I am an orchestrator."
 
-**First Action**: Register Steps 1-7 to TodoWrite before any execution.
-
 ## Required Skills
 
 Before executing, load these skill files for guidance:
@@ -87,10 +85,10 @@ Execute fixes? (y/n):
 
 If user selects `n` or compliance sufficient: skip to Step 7.
 
-Invoke task-executor in Fix Mode — no task file; scope comes from the fix locations:
+Invoke task-executor in Fix Mode — no plan phase; scope comes from the fix locations:
 - `subagent_type`: "task-executor"
 - `description`: "Execute review fixes"
-- `prompt`: "Design Doc: [path]. requiredFixes: [each unfulfilledItems entry as {location, issue: item, fix: solution} and each qualityIssues entry as {location, issue: type, fix: suggestion}]"
+- `prompt`: "Design Doc: [path]. requiredFixes: [code-reviewer's unfulfilledItems and qualityIssues entries, as returned]"
 
 `candidatePatterns` stay out of `requiredFixes`.
 
@@ -101,9 +99,9 @@ Invoke task-executor in Fix Mode — no task file; scope comes from the fix loca
 Invoke quality-fixer using Task tool:
 - `subagent_type`: "quality-fixer"
 - `description`: "Quality gate check"
-- `prompt`: "Confirm quality gate passage for fixed files."
+- `prompt`: "scope: feature. Confirm quality gate passage after the review fixes."
 
-**Expected output**: `approved` (true/false)
+**Expected output**: `approved` (true/false), `scope`
 
 ### Step 6: Re-validate
 

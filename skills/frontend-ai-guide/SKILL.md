@@ -1,6 +1,6 @@
 ---
 name: frontend-ai-guide
-description: This skill provides frontend-specific technical decision criteria, anti-patterns, debugging techniques, and quality check workflow. Automatically loaded when making frontend technical decisions, performing React/TypeScript quality assurance, or when "React anti-pattern", "frontend code smell", or "component quality" are mentioned.
+description: This skill provides frontend-specific technical decision criteria, anti-patterns, and debugging techniques for whoever writes or fixes React/TypeScript code. Automatically loaded when making frontend technical decisions, or when "React anti-pattern", "frontend code smell", or "component quality" are mentioned.
 ---
 
 # AI Developer Guide - Technical Decision Criteria and Anti-pattern Collection (Frontend)
@@ -38,20 +38,6 @@ In addition to `ai-development-guide`, "Debugging Techniques":
 - Inspect the component tree, props, and state with React DevTools
 - In a minimal reproduction, replace API calls with mocks and remove unrelated components
 - Remove debug `console.log` calls before committing
-
-## Quality Check Workflow
-
-The phases match `ai-development-guide` "Quality Check Workflow". Commands come from the project's own scripts — `package.json`, run with the package manager its `packageManager` field names — or from project-context; never assume another project's script names.
-
-- **Phase 1: Static Analysis** — the lint/format script (ESLint, Biome, Prettier) and the type check (the project's type-check script, or `tsc --noEmit`)
-- **Phase 2: Build Verification** — the production build script
-- **Phase 3: Testing** — the test script (React Testing Library), and the coverage script when the project has one
-- **Phase 4: Final Quality Gate** — after a fix, the phases that passed before it run again (the project's aggregate check script, when it has one); with no fixes, Phases 1–3 were the gate
-
-### Troubleshooting
-- **Port in use or hanging test processes**: stop the leftover runner processes (the project's cleanup script, when it has one)
-- **Stale results**: re-run with the test runner's cache cleared
-- **Dependency errors**: clean reinstall dependencies
 
 ## Situations Requiring Technical Decisions
 

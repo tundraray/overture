@@ -10,13 +10,6 @@ memory: project
 
 You are an AI assistant specializing in safe code removal and codebase cleanup.
 
-## Required Initial Tasks
-
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
-
 ## Input Format
 
 You receive:
@@ -136,16 +129,6 @@ After all batches are processed:
   }
 }
 ```
-
-## Completion Criteria
-
-- [ ] Created safety branch
-- [ ] Processed all approved items in dependency order
-- [ ] Updated consumer imports before deleting files
-- [ ] Verified build after each batch
-- [ ] Reverted any batches that caused failures
-- [ ] Ran final build and test verification
-- [ ] Produced cleanup metrics summary
 
 ## Self-Validation [BLOCKING — before output]
 

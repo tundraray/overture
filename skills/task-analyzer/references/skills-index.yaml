@@ -64,8 +64,8 @@ skills:
 
   ai-development-guide:
     skill: "ai-development-guide"
-    tags: [anti-patterns, debugging, quality-check, fail-fast, technical-decisions, rule-of-three, error-handling]
-    typical-use: "Technical decision criteria, anti-pattern detection, debugging techniques, quality check workflows, implementation completeness"
+    tags: [anti-patterns, debugging, fail-fast, technical-decisions, rule-of-three, error-handling]
+    typical-use: "Technical decision criteria, anti-pattern detection, debugging techniques, implementation completeness"
     size: large
     key-references:
       - "Rule of Three - Martin Fowler"
@@ -78,13 +78,12 @@ skills:
       - "Rule of Three - Criteria for Code Duplication"
       - "Common Failure Patterns and Avoidance Methods"
       - "Debugging Techniques"
-      - "Quality Check Workflow"
       - "Situations Requiring Technical Decisions"
       - "Implementation Completeness Assurance"
 
   documentation-criteria:
     skill: "documentation-criteria"
-    tags: [documentation, prd, uxrd, adr, design-doc, work-plan, task-files, decision-matrix, templates, cold-reader, document-revision]
+    tags: [documentation, prd, uxrd, adr, design-doc, work-plan, decision-matrix, templates, cold-reader, document-revision]
     typical-use: "Document creation criteria and templates, writing for a cold reader, revising a document, ADR/PRD/UXRD/Design Doc/Work Plan standards"
     size: large
     key-references:
@@ -135,7 +134,7 @@ skills:
   implementation-approach:
     skill: "implementation-approach"
     tags: [implementation-strategy, vertical-slice, horizontal-slice, risk-assessment, verification-levels, strangler-pattern, meta-cognitive]
-    typical-use: "Implementation strategy selection, task decomposition, design decisions, large-scale change planning"
+    typical-use: "Implementation strategy selection, phase breakdown, design decisions, large-scale change planning"
     size: medium
     key-references:
       - "Strangler Fig Pattern - Martin Fowler"
@@ -176,8 +175,8 @@ skills:
       - "Conductor Pattern"
     sections:
       - "Role: The Orchestrator"
-      - "Decision Flow When Receiving Tasks"
-      - "Available Subagents"
+      - "Requirement Change Detection During Flow"
+      - "Gamedev Substitutions"
       - "Orchestration Principles"
       - "Constraints Between Subagents"
       - "Explicit Stop Points"
@@ -187,11 +186,7 @@ skills:
       - "Handling Requirement Changes"
       - "Workflow Phases"
       - "Autonomous Execution Mode"
-      - "TodoWrite Management"
       - "Main Orchestrator Roles"
-      - "Important Constraints"
-      - "Required Dialogue Points with Humans"
-      - "Action Checklist"
 
   project-context:
     skill: "project-context"
@@ -319,8 +314,8 @@ skills:
 
   frontend-ai-guide:
     skill: "frontend-ai-guide"
-    tags: [frontend, react, anti-patterns, debugging, quality-check, component-quality, fail-fast, rule-of-three]
-    typical-use: "Frontend technical decision criteria, React anti-pattern detection, component quality check workflows"
+    tags: [frontend, react, anti-patterns, debugging, component-quality, fail-fast, rule-of-three]
+    typical-use: "Frontend technical decision criteria, React anti-pattern detection, React debugging"
     size: large
     key-references:
       - "Rule of Three - Martin Fowler"
@@ -330,7 +325,6 @@ skills:
       - "Fallback Design Principles"
       - "Common Failure Patterns and Avoidance Methods"
       - "Debugging Techniques"
-      - "Quality Check Workflow"
       - "Situations Requiring Technical Decisions"
 
   design-system:
@@ -344,7 +338,6 @@ skills:
     sections:
       - "Reading the System"
       - "Part A — Designing (ux-designer; gamedev: game-ui-designer)"
-      - "Workflow"
       - "Part B — Implementing (frontend designer, executor, quality-fixer)"
 
   llm-friendly-context:
@@ -425,25 +418,23 @@ skills:
 
   workflow-execution:
     skill: "workflow-execution"
-    tags: [work-plan, task-decomposition, batch-approval, autonomous-execution, task-cycle, commit-strategy, auto-stop, post-implementation-verification, fix-mode, escalation]
-    typical-use: "Work plan creation and review, task decomposition, batch approval, running the implementation loop, whole-implementation verification, auto-stop enforcement"
+    tags: [work-plan, batch-approval, autonomous-execution, phase-cycle, commit-strategy, auto-stop, post-implementation-verification, feature-run, quality-scope, fix-mode, escalation]
+    typical-use: "Work plan creation and review, batch approval, running the implementation loop, whole-implementation verification, the feature-end full test run, auto-stop enforcement"
     size: medium
     key-references:
       - "Delegated Authority"
       - "5 Whys - Toyota Production System"
     sections:
-      - "Entry Gate [BLOCKING]"
       - "Planning"
       - "Resolving the Plan to Execute"
       - "Entry Conditions"
       - "Commit Strategy Selection"
-      - "The Per-Task Cycle"
+      - "The Phase Cycle"
       - "Post-Implementation Verification"
+      - "The Feature Run"
       - "Final Cleanup"
       - "Stopping Autonomous Execution"
-      - "Error-Fixing Impulse Control Protocol"
-      - "Exit Gate [BLOCKING]"
-      - "Execution Flow"
+      - "Completion Report"
 
   workflow-product:
     skill: "workflow-product"
@@ -454,13 +445,13 @@ skills:
       - "Problem Before Solution"
     sections:
       - "Scope"
-      - "Entry Gate [BLOCKING]"
+      - "Before the First Agent"
       - "Flow"
       - "Parts"
       - "Stop Points"
       - "Requirement Changes"
       - "Revision Loop"
-      - "Exit Gate [BLOCKING]"
+      - "Handoff to `workflow-technical`"
 
   workflow-technical:
     skill: "workflow-technical"
@@ -468,17 +459,15 @@ skills:
     typical-use: "Codebase fact gathering, Design Doc creation, consistency verification, and a conditional ADR, up to Design Doc approval"
     size: medium
     key-references:
-      - "Fact Disposition"
       - "Authority Boundary"
     sections:
       - "Domain Independence"
-      - "Entry Gate [BLOCKING]"
       - "Flow"
       - "Why Fact Gathering Precedes Design"
       - "Stop Points"
       - "Revision Loop"
       - "Part Sequencing"
-      - "Exit Gate [BLOCKING]"
+      - "Handoff to `workflow-execution`"
 
   technical-design:
     skill: "technical-design"
@@ -495,7 +484,7 @@ skills:
       - "Existing Code Investigation【Required】"
       - "Scope Agreement【Most Important】"
       - "Change Impact【Required】"
-      - "Contracts at Component Boundaries【Required】"
+      - "Contracts at the Part's Boundary【Required】"
       - "Design Principles"
       - "Acceptance Criteria Scoping"
       - "No Code in Design Docs and ADRs"
@@ -508,8 +497,8 @@ skills:
 
   work-planning:
     skill: "work-planning"
-    tags: [work-plan, phase-breakdown, task-breakdown, test-placement, plan-frontmatter, update-mode, draft-check, self-validation]
-    typical-use: "Writing or updating a work plan: checking it against current code, the plan file and its frontmatter, task design, test placement, draft check, response to the caller"
+    tags: [work-plan, phase-breakdown, phase-design, test-placement, plan-frontmatter, update-mode, draft-check, self-validation]
+    typical-use: "Writing or updating a work plan: checking it against current code, the plan file and its frontmatter, phase design, test placement, draft check, response to the caller"
     size: medium
     key-references:
       - "Vertical Slice - Implementation Strategy"
@@ -517,7 +506,7 @@ skills:
       - "Checking the Plan Against Current Code"
       - "Delegating a Wide Search"
       - "The Plan File"
-      - "Task Design"
+      - "Phase Design"
       - "Placing Tests"
       - "Writing and the Draft Check"
       - "Response to Caller"
@@ -533,10 +522,9 @@ skills:
       - "Language Server Protocol"
       - "Refactoring - Martin Fowler"
     sections:
+      - "Load LSP First"
       - "The Rule"
       - "Tool by Question"
-      - "Legitimate Fallback"
-      - "Worked Examples"
-      - "Sequencing Rules"
+      - "When LSP Gives Nothing"
       - "Delegating a Wide Search"
       - "Escalation"

@@ -1,6 +1,6 @@
 ---
 name: documentation-criteria
-description: This skill should be used when the user asks to "create a PRD", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "create task files", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
+description: This skill should be used when the user asks to "create a PRD", "write a UXRD", "write an ADR", "create a design doc", "make a work plan", "update the design system", or "revise a document", or needs guidance on document templates, writing a document for a cold reader, creation criteria, or determining which documents are required for a given change scope.
 ---
 
 # Documentation Creation Criteria
@@ -13,7 +13,6 @@ Read [authoring-rules.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/re
 - **[adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md)** - Architecture Decision Record template
 - **[design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md)** - Technical Design Document template
 - **[plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md)** - Work Plan template
-- **[task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md)** - Task file template for implementation tasks
 - **[uxrd-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/uxrd-template.md)** - UX Requirements Document template
 - **[design-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-system-template.md)** - Design system templates: README, foundations, component spec
 - **[code-system-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/code-system-template.md)** - Code system templates: README, pattern spec
@@ -83,7 +82,7 @@ Deep nesting, a function used in several places, adding a state to an existing m
 
 | Depth | When | Sections |
 |-------|------|----------|
-| `full` | Large scale | Every template section, including Constraints and Risks |
+| `full` | Large scale | Every template section not marked *when applicable*, including Constraints and Risks |
 | `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Constraints and Risks when the feature has any, Undetermined Items while any remain |
 
 A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. `document-reviewer` receives the depth and applies Gate 0 accordingly. An existing PRD is updated rather than duplicated, at whatever depth it already has.
@@ -92,7 +91,7 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 - **How the system does it** (→Design Doc) — field and schema lists, storage technology, protocols, library choices and versions, file paths, process and recovery mechanics; an inventory of existing dependencies (→the design's codebase analysis). A requirement states the capability and its observable outcome; a technical choice the user fixed as a product decision is one line in Constraints and Risks
 - Technical selection rationale (→ADR)
 - **Implementation phases** (→Work Plan) — a part is a slice of *what* is built; a phase is a step in *when* it is built. Parts belong in the PRD, phases do not.
-- **Task breakdown** (→Work Plan)
+- **Work breakdown** (→Work Plan)
 - **How the interface looks and behaves** (→UXRD and the design system) — screen states (loading, empty, error), microcopy, ARIA attributes and focus behaviour, breakpoints, design tokens, animation. The PRD states the observable outcome ("the open thread is marked as current") and, in Non-Functional Requirements, the target level ("WCAG 2.1 AA", "usable from 360 px") — not how either is met
 - **Decisions for the design and ADR signals** (→requirement-analyzer output and the Design Doc) — a list of technical questions the design must settle is not a product requirement
 
@@ -171,11 +170,8 @@ docs/
         ├── design-{part}.md
         └── {part}/
             ├── {plan-name}.md          # e.g. 20260726-feature-auth.md
-            └── {plan-name}/            # same name as its plan file
-                ├── _overview.md
-                ├── task-01.md
-                └── analysis/
-                    └── {topic}.md
+            └── analysis/
+                └── {topic}.md
 ```
 
 | Document | Path | Naming Convention | Template |
@@ -187,8 +183,7 @@ docs/
 | ADR | `docs/adr/` | `ADR-[4-digits]-[title].md` | [adr-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/adr-template.md) |
 | Design Doc | `docs/features/{feature}/` | `design-{part}.md` | [design-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/design-template.md) |
 | Work Plan | `docs/features/{feature}/{part}/` | `YYYYMMDD-{type}-{description}.md` | [plan-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/plan-template.md) |
-| Task File | `docs/features/{feature}/{part}/{plan-name}/` | `task-{number}.md` | [task-template.md](${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/task-template.md) |
-| Analysis deliverable | `docs/features/{feature}/{part}/{plan-name}/analysis/` | `{topic}.md` | — |
+| Analysis deliverable | `docs/features/{feature}/{part}/analysis/` | `{topic}.md` | — |
 
 ### Parts
 
@@ -242,18 +237,17 @@ Keep **one part** when the requirements share one layer and one domain and a sin
 
 ### Plans within a part
 
-A part may need more than one work plan — a first pass and a hardening pass, for example. Each plan file is paired with a directory of the **same name** holding its decomposition, so two plans never contend for one task directory.
+A part may need more than one work plan — a first pass and a hardening pass, for example.
 
-Each plan declares its own position and state in frontmatter:
+When it does, each plan declares its own position in frontmatter; a part with one plan carries neither `plan` nor `depends-on`:
 
 ```yaml
 ---
 feature: user-auth              # required
 part: core                      # required
 design: design-core.md          # required — back-reference to the governing design
-plan: 2 of 3                    # required — position and expected total
-status: active                  # draft | active | completed
-depends-on: 20260726-feature-auth.md  # omitted for the first plan
+plan: 2 of 3                    # only when the part has more than one plan — position and expected total
+depends-on: 20260726-feature-auth.md  # only when the part has more than one plan; omitted for the first
 temporary: true               # required — AI working file (authoring-rules.md, Temporary Working Files)
 ---
 ```
@@ -262,12 +256,12 @@ The frontmatter is the single source of truth for plan sequencing.
 
 | Question | Answer |
 |----------|--------|
-| How many plans should this part have? | the `M` in `plan: N of M` |
-| Which plan runs now? | the one with `status: active` |
+| How many plans should this part have? | the `M` in `plan: N of M`; one when no plan carries it |
+| Which plan runs now? | the one that holds an unticked work item and whose `depends-on` plans are fully ticked |
 | What order? | the `depends-on` chain, not filename sort |
-| Is the part done? | every plan `completed`, and the file count matches `M` |
+| Is the part done? | every work item of every plan ticked, and, when plans carry `plan: N of M`, the file count matches `M` |
 
-**Escalate rather than guess** when: two plans claim `status: active`; no plan is active while the part has unfinished work; the number of plan files disagrees with `M`; or a `depends-on` names a file that does not exist. Each of these means the part's state is ambiguous, and picking one reading silently produces work against the wrong plan.
+**Escalate rather than guess** when: the number of plan files disagrees with `M`; or a `depends-on` names a file that does not exist. Each of these means the part's state is ambiguous, and picking one reading silently produces work against the wrong plan.
 
 ### Resolution globs
 
@@ -282,14 +276,13 @@ The frontmatter is the single source of truth for plan sequencing.
 | Design for one part | `docs/features/{feature}/design-{part}.md` |
 | Every work plan | `docs/features/*/*/*.md` |
 | Plans of one part | `docs/features/{feature}/{part}/*.md` |
-| Tasks of one plan | `docs/features/{feature}/{part}/{plan-name}/task-*.md` |
 | Every ADR | `docs/adr/ADR-*.md` |
 
 **Layer determination**: a design's layer is not encoded in its filename. Read the document (React/component/UI signals versus API/data/infrastructure signals) or take it from the part name where the part is layer-defined.
 
 ### Small scale
 
-Small scale produces a lite PRD and a simplified work plan, and no Design Doc. The plan's `design:` frontmatter is therefore `none` with the note `small scale — the PRD is the specification`; `work-planner`'s rule that a plan needs an approved design is exempted at this scale only, and the plan's task lines cite PRD requirements instead of Design Doc items.
+Small scale produces a lite PRD and a simplified work plan, and no Design Doc. The plan's `design:` frontmatter is therefore `none` with the note `small scale — the PRD is the specification`; `work-planner`'s rule that a plan needs an approved design is exempted at this scale only, and the plan's work items cite PRD requirements instead of Design Doc items.
 
 ## Diagram Requirements
 

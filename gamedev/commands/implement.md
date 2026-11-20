@@ -39,14 +39,14 @@ Instruction Content: $ARGUMENTS
 | Situation Pattern | Decision Criteria | Next Action |
 |------------------|------------------|-------------|
 | New Requirements | No existing work, new game feature/project request | Start with requirement-analyzer |
-| Flow Continuation | Existing docs/tasks present, continuation directive | Identify next step in workflow-gamedev flow |
+| Flow Continuation | Existing docs or a work plan present, continuation directive | Identify next step in workflow-gamedev flow |
 | Quality Errors | Error detection, test failures, build errors | Execute quality-fixer |
 | Ambiguous | Intent unclear, multiple interpretations possible | Confirm with user |
 
 ### 2. Progress Verification for Continuation
 
 When continuing existing flow, verify:
-- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan/Tasks), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a `completed` plan chain — the current part is the first one not finished in the current phase
+- Latest artifacts (GDD/Feature Spec/ADR/Design Doc/Work Plan with its ticked work items), and which parts of the feature spec's Delivery Parts have an approved `design-{part}.md` or a plan chain with every work item ticked — the current part is the first one not finished in the current phase
 - Current phase position (Requirements/Market Analysis/Game Design/Technical Design/Planning/Implementation/QA)
 - Identify next step in workflow-gamedev skill corresponding flow
 
@@ -175,21 +175,12 @@ scopeDependencies:
 - Recognize mandatory stopping points
 - Invoke next sub-agent defined in flow
 
-### 5. Register All Flow Steps to TodoWrite (MANDATORY)
-
-**After scale determination, register all steps of the applicable flow to TodoWrite**:
-- First todo: "Confirm skill constraints"
-- Register each step as individual Todo (including gamedev-specific phases)
-- Set currently executing step to `in_progress`
-- **Complete TodoWrite registration before invoking subagents**
-
 ## Subagents Orchestration Guide Compliance Execution
 
 **Pre-execution Checklist (MANDATORY)**:
 - [ ] Confirmed relevant workflow-gamedev skill flow
 - [ ] Identified current progress position
 - [ ] Clarified next step
-- [ ] Recognized stopping points
 - [ ] Detected development mode (Full/Design Only/Prototype)
 - [ ] Detected scenario (New Project/Existing Project)
 - [ ] **Environment check**: Can I execute the commit cycle?
@@ -218,19 +209,20 @@ This agent operates within implement command scope. Use orchestrator-provided ru
 The parts list confirmed in the product phase — the feature spec's Delivery Parts section, at every scale — drives two loops, both in the list's dependency order:
 
 1. **Technical phase**: design every part to approval before planning any — `workflow-technical`, "Flow". One `[Stop: Design Doc approval — part X]` per part.
-2. **Execution phase**: for each part, plan → batch approval → decompose → execute → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part.
+2. **Execution phase**: for each part, plan → batch approval → execute phase by phase → post-implementation verification → Final Cleanup, then the next part — `workflow-execution`, "One part at a time". One batch approval per part. The last part runs the feature run between its verification and its cleanup.
 
-Register per-part steps in TodoWrite as `[part] step`, so the current part is always visible. Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`mid-game-designer` in `update` mode and feature spec re-approval).
+Commit strategy is asked once per feature, before the first part's batch approval. The orchestrator does not add, merge, or rename parts: a change to the list returns to the product phase (`mid-game-designer` in `update` mode and feature spec re-approval).
 
 ### Execution Phase (per part)
 
 `workflow-execution` owns every step below, with `gamedev-work-planner` as `{planner}`; follow it there rather than from memory:
 
-- **Commit strategy** — asked once per feature, after feature spec approval and before the first part's batch approval ("Commit Strategy Selection"); `per-phase` groups commits by the six game phases
-- **Per-task cycle** — task-executor → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer at the gate point (before a commit, at a phase end) → commit per strategy ("The Per-Task Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
-- **Post-Implementation Verification** — the four verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and nothing is committed; candidate patterns go to the completion report
-- **Final Cleanup** — the consumed task directory is deleted and `gamedev-work-planner` (`update` mode) sets the plan `completed`; the feature spec, GDD, `docs/design-system/`, `docs/code-system/`, and every design document stay
-- **Test skeleton paths** reach `gamedev-work-planner` per part — `workflow-orchestration`, "Main Orchestrator Roles"
+- **Commit strategy** — asked once per feature, after feature spec approval and before the first part's batch approval ("Commit Strategy Selection"); `per-phase` commits per plan phase — the six game stages (Core Mechanics … QA) each hold one or more plan phases — and each phase's end is a `phase`-scope gate
+- **Phase cycle** — for each plan phase: task-executor (`"Work plan: [path]. Phase: N."`) → escalation check → integration-test-reviewer when `requiresTestReview` → quality-fixer with `scope: phase` and that run's changed files → commit per strategy ("The Phase Cycle"). Never skip the escalation check or quality-fixer; never commit on `stub_detected`
+- **Post-Implementation Verification** — the four verifiers in parallel on the part's file list, then at most two fix cycles. A `security-reviewer` `blocked` stops the run and goes to the user; candidate patterns go to the completion report
+- **Feature run** — once, after the last part's verification: quality-fixer with `scope: feature` ("The Feature Run")
+- **Final Cleanup** — after the part's last plan its `analysis/` directory is deleted; the feature spec, GDD, `docs/design-system/`, `docs/code-system/`, and every design document stay
+- **Test skeleton paths** reach `gamedev-work-planner` per part
 
 Append `[SYSTEM CONSTRAINT] This agent operates within implement command scope.` to each verifier prompt as well.
 

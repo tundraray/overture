@@ -69,13 +69,12 @@ Execute fixes? (y/n):
 If user selects `y`:
 
 ## Pre-fix Metacognition
-**Required**: `rule-advisor → TodoWrite → task-executor-frontend → quality-fixer-frontend`
+**Required**: `rule-advisor → task-executor-frontend → quality-fixer-frontend`
 
 1. **Execute rule-advisor**: Understand fix essence (symptomatic treatment vs root solution)
-2. **Update TodoWrite**: Register work steps. Always include: first "Confirm skill constraints", final "Verify skill fidelity"
-3. **Execute task-executor-frontend** in Fix Mode, no task file: `Design Doc: [path]` and `requiredFixes` built from code-reviewer's `unfulfilledItems` and `qualityIssues` (`{location, issue, fix}`); `candidatePatterns` stay out of `requiredFixes`
-4. **Execute quality-fixer-frontend**: Confirm quality gate passage
-5. **Re-validate**: Measure improvement with code-reviewer
+2. **Execute task-executor-frontend** in Fix Mode, no plan phase: `Design Doc: [path]` and `requiredFixes`: code-reviewer's `unfulfilledItems` and `qualityIssues` entries, as returned; `candidatePatterns` stay out of `requiredFixes`
+3. **Execute quality-fixer-frontend** with `scope: feature`: Confirm quality gate passage
+4. **Re-validate**: Measure improvement with code-reviewer
 
 ### 4. Final Report
 ```

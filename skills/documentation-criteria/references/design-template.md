@@ -2,11 +2,11 @@
 
 <!-- Guidance for the author sits in comments like this one; every section follows "Writing for the Reader" in documentation-criteria. -->
 
-**Status:** Draft / Approved · **Date:** YYYY-MM-DD · **PRD:** [prd.md](./prd.md) · **UXRD:** [uxrd.md](./uxrd.md) or none · **Depends on:** [`design-[part].md`] or nothing
+**Status:** Draft / Approved · **Date:** YYYY-MM-DD · **PRD:** [prd.md](./prd.md) · **UXRD:** [uxrd.md](./uxrd.md) or none · **Depends on:** [`design-[part].md#contract-definitions`] or nothing
 
 ## Snapshot
 
-<!-- Answers: what is this, and what could go wrong? At most ten lines. -->
+<!-- Answers: what is this, why is it needed, and what could go wrong? At most ten lines. -->
 
 **Overview.** [Three to five plain sentences: the problem this part solves, what it adds or changes, and how it works in outline — as you would explain it to a colleague who has not followed the feature. No IDs, no code names the reader has not met.]
 
@@ -16,12 +16,11 @@
 
 ### Key Decisions
 
-<!-- Answers: why is it built this way and not another? Three to seven decisions a reviewer would argue about, each with every option not taken. This is the one place a decision is argued; every other section cites the ID instead of re-arguing it. A breaking change to an existing contract, and a data migration, are decisions here.
-When choosing, prefer the option adding the least: new persistent state, then crossing a boundary, then a new concept/mode/flag/prop, then a breaking change. -->
+<!-- Answers: why is it built this way and not another? Three to seven decisions a reviewer would argue about. -->
 
 #### KD-1: [what was decided, in one sentence]
 
-[Why, in words a newcomer follows. Then each option not taken, by name, and why it was not taken — a sentence or two each.]
+[Why: the problem it settles and what it buys, in words a newcomer follows. Then the options a reviewer would raise, by name, and why each lost — a sentence or two each.]
 
 ## Terms
 
@@ -31,13 +30,9 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 ## Part
 
-<!-- Answers: what does this part cover, and what does it leave alone? Scope as agreed with the user: what this part leaves as it is, and what the design must respect. -->
+<!-- Answers: what does this part leave alone, and what must the design respect? -->
 
-- **Part**: `[part-name]` — one entry of the PRD's Delivery Parts section (on the gamedev path, of the feature spec's Delivery Parts section)
-- **Covers**: [the ID of each requirement this part owns — the PRD holds the full text]
-- **Depends on**: [link to the contract section of each approved upstream design, e.g. `design-[other-part].md#contract-definitions` — cited, never restated: a copy forces a revision every time upstream changes], or "none — first part"
 - **Prerequisite ADRs**: [a link to each existing ADR this design follows], or "none"
-- **Sibling parts**: [other parts of this feature; their requirements are out of scope here and appear only as contracts]
 
 **Out of scope**
 
@@ -49,7 +44,7 @@ When choosing, prefer the option adding the least: new persistent state, then cr
 
 ## Building-block Inventory
 
-<!-- Answers: which modules, services, utilities and components does this part touch, and is each one reused, extended or new? Present when docs/code-system/ exists. Workflow (reuse, extend, new pattern): `code-system`, "Part A". A row marked `new` where a catalogued pattern or an existing block fits is a Key Decision — cite its ID here. -->
+<!-- Answers: which modules, services, utilities and components does this part touch, and is each one reused, extended or new? Present when docs/code-system/ exists. -->
 
 Follows the [code system](../../code-system/README.md).
 
@@ -61,12 +56,7 @@ Follows the [code system](../../code-system/README.md).
 
 ## Acceptance Criteria
 
-<!--
-Answers: what must be true when this part is done?
-A PRD criterion that already states testable behaviour is cited by its ID under its requirement, never restated in words.
-Write a criterion of your own only where the design refines a PRD criterion into system behaviour the PRD does not spell out — a trigger, a state, an error case. Give it an ID (`DC-1`, `DC-2`) so flows and use cases can cite it.
-Each is one plain sentence a person reads: what happens, and when. No table mapping criteria to sections or use cases, and no prose saying where each one is handled: each use case in Test Strategy names the criteria it covers.
--->
+<!-- Answers: what must be true when this part is done? -->
 
 ### [Requirement ID]: [short name]
 
@@ -78,7 +68,7 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ### Architecture (C1–C4)
 
-<!-- Answers: how does it work? Diagrams carry this section; prose states only what a picture cannot — why. Every diagram follows the `mermaid-diagrams` skill; which levels are drawn, and how, is in its `references/c4-levels.md`. Delete the subsection of a level not drawn. -->
+<!-- Answers: how does it work? Every diagram follows the `mermaid-diagrams` skill; which levels are drawn, and how, is in its `references/c4-levels.md`. Delete the subsection of a level not drawn. -->
 
 #### C1 · Context
 
@@ -98,7 +88,7 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ### Runtime Flows
 
-<!-- One flow per acceptance criterion that crosses a container boundary or has a failure path that changes state; every other criterion is covered by its use cases in Test Strategy. The sequence diagram is the flow: drawn at container level (participants are containers, under their C2 names), one journey shape across all flows, path animation per the `mermaid-diagrams` skill. -->
+<!-- Answers: what happens, step by step, when the system runs? One flow per acceptance criterion that crosses a container boundary or has a failure path that changes state, drawn per the `mermaid-diagrams` skill. -->
 
 #### Flow 1: [name]
 
@@ -106,21 +96,17 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 [`sequenceDiagram`]
 
-**Outcome:** [result and persisted state the diagram does not show]
-
-**Failure handling:**
-
-- [what can go wrong] → [how it is handled, what the caller sees]
+[Only what the diagram cannot show: what is persisted, and a failure no contract states.]
 
 ### Contract Definitions
 
-<!-- Answers: what can a caller — another part, the UI — rely on? What each operation offers its caller, at the design's altitude ("Writing for the Reader"). Sibling parts cite this section. No source code and no full copy of a schema — the schema or type is written at implementation. An exact value a caller or the work plan relies on is written exactly: limits, enum values, status codes, timeouts, setting names and defaults. -->
+<!-- Answers: what can a caller — another part, the UI, an external system — rely on? Exact where a value crosses that boundary; nothing about what sits behind it. -->
 
 - **[route / method / event name]** — [what it does for the caller, naming its input, in a sentence]. Returns [result, by name]. [Each failure the caller handles, and what it sees.]
 
-<!-- Only for a shape another part or the UI uses: the fields a caller must understand, as a list, with the exact limits and allowed values it relies on. -->
-
 **[Shape name]**
+
+<!-- When applicable: a shape another part or the UI uses. -->
 
 - `[field]` — [what it is for the caller; optional or nullable when it is; its limit or allowed values when a caller relies on them]
 
@@ -132,19 +118,21 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 **Runtime settings**
 
-<!-- When applicable: each setting the part reads. -->
+<!-- When applicable: settings an operator sets. -->
 
 - `[SETTING_NAME]` — default `[value]`; [what it changes]
 
 ### Data Model
 
-<!-- When applicable: the part adds or changes persistent stores. In sentences: what each store holds, how stores relate, and the invariant each store guarantees — not columns, types, or indexes: those are the migration's. -->
+<!-- When applicable: the part adds or changes persistent stores. -->
 
 [What is stored, how the stores relate, and which rule each store enforces.]
 
 ### State Transitions and Invariants
 
-<!-- When applicable: an entity moves through states. A `stateDiagram-v2`, then the invariants as plain sentences — the rule, not the mechanism that enforces it. -->
+<!-- When applicable: an entity moves through states. -->
+
+[`stateDiagram-v2`]
 
 **Invariants**
 
@@ -152,32 +140,16 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ## Test Strategy
 
-<!-- Answers: how will we know it works? Use cases, in the words of the domain: who acts, from what state, what they do, what they observe. Every acceptance criterion is covered by at least one use case. No test code, test file names, framework, fixture, or helper names — how a use case becomes a test is decided by `acceptance-test-generator` and the task files. Delete a subsection that has no use cases. -->
-
-### Main Use Cases
+<!-- Answers: how will we know it works? Use cases in the words of the domain, grouped under sub-headings only when the list is long; a non-functional use case only when the part has a threshold to prove. -->
 
 - **UC-1: [short name]** — covers [AC ids]
   - Given: [starting state, in domain terms]
   - When: [what the user or calling system does]
-  - Then: [what they observe — concrete values, counts, status]
-
-### Error and Edge Use Cases
-
-- **UC-E1: [short name]** — covers [AC ids]
-  - Given: [state that leads to the failure or boundary]
-  - When: [action]
-  - Then: [observable outcome — what the user sees, what stays unchanged]
-
-### Non-Functional Use Cases
-
-- **UC-N1: [short name]** — covers [NFR / AC ids]
-  - Given: [load or data volume]
-  - When: [action]
-  - Then: [measurable threshold]
+  - Then: [what they observe]
 
 ## Security Considerations
 
-<!-- Answers: who could misuse it, and what protects against that? Answer each item against this part's trust boundaries. An item with no relevant boundary gets one line saying why — an unanswered question is not the same as an inapplicable one. -->
+<!-- Answers: who could misuse it, and what protects against that? -->
 
 - **Authentication & Authorization**: [what protects new entry points and resource access]
 - **Input Validation**: [where external input enters and how it is validated]
@@ -191,24 +163,13 @@ Each is one plain sentence a person reads: what happens, and when. No table mapp
 
 ## Open Questions
 
-<!-- When applicable. Answers: what is not decided yet? Each names the decision it blocks and who resolves it. -->
+<!-- When applicable. Answers: what is not decided yet? -->
 
 - [The question, in a sentence] It blocks [which decision]; [who] resolves it.
 
-## Appendix: Fact Disposition
-
-<!-- What the design does with the existing behaviour codebase analysis found (`focusAreas`). A row only for a fact the design transforms, removes, or puts out of scope, one phrase per cell; the facts it preserves go in one sentence under the table. Every fact appears once, so a deliberate removal is distinguishable from an oversight. The analyzer output holds the evidence; this records only what happened to each fact, the file it lives in, and where the design handles it. -->
-
-| Fact | Disposition | Handled in |
-|------|-------------|------------|
-| [the fact in a few words, the file it lives in (fact_id)] | transform / remove / out-of-scope | [the decision or section, in words with its ID] |
-
-The design preserves [each remaining fact in a few words, with its fact_id].
-
 ## Update History
 
-<!-- One line per version, newest last: what changed in the design, in a phrase. No reviewer IDs, no "user decision of <date>" — the body states the current truth, this table says when it changed.
-After approval the design changes only when a decision, contract, or AC changes; implementation details found during execution (package versions, file or function names) go to the task files, not the design. -->
+<!-- One line per version, newest last. -->
 
 | Version | Date | Change |
 |---------|------|--------|

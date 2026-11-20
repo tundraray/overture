@@ -4,7 +4,7 @@
  *
  * The File Ownership table in workflow-orchestration says which agent owns
  * which document. It is guidance, and guidance is followed until it isn't:
- * a Design Doc rewritten by an executor mid-task is indistinguishable, after
+ * a Design Doc rewritten by an executor during implementation is indistinguishable, after
  * the fact, from one the designer wrote.
  *
  * This turns the table into a gate. It reads `agent_type` from the hook input
@@ -29,7 +29,7 @@
  * data; `cd` is followed) and a write is a redirect, `rm`/`mv`/`tee`/`touch`/
  * `truncate`, a copy destination, an in-place `sed`/`perl`, a writing `git`
  * subcommand, or a PowerShell content/item cmdlet whose target is a human
- * document. Work plans and task files are temporary and not guarded here. A
+ * document. Work plans are temporary and not guarded here. A
  * script that opens files itself (`python -c`, `node -e`) is not recognised.
  *
  * The same hook also watches Agent/Task calls for one shape: a document owner
@@ -83,7 +83,7 @@ const RULES = [
     name: 'Design Doc',
     test: /^docs\/features\/[^/]+\/design-[^/]+\.md$/,
     authors: ['technical-designer', 'technical-designer-frontend'],
-    // a design has no progress section; progress lives in plans and task files
+    // a design has no progress section; progress lives in the work plan
     updaters: [],
   },
   {
@@ -105,17 +105,11 @@ const RULES = [
     updaters: [],
   },
   {
-    // research task deliverables (task metadata `Provides:`)
+    // research deliverables a plan phase lists among its Target Files
     name: 'research deliverable',
-    test: /^docs\/features\/[^/]+\/[^/]+\/[^/]+\/analysis\/.+\.md$/,
+    test: /^docs\/features\/[^/]+\/[^/]+\/analysis\/.+\.md$/,
     authors: ['task-executor', 'task-executor-frontend'],
     updaters: [],
-  },
-  {
-    name: 'task file',
-    test: /^docs\/features\/[^/]+\/[^/]+\/[^/]+\/.+\.md$/,
-    authors: ['task-decomposer'],
-    updaters: ['task-executor', 'task-executor-frontend'],
   },
   {
     name: 'work plan',
@@ -132,7 +126,7 @@ const SPAWN_TOOLS = new Set(['Agent', 'Task']);
 // --- shell guard ------------------------------------------------------------
 //
 // Human documents — PRD, UXRD, design system, code system, Design Doc, ADR,
-// GDD, feature spec — change only through Write/Edit. Work plans and task files (a part
+// GDD, feature spec — change only through Write/Edit. Work plans and research deliverables (a part
 // directory under docs/features/<feature>/) are temporary working state: the
 // shell may touch them, and Final Cleanup deletes them with `rm`.
 
@@ -143,7 +137,7 @@ function isHumanDocPath(p) {
   if (p === 'docs') return true;
   if (!p.startsWith('docs/')) return false;
   const rest = p.slice('docs/'.length);
-  if (/^features\/[^/]+\/[^/.]+(\/|$)/.test(rest)) return false; // part directory: plans and task files
+  if (/^features\/[^/]+\/[^/.]+(\/|$)/.test(rest)) return false; // part directory: plans and research deliverables
   return /^(features|adr|design-system|code-system|game-design)(\/|$)/.test(rest);
 }
 
@@ -284,7 +278,7 @@ function decideShell(command, cwd, agentType) {
     decision: 'deny',
     reason: `This command changes a document under docs/ through the shell. PRD, UXRD, design system, `
       + `code system, Design Doc, ADR, GDD, and feature spec change only through Write/Edit, where ownership is checked. `
-      + `${next} Work plans and task files are not affected by this rule.`,
+      + `${next} Work plans are not affected by this rule.`,
   };
 }
 

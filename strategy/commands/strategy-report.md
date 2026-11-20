@@ -296,29 +296,6 @@ If user requests only one domain (e.g., "just do market analysis"):
 2. [domain-specific agent] → the files the single-domain command names
 3. No report compilation
 
-## TodoWrite Registration (MANDATORY)
-
-After determining flow type, register all steps:
-```
-1. [in_progress] Context analysis → context-brief.md
-2. [pending] User confirmation of context
-3. [pending] AJTBD analysis → rat.md + segments.md + jobs-graph.md
-4. [pending] User review of AJTBD findings
-5. [pending] Market intelligence → market-analysis.md + competitive-landscape.md + customer-segments.md
-6. [pending] User review of market findings
-7. [pending] Strategic analysis → strategy-canvas.md + brand-positioning.md (parallel)
-8. [pending] Business model → business-model.md (parallel)
-9. [pending] User approval of strategy + model
-10. [pending] GTM + pricing → gtm-plan.md + pricing-analysis.md (parallel)
-11. [pending] Growth + priorities → growth-plan.md + prioritized-initiatives.md (parallel)
-12. [pending] User approval of GTM + growth
-13. [pending] Report compilation → strategic-report.md
-14. [pending] Verify all 15 files exist
-15. [pending] Final report review
-16. [pending] Product plan → opportunity-map.md + features/*.md + product-roadmap.md + mvp-definition.md
-17. [pending] User review of product plan
-```
-
 ## CRITICAL Sub-agent Invocation Constraints
 
 **MANDATORY suffix for ALL sub-agent prompts**:

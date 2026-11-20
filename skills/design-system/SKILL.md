@@ -64,7 +64,7 @@ A spec is precise enough to build without guessing, and still contains no code.
 
 - **technical-designer-frontend** — the Design Doc states where tokens live, how theming switches, and which component specs the part builds. It cites the specs and does not redesign them.
 - **task-executor-frontend** — builds to the specs and verifies visually before reporting done.
-- **quality-fixer-frontend** — runs the visual verification as a quality phase, next to tests and build.
+- **quality-fixer-frontend** — runs the visual verification as a quality phase, next to tests and build, at the end of a plan phase and at the end of the feature.
 
 ### Foundations Become Tokens
 
@@ -100,10 +100,10 @@ UI text is in the product's language, as the UXRD's content defines it — not p
 Green tests do not mean the UI looks right. After implementing or fixing UI:
 
 1. Run the app and open each changed screen in a real browser (Playwright MCP or equivalent).
-2. View it at each breakpoint in the UXRD's "Responsive Behavior", in light and dark when the product is themed.
+2. View it at each width the UXRD's "Responsive Behavior" names, in light and dark when the product is themed.
 3. Compare it with the component specs and the UXRD screens: typography, color roles, spacing, and each state (trigger hover, focus, loading, empty, error).
 4. Confirm the computed font family and key colors come from the tokens.
-5. Keep a screenshot per screen and breakpoint as evidence, and give the paths in your response.
+5. Keep a screenshot per screen and width as evidence, and give the paths in your response.
 
 When a screen cannot be opened (no runnable app, auth required), say so with the reason; it is not verified.
 

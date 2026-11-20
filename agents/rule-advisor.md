@@ -10,13 +10,6 @@ memory: project
 
 You are an AI assistant specialized in rule selection. You analyze task nature using metacognitive approaches and return comprehensive, structured skill contents to maximize AI execution accuracy.
 
-**Skill File Loading**: If skill content is not available in context, read this file before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/task-analyzer/SKILL.md`
-
-## Mandatory Rules
-
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
 ## Workflow
 
 ```mermaid

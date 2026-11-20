@@ -16,17 +16,18 @@ The main workflow triggered by `/implement`. Analyzes your request, determines c
    - **Small** — a lite PRD and a simplified work plan, no Design Doc
 4. **Expert analysis** (optional, once per feature) — for complex tasks, 3-5 expert-analyst agents evaluate the problem in parallel from different perspectives before design begins
 5. **For each part, in dependency order**: **codebase-analyzer** (or **ui-analyzer**) gathers facts, **technical-designer** (or **technical-designer-frontend**) produces `design-{part}.md`, **document-reviewer** and **design-sync** verify it, **acceptance-test-generator** creates that part's test skeletons. Every part is designed before any is planned
-6. **For each part, in dependency order**: **work-planner** breaks the part into phased tasks, **document-reviewer** checks traceability, **task-decomposer** splits phases into single-commit tasks, then **task-executor** handles each task and **quality-fixer** gates each commit and phase end, autonomously until the part's completion report
+6. **For each part, in dependency order**: **work-planner** breaks the part into phases, each with its work items spelled out and sized for one commit, and **document-reviewer** checks traceability. Then **task-executor** implements one plan phase per run, test-first, running only the unit tests of what it touches; at the end of the phase **quality-fixer** runs static checks and the unit tests of the changed files, and the phase is committed per the commit strategy — autonomously until the part's completion report
+7. **Once per feature**, after the last part: one full run — whole suite, integration, e2e, coverage — before the feature's completion report. Integration and e2e tests are written with the code and first run here
 
 **Stop points** (workflow pauses for your approval):
 - After requirement-analyzer — confirm scope and scale (once)
-- After document-reviewer — approve the PRD, including the parts split (once, every scale)
-- After document-reviewer — approve the UXRD (once, when there is a UI surface)
+- After prd-creator — approve the PRD, including the parts split (once, every scale)
+- After ux-designer — approve the UXRD (once, when there is a UI surface)
 - After design-sync — approve a part's Design Doc (once per part)
-- After document-reviewer — approve an ADR (only when the design produced one)
-- After document-reviewer reviews a part's work plan — batch-approve that part's implementation (once per part)
+- After technical-designer — approve an ADR (only when the design produced one)
+- After work-planner returns a part's work plan — batch-approve that part's implementation (once per part)
 
-After a part's batch approval, execution is autonomous until that part's completion report or an escalation; the next part starts with its own plan review and batch approval.
+After a part's batch approval, execution is autonomous until that part's completion report or an escalation; the next part starts with its own plan and batch approval. `/build` and `/front-build` started on their own ask that approval as their first question.
 
 ```mermaid
 graph TB
@@ -55,16 +56,16 @@ graph TB
 
     BP --> G[work-planner]
     G --> PR[document-reviewer: plan review]
-    PR --> H[task-decomposer]
-    SP --> H
+    PR --> I[task-executor: one plan phase, test-first]
+    SP --> I
 
-    H --> I[task-executor]
-    I --> J[quality gate: quality-fixer]
-    J --> K{More tasks?}
+    I --> J[quality-fixer: static checks + unit tests of the changed files]
+    J --> K{More phases?}
     K --> |Yes| I
     K --> |No| L{More parts to build?}
     L --> |Yes| BP
-    L --> |No| M[Completion report]
+    L --> |No| FR[quality-fixer: full run, once per feature]
+    FR --> M[Completion report]
 ```
 
 ---
@@ -193,7 +194,7 @@ The workflow detects the project context and branches into two scenarios:
 - **Market analysis** — competitor research, target audience, monetization strategy, Go/No-Go recommendation
 - **GDD creation/update** — game vision, core loop, progression systems, balancing parameters
 - **Specialist agents** — mechanics-developer, game-feel-developer, sr-game-artist, technical-artist, game-ui-designer, data-scientist each contribute their domain expertise
-- **6-phase work planning** — tasks organized by game development phases instead of generic Foundation/Core/Integration/QA
+- **6-stage work planning** — plan phases grouped into six game development stages instead of generic Foundation/Core/Integration/QA
 
 See [detailed gamedev workflow diagrams](gamedev-workflows.md) for all scale variants, scenario detection, development modes, and phase dependencies.
 
@@ -207,7 +208,8 @@ graph TB
     SGD2 --> GAME
     GAME --> TD[technical-designer → Design Doc]
     TD --> DR[document-reviewer → design-sync]
-    DR --> WP[gamedev-work-planner → 6-phase plan]
-    WP --> AUTO[task-decomposer → task-executor → quality-fixer]
-    AUTO --> DONE[Ready to Commit]
+    DR --> WP[gamedev-work-planner → 6-stage plan]
+    WP --> AUTO[task-executor per plan phase → quality-fixer at each phase end]
+    AUTO --> FULL[Full run, once per feature]
+    FULL --> DONE[Ready to Commit]
 ```

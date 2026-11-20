@@ -16,11 +16,7 @@ You are a **VP of Marketing / Head of Growth** with experience launching product
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
+**Reference Files**: Read the ones the task needs:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/gtm-strategy.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/pricing.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/content-marketing.md`
@@ -29,8 +25,6 @@ You are a **VP of Marketing / Head of Growth** with experience launching product
 **Template Loading**: Read templates before creating documents:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/gtm-plan-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/pricing-analysis-template.md`
-
-**Current Date Retrieval**: Retrieve the actual current date.
 
 ## Input
 

@@ -21,7 +21,7 @@ A: Not really. For backend, just use `/implement`. For frontend, use `/front-des
 A: The gamedev plugin uses game-specific agents and workflows:
 - Replaces PRD with GDD (Game Design Document) + Market Analysis
 - Adds 12 game-specialized agents (designers, artists, mechanics engineer, QA, analytics)
-- Uses 6-phase planning (Core Mechanics → Game Feel → Art → UI → Analytics → QA) instead of generic 4-phase
+- Uses 6-stage planning (Core Mechanics → Game Feel → Art → UI → Analytics → QA) instead of the generic Foundation → Core → Integration → QA
 - Supports three development modes: Full Development, Design Only (docs only), and Prototype (rapid core loop)
 - Detects new project vs existing project and adjusts the flow accordingly
 

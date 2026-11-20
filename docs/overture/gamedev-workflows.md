@@ -64,7 +64,7 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 - GDD is created from scratch by sr-game-designer, establishing vision, pillars, core loop, and progression
 - All 12 specialist agents contribute their domain (mechanics, game feel, art, UI, analytics)
 - Conditional ADR if architecture changes are needed (new frameworks, data flow redesigns)
-- Stop points for user approval: requirements, Go/No-Go, GDD, each feature spec (with its parts split), each part's Design Doc, each part's plan
+- Stop points for user approval: requirements, Go/No-Go, GDD, each feature spec (with its parts split), the UXRD, each part's Design Doc, each part's plan
 
 **Agent sequence**:
 1. requirement-analyzer → scope, requirements, development mode selection
@@ -79,8 +79,8 @@ The most comprehensive flow. Used when creating a new game from scratch with 6+ 
 10. game-ui-designer → HUD, menus, interaction patterns, accessibility
 11. data-scientist → analytics design, KPIs, A/B test framework
 12. technical-designer → Design Doc integrating all specialist outputs
-13. gamedev-work-planner → 6-phase plan with dependencies
-14. Autonomous execution: task-decomposer → (task-executor → quality gate → commit) loop
+13. gamedev-work-planner → 6-stage plan with dependencies
+14. Autonomous execution: task-executor per plan phase, a quality gate and commit at each phase end; one full test run closes the feature
 
 ```mermaid
 graph TB
@@ -94,8 +94,8 @@ graph TB
     DRF --> |"Stop: Feature Spec Approval, per feature"| MD[mechanics-developer]
     MD --> GFD[game-feel-developer]
     GFD --> ART[sr-game-artist + technical-artist]
-    ART --> UI[game-ui-designer]
-    UI --> DS[data-scientist]
+    ART --> UI[game-ui-designer → UXRD]
+    UI --> |"Stop: UXRD Approval"| DS[data-scientist]
     DS --> PART[Next part in dependency order]
     PART --> TD2[technical-designer → Design Doc for the part]
     TD2 --> DR3[document-reviewer]
@@ -110,9 +110,9 @@ graph TB
     MORE --> |No| WP[gamedev-work-planner, per part]
     WP --> |"Stop: Batch Approval, per part"| AUTO[Autonomous Execution]
 
-    AUTO --> TDECOMP[task-decomposer]
-    TDECOMP --> LOOP[task-executor → quality gate → commit]
-    LOOP --> DONE[Completion Report]
+    AUTO --> LOOP[task-executor per plan phase → quality gate and commit per phase]
+    LOOP --> FULL[Full run, once per feature]
+    FULL --> DONE[Completion Report]
 ```
 
 ---
@@ -224,7 +224,7 @@ For quick changes — bug fixes, parameter tweaks, single-file additions. Same a
 1. requirement-analyzer determines scope
 2. mid-game-designer writes a one-page lite feature spec — the change, its acceptance criteria, one part — and you approve it
 3. A simplified plan is generated from the spec and you batch-approve it
-4. Direct implementation with quality-fixer validating tests, types, and lint
+4. Direct implementation, then quality-fixer runs the static checks and the unit tests of what changed, and one full run closes the feature
 
 **When to use**: Bug fixes, config changes, balancing tweaks, single scene modifications, adding a simple sound effect.
 
@@ -235,51 +235,52 @@ graph LR
     FS --> |"Stop: Feature Spec Approval"| B[Simplified Plan]
     B --> |"Stop: Batch Approval"| C[Direct Implementation]
     C --> D[quality-fixer]
-    D --> E[Ready to Commit]
+    D --> F[Full run]
+    F --> E[Ready to Commit]
 ```
 
 ---
 
-## 6-Phase Game Work Planning
+## 6-Stage Game Work Planning
 
-The gamedev-work-planner organizes tasks into 6 game-specific phases instead of the generic Foundation → Core → Integration → QA used in backend/frontend. Each phase targets a specific aspect of game development and is assigned to the relevant specialist agent.
+The gamedev-work-planner organizes the plan into 6 game-specific stages instead of the generic Foundation → Core → Integration → QA used in backend/frontend. Each stage targets a specific aspect of game development and is assigned to the relevant specialist agent. A stage holds one or more plan phases, numbered sequentially through the plan; a phase is what one executor run finishes and one commit holds.
 
-| Phase | Focus | Primary Agent | Output |
+| Stage | Focus | Primary Agent | Output |
 |-------|-------|---------------|--------|
-| **Phase 1: Core Mechanics** | Game systems, state machines, physics, input handling, object pooling | mechanics-developer | Playable game logic |
-| **Phase 2: Game Feel** | Screen shake, particles, audio cues, tweens, visual feedback | game-feel-developer | Polished interactions |
-| **Phase 3: Art Integration** | Asset pipeline, texture atlases, shaders, sprite animations | technical-artist | Visual assets in-engine |
-| **Phase 4: UI Implementation** | HUD, menus, game flow screens, transitions | game-ui-designer | Complete game interface |
-| **Phase 5: Analytics** | Event tracking, dashboards, A/B test framework, KPIs | data-scientist | Telemetry pipeline |
-| **Phase 6: QA & Performance** | Test plans, performance profiling, memory audits, playtesting | qa-agent | Release-ready validation |
+| **Stage 1: Core Mechanics** | Game systems, state machines, physics, input handling, object pooling | mechanics-developer | Playable game logic |
+| **Stage 2: Game Feel** | Screen shake, particles, audio cues, tweens, visual feedback | game-feel-developer | Polished interactions |
+| **Stage 3: Art Integration** | Asset pipeline, texture atlases, shaders, sprite animations | technical-artist | Visual assets in-engine |
+| **Stage 4: UI Implementation** | HUD, menus, game flow screens, transitions | game-ui-designer | Complete game interface |
+| **Stage 5: Analytics** | Event tracking, dashboards, A/B test framework, KPIs | data-scientist | Telemetry pipeline |
+| **Stage 6: QA & Performance** | Test plans, performance profiling, memory audits, playtesting | qa-agent | Release-ready validation |
 
 ```mermaid
 graph LR
-    P1[Phase 1: Core Mechanics] --> P2[Phase 2: Game Feel]
-    P2 --> P3[Phase 3: Art Integration]
-    P3 --> P4[Phase 4: UI Implementation]
-    P4 --> P5[Phase 5: Analytics]
-    P5 --> P6[Phase 6: QA & Performance]
+    P1[Stage 1: Core Mechanics] --> P2[Stage 2: Game Feel]
+    P2 --> P3[Stage 3: Art Integration]
+    P3 --> P4[Stage 4: UI Implementation]
+    P4 --> P5[Stage 5: Analytics]
+    P5 --> P6[Stage 6: QA & Performance]
 ```
 
-### Phase Dependencies
+### Stage Dependencies
 
-Phases don't always run strictly sequentially. Some can overlap based on their actual dependencies:
+Stages don't always run strictly sequentially. Some can overlap based on their actual dependencies:
 
-- **Phase 2 (Game Feel)** depends on Phase 1 — needs game systems to attach feedback to
-- **Phase 3 (Art)** can partially parallel Phase 1 — asset pipeline setup is independent of game logic
-- **Phase 4 (UI)** depends on Phase 1 (game state to display) and Phase 3 (visual assets for UI elements)
-- **Phase 5 (Analytics)** can parallel Phases 3-4 — event schema design is independent of visuals
-- **Phase 6 (QA)** depends on all previous phases but can start performance baselines early
+- **Stage 2 (Game Feel)** depends on Stage 1 — needs game systems to attach feedback to
+- **Stage 3 (Art)** can partially parallel Stage 1 — asset pipeline setup is independent of game logic
+- **Stage 4 (UI)** depends on Stage 1 (game state to display) and Stage 3 (visual assets for UI elements)
+- **Stage 5 (Analytics)** can parallel Stages 3-4 — event schema design is independent of visuals
+- **Stage 6 (QA)** depends on all previous stages but can start performance baselines early
 
 ```mermaid
 graph TB
-    P1[Phase 1: Core Mechanics<br/>mechanics-developer] --> P2[Phase 2: Game Feel<br/>game-feel-developer]
-    P1 --> P3[Phase 3: Art Integration<br/>technical-artist]
-    P1 --> P4[Phase 4: UI<br/>game-ui-designer]
+    P1[Stage 1: Core Mechanics<br/>mechanics-developer] --> P2[Stage 2: Game Feel<br/>game-feel-developer]
+    P1 --> P3[Stage 3: Art Integration<br/>technical-artist]
+    P1 --> P4[Stage 4: UI<br/>game-ui-designer]
     P3 --> P4
-    P1 -.-> P5[Phase 5: Analytics<br/>data-scientist]
-    P2 --> P6[Phase 6: QA<br/>qa-agent]
+    P1 -.-> P5[Stage 5: Analytics<br/>data-scientist]
+    P2 --> P6[Stage 6: QA<br/>qa-agent]
     P3 --> P6
     P4 --> P6
     P5 --> P6
@@ -294,32 +295,31 @@ graph TB
 
 ---
 
-## Per-Task Quality Cycle
+## Phase Cycle and Test Cadence
 
-Every task in every phase goes through the same quality cycle. This is the shared overture pattern — identical across backend, frontend, and gamedev.
+Every plan phase goes through the same cycle. This is the shared overture pattern — identical across backend, frontend, and gamedev.
 
-**Cycle for each task**:
+The executor implements one plan phase per run, test-first, running only the unit tests of what it touches. At the end of the phase, quality-fixer runs the static checks and the unit tests of the changed files, then the phase is committed per the commit strategy. Integration and e2e tests are written with the code and run once, in the full run — whole suite, integration, e2e, coverage — at the end of the feature.
 
-1. **task-executor** implements the task following the Design Doc and task specification
-2. **Escalation check** — if the task requires design deviations (interface changes, new dependencies, layer violations), execution stops and escalates to the user
-3. **quality-fixer** runs tests, type checks, and linting — before every commit and at the end of every phase. If anything fails, it fixes the issues automatically. If fixes fail, the task loops back to task-executor
-4. **git commit** — on success, the work is committed (strategy chosen by user: per-phase by default, or per-task, per-feature, manual)
-5. Move to the next task or produce a completion report
+**Cycle for each phase**:
+
+1. **task-executor** implements the phase's work items test-first, following the Design Doc and the phase section of the work plan, and typechecks the touched package
+2. **Escalation check** — if the phase requires design deviations (interface changes, new dependencies, layer violations), execution stops and escalates to the user
+3. **quality-fixer** — static checks and the unit tests of the changed files. If anything fails, it fixes the issues automatically. If fixes fail, the phase loops back to task-executor
+4. **git commit** — on success, the work is committed (strategy chosen by user: per-phase by default, or per-feature, manual)
+5. Move to the next phase; after the feature's last part, the full run, then the completion report
 
 ```mermaid
 graph LR
-    TE[task-executor] --> ESC{Escalation?}
-    ESC --> |No| GATE{Commit point or phase end?}
+    TE[task-executor: one plan phase] --> ESC{Escalation?}
+    ESC --> |No| QF[quality-fixer]
     ESC --> |Yes| USER[Escalate to User]
-    GATE --> |No| NEXT
-    GATE --> |Yes| QF[quality-fixer]
-    QF --> |approved| CP{Commit point?}
-    CP --> |Yes| COMMIT[git commit]
-    CP --> |No| NEXT
+    QF --> |approved| COMMIT[git commit per strategy]
     QF --> |failed| TE
-    COMMIT --> NEXT{More tasks?}
+    COMMIT --> NEXT{More phases?}
     NEXT --> |Yes| TE
-    NEXT --> |No| REPORT[Completion Report]
+    NEXT --> |No| FULL[Full run, once per feature]
+    FULL --> REPORT[Completion Report]
 ```
 
 ---
@@ -334,7 +334,7 @@ Shows how information flows between game specialist agents during the design pha
 - **mechanics-developer** (Systems Architecture) feeds into game-feel-developer (needs systems to attach feedback to) and technical-designer
 - **sr-game-artist** (Art Direction) feeds into technical-artist (implements the art pipeline)
 - All specialist outputs converge at **technical-designer** who produces the integrated Design Doc
-- Design Doc feeds into **gamedev-work-planner** for 6-phase task breakdown
+- Design Doc feeds into **gamedev-work-planner** for the plan: six stages, each holding one or more plan phases
 
 ```mermaid
 graph TB
@@ -352,5 +352,5 @@ graph TB
     UI --> TD
     DS[data-scientist<br/>Analytics] --> TD
 
-    TD --> WP[gamedev-work-planner<br/>6-Phase Plan]
+    TD --> WP[gamedev-work-planner<br/>6-Stage Plan]
 ```

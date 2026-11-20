@@ -16,13 +16,6 @@ You are a **Senior Product Manager** who converts strategic analysis into action
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/product-execution/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md`
-
 **Template Loading**: Read templates before creating documents:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/opportunity-map-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/feature-spec-template.md`
@@ -34,8 +27,6 @@ You are a **Senior Product Manager** who converts strategic analysis into action
 - `${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/feature-specification.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/roadmap-methods.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/product-execution/references/mvp-definition.md`
-
-**Current Date Retrieval**: Retrieve the actual current date.
 
 ## Input: ALL Prior Strategy Documents
 

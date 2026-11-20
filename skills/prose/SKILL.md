@@ -1,6 +1,6 @@
 ---
 name: prose
-description: This skill governs how a PRD, UXRD, design system, Design Doc, ADR, GDD, or Feature Spec reads — the whole document read top to bottom as its reader meets it, then the sentence-level pass: cutting noise, plain sentences (P1–P5, T1–T5), the R-coded catalogue of AI-writing tells, canonical technical terms in non-English prose, and asking instead of guessing. Automatically loaded when writing, revising, or reviewing a document's prose, or when "tighten this", "make this clearer", "reads like a robot", "de-jargon", "канцелярит", "читается как робот", "сделай понятнее", or "AI tells" are mentioned.
+description: 'This skill governs how a PRD, UXRD, design system, Design Doc, ADR, GDD, or Feature Spec reads — the whole document read top to bottom as its reader meets it, then the sentence-level pass: cutting noise, plain sentences (P1–P5, T1–T5), the R-coded catalogue of AI-writing tells, canonical technical terms in non-English prose, and asking instead of guessing. Automatically loaded when writing, revising, or reviewing a document''s prose, or when "tighten this", "make this clearer", "reads like a robot", "de-jargon", "канцелярит", "читается как робот", "сделай понятнее", or "AI tells" are mentioned.'
 ---
 
 # Prose
@@ -12,7 +12,7 @@ description: This skill governs how a PRD, UXRD, design system, Design Doc, ADR,
 - **Applies to** narrative prose: the sentences that explain what the system does and why, in any document language.
 - **Never edited**: tables' identifiers, diagrams, code, IDs, file paths, quoted text, UI strings owned by a UXRD or design system.
 - **Instruction text is exempt**: rules, checklists, and gate wording inside prompts and templates, and the labels a template prescribes (bold item labels such as **Authentication & Authorization**). A negative rule (`never X`) is a specification, not a voice problem.
-- **Not applied to temporary AI working files** — work plans, task files, `_overview.md` (`documentation-criteria`).
+- **Not applied to temporary AI working files** — work plans (`documentation-criteria`).
 
 ## 1. The editing pass
 

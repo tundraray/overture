@@ -78,7 +78,7 @@ overture/
 │   │   ├── game-ui-designer.md            # HUD, menus, accessibility
 │   │   ├── data-scientist.md         # Analytics, telemetry, A/B tests
 │   │   ├── qa-agent.md               # Test plans, performance
-│   │   ├── gamedev-work-planner.md   # 6-phase game work planning
+│   │   ├── gamedev-work-planner.md   # 6-stage game work planning
 │   │   └── ... (19 shared symlinks)
 │   ├── commands/               # 14 symlinks + 1 local (implement.md)
 │   ├── skills/                 # 11 symlinks + 2 local

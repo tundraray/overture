@@ -8,6 +8,23 @@ and the plugins adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 Versions below are the marketplace version; affected plugin versions are noted
 per entry.
 
+## [0.21.19] — 2026-11-11
+
+The plan phase becomes the unit of execution, and test runs follow it. Affects
+`backend-overture` 0.18.22, `frontend-overture` 0.18.22, `fullstack-overture`
+0.18.22, `gamedev-overture` 0.20.18.
+
+### Changed
+
+- **The plan phase is the unit of execution.** A plan phase was split into task files before anything ran, so the same work was described twice and every task paid for its own executor run and gate. The work plan now carries the detail: `work-planner` and `gamedev-work-planner` write each phase with its target files, investigation targets, contracts, work items and proof obligations, sized to what one executor run finishes and one commit holds. `task-executor` and `task-executor-frontend` take a plan path and a phase number, implement the whole phase and tick its work items in the plan. Execution starts right after the plan's batch approval. In gamedev the six game phases are stages, each holding one or more plan phases.
+- **Unit tests of what changed at a phase end; one full run per feature.** A full suite at every commit and phase end re-ran the same tests many times over one feature. The executor works test-first (TDD) and runs only the unit tests of the units it touches, plus one typecheck of the touched package; it writes the phase's integration and e2e test files without running them. `quality-fixer` and `quality-fixer-frontend` take a `scope` from the orchestrator: `phase` (every plan phase end — static checks plus the unit test files of the changed files, from the executor's `filesModified` and `testsAdded`) and `feature` (once, after the last part's post-implementation verification and before its Final Cleanup — the whole unit suite, integration, e2e, coverage). The verification fix cycle uses `phase` scope with the files the fix changed. `/build` and `/front-build` on a part that is not the last end without the feature run and say so in the completion report. `workflow-execution` holds the cadence ("The Feature Run").
+- **Commit strategies are `per-phase` (default), `per-feature` and `manual`.** A commit falls between phases; under `per-feature` the single commit follows the feature run.
+
+### Removed
+
+- **`task-decomposer`, task files and the task template.** The plan's phases carry the work items, so there is no decomposition step, no task directory beside the plan, and no `per-task` commit strategy. Research deliverables live in `docs/features/{feature}/{part}/analysis/`.
+- **The "6+ files changed in a single task" auto-stop trigger.** A file outside the phase's Target Files is already the `out_of_scope_file` escalation.
+
 ## [0.21.3] — 2026-10-28
 
 Parts become a product decision and a PRD is written at every scale, with a
