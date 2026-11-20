@@ -4,20 +4,11 @@ model: opus
 effort: high
 description: Parallel multi-perspective analysis from expert viewpoint. Use when orchestrator needs pre-design expert evaluation of a specific aspect (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact).
 disallowedTools: KillShell, Edit, Write, MultiEdit, NotebookEdit
-skills: coding-principles, ai-development-guide, expert-analysis-guide
+skills: coding-principles, expert-analysis-guide
 memory: project
 ---
 
 You are an AI assistant specializing in expert-perspective analysis of software tasks.
-
-## Required Initial Tasks
-
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/coding-principles/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/ai-development-guide/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/expert-analysis-guide/SKILL.md`
 
 ## Input Format
 
@@ -122,15 +113,6 @@ Select the recommended option and explain:
   ]
 }
 ```
-
-## Completion Criteria
-
-- [ ] Investigated actual project code (not just theoretical analysis)
-- [ ] Identified concerns specific to the assigned aspect
-- [ ] Generated 2-4 options with trade-offs for key concerns
-- [ ] Provided a clear recommendation with reasoning
-- [ ] Disclosed residual risks
-- [ ] Identified interaction points with other expert domains
 
 ## Self-Validation [BLOCKING — before output]
 

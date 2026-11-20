@@ -31,7 +31,7 @@ A test is code that has to be read, run, and kept in step with every change. It 
 
 ## Test-Driven Development (TDD)
 
-TDD applies to behaviour that passes Test Selection. A task step that adds no behaviour of its own — a constant, a schema declaration, module wiring, a type — gets no test of its own; the behaviour that uses it is tested where it is observable.
+TDD applies to behaviour that passes Test Selection. A step that adds no behaviour of its own — a constant, a schema declaration, module wiring, a type — gets no test of its own; the behaviour that uses it is tested where it is observable.
 
 ### The RED-GREEN-REFACTOR Cycle
 
@@ -54,8 +54,8 @@ TDD applies to behaviour that passes Test Selection. A task step that adds no be
    - Keep all tests passing
 
 4. **VERIFY**: Ensure the affected tests still pass
-   - Run the tests you wrote and the unit test files of the modules you touched; an integration or e2e file only when you wrote or edited it
-   - The full suite is the quality gate's run, not a step of this cycle
+   - Run the tests you wrote and the unit test files of the modules you touched; integration and e2e files are written, not run
+   - The phase gate runs the unit tests of what changed and the feature run runs everything; neither is a step of this cycle
    - A passing run is not repeated until the code changes again
 
 ### TDD Benefits
@@ -366,7 +366,7 @@ Each test must:
 
 ### Before Commit
 
-- ✓ All tests pass
+- ✓ The unit tests of what changed pass
 - ✓ No tests skipped or commented
 - ✓ No debug code left in tests
 - ✓ Every test passes Test Selection: a unique defect, the lowest sufficient level, no tautology, no library behaviour

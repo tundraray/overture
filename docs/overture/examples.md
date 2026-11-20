@@ -22,10 +22,11 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 # What happens:
 # 1. Analyzes your requirements
 # 2. Creates design documents
-# 3. Breaks down into tasks
-# 4. Implements with TDD
-# 5. Runs tests and fixes issues
+# 3. Breaks the work into plan phases
+# 4. Implements each phase test-first, running the unit tests of what it touches
+# 5. Checks each phase: static checks and the unit tests of the changed files, then commits
 # 6. Reviews against design docs
+# 7. Runs the whole suite once — unit, integration, e2e, coverage — and fixes issues
 ```
 
 ### Frontend Feature Development
@@ -144,8 +145,9 @@ Built in 1.5 days - Complete creative tool with multi-image blending and charact
 # 9. UI/UX Agent designs HUD, menus, game flow
 # 10. Data Scientist plans analytics and telemetry
 # 11. Technical Designer creates Design Doc integrating all specs
-# 12. Gamedev Work Planner creates 6-phase plan
-# 13. Autonomous execution: task-decomposer → task-executor → quality-fixer
+# 12. Gamedev Work Planner creates 6-stage plan
+# 13. Autonomous execution: task-executor per plan phase → quality-fixer at each phase end
+# 14. One full test run at the end of the feature
 ```
 
 ### Game Development - New Feature (Existing Project)

@@ -1,1 +1,0 @@
-../../../../skills/documentation-criteria/references/task-template.md

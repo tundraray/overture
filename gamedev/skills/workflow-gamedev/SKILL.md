@@ -5,7 +5,7 @@ description: This skill governs the product phase for game development — scena
 
 # Game Development Product Phase
 
-This skill replaces `workflow-product` for game development. Everything after it is unchanged: the technical phase is `workflow-technical`, and planning plus execution is `workflow-execution` (substituting `gamedev-work-planner` for the planner). Shared mechanics — invoking agents, response contracts, delegation boundaries, file ownership, TodoWrite — are in `workflow-orchestration`.
+This skill replaces `workflow-product` for game development. Everything after it is unchanged: the technical phase is `workflow-technical`, and planning plus execution is `workflow-execution` (substituting `gamedev-work-planner` for the planner). Shared mechanics — invoking agents, response contracts, delegation boundaries, file ownership — are in `workflow-orchestration`.
 
 A game feature and a service endpoint need the same design rigour, the same codebase fact gathering, and the same verification. What differs is upstream: what "the product" is, who defines it, and how a project starts.
 
@@ -13,7 +13,7 @@ A game feature and a service endpoint need the same design rigour, the same code
 
 **In scope**: scenario detection, development-mode routing, market analysis, GDD, feature specs, mechanics and game-feel specification, art direction, game UI/UX, analytics design, and the stop points gating each.
 
-**Out of scope**: codebase fact gathering, Design Doc, ADR, and test skeletons — all `workflow-technical`, used unchanged. Work plan, batch approval, and decomposition — all `workflow-execution`.
+**Out of scope**: codebase fact gathering, Design Doc, ADR, and test skeletons — all `workflow-technical`, used unchanged. Work plan, batch approval, and execution — all `workflow-execution`.
 
 ## Gamedev Agents
 
@@ -69,7 +69,7 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 |------|-------------|-------------------|
 | **Full Development** | Standard scale-based flow | None |
 | **Design Only** | Run the product phase to completion, stop before technical design | Deliver the design package; no implementation |
-| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part, with its draft check) → [Stop: Feature Spec approval] → simplified plan with `design: none`, at any scale | Skip market analysis, art direction, UI, analytics, and the technical phase; the lite spec still exists, so the execution entry gate and the parts list hold, and the plan's traceability maps to the spec's acceptance criteria |
+| **Prototype** | requirement-analyzer → sr-game-designer (core loop only) → mid-game-designer (lite feature spec, one part, with its draft check) → [Stop: Feature Spec approval] → simplified plan with `design: none`, at any scale | Skip market analysis, art direction, UI, analytics, and the technical phase; the lite spec still exists, so the parts list holds, and the plan's traceability maps to the spec's acceptance criteria |
 
 ## Flow
 
@@ -114,6 +114,7 @@ Detected by the orchestrator from the user's request, after `requirement-analyze
 1. **requirement-analyzer** → requirement analysis + preliminary part proposal
    **[Stop: requirements confirmation]**
 2. *[Conditional]* **sr-game-designer** → GDD update (when new mechanics are involved), with its draft check
+   **[Stop: GDD approval]**
 3. **mid-game-designer** (`depth: lite`, or `update` when a spec already covers the feature) → feature spec with Delivery Parts, with its draft check
    **[Stop: Feature Spec approval — includes the parts split]**
 4. **mechanics-developer** → mechanics architecture (when new systems are involved)
@@ -148,7 +149,7 @@ The technical phase adds Design Doc approval and, when one is written, ADR appro
 
 ## Exit Gate [BLOCKING]
 
-Run before handing off to `workflow-technical`. Same contract as `workflow-product`, with the game artifacts substituted.
+Run before handing off to `workflow-technical`. It stands in for `workflow-product`, "Handoff to `workflow-technical`", with the game artifacts substituted.
 
 ☐ The user has confirmed requirements and the detected development mode
 ☐ Scenario (A or B) is recorded, with the evidence that selected it
@@ -165,7 +166,7 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 | Item | Form |
 |------|------|
 | GDD | `docs/game-design/{project}-gdd.md`, or "unchanged by this feature" — context for the designers |
-| Feature spec | `docs/game-design/features/{feature}-spec.md`, with its depth — stands in for the PRD at the technical entry gate |
+| Feature spec | `docs/game-design/features/{feature}-spec.md`, with its depth — stands in for the PRD in the technical phase |
 | Discipline outputs | Paths for mechanics, game feel, art direction, UI/UX, analytics — or "N/A" each; the `game-ui-designer` output stands in for the UXRD, with the `docs/design-system/` files it created or changed |
 | Parts list | `{name, covers, cutAlong, dependsOn}` per part, in dependency order — copied from the feature spec's Delivery Parts; `workflow-technical` designs one `design-{part}.md` per entry |
 | Scale | `{small\|medium\|large}` plus `decidingAxis` |
@@ -177,4 +178,4 @@ Run before handing off to `workflow-technical`. Same contract as `workflow-produ
 
 ## Phase Note for Execution
 
-The 6 game development phases (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are phases **within one work plan**, not separate plans. The `per-phase` commit strategy in `workflow-execution` groups commits by them. Reach for a second plan only when a later pass is genuinely deferred — a post-playtest tuning round — rather than to model the phase sequence.
+The 6 game development stages (Core Mechanics, Game Feel, Art, UI, Analytics, QA) are stages **within one work plan**, not separate plans. A stage holds one or more plan phases, numbered sequentially through the plan; a plan phase is what one executor run finishes and one commit holds. The `per-phase` commit strategy in `workflow-execution` commits per plan phase, and quality-fixer's `phase` scope runs at the end of each. Reach for a second plan only when a later pass is genuinely deferred — a post-playtest tuning round — rather than to model the stage sequence.

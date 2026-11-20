@@ -26,8 +26,6 @@ Before executing, load these skill files for guidance:
 
 Target: $ARGUMENTS
 
-**TodoWrite**: Register Phase 0: Scope Configuration as first todo.
-
 ### 0.1 Game Identification
 
 Use AskUserQuestion to collect:
@@ -71,8 +69,6 @@ Phase 5: Comparison (conditional)
 
 ## Phase 1: Research Data Collection
 
-**TodoWrite**: Register Phase 1 steps.
-
 ### Step 1.1: Invoke game-researcher
 
 **Task invocation**:
@@ -113,8 +109,6 @@ prompt: |
 **[Stop: Review raw research quality and completeness. User can request additional research.]**
 
 ## Phase 2: Mechanics Deep Dive
-
-**TodoWrite**: Register Phase 2 steps.
 
 **Skip this phase** if "Core Loop & Mechanics" was not selected in focus areas. Proceed to Phase 3.
 
@@ -201,8 +195,6 @@ prompt: |
 **[Stop: Review mechanics breakdown. User can request deeper analysis of specific mechanics.]**
 
 ## Phase 3: Specialized Analysis
-
-**TodoWrite**: Register Phase 3 steps based on selected focus areas.
 
 **Autonomous execution**: After mechanics approval, run all applicable agents without stopping.
 
@@ -338,8 +330,6 @@ prompt: |
 
 ## Phase 4: Quality Review + Synthesis
 
-**TodoWrite**: Register Phase 4 steps.
-
 ### Step 4.1: Quality Gate
 
 For each generated report, invoke document-reviewer:
@@ -359,7 +349,7 @@ prompt: |
 
 **Revision logic** (`workflow-orchestration`, "Revision Loop"): If document-reviewer returns `approved_with_conditions` or `needs_revision`:
 1. Identify the owning agent: the agent whose Phase 2 or Phase 3 invocation wrote the report
-2. Re-invoke that agent with the `critical` and `important` issues; `recommended` ones go into the report's caveats
+2. Re-invoke that agent with the `critical` and `important` issues
 3. Re-review once with `review_scope: changes`, the `diff_base`, and the prior issues verbatim
 4. A re-review that is not `approved`, or a `rejected` verdict: accept as-is with the open issues noted as quality caveats
 
@@ -459,14 +449,6 @@ Present to user:
 | Agent report completely empty | Re-invoke with simplified prompt. If still empty, mark as failed in final report |
 | Source code analysis fails | Skip silently, note in executive summary that source code was unavailable |
 | Re-review still not approved | Accept report with caveats, note quality issues in executive summary |
-
-## TodoWrite Integration
-
-1. First todo: "Confirm skill constraints"
-2. Register all phases at start
-3. Within Phase 2: register each mechanic as individual todo
-4. Update status in real-time: pending → in_progress → completed
-5. Final todo: "Verify skill fidelity"
 
 ## CRITICAL Sub-agent Invocation Constraints
 

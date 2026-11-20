@@ -1,0 +1,5 @@
+import fs from 'fs';
+const D = JSON.parse(fs.readFileSync('executors.json','utf8'));
+const [,, mode, id, n] = process.argv;
+if (mode==='prompts') { for (const s of ['bb45672c','eae5f417','28626df2']) { const A=D.filter(a=>a.session===s).sort((x,y)=>x.start<y.start?-1:1); for (const i of [0,Math.floor(A.length/3),Math.floor(2*A.length/3),A.length-1]) { const a=A[i]; console.log(`\n### ${a.session} ${a.file} ${a.type} len=${a.promptLen} ${a.start}\n${a.prompt.slice(0,+id||1500)}`); } } }
+if (mode==='seq') { const a=D.find(a=>a.file.includes(id)); console.log(a.session,a.file,a.type,a.desc,a.start,a.end,'outTok',a.outTok,'\nPROMPT:',a.prompt.slice(0,+n||1200),'\n'); let p=new Date(a.start); for (const c of a.calls) { const t=new Date(c.t); const gap=((t-p)/1000).toFixed(0); p=c.rt?new Date(c.rt):t; console.log(`+${gap}s ${c.name}${c.err?' ERR':''} [${c.resSize??''}${c.len?'/cmd'+c.len:''}] ${c.key.replace(/\s+/g,' ').slice(0, c.name==='SubagentHandback'?1500:230)}${c.err?' => '+(c.res||'').replace(/\s+/g,' ').slice(0,200):''}`); } }

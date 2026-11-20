@@ -7,10 +7,10 @@ description: This skill provides integration and E2E test design principles, tes
 
 ## Test Type Definition and Limits
 
-| Test Type | Purpose | Scope | Limit per Part | Implementation Timing |
-|-----------|---------|-------|-------------------|----------------------|
-| Integration | Verify component interactions | Partial system integration | MAX 3; up to 5 only when each extra test names the defect no other test catches | Created alongside implementation |
-| E2E | Verify critical user journeys | Full system | MAX 1-2 | Executed in final phase only |
+| Test Type | Purpose | Scope | Limit per Part | Written | First Run |
+|-----------|---------|-------|-------------------|---------|-----------|
+| Integration | Verify component interactions | Partial system integration | MAX 3; up to 5 only when each extra test names the defect no other test catches | Alongside the implementation it exercises | The feature's full run, after the last part |
+| E2E | Verify critical user journeys | Full system | MAX 1-2 | In the phase that completes the journey | The feature's full run, after the last part |
 
 ## Behavior-First Principle
 

@@ -16,8 +16,6 @@ Target scope: $ARGUMENTS
 
 Orchestrator invokes sub-agents and passes structured JSON between them.
 
-**TodoWrite Registration**: Register execution steps in TodoWrite and proceed systematically
-
 ## Audit Flow Overview
 
 ```
@@ -27,8 +25,6 @@ Scope → code-explorer (sweep) → Interactive Review → Confirm → cleanup-e
 **Context Separation**: Pass only structured JSON output to each step. Each step starts fresh with the JSON data only.
 
 ## Execution Steps
-
-Register the following in TodoWrite and execute:
 
 ### Step 1: Scan (code-explorer)
 

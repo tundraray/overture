@@ -101,14 +101,14 @@ Select optimal solution from basic implementation approaches (creative combinati
 **Application Conditions**: Unclear requirements, need to change approach per phase, transition from prototyping to full implementation
 **Verification Method**: Verify at appropriate L1/L2/L3 levels according to each phase's goals
 
-The decision is recorded as one line in the work plan's Overview (the approach and its reason), together with the implementation order and per-task verification levels.
+The decision is recorded as one line in the work plan's Overview (the approach and its reason), together with the implementation order.
 
 ## Verification Level Definitions
 
-Priority for completion verification of each task:
+Priority for completion verification of each phase:
 
 - **L1: Functional Operation Verification** - Operates as end-user feature (e.g., search executable)
-- **L2: Test Operation Verification** - The tests that prove the task's obligations pass, new or existing — those test files, not the suite
+- **L2: Test Operation Verification** - The unit tests that prove the phase's obligations pass, new or existing — those test files, not the suite
 - **L3: Build Success Verification** - The touched package typechecks without errors
 
 **Priority**: L1 > L2 > L3 in order of verifiability importance

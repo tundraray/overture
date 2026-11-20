@@ -10,8 +10,6 @@ argument-hint: <PRD name or path>
 
 Target PRD: $ARGUMENTS
 
-**TodoWrite**: Register phases first, then steps within each phase as you enter it.
-
 ## Step 0: Initial Configuration
 
 ### 0.1 Scope Confirmation
@@ -150,7 +148,7 @@ prompt: |
   Existing Design Doc: $STEP_2_OUTPUT
 
   ## Review Feedback
-  (The `critical` and `important` issues from $STEP_4_OUTPUT; `recommended` ones go to the summary for the user)
+  (The `critical` and `important` issues from $STEP_4_OUTPUT)
 
   ## Discrepancies to Address
   (Extract critical and major discrepancies from $STEP_3_OUTPUT)

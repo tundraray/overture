@@ -2,38 +2,31 @@
 
 <!--
 Depth: `full` | `lite` — set by scale (documentation-criteria, "PRD depth").
-The PRD says what the user achieves, not what the screen looks like or how the system does it. Screen states, microcopy, ARIA and focus behaviour,
-breakpoints, tokens, and animation belong to the UXRD; field lists, storage, protocols, libraries and their versions, file paths, and process
-mechanics belong to the Design Doc. A technical choice the user fixed as a product decision is one line in Constraints and Risks.
-Later documents cite this PRD by ID (UC-2, AC-01.3) instead of restating it.
-Reader rules: documentation-criteria, "Writing for the Reader". Guidance in these comments is not copied into the document.
+What this document owns, and what belongs to the UXRD or the Design Doc: documentation-criteria, PRD "Includes" and "Excludes".
+Reader rules: documentation-criteria, "Writing for the Reader".
 -->
 
-| Status | Date | Depth | UXRD | Designs |
-|---|---|---|---|---|
-| Draft / Approved | YYYY-MM-DD | full / lite | [uxrd.md](./uxrd.md) or — | [design-[part].md] or — |
+| Date | Depth |
+|---|---|
+| YYYY-MM-DD | full / lite |
 
 ## Snapshot
 
-<!-- At most ten lines. The Overview is the story a newcomer needs; the bullets are what they would ask next. -->
+**Overview.** [Three to five plain sentences: the problem the users have today and why it matters, then what they can do once this ships. No IDs.]
 
-**Overview.** [Three to five plain sentences: what problem the users have today, what they can do once this ships, and the core capabilities that make it possible. No IDs.]
-
-- **For**: [primary users]
 - **Not included**: [the one or two things a reader would expect here, from Won't Have]
-- **Parts**: [part names, in build order]
 - **Biggest risk**: [one line]
-- **Open questions**: [a link to Undetermined Items, or "none"]
+- **Open questions**: [a link to Undetermined Items — delete the line when there are none]
 
 ## Terms
 
-<!-- When applicable: the document leans on five or more words a newcomer may not know. One line each. Later documents add only terms that are new to them. -->
+<!-- When applicable. Later documents add only terms that are new to them. -->
 
 - **[Term]**: [what it means here, in a few plain words]
 
 ## Background
 
-<!-- At most three short paragraphs: what exists today, why now, and the context a reader needs to judge the problem. The Overview already states the problem; do not restate it. Market context, when needed, is a sentence here with its source linked. -->
+<!-- What exists today, why now, and the context a reader needs to judge the problem. The Overview already states the problem; do not restate it. Market context, when needed, is a sentence here with its source linked. -->
 
 [What exists today and why this is needed now]
 
@@ -52,23 +45,27 @@ Reader rules: documentation-criteria, "Writing for the Reader". Guidance in thes
 
 ## Functional Requirements
 
-<!-- Every requirement carries a MoSCoW priority and an acceptance criterion. A requirement states a capability and its observable outcome; how the system delivers it is the Design Doc's.
+<!-- Every requirement carries a MoSCoW priority and an acceptance criterion.
 `Won't Have` is recorded, not omitted — an unlisted exclusion is rediscovered during implementation.
 IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents cite these. -->
 
 ### Must Have (MVP)
 
-- **FR-01. [Short name].** [What the user or the system can do, in one or two sentences]
-  - AC-01.1: Given [state], when [action], then [observable outcome for the user — "the open thread is marked as current", not its markup or styling ("`aria-current` is set", "a skeleton is shown")]
+- **FR-01. [Short name].** [What the user can do and the need it answers, in one or two sentences]
+  - AC-01.1: Given [state], when [action], then [what the user observes — "the open thread is marked as current", not how it is worded, styled, or produced]
 - **FR-02. [Short name].** [...]
   - AC-02.1: [...]
 
 ### Should Have
 
+<!-- When applicable. -->
+
 - **FR-03. [Short name].** [...]
   - AC-03.1: [...]
 
 ### Could Have
+
+<!-- When applicable. -->
 
 - **FR-04. [Short name].** [...]
   - AC-04.1: [...]
@@ -82,11 +79,11 @@ IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents 
 ## Non-Functional Requirements
 
 <!-- Only the categories this feature sets a requirement for — performance, reliability, security, scalability, accessibility and responsiveness; delete the rest. When the feature sets none, one line: "none beyond project defaults".
-Each requirement has an ID (`NFR-01`) and states a target and how it is measured. Accessibility and responsiveness give the target level only ("WCAG 2.1 AA", "usable from 360 px width"); how each is met is the UXRD's. -->
+Each requirement has an ID (`NFR-01`) and states a target that can be checked. Accessibility and responsiveness give the target level only ("WCAG 2.1 AA", "usable from 360 px width"). -->
 
 ### [Category]
 
-- **NFR-01**: [target, and how it is measured]
+- **NFR-01**: [target]
 
 ## Delivery Parts
 
@@ -122,39 +119,29 @@ graph LR
 
 ## Success Criteria
 
-<!-- How we will know, after release, that the feature reached its goal: what is measured, the target, and where it is read — as many as the goal needs, no fixed count.
-Acceptance criteria prove the feature works; success criteria prove it was worth building. Never restate an acceptance criterion as a test run.
-When the feature is an internal capability with no measure beyond its acceptance criteria, write one line naming the use cases that prove it. -->
+<!-- Acceptance criteria prove the feature works; success criteria prove it was worth building. -->
 
 - [what is measured] — [target], read from [where], by [when]
 
 ## Constraints and Risks
 
-<!-- Required at full depth; at lite depth, when the feature has any. Product-level only: no inventory of dependencies, versions, or file paths — codebase facts belong to the design's analysis. -->
+<!-- Required at full depth; at lite depth, when the feature has any. -->
 
 ### Constraints
 
 - [a limit the solution must respect — business, legal, a deadline, or a technical choice the user fixed as a product decision — in a sentence]
 
-### Assumptions
+### Assumptions and Risks
 
-- [what the decision rests on that is not yet confirmed] — [how and when it is checked]
-
-### Risks
-
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| [what could make the feature fail its users or its goal] | High/Medium/Low | High/Medium/Low | [Countermeasure] |
+[What the decision rests on that is unconfirmed, and what could make the feature fail its users — each in a sentence]
 
 ## Undetermined Items
 
+<!-- When applicable: a question is open. -->
+
 - [Question] — [the options or what it affects]; blocks [what]; resolved by [who]
 
-<!-- *Discuss with user until this section is empty, then delete after confirmation* -->
-
 ## Update History
-
-<!-- One line per version, newest last, a phrase per change. No reviewer IDs. -->
 
 | Version | Date | Change |
 |---------|------|--------|

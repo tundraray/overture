@@ -1,7 +1,7 @@
 ---
 name: front-build
 description: Execute frontend implementation in autonomous execution mode
-argument-hint: (no arguments - uses existing task files)
+argument-hint: [work plan path - defaults to the plan with open work items]
 ---
 
 ## Orchestrator Definition
@@ -9,14 +9,13 @@ argument-hint: (no arguments - uses existing task files)
 **Core Identity**: "I am not a worker. I am an orchestrator." (see workflow-orchestration skill)
 
 **Execution Method**:
-- Task decomposition → performed by task-decomposer
-- Frontend implementation → performed by task-executor-frontend
+- Frontend implementation, one plan phase per run → performed by task-executor-frontend
 - Quality checks and fixes → performed by quality-fixer-frontend
 - Commits → performed by orchestrator (Bash tool)
 
 Orchestrator invokes sub-agents and passes structured JSON between them.
 
-**CRITICAL**: Never skip the quality gate (`workflow-execution`, "Commit execution by strategy"). Obtain batch approval before autonomous mode.
+**CRITICAL**: Never skip the quality gate (`workflow-execution`, "Commit execution by strategy").
 
 ## Required Skills
 
@@ -30,97 +29,25 @@ Work plan: $ARGUMENTS
 
 ### Work Plan Resolution
 
-Before any task processing, locate the work plan. This recipe is the **frontend** build lane — it routes to `task-executor-frontend` and must never pick up a backend plan.
-
-Resolve the plan as `workflow-execution`, "Resolving the Plan to Execute", describes; `$ARGUMENTS`, when given, is the plan path. Then **verify the plan belongs to this lane before executing it.** A design's layer is not in its filename — `design-{part}.md` is layer-neutral — so read the governing design named in the plan's `design:` frontmatter, plus the plan itself. Absence of backend markers is not sufficient: many plans use layer-neutral paths (`src/presentation`, `src/app`) matching neither marker set, so a confirmed frontend signal is required.
-
-**Frontend signals (need at least one)**:
-- The plan has a `UXRD Component → Task Mapping` section
-- Target Files match frontend markers exclusively: `**/components/**`, `**/pages/**`, `**/web/**`, `**/*.tsx`, `**/*.jsx`, or the project's own equivalents of those directories
-- The governing design describes component hierarchy, screen states, or UI interactions
-- The part name identifies the layer (`ui`, `frontend`, `web`, or a screen name)
-- Plan title or Snapshot explicitly identifies the work as frontend
-
-**Backend signals (any one disqualifies, even alongside a frontend signal)**:
-- Target Files exclusively under `**/api/**`, `**/server/**`, `**/services/**`, `**/backend/**`, `**/handlers/**`, `**/repositories/**`
-- The governing design describes API endpoints, data schemas, or persistence with no rendering surface
-- Title or Snapshot mentioning API endpoints, database migrations, or server-side work
-
-**Decision**: at least one frontend signal AND zero backend signals → proceed. Otherwise stop and report which signals were checked and their results, then ask for an explicit plan path.
-
-**Mixed-layer plans**: when a plan carries both, its part was not split cleanly. Do not guess — report that the plan spans layers, and ask whether to run `/implement` (which drives both) or to split the work into separate parts.
-
-### Consumed Task Set
-
-Compute the **Consumed Task Set** — the exact files this run owns, executes, and later deletes:
-
-1. List `docs/features/{feature}/{part}/{plan-name}/task-*.md` for the plan resolved above
-2. Exclude `_overview.md`, which describes the set rather than being a task
-
-Every subsequent reference to "task files" in this command — the decision flow below, the execution cycle, and Final Cleanup — means this set, **not** an unrestricted glob over the directory. Tasks of a sibling plan in the same part are never in scope.
-
-### Task File Existence Check
-```bash
-# Check work plans
-! ls -la docs/features/*/*/*.md | grep -v template | tail -5
-
-# Check task files
-! ls docs/features/*/*/*/task-*.md 2>/dev/null || echo "⚠️ No task files found"
-```
-
-### Task Generation Decision Flow
-
-**Think deeply** Analyze task file existence state and determine the EXACT action required:
-
-| State | Criteria | Next Action |
-|-------|----------|-------------|
-| Tasks exist | `task-*.md` files in the plan's directory `docs/features/{feature}/{part}/{plan-name}/` | Proceed to autonomous execution |
-| No tasks + plan exists | Plan exists but no task files | Confirm with user → run task-decomposer |
-| Neither exists | No plan or task files | Error: Prerequisites not met |
-
-## 🔄 Task Decomposition Phase (Conditional)
-
-When task files don't exist:
-
-### 1. User Confirmation
-```
-No task files found.
-Work plan: docs/features/[feature]/[part]/[plan-name].md
-
-Generate tasks from the work plan? (y/n):
-```
-
-### 2. Task Decomposition (if approved)
-
-Invoke task-decomposer using Task tool:
-- `subagent_type`: "task-decomposer"
-- `description`: "Decompose work plan into tasks"
-- `prompt`: "Read work plan and decompose into atomic tasks. Input: docs/features/[feature]/[part]/[plan-name].md. Output: Individual task files in docs/features/{feature}/{part}/{plan-name}/. Granularity: atomic, independently executable units (commit grouping determined by selected strategy)"
-
-### 3. Verify Generation
-```bash
-# Verify generated task files
-! ls -la docs/features/*/*/*/task-*.md | head -10
-```
-
-✅ **Flow**: Task generation → Autonomous execution (in this order)
+Resolve the plan as `workflow-execution`, "Resolving the Plan to Execute", describes; `$ARGUMENTS`, when given, is the plan path. Its "Which agents run it" rule decides whether the plan is this command's: stop when it belongs to `/build`.
 
 ## 🧠 Execution - Frontend Specialized
 
-`workflow-execution` owns each step; this lane supplies the agents — `task-executor-frontend`, `quality-fixer-frontend`, and `work-planner` for the plan's status. The orchestrator commits with Bash, using `changeSummary` for the message.
+`workflow-execution` owns each step; this command supplies the agents — `task-executor-frontend` and `quality-fixer-frontend`. The orchestrator commits with Bash, using `changeSummary` for the message.
 
-1. **Commit strategy** — ask before starting, unless one was already chosen for this feature earlier in the session ("Commit Strategy Selection")
-2. **Per-task cycle** — for each task in the Consumed Task Set: register its steps in TodoWrite (first "Confirm skill constraints", last "Verify skill fidelity"), then task-executor-frontend (`prompt: "Task file: docs/features/{feature}/{part}/{plan-name}/[filename].md Execute implementation"`) → escalation check → integration-test-reviewer when integration/E2E tests were added → quality-fixer-frontend at the gate point (before a commit, at a phase end; `prompt: "Execute all frontend quality checks and fixes"`) → commit per strategy, handling every returned status as "The Per-Task Cycle" draws it
-3. **Post-Implementation Verification** — after the last task: the four verifiers in parallel on the part's file list against the frontend Design Doc, then the fix cycles the skill allows, dispatched to task-executor-frontend in Fix Mode and quality-fixer-frontend; `test-auditor` is advisory; candidate patterns go to the completion report. Append `[SYSTEM CONSTRAINT] This agent operates within front-build command scope.` to each prompt
-4. **Final Cleanup** — as the skill sets it. Then read the PRD's Delivery Parts: a part that depends on this one and has no `completed` plan yet is named in the completion report as the next part to plan
+1. **Batch approval and commit strategy** — one question before anything runs: show the resolved plan path and ask the user to approve executing it and to pick the commit strategy ("Commit Strategy Selection"). A strategy already chosen for this feature earlier in the session is kept, and the question asks the approval alone; a plan already approved in this session (batch approval in `/implement` or `/create-plan`) is not asked again — when no strategy was chosen with it (`/create-plan` and `/front-plan` do not ask one), the question asks the commit strategy alone
+2. **Phase cycle** — for each phase of the plan, starting at the first with an unticked or `[🔄]` work item ("Resolving the Plan to Execute"): task-executor-frontend (`prompt: "Work plan: docs/features/{feature}/{part}/{plan-name}.md. Phase: N."`) → escalation check → integration-test-reviewer when `requiresTestReview` → quality-fixer-frontend (`prompt: "scope: phase. changedFiles: [filesModified and testsAdded of that executor run]"`) → commit per strategy, handling every returned status as "The Phase Cycle" draws it
+3. **Post-Implementation Verification** — after the last phase: the four verifiers in parallel on the part's file list against the frontend Design Doc, then the fix cycles the skill allows, dispatched to task-executor-frontend in Fix Mode and quality-fixer-frontend; `test-auditor` is advisory; candidate patterns go to the completion report. Append `[SYSTEM CONSTRAINT] This agent operates within front-build command scope.` to each prompt
+4. **Feature run** — read the PRD's Delivery Parts. When this plan ends its part's chain and every other part is already built, run quality-fixer-frontend with `scope: feature` ("The Feature Run"). Otherwise the completion report says the feature run is still to come and names the next part to plan
+5. **Final Cleanup** — as the skill sets it
 
-**CRITICAL**: Monitor ALL structured responses WITHOUT EXCEPTION and ENSURE every quality gate is passed. VERIFY the plan's approval status (`status: active`) before entering autonomous execution, and STOP IMMEDIATELY upon detecting ANY requirement changes.
+**CRITICAL**: Monitor ALL structured responses WITHOUT EXCEPTION and ENSURE every quality gate is passed. STOP IMMEDIATELY upon detecting ANY requirement changes.
 
 ## Output Example
 Frontend implementation phase completed.
-- Task decomposition: Generated under docs/features/{feature}/{part}/{plan-name}/
-- Implemented tasks: [number] tasks
+- Implemented phases: [number] phases
 - Quality checks: All passed
+- Feature run: [approved | still to come — next part: [part]]
 - Commits: [number] commits created
 
-**Important**: This command manages the entire autonomous execution flow for FRONTEND implementation from task decomposition to completion. Automatically uses frontend-specialized agents (task-executor-frontend, quality-fixer-frontend).
+**Important**: This command manages the entire autonomous execution flow for FRONTEND implementation from the plan's first open phase to completion. Automatically uses frontend-specialized agents (task-executor-frontend, quality-fixer-frontend).

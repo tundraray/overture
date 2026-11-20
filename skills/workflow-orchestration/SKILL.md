@@ -20,31 +20,11 @@ All investigation, analysis, and implementation work flows through specialized s
 | Phase completion | Delegate to the appropriate subagent |
 | Stop point reached | Wait for user approval |
 
-### First Action Rule
+### Session Start
 
-**Every new task begins with requirement-analyzer.**
+Before the first action in a new session, load the project-context skill: it holds the project-specific constraints every later decision depends on.
 
-### Session Initialization Protocol
-
-Before the orchestrator performs any other action in a new session:
-
-1. **Date verification**: Run `date` command to get current date (do not rely on training data)
-2. **Load project context**: Execute project-context skill to understand project-specific constraints
-
-These steps ensure the orchestrator has current context before making decisions.
-
-## Decision Flow When Receiving Tasks
-
-```mermaid
-graph TD
-    Start[Receive New Task] --> RA[Analyze requirements with requirement-analyzer]
-    RA --> Scale[Scale assessment]
-    Scale --> Flow[Execute flow based on scale]
-```
-
-**During flow execution, take the next subagent from the current phase skill's flow** — see "Workflow Phases"
-
-### Requirement Change Detection During Flow
+## Requirement Change Detection During Flow
 
 **During flow execution**, if detecting the following in user response, stop flow and go to requirement-analyzer:
 - Mentions of new features/behaviors (additional operation methods, display on different screens, etc.)
@@ -53,37 +33,7 @@ graph TD
 
 **If any one applies → Restart from requirement-analyzer with integrated requirements**
 
-## Available Subagents
-
-The following subagents are available:
-
-### Implementation Support Agents
-1. **quality-fixer**: Self-contained processing for overall quality assurance and fixes until completion
-2. **task-decomposer**: Appropriate task decomposition of work plans
-3. **task-executor**: Individual task execution and structured response
-4. **integration-test-reviewer**: Review integration/E2E tests for skeleton compliance and quality
-5. **security-reviewer**: Security compliance review against Design Doc and coding-principles (read-only)
-6. **code-explorer**: Searches the codebase — locates a named thing and what touches it, or sweeps for what is unused (read-only)
-7. **test-auditor**: Post-implementation audit of the part's tests — advisory, never a gate (read-only)
-8. **code-reviewer**: Post-implementation review of the code against the Design Doc and the code system it cites — conformance findings and candidate patterns (read-only)
-
-### Document Creation Agents
-1. **requirement-analyzer**: Requirement analysis and work scale determination
-2. **prd-creator**: Product Requirements Document creation
-3. **ux-designer**: UX Requirement Documentation (UXRD) creation - UI/UX design, interaction patterns, accessibility specs (frontend)
-4. **technical-designer**: ADR/Design Doc creation for backend
-5. **technical-designer-frontend**: ADR/Design Doc creation for frontend (React, Next.js)
-6. **work-planner**: Work plan creation from Design Doc and test skeletons
-7. **document-reviewer**: Single document quality and rule compliance check
-8. **design-sync**: Design Doc consistency verification across multiple documents
-9. **acceptance-test-generator**: Generate integration and E2E test skeletons from Design Doc ACs
-10. **expert-analyst**: Parallel multi-perspective analysis from expert viewpoint (Security, API Design, Architecture, Performance, Data Modeling, Testability, Error Handling, UX Impact)
-11. **codebase-analyzer**: Read-only pre-design fact gathering — emits `fact_id`-anchored `focusAreas` the designer must address (backend/shared)
-12. **ui-analyzer**: Read-only pre-design UI fact gathering, including external design-resource fetch with per-resource `fetch_status` (frontend)
-13. **code-verifier**: Post-implementation consistency check of the code against the Design Doc (read-only)
-14. **cleanup-executor**: Safely removes confirmed dead code with git backup and build verification
-
-### Gamedev Substitutions
+## Gamedev Substitutions
 
 gamedev-overture ships the shared commands but not every shared agent or skill. When a shared command or skill runs there, read each name on the left as the one on the right:
 
@@ -105,12 +55,12 @@ gamedev-overture ships the shared commands but not every shared agent or skill. 
 Assign work based on each subagent's responsibilities:
 
 **What to delegate to task-executor**:
-- Implementation work and test addition
-- Confirmation that the added tests and the touched modules' unit test files pass, the touched package typechecks, and the task's Operation Verification
+- One plan phase: implementation and test addition, test-first
+- The unit tests it writes and those of the modules it touches, one typecheck of the touched package, and the phase's Operational Verification; the integration and e2e files it writes first run in the feature run
 - Do not delegate quality assurance
 
 **What to delegate to quality-fixer**:
-- Overall quality assurance, once for the whole project (lint, unused-code check, build, full test suite, e2e, coverage)
+- Quality assurance at the `scope` the orchestrator passes — `phase` (static checks plus the unit tests of the phase's changed files), `feature` (whole suite, integration, e2e, coverage); see `workflow-execution`, "Commit execution by strategy"
 - Complete execution of quality error fixes
 - Self-contained processing until fix completion
 - Final approved judgment (only after fixes are complete)
@@ -123,7 +73,7 @@ A subagent can spawn subagents, up to three layers below the main conversation b
 
 **Naming.** Plugin agents are registered as `<plugin>:<agent>`. Whether the bare name also resolves is not documented, and a failed spawn returns "Agent type not found" — an error an autonomous caller tends to absorb and move past without the result it needed. The examples in this repository write the bare name because the same agent file ships in several plugins; use the name as the `Agent` tool's available-agents list shows it, and treat "not found" as a reason to retry in the namespaced form, never as an answer.
 
-**Depth.** The chain orchestrator → document owner → `code-explorer` → its fan-out children reaches the default limit exactly. At the limit the platform withholds `Agent`, and `code-explorer` searches its directions serially instead; a command run as a subagent rather than from the main conversation loses that fan-out one level earlier.
+**Depth.** The chain orchestrator → document owner → `code-explorer` stays within the default limit; a command run as a subagent rather than from the main conversation starts one level deeper.
 
 What stays true regardless: subagents cannot coordinate with each other. There is no channel between siblings, and a result reaches a peer only by returning to whoever spawned them — so **sequencing remains the orchestrator's**, whatever an agent does internally to answer its own question.
 
@@ -132,7 +82,7 @@ What stays true regardless: subagents cannot coordinate with each other. There i
 Pass **what to accomplish** and **where to work**. Each specialist determines **how to execute** autonomously. Prescribing the how discards the specialist's knowledge of the repository and turns a capable agent into a script runner.
 
 **Pass to specialists** (what / where / constraints):
-- Task file path — executor agents (task-executor, task-decomposer); broader scope requires an explicit user request
+- Work plan path and phase number — executor agents (task-executor, task-executor-frontend); broader scope requires an explicit user request
 - Target directory or package scope — discovery and review agents (code-verifier, code-reviewer, security-reviewer, integration-test-reviewer)
 - Acceptance criteria and hard constraints from the user or design artifacts
 
@@ -144,15 +94,15 @@ Pass **what to accomplish** and **where to work**. Each specialist determines **
 
 | | Bad (prescribing how) | Good (passing what) |
 |---|---|---|
-| quality-fixer | "Run these checks: 1. lint 2. test" | "Execute all quality checks and fixes" |
-| task-executor | "Edit file X and add handler Y" | "Task file: docs/features/checkout/core/20260726-feature-checkout/task-03.md" |
+| quality-fixer | "Run these checks: 1. lint 2. test" | "scope: phase. changedFiles: [filesModified and testsAdded of the phase's executor run]" |
+| task-executor | "Edit file X and add handler Y" | "Work plan: docs/features/checkout/core/20260726-feature-checkout.md. Phase: 2." |
 
 ### Decision Precedence When Outputs Conflict
 
 When two specialists disagree, or a specialist contradicts the orchestrator's expectation, resolve in this order:
 
 1. **User instructions** — explicit requests or constraints
-2. **Task files and design artifacts** — Design Doc, PRD, work plan
+2. **Design artifacts** — Design Doc, PRD, work plan
 3. **Objective repo state** — git status, file system, project configuration
 4. **Specialist judgment**
 
@@ -168,8 +118,7 @@ The orchestrator coordinates using only these tools:
 |------|---------|
 | Agent / Task | Invoke subagents |
 | AskUserQuestion | User confirmations and questions |
-| TodoWrite, TaskCreate / TaskUpdate | Progress tracking |
-| Bash | Shell operations (git commit, ls, verification commands) |
+| Bash | Shell operations (git commit, ls) |
 | Read | Deliverable documents, for information bridging between subagents |
 
 Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator.
@@ -186,9 +135,8 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
 | `docs/features/*/design-*.md` | technical-designer(-frontend) |
-| `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes; `status` flips go through the planner in `update` mode |
-| `docs/features/{feature}/{part}/{plan-name}/*.md` | task-decomposer; executors may Edit progress |
-| `docs/features/{feature}/{part}/{plan-name}/analysis/*.md` | task-executor(-frontend) — research deliverables |
+| `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes and a phase's Investigation Notes |
+| `docs/features/{feature}/{part}/analysis/*.md` | task-executor(-frontend) — research deliverables |
 | `src/**/*`, `tests/**/*` (code) | task-executor(-frontend) |
 | Any file (quality fixes) | quality-fixer(-frontend) |
 
@@ -203,7 +151,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 
 The Write/Edit split is the load-bearing part: a `Write` replaces the file, which is authorship, while an `Edit` is the targeted change an executor makes when ticking a progress checkbox in someone else's plan. The main conversation is denied, not asked: auto mode resolves an `ask` without the user. A fork is denied too — it reports `agent_type: "fork"`, not whose work it does — so an owner that splits its work spawns itself (`<plugin>:<agent>`), which the spawn check below allows.
 
-Human documents change only through `Write`/`Edit`. A `Bash` or `PowerShell` command that writes one — `sed -i`, `perl -i`, a redirect, `tee`, `rm`, `mv`, `touch`, a copy destination, `git checkout`/`restore`/`clean`, `Set-Content`, `Remove-Item` — is denied for every caller, owner included, because a shell edit cannot be attributed to an owner. Work plans and task files are temporary and may be changed or deleted from the shell.
+Human documents change only through `Write`/`Edit`. A `Bash` or `PowerShell` command that writes one — `sed -i`, `perl -i`, a redirect, `tee`, `rm`, `mv`, `touch`, a copy destination, `git checkout`/`restore`/`clean`, `Set-Content`, `Remove-Item` — is denied for every caller, owner included, because a shell edit cannot be attributed to an owner. Work plans and a part's `analysis/` files are temporary and may be changed or deleted from the shell.
 
 The same hook watches `Agent`/`Task` calls for one shape: **a document owner spawning a different document owner** is denied. The Write/Edit guard only sees who is knocking right now, so an owner blocked from a file it does not own could otherwise spawn that file's owner and have it write on the caller's behalf. A cross-owner handoff goes back to the orchestrator, which delegates to the owner explicitly. An owner spawning itself (fan-out) or a non-owning helper (`code-explorer`) passes.
 
@@ -228,9 +176,9 @@ Autonomous execution MUST stop and wait for user input at these points.
 | Technical | After technical-designer(-frontend) returns the ADR (with its draft check; only when an ADR was written) | ADR | Approve ADR |
 | Execution | After the planner returns the work plan (with its draft check; small scale and gamedev Prototype: the simplified plan, which is not reviewed) | part | Batch approval for that part's implementation |
 
-**At a document stop** the orchestrator shows the document path and the author's `draftCheck.open` items in plain words, and asks: approve, request changes (one owner pass in `mode: update` with the user's instruction verbatim, then the same stop), or independent review — a cold `document-reviewer` run, after which "Revision Loop" applies. No option is preselected; independent review is marked recommended only when `draftCheck.verdict` is `not_run`. `design-sync` before the Design Doc stop stays automatic.
+**At a document stop** the orchestrator shows the document path, the draft-check verdict — approved, approved with open items, `skipped` (no draft check ran on this revision) or `not_run` — and the author's `draftCheck.open` items in plain words, and asks: approve, request changes (one owner pass in `mode: update` with the user's instruction verbatim, then the same stop), or independent review — a cold `document-reviewer` run, after which "Revision Loop" applies. No option is preselected; independent review is marked recommended only when `draftCheck.verdict` is `not_run`. `design-sync` before the Design Doc stop stays automatic.
 
-**After batch approval**: Autonomous execution proceeds without stops until the current part's completion report or an escalation. The next part begins with its own plan and batch approval.
+**After batch approval**: Autonomous execution proceeds without stops until the current part's completion report or an escalation. The next part begins with its own plan and batch approval. `/build` and `/front-build` started on their own take the batch approval as their first question; a plan already approved in this session is not asked again.
 
 ## Scale Determination and Document Requirements
 | Scale | Typical file count※5 | PRD | UXRD | ADR | Design Doc | Work Plan |
@@ -246,22 +194,6 @@ Autonomous execution MUST stop and wait for user input at these points.
 ※5: File count is the typical range, not the rule. Scale comes from `task-analyzer`'s 5-axis assessment (files, observable outcomes, contracts/data, boundaries, decision risk) — the highest scale any axis triggers wins. A 2-file breaking contract change routes as Large.
 
 ## How to Call Subagents
-
-### Execution Method
-Call subagents using the Agent tool:
-- subagent_type: Agent name
-- description: Concise task description (3-5 words)
-- prompt: Specific instructions
-
-### Call Example (requirement-analyzer)
-- subagent_type: "requirement-analyzer"
-- description: "Requirement analysis"
-- prompt: "Requirements: [user requirements] Please perform requirement analysis and scale determination"
-
-### Call Example (task-executor)
-- subagent_type: "task-executor"
-- description: "Task execution"
-- prompt: "Task file: docs/features/[feature]/[part]/[plan-name]/task-01.md Please complete the implementation"
 
 ### Reviewers Are Cold Readers
 
@@ -295,7 +227,7 @@ Shared by every phase, for the reviews the orchestrator runs: an independent rev
 | `needs_revision` | the `critical` and `important` issues only | yes, `review_scope: changes` |
 | `rejected` | none — straight to the user | — |
 
-`recommended` issues and the reviewer's `deferred` list never go to the owner on the orchestrator's initiative. They are shown at the gate's stop point as one short list, and the user picks which to apply: one owner pass, no re-review unless the user asks for one.
+The reviewer's `deferred` list never goes to the owner on the orchestrator's initiative. It is shown at the gate's stop point as one short list, and the user picks which to apply: one owner pass, no re-review unless the user asks for one.
 
 **Round cap.** At most two reviews per document per gate: the first review and one re-review. A re-review that is not `approved` stops the loop. Put it to the user via `AskUserQuestion` with the outstanding issues in plain words and three options:
 - **Revise again** — one more owner pass with the user's instruction passed verbatim, then one more re-review
@@ -306,27 +238,21 @@ Shared by every phase, for the reviews the orchestrator runs: an independent rev
 
 **Re-review scope.** A re-review checks the prior issues and the changed text (`document-reviewer` Step 2b); it does not read the whole document cold again.
 
-**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs + code system → ADR → work plan → task files), with `draft_check: skip` in its prompt. Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
+**One change, one round across documents.** When one decision changes several documents — a user answer at a stop, an escalation during implementation — every affected owner updates its document first, in dependency order (PRD → UXRD + design system → Design Docs + code system → ADR → work plan), with `draft_check: skip` in its prompt. Then one review round runs over the set: one `document-reviewer` call per changed document with `review_scope: changes`, in parallel, plus one `design-sync` when a Design Doc changed. The user approves the set at one stop. A document is not re-reviewed because a neighbour changed; a neighbour's change reaches it only through the update step.
 
 The orchestrator never accepts a reviewer finding on its own authority, and never edits the document to make a finding go away. An author's `draftCheck.open` items are findings too: they go to the user at the stop, never dropped. Only the user's explicit accept advances a gate past an open finding.
 
 ## Structured Response Specification
 
-Each subagent responds in JSON format. A document-producing agent returns the paths it wrote in `documents[].path` — that path, not the response text, is what the orchestrator hands to the next agent. An author that runs a draft check (`documentation-criteria`, "Draft Check") also returns `draftCheck` (`verdict`, `fixed`, `open`). Key fields for orchestrator decisions:
-- **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments (prd with depth, uxrd, designDoc, workPlan), adrSignals, scopeDependencies, questions
-- **task-executor**: status, filesModified, testsAdded, readyForQualityCheck
-- **quality-fixer**: status, checksPerformed, fixesApplied, approved, incompleteImplementations
-- **document-reviewer**: status, revision_agent, gate0, gate0_missing, issues, deferred (with `review_scope: changes`)
-- **design-sync**: syncStatus, counts, conflicts (severity, type, source, target, revision_agent), analyzedDocuments
-- **integration-test-reviewer**: status (approved/needs_revision/blocked), qualityIssues, requiredFixes, verdict
-- **acceptance-test-generator**: status, generatedFiles, budgetUsage
-- **expert-analyst**: status, aspect, expertName, codeInvestigation, concerns, options, recommendation (with risks and confidence), interactionPoints
-- **code-explorer**: status, answer, locations (directed) or findings (sweep: id, category, files, confidence, signals, ruledOut, notRuledOut), counts, coverage
-- **cleanup-executor**: status, branchName, filesRemoved, importsUpdated, revertedItems, buildVerified, testsVerified
-- **security-reviewer**: status (approved/approved_with_notes/needs_revision/blocked), findings, designDocCoverage, blockers, nextSteps
-- **test-auditor**: status, verdict (lean/bloated/blocked), findings (per-test `merge` / `drop` / `move` verdicts), budget, gaps — advisory, reported to the user
-- **code-reviewer**: status, verdict (pass/needs-improvement/needs-redesign), unfulfilledItems, qualityIssues (conformance types enter Fix Mode), candidatePatterns (completion report), testEvidence
-
+Each subagent replies in JSON. A reply carries the status, the paths written, and what the orchestrator must decide. An agent that writes files returns their paths, and the next agent is handed the path. An agent that cannot write (the reviewers, verifiers and analyzers) returns only the findings the flow acts on, and the orchestrator forwards them as returned, without retyping or restructuring them. An author that runs a draft check (`documentation-criteria`, "Draft Check") also returns `draftCheck` (`verdict`, `fixed`, `open`). The fields the flow keys on:
+- **requirement-analyzer**: status, scale, scaleRationale.decidingAxis, confidence, parts, requiredDocuments, scopeDependencies, questions
+- **document authors** (prd-creator, ux-designer, technical-designer(-frontend), the planner): status, documents[].path, draftCheck, openQuestions
+- **task-executor**: status, filesModified, testsAdded, requiresTestReview
+- **quality-fixer**: status, approved, incompleteImplementations
+- **document-reviewer**: status, revision_agent, issues
+- **design-sync**: syncStatus, conflicts (with revision_agent)
+- **integration-test-reviewer**: status, requiredFixes
+- **code-verifier**, **code-reviewer**, **security-reviewer**, **test-auditor**: the verdict `workflow-execution`, "Post-Implementation Verification", reads, and the findings a fix acts on
 
 ## Handling Requirement Changes
 
@@ -354,10 +280,10 @@ Document generation agents (work-planner, technical-designer, technical-designer
 - **On requirement change**: Edit existing document and add history in update mode
 
 Criteria for timing when to call each agent:
-- **work-planner**: Request structural updates only before execution; the `status` flips (`active` after batch approval, `completed` in Final Cleanup) are requested in `update` mode at those two moments
-- **technical-designer(-frontend)**: Request updates according to design changes → the designer's draft check covers the change
-- **prd-creator**: Request updates according to requirement changes → the author's draft check covers the change
-- **ux-designer**: Request updates according to UX/UI requirement changes → the author's draft check covers the change
+- **work-planner**: Request structural updates only before execution
+- **technical-designer(-frontend)**: Request updates according to design changes → the designer's draft check covers a change to a requirement, a decision, or a contract; any other revision returns `draftCheck.verdict: "skipped"`, which is normal
+- **prd-creator**: Request updates according to requirement changes → the author's draft check covers the change, on the same condition
+- **ux-designer**: Request updates according to UX/UI requirement changes → the author's draft check covers the change, on the same condition
 - **document-reviewer**: Run by the author as its draft check (`documentation-criteria`, "Draft Check"); by the orchestrator only when the user picks independent review at the stop, and in the review round over a set one change touched
 
 ## Workflow Phases
@@ -370,82 +296,24 @@ This skill holds the mechanics shared by every phase. The phases themselves live
 | Technical | `workflow-technical` | How to build it | Design Doc approval |
 | Execution | `workflow-execution` | Scheduling it, then doing it | Completion report |
 
-Planning and decomposition belong to execution, not to technical design: a plan is a schedule for doing the work rather than a statement of what the work is, and batch approval — the authority boundary — gates the plan.
+Planning belongs to execution, not to technical design: a plan is a schedule for doing the work rather than a statement of what the work is, and batch approval — the authority boundary — gates the plan.
 
 Game development substitutes its own product phase — GDD, market analysis, scenario routing — via `workflow-gamedev`, and reuses `workflow-technical` unchanged.
 
 **Load the phase skill for the phase you are in.** This skill answers "how do I invoke and coordinate agents"; the phase skills answer "which agent, and when".
 
-### Phase Gates
-
-Each phase opens with an **Entry Gate** and closes with an **Exit Gate**, both `[BLOCKING]`. A phase's exit gate and the next phase's entry gate check the same handoff from both sides: the producer confirms it was produced, the consumer confirms it arrived. Checking once from one side is how a missing artifact gets noticed three steps later.
-
-```
-workflow-product ──exit──▶──entry── workflow-technical ──exit──▶──entry── workflow-execution ──exit──▶ done
-   (workflow-gamedev substitutes here)
-```
-
-| Boundary | Producer confirms | Consumer confirms |
-|----------|-------------------|-------------------|
-| Product → Technical | Requirements confirmed; PRD approved at the scale's depth; UXRD approved or no UI surface; parts list confirmed by the user, in dependency order; scale with `decidingAxis`; open questions written down | The same, plus: no open question blocks a decision this phase must make |
-| Technical → Execution | A Design Doc per part approved in dependency order; every `focusAreas` entry disposed of; ADR test applied and outcome recorded; test skeletons generated per part | The same, plus: every part's plan state is unambiguous |
-| Execution → done | All tasks committed; post-implementation verification passed; cleanup done; plan `status: completed` | — |
-
-**A gate failure is not a delay to work around.** Report the unmet item and the phase that produces it, then stop. Substituting a plausible assumption for a missing input is how a design encodes something nobody agreed to — and by the time it surfaces, it is in committed code.
-
-Gates are distinct from **stop points**: a stop point asks the user to decide, a gate checks that work is complete. A phase can pass every stop point and still fail its exit gate — approval of a document is not the same as having produced everything the next phase needs.
-
 ## Autonomous Execution Mode
 
-Everything after batch approval — entry conditions, the per-task cycle, commit strategies, post-implementation verification, final cleanup, auto-stop triggers, and the error-fixing protocol — is governed by `workflow-execution`.
+Everything after batch approval — entry conditions, the phase cycle, commit strategies and quality-fixer scopes, post-implementation verification, the feature run, final cleanup, and auto-stop triggers — is governed by `workflow-execution`.
 
 Load `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md` before entering autonomous mode.
-
-## TodoWrite Management
-
-
-**Stage 1: Phase Management** (Orchestrator responsibility)
-- Register overall phases as TodoWrite items
-- Update status as each phase completes
-
-**Stage 2: Task Expansion** (Subagent responsibility)
-- Each subagent registers detailed steps in TodoWrite at execution start
-- Update status on each step completion
 
 ## Main Orchestrator Roles
 
 1. **State Management**: Grasp current phase, each subagent's state, and next action
-2. **Information Bridging**: Data conversion and transmission between subagents
-   - Convert each subagent's output to next subagent's input format
-   - **Always pass deliverables from previous process to next agent**
-   - Extract necessary information from structured responses
-   - Compose commit messages from changeSummary → **Execute git commit with Bash**
-   - Explicitly integrate initial and additional requirements when requirements change
-
-   #### acceptance-test-generator → work-planner
-
-   **Purpose**: Prepare information for work-planner to incorporate into work plan
-
-   **Orchestrator verification items**:
-   - Verify integration test file path retrieval and existence
-   - Verify E2E test file path retrieval and existence
-
-   **Pass to work-planner** — per part, since the generator runs once per part and the planner plans one part:
-   - Integration test file: [path]/[feature]-[part].int.test.[ext] (create and execute simultaneously with each phase implementation)
-   - E2E test file: [path]/[feature]-[part].e2e.test.[ext] (execute only in final phase)
-
-   **On error**: Escalate to user if files are not generated
-
+2. **Handoffs**: Pass the next agent the paths the previous one returned; when requirements change, integrate the initial and additional requirements explicitly
 3. **Quality Assurance and Commit Execution**: After `approved: true` at a commit point of the chosen strategy, execute git commit
 4. **Autonomous Execution Mode Management**: Start/stop autonomous execution after approval, escalation decisions
-5. **ADR Status Management**: After the user's decision, have `technical-designer(-frontend)` set the ADR's status in `update` mode
-
-## Important Constraints
-
-- **Quality check is mandatory**: quality-fixer approval needed before commit
-- **Structured response mandatory**: Information transmission between subagents in JSON format
-- **Approval management**: Document creation with the author's draft check → user approval at the stop (independent review when the user picks it) before proceeding
-- **Flow confirmation**: After getting approval, take the next step from the current phase skill's flow
 
 ## Required Dialogue Points with Humans
 
@@ -453,12 +321,3 @@ Load `${CLAUDE_PLUGIN_ROOT}/skills/workflow-execution/SKILL.md` before entering 
 - **Stopping is mandatory**: Always wait for human response at the following timings
 - **Confirmation → Agreement cycle**: After document generation, proceed to next step after agreement or fix instructions in update mode
 - **Specific questions**: Make decisions easy with options (A/B/C) or comparison tables
-## Action Checklist
-
-When receiving a task, check the following:
-
-- [ ] Confirmed if there is an orchestrator instruction
-- [ ] Determined task type (new feature/fix/research, etc.)
-- [ ] Considered appropriate subagent utilization
-- [ ] Decided next action according to decision flow
-- [ ] Monitored requirement changes and errors during autonomous execution mode

@@ -52,12 +52,12 @@ Commands come from the project's own scripts — `package.json`, run with the pa
 
 ### Quality Check Requirements
 
-Quality checks are mandatory upon implementation completion, in the phases of `ai-development-guide` "Quality Check Workflow":
+Quality checks are mandatory at the end of every plan phase and at the end of the feature, run by `quality-fixer` in this order (`quality-fixer`, "Workflow"):
 
 - **Phase 1: Static Analysis** — the lint/format script, the type check, and the unused-export and circular-dependency checks when the project has them
 - **Phase 2: Build Verification** — the build script
-- **Phase 3: Testing** — the test script, and the coverage script when the project has one
-- **Phase 4: Final Quality Gate** — after a fix, the phases that passed before it run again, so a fix made for a test did not break an earlier phase; with no fixes, Phases 1–3 were the gate
+- **Phase 3: Testing** — the test script, as far as the gate's scope asks (`quality-fixer`, "Scope"): the unit tests of the changed files at the end of a plan phase; the whole suite, and the coverage script when the project has one, once at the end of the feature
+- **After a fix** — the failed check runs again, then the checks that had passed before it, so a fix made for a test did not break an earlier phase
 
 ### Troubleshooting
 

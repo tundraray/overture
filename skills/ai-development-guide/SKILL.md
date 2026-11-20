@@ -1,6 +1,6 @@
 ---
 name: ai-development-guide
-description: This skill provides technical decision criteria, anti-pattern detection, debugging techniques, and quality check workflow. Automatically loaded when making technical decisions, detecting code smells, performing quality assurance, or when patterns like "code smell", "anti-pattern", "technical debt", or "quality check" are mentioned.
+description: This skill provides technical decision criteria, anti-pattern detection, and debugging techniques for whoever writes or fixes code. Automatically loaded when making technical decisions, detecting code smells, tracing a failure to its root cause, or when patterns like "code smell", "anti-pattern", "technical debt", or "root cause" are mentioned.
 ---
 
 # AI Developer Guide - Technical Decision Criteria and Anti-pattern Collection
@@ -177,49 +177,6 @@ To isolate problems, attempt reproduction with minimal code:
 - Replace external dependencies with mocks
 - Create minimal configuration that reproduces problem
 
-## Quality Check Workflow
-
-Universal quality assurance phases applicable to all languages:
-
-### Phase 1: Static Analysis
-1. **Code Style Checking**: Verify adherence to style guidelines
-2. **Code Formatting**: Ensure consistent formatting
-3. **Unused Code Detection**: Identify dead code and unused imports/variables
-4. **Static Type Checking**: Verify type correctness (for statically typed languages)
-5. **Static Analysis**: Detect potential bugs, security issues, code smells
-
-### Phase 2: Build Verification
-1. **Compilation/Build**: Verify code builds successfully (for compiled languages)
-2. **Dependency Resolution**: Ensure all dependencies are available and compatible
-3. **Resource Validation**: Check configuration files, assets are valid
-
-### Phase 3: Testing
-1. **Unit Tests**: Run all unit tests
-2. **Integration Tests**: Run integration tests
-3. **Test Coverage**: Measure coverage; check it against the project's CI threshold when one is configured
-4. **E2E Tests**: Run end-to-end tests
-
-### Phase 4: Final Quality Gate
-Runs only after a fix in Phases 1–3, re-running the phases that passed before it; with no fixes, Phases 1–3 are the gate. All must pass:
-- Zero static analysis errors
-- Build succeeds
-- All tests pass
-- Coverage meets the project's CI threshold, when one is configured
-
-### Quality Check Pattern (Language-Agnostic)
-```
-Workflow:
-1. Format check → 2. Lint/Style → 3. Static analysis →
-4. Build/Compile → 5. Unit tests → 6. Coverage check →
-7. Integration tests → 8. Final gate (after a fix)
-
-Auto-fix capabilities (when available):
-- Format auto-fix
-- Lint auto-fix
-- Dependency/import organization
-- Simple code smell corrections
-```
-
 ## Situations Requiring Technical Decisions
 
 ### Timing of Abstraction
@@ -240,7 +197,7 @@ Auto-fix capabilities (when available):
 ## Implementation Completeness Assurance
 
 ### Impact Before Change
-Before changing code whose callers are unknown, resolve its consumers per `code-navigation`. The change stays inside the task's Target Files; a consumer outside them that must change is an escalation (`out_of_scope_file`), not a silent edit.
+Before changing code whose callers are unknown, resolve its consumers per `code-navigation`. The change stays inside the phase's Target Files, plus an edit to a file in a directory that already holds one of them (or to a Target File's test file) that changes no exported signature, schema, route or shared type, reported as the executor's File Scope Constraint sets. Any other consumer is an escalation (`out_of_scope_file`), not a silent edit.
 
 ### Unused and Broken Code
-Within the task's Target Files, code this work leaves unused is deleted (Git preserves it), and code that does not work is fixed or replaced rather than patched around. Unused or broken code outside them is reported, not touched.
+Within the phase's Target Files, code this work leaves unused is deleted (Git preserves it), and code that does not work is fixed or replaced rather than patched around. Unused or broken code outside them is reported, not touched.

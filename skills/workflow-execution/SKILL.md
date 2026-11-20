@@ -1,27 +1,15 @@
 ---
 name: workflow-execution
-description: This skill governs planning and execution — work plan creation, task decomposition, batch approval, the per-task cycle, commit strategies, whole-implementation verification, and the conditions that force a stop. Automatically loaded when creating a work plan, decomposing tasks, entering autonomous mode, or when "work plan", "task decomposition", "batch approval", "autonomous execution", "task cycle", or "commit strategy" are mentioned.
+description: This skill governs planning and execution — work plan creation, batch approval, the phase cycle, commit strategies and quality-fixer scopes, whole-implementation verification, the feature run, and the conditions that force a stop. Automatically loaded when creating a work plan, entering autonomous mode, or when "work plan", "plan approval", "autonomous execution", "phase cycle", "commit strategy", or "feature run" are mentioned.
 ---
 
 # Autonomous Execution Workflows
 
-Coordination mechanics belong to `workflow-orchestration`; the approved design arrives from `workflow-technical`. This skill covers everything from "we know what to build" to "it is built": planning the work, decomposing it, obtaining batch approval, and then running the loop that proceeds without asking permission.
+Coordination mechanics belong to `workflow-orchestration`; the approved design arrives from `workflow-technical`. This skill covers everything from "we know what to build" to "it is built": planning the work, obtaining batch approval, and then running the loop that proceeds without asking permission.
 
 Planning lives here rather than with design because a plan is a schedule for doing the work, not a statement of what the work is. It also carries the only domain difference in this half of the workflow — the planner agent.
 
 Autonomy is delegated authority, not absence of limits. Every rule below exists because unbounded execution fails in a specific, observed way: it edits far more than intended, retries a broken approach indefinitely, or reports success on work it never verified.
-
-## Entry Gate [BLOCKING]
-
-Run before planning begins.
-
-☐ Parts list received, with an approved Design Doc path for every part (`workflow-technical` exit gate passed) — or, at small scale or in gamedev Prototype mode, the approved lite PRD (the lite feature spec on the gamedev path) and a single part with no design
-☐ ADR paths received per part, or an explicit "none passed the test" (small scale and Prototype: none)
-☐ Test skeleton paths received per part (small scale and Prototype: none)
-☐ PRD and UXRD paths carried through, for plan traceability (feature spec, GDD, and `game-ui-designer` output on the gamedev path); a small-scale plan's task lines cite the PRD's or feature spec's acceptance criteria
-☐ The plan state of every part is unambiguous: at most one plan is `status: active`, the plan file count matches `M` in `plan: N of M`, and every `depends-on` resolves
-
-**ENFORCEMENT**: when an item is unchecked, stop and name the missing input and the phase that produces it. An ambiguous plan state in particular must never be resolved by picking one — see "Planning" below.
 
 ## Planning
 
@@ -40,43 +28,41 @@ Substitute the domain's agent wherever this skill says **`{planner}`**. Nothing 
 
 Planning and execution run **per part**, in the dependency order of the parts list: plan the first part, take its batch approval, build it through its completion report, then plan the next. The whole feature was designed before this phase began, so every contract a part consumes is settled; building in order adds that the upstream part's *code* exists too, and the downstream plan can name real files where the upstream plan could only name designed ones.
 
-Commit strategy is asked once, before the first part's batch approval, and holds for the feature. Batch approval is taken per part: it approves one plan, and one plan covers one part.
+Commit strategy is asked once, in the first part's batch approval, and holds for the feature. Batch approval is taken per part: it approves one plan, and one plan covers one part.
 
 ### Flow
 
 Run for the current part, then repeat for the next part in the list:
 
-1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying the frontmatter that positions it within its part (`plan: N of M`, `status`, `depends-on`) and incorporating the part's test skeleton paths
+1. **`{planner}`** → work plan at `docs/features/{feature}/{part}/{plan-name}.md`, carrying, when the part has more than one plan, the frontmatter that positions it within its part (`plan: N of M`, `depends-on`), and incorporating the part's test skeleton paths
 2. **`{planner}`'s draft check** — `document-reviewer`, run by the planner on the plan it wrote (`documentation-criteria`, "Draft Check"); the orchestrator runs no plan review of its own
-3. **Commit strategy selection** — ask the user, first part only (see below)
 
-   **[Stop: batch approval — part `{part}`]** — shows the plan path and the planner's `draftCheck.open` items, and offers independent review as an option; when the user picks it, `workflow-orchestration`, "Revision Loop" applies before approval
+   **[Stop: batch approval — part `{part}`]** — shows the plan path and the planner's `draftCheck.open` items, and offers independent review as an option; when the user picks it, `workflow-orchestration`, "Revision Loop" applies before approval. At the first part the same question asks the commit strategy ("Commit Strategy Selection")
 
-4. **`{planner}`** (`update` mode) → set the approved plan's frontmatter `status: active`. The orchestrator never edits the file itself; the planner owns it and checks no sibling is already active
-5. **task-decomposer** → task files in `docs/features/{feature}/{part}/{plan-name}/`, one per single-commit unit, plus `_overview.md`
-6. The per-task cycle, post-implementation verification, and Final Cleanup below, for this part. Its completion report names the next part in the list, or closes the feature when it was the last
-
-Decomposition runs **after** batch approval: it produces working state, not a document under review, and re-decomposing is cheap while re-approving is not.
+3. The phase cycle, post-implementation verification, and Final Cleanup below, for this part. Its completion report names the next part in the list; the last part runs the feature run before its cleanup, and its report closes the feature
 
 ### Batch approval is the authority boundary
 
 Everything before it is reviewed by a human; everything after runs autonomously until completion or escalation. Do not reach it with an unresolved question — after it, no one is asked again.
 
-Small scale, and gamedev Prototype mode at any scale, skips step 2: `{planner}` writes a simplified plan with `design: none` whose task lines cite the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
+Small scale, and gamedev Prototype mode at any scale, skips step 2: `{planner}` writes a simplified plan with `design: none` whose work items cite the lite PRD's requirements (the lite feature spec on the gamedev path), batch approval is taken, and the loop runs. The parts list has one entry.
 
 ## Resolving the Plan to Execute
 
 A command that resumes execution (`/build`, `/front-build`) finds its plan this way:
 
-- **A plan path was given**: use it. Its `{plan-name}` is the filename without `.md`; its tasks are in the sibling directory of the same name
-- **No path**: read every plan at `docs/features/*/*/*.md`, parse its frontmatter (`feature`, `part`, `design`, `plan: N of M`, `status`, `depends-on`), and take the plan with `status: active`
-- **Stop and escalate rather than guess** when a part's state is ambiguous: two plans in one part claim `active`; no plan is active while the part still has task files; the part's plan count disagrees with `M`; a `depends-on` names a missing plan; or the active plan's `depends-on` chain holds a plan that is not `completed`
-- **Several parts have an active plan**: take the one whose task directory has the most recently modified `task-*.md`, and report the choice and the alternatives
+- **A plan path was given**: use it
+- **No path**: read the plans at `docs/features/*/*/*.md` and take the one that holds an unticked or `[🔄]` work item and whose `depends-on` plans are fully ticked. A plan with every work item ticked is finished
+- **Several plans qualify**: take the most recently modified plan file — the executor ticks work items in it — and report the choice and the alternatives
 - **No plan under `docs/features/*/*/`**: stop — "No work plan found. Pass a work plan path, or complete the planning phase first."
+
+**Which agents run it.** Look up the plan's `part` (frontmatter) in the PRD's Delivery Parts: a part whose "Cut along" is `frontend` runs with `task-executor-frontend` and `quality-fixer-frontend` (`/front-build`), every other part with `task-executor` and `quality-fixer` (`/build`). Each of the two commands stops when the resolved plan belongs to the other and names the command to run instead. gamedev-overture has one pair and skips this check.
+
+Execution resumes at the plan's first `### Phase N` that holds an unticked or `[🔄]` work item; the executor continues from the unticked items. A phase whose items are all `[x]` while its files are still uncommitted under `per-phase` gets its gate (`scope: phase`) and its commit first.
 
 ## Entry Conditions
 
-Autonomous mode starts after batch approval and decomposition. Before entering the loop, verify the environment supports what it assumes.
+Autonomous mode starts after batch approval. Before entering the loop, verify the environment supports what it assumes.
 
 ### Pre-Execution Environment Check
 
@@ -84,8 +70,7 @@ Autonomous mode starts after batch approval and decomposition. Before entering t
 
 **Required environments**:
 - Commit capability (for the commit cycle)
-- Quality check tools (quality-fixer detects and escalates if missing)
-- Test runner (task-executor detects and escalates if missing)
+- Quality check tools and test runner (quality-fixer detects and escalates if missing)
 
 **If a critical environment is unavailable**: escalate with the specific missing component *before* entering autonomous mode — discovering it mid-loop wastes the approval and leaves partial work.
 **If the gap is detectable by a subagent**: proceed; the subagent escalates with fuller context than a pre-check can produce.
@@ -96,41 +81,41 @@ Once the environment check passes, batch approval delegates authority to the sub
 
 | Agent | Delegated authority |
 |-------|---------------------|
-| task-executor(-frontend) | Implementation — may use Edit/Write within its File Scope Constraint |
+| task-executor(-frontend) | Implementation — may use Edit/Write within the phase's file scope (its Target Files, and an edit that passes the executor's File Scope test) |
 | quality-fixer(-frontend) | Fix authority — automatic quality error fixes |
 
 The orchestrator itself gains no write authority: it still coordinates only.
 
 ## Commit Strategy Selection
 
-**Ask before batch approval**, so the user approves the plan and its commit granularity together.
+**Ask in the batch-approval question**, so the user approves the plan and its commit granularity together; `/build` and `/front-build` started on their own do the same.
 
 | Strategy | When to Commit | Best For |
 |----------|----------------|----------|
-| **per-task** | After each task completes | Atomic commits, easy rollback, CI-friendly |
-| **per-phase** | After each phase completes | Balanced granularity |
-| **per-feature** | Single commit at feature completion | Clean history, squash-like |
-| **manual** | User explicitly requests | Full control, interactive workflow |
+| **per-phase** | After each phase completes | One commit per verified unit of work, easy rollback |
+| **per-feature** | Single commit after the feature run | Clean history, squash-like |
+| **manual** | User explicitly requests, between phases | Full control, interactive workflow |
 
 **Default**: `per-phase`.
 
 The strategy sets when `git commit` runs and commit message granularity.
 
-## The Per-Task Cycle
+## The Phase Cycle
+
+A plan phase is the unit of execution: one executor run implements it, one gate checks it, one commit holds it. The orchestrator runs the plan's phases in order, each through this cycle.
 
 ```mermaid
 flowchart TD
-    TE[task-executor] -->|escalation_needed / blocked| U[Escalate to user]
-    TE -->|int/e2e tests added| ITR[integration-test-reviewer]
-    TE -->|completed| G{Commit point or phase end?}
+    TE[task-executor: phase N] -->|escalation_needed / blocked| U[Escalate to user]
+    TE -->|requiresTestReview| ITR[integration-test-reviewer]
+    TE -->|completed| QF[quality-fixer: phase scope]
     ITR -->|needs_revision: requiredFixes| FIX_ITR[task-executor Fix Mode]
     ITR -->|blocked| U
-    ITR -->|approved| G
-    G -->|no| N[Next task]
-    G -->|yes| QF[quality-fixer]
+    ITR -->|approved| QF
     QF -->|approved| CP{Commit point?}
     CP -->|yes| C[Commit]
-    CP -->|no| N
+    CP -->|no| N[Next phase]
+    C --> N
     FIX_ITR --> ITR
     FIX_ITR -->|escalation_needed| U
     QF -->|stub_detected: incompleteImplementations| FIX_QF[task-executor Fix Mode]
@@ -139,22 +124,28 @@ flowchart TD
     FIX_QF -->|escalation_needed| U
 ```
 
-Never commit on `stub_detected`: a stub can pass every other check while implementing nothing.
+The executor takes `"Work plan: <path>. Phase: N."`, works the phase's items test-first and ticks them in the plan. It runs only the unit tests it writes and the unit test files of the modules it touches, plus one typecheck of the touched package; the integration and e2e files the phase calls for are written and left for the feature run. Never commit on `stub_detected`: a stub can pass every other check while implementing nothing.
 
 ### Commit execution by strategy
 
-| Strategy | Commit Trigger |
-|----------|----------------|
-| **per-task** | Each task → quality-fixer `approved: true` → commit immediately |
-| **per-phase** | All tasks in the phase complete → quality-fixer `approved: true` → commit |
-| **per-feature** | quality-fixer at each phase end; after post-implementation verification → single commit |
-| **manual** | quality-fixer at each phase end; user says "commit" or "save progress" → quality-fixer (skipped if nothing changed since its last run) → commit staged changes |
+`quality-fixer` runs at the `scope` the orchestrator passes:
 
-**quality-fixer runs before every commit and at the end of every phase.**
+| Scope | When | What runs |
+|-------|------|-----------|
+| `phase` | After every plan phase, and after a verification fix | Static checks plus the unit test files of what changed. The orchestrator passes `changedFiles`: the union of `filesModified` and `testsAdded` from the executor run being gated |
+| `feature` | Once, at the end of the feature — "The Feature Run" | The whole unit suite, integration, e2e, coverage |
+
+| Strategy | quality-fixer | Commit |
+|----------|---------------|--------|
+| **per-phase** | `phase` scope at phase end | After `approved: true` |
+| **per-feature** | `phase` scope at each phase end | One commit after the feature run |
+| **manual** | `phase` scope at each phase end | On request between phases, staged changes |
+
+A full suite at every phase end would run the same tests many times over one feature. The unit tests of the changed files catch what the phase broke; the single feature run covers cross-module and end-to-end behaviour.
 
 ## Post-Implementation Verification
 
-The per-task cycle checks each task in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After **all** task cycles finish — before the completion report — run a whole-implementation pass.
+The phase cycle checks each phase in isolation. It cannot detect drift between the finished implementation and the Design Doc, nor assess the security posture of the change set as a whole. After **all** phase cycles finish — before the completion report — run a whole-implementation pass.
 
 **Invoke the verifiers in parallel** (single message, four Agent calls):
 
@@ -165,44 +156,39 @@ The per-task cycle checks each task in isolation. It cannot detect drift between
 | `security-reviewer` | Design Doc path, the part's file list |
 | `test-auditor` | `testPaths`: the test files in the part's file list; Design Doc path |
 
-**The part's file list** is the union of `filesModified` and `testsAdded` from this run's task results, committed or not, plus the Target Files of this part's tasks completed before this run (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
+**The part's file list** is the union of `filesModified` and `testsAdded` from this run's phase results, committed or not, plus, for this part's phases completed before this run, their Target Files and the files their Investigation Notes record as edited outside them (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
 
 **Small scale** (and gamedev Prototype mode) has no Design Doc: `code-verifier` runs with `doc_type: prd` against the lite PRD (skipped on the gamedev path — the lite feature spec is not a `code-verifier` document type), `code-reviewer`, `security-reviewer` and `test-auditor` take the lite PRD or feature spec in place of the Design Doc, and Fix Mode below receives the same path.
 
-**`test-auditor` is advisory, never a gate.** Its findings are not converted into `requiredFixes[]` and never dispatched to `task-executor`: deleting or merging an existing test is the user's decision. A `bloated` verdict goes into the completion report as a table of `merge` / `drop` / `move` rows with their reasons, plus the `gaps` list, and the user decides which to apply.
+**`test-auditor` is advisory, never a gate.** Its findings are never dispatched to `task-executor`: deleting or merging an existing test is the user's decision. A `bloated` verdict goes into the completion report as a table of `merge` / `drop` / `move` rows with their reasons, plus the `gaps` list, and the user decides which to apply.
 
-**Pass/fail criteria**:
+`drift` means the code moved past the document (code-verifier: "document update needed") — it goes to the completion report, not to the executor.
 
-| Verifier | Pass | Fail | Blocked |
-|----------|------|------|---------|
-| `code-verifier` | `consistent` or `mostly_consistent` | `needs_review` or `inconsistent` | — |
-| `code-reviewer` | no `qualityIssues` of type `duplicate-block`, `boundary-violation` or `pattern-mismatch` | any such issue | — |
-| `security-reviewer` | `approved` or `approved_with_notes` | `needs_revision` | `blocked` → escalate to user |
+**Candidate patterns.** The completion report lists, under one heading, code-verifier's `drift` whose `classification` begins `architectural:` and code-reviewer's `candidatePatterns`. The user confirms which become catalogue entries; each confirmed one goes to the technical designer through `/update-doc` (code system) after the completion report, outside the autonomous run. A candidate is not a defect: it is never dispatched to Fix Mode, and nothing in the run writes to `docs/code-system/`.
 
-**Normalizing output into one `requiredFixes[]`** — the verifiers emit different shapes and must be reconciled before invoking task-executor:
+**Fix cycle** (a verifier returned a finding of the types in step 1 — maximum 2 cycles; a `security-reviewer` `blocked` goes to the user; when the failures hold nothing to fix, e.g. only `drift`, skip it and report the verdict and drift in the completion report):
 
-- `security-reviewer.findings[]` → each `confirmed_risk` or `defense_gap` becomes `{location, issue: description, fix: remediation}`
-- `code-verifier.discrepancies[]` → each `gap` or `conflict` becomes `{location: discrepancy.codeLocation, issue: discrepancy.claim, fix: "<correction restoring Design Doc consistency, derived from classification and evidence>"}`
-- `code-reviewer.qualityIssues[]` → each `duplicate-block`, `boundary-violation` or `pattern-mismatch` becomes `{location, issue: type, fix: suggestion}`; its other findings overlap `code-verifier` and go to the completion report only
-- When `discrepancy.codeLocation` is `null` (the claim is unimplemented), set `location` to the planned target file. If no target file can be determined, escalate rather than dispatching Fix Mode with an unresolvable location.
-- `drift` means the code moved past the document (code-verifier: "document update needed") — it goes to the completion report, not to the executor.
+1. `task-executor` in **Fix Mode** with `requiredFixes`: from the verifiers, as returned, only code-verifier's `gap` and `conflict` discrepancies, security-reviewer's `confirmed_risk` and `defense_gap` findings, and code-reviewer's `duplicate-block`, `boundary-violation` and `pattern-mismatch` issues — every other finding goes to the completion report, and a finding with no code location (code-verifier's `codeLocation: null`) goes to the user, not to the executor. With them, `Design Doc: [path]` (small scale: the lite PRD or feature spec) — no plan phase; Fix Mode takes its file scope from the fix locations and ticks nothing
+2. `quality-fixer` with `phase` scope and `changedFiles` = the files the fix changed → commit per strategy. Then re-run a verifier only on the fix locations, and only where the fix was not mechanical: a rename or a moved block needs no second opinion, a changed behaviour does
 
-**Candidate patterns.** The completion report lists, under one heading, code-verifier's `drift` whose `classification` begins `architectural:` and code-reviewer's `candidatePatterns`. The user confirms which become catalogue entries; each confirmed one goes to the technical designer through `/update-doc` (code system) at the completion stop, outside the autonomous run. A candidate is not a defect: it is never dispatched to Fix Mode, and nothing in the run writes to `docs/code-system/`.
+After cycle 2, escalate every remaining finding.
 
-**Fix cycle** (any verifier failed — maximum 2 cycles; when normalization yields no items, e.g. only `drift`, skip it and report the verdict and drift in the completion report):
+## The Feature Run
 
-1. `task-executor` in **Fix Mode** with the normalized array and `Design Doc: [path]` (small scale: the lite PRD or feature spec) — no task file; Fix Mode takes its file scope from the fix locations
-2. `quality-fixer` → commit per strategy → re-run **only the failed verifiers**, retaining recorded evidence from those that passed
+Once per feature, after the last part's post-implementation verification and its fix cycle and before that part's Final Cleanup, `quality-fixer` runs with `scope: feature`: the whole unit suite, integration, e2e, and coverage. The integration and e2e test files written during implementation execute here for the first time. The last part is the one whose plan chain is finished while every other part in the parts list is already built — every work item of its plans ticked.
 
-**Re-run rule**: a cycle makes progress only when a previously failing verifier reaches a pass status, or its count of named remaining findings decreases. Escalate immediately when a cycle makes no progress or needs external input. After cycle 2, escalate every remaining failure with its findings.
+- `approved: true` → commit per strategy: the run's fixes, or under `per-feature` the feature's one commit; under `manual` the changes stay in the working tree until the user asks
+- `stub_detected` → `task-executor` Fix Mode with `incompleteImplementations`, then the feature run again
+- `blocked` → escalate to user
+
+A run that ends on any other part (`/build` on one part) ends without the feature run, and its completion report says the run is still to come.
 
 ## Final Cleanup
 
-Before the completion report, delete the task directory this run consumed. The directory is working state, not a durable artifact.
+Before the completion report:
 
-- Delete `docs/features/{feature}/{part}/{plan-name}/` — `task-*.md`, `_overview.md`, `analysis/` (a Bash `rm` of working state, not a document edit)
-- Invoke `{planner}` in `update` mode to set the plan's frontmatter `status` to `completed`, so the next run resolves the following plan in the chain
-- **Preserve** sibling plans and their directories — a part may hold several, and only the executed one is finished
+- After the last plan of the part's chain, delete `docs/features/{feature}/{part}/analysis/` — the executors' research deliverables are working state, not a durable artifact (a Bash `rm`, not a document edit)
+- **Preserve** sibling plans — a part may hold several, and only the executed one is finished
 - **Preserve** `prd.md`, `uxrd.md`, `design-{part}.md`, and everything under `docs/adr/`, `docs/design-system/` and `docs/code-system/` — on the gamedev path also the feature spec and GDD under `docs/game-design/`
 
 If deletion fails, report the failure but do not block the completion report.
@@ -215,7 +201,9 @@ If deletion fails, report the failure but do not block the completion report.
 2. **Requirement change detected** — any match in the requirement-change checklist; stop and re-analyze with integrated requirements via requirement-analyzer
 3. **User explicitly stops** — direct instruction or interruption
 
-**Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc or the code system, the plan, or task files, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the per-task cycle resumes at the task that escalated.
+**Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc, the code system, or the plan, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the phase cycle resumes at the phase that escalated.
+
+An `out_of_scope_file` escalation means the phase needs an edit outside the directories of its Target Files (or a Target File's test file), or one that changes an exported signature, schema, route or shared type — the executor makes and records any other edit itself — so it goes to the user like any other escalation.
 
 ### Quantitative Auto-Stop Triggers
 
@@ -223,92 +211,24 @@ These numeric thresholds MUST trigger immediate orchestrator action. They are no
 
 | Trigger Condition | Required Action |
 |---|---|
-| **6+ files changed** in a single task (task-decomposer allows up to 5) | STOP. Create an impact report listing all changed files and affected modules. Present to the user before continuing. |
-| **Same error occurs 3 times** | STOP. Run the Error-Fixing Impulse Control Protocol below before any further fix. |
+| **Same error occurs 3 times** | STOP. Present the error and a proposed approach to the user; fix only after approval. |
 | **2nd consecutive error fix attempt** | Run rule-advisor. The previous approach has failed — reassess task essence and strategy. |
 
 **Enforcement rules**:
 
-1. Counters reset at the start of each new task
-2. The orchestrator counts from the subagents' returned JSON (`filesModified`, statuses) — it does not see their individual edits
+1. Counters reset at the start of each phase
+2. The orchestrator counts from the subagents' returned JSON (statuses, error reports) — it does not see their individual edits
 3. Auto-stop triggers take priority over autonomous execution
 4. After any auto-stop, present a status report before resuming
 5. A user may override with "continue" — but the stop MUST occur first
 
-## Error-Fixing Impulse Control Protocol
+## Completion Report
 
-When an error appears during implementation, follow this protocol **instead of** immediately attempting a fix. The reflex to patch is what turns one defect into a sequence of increasingly speculative edits.
+The run ends with a completion report; reporting completion over an unverified item removes the reader's reason to look, so the report names every gap. It states:
 
-1. **PAUSE** — do not attempt a fix yet
-2. **Run rule-advisor** with the error context:
-   ```yaml
-   subagent_type: rule-advisor
-   prompt: "Re-analyze task considering this error: [error details]. Determine whether the original approach is still valid or a different strategy is needed."
-   ```
-3. **Present an action plan** built from rule-advisor's re-analysis — root cause, proposed approach, estimated impact (files to change), risk assessment. When the cause is still unknown, delegate the investigation (`investigator`, as `/diagnose` does) rather than analysing it yourself
-4. **Fix only after user approval**
-
-### Applies to
-
-- An error that reaches the orchestrator as a subagent's `escalation_needed` or `blocked`
-- The "Same error occurs 3 times" trigger above
-
-### Does NOT apply to
-
-- Expected test failures during Red-Green-Refactor (the TDD red phase)
-- Errors quality-fixer fixes inside its own loop — that is its delegated authority
-- Known, documented environment issues
-
-## Exit Gate [BLOCKING]
-
-Run before the completion report.
-
-☐ Every task file of the executed plan is committed per the chosen strategy (under `manual`, its changes are in the working tree and named in the report), or explicitly escalated and reported
-☐ Post-implementation verification passed, or its remaining findings were escalated after cycle 2
-☐ No `quality-fixer` result was accepted on `non_substantive` test evidence
-☐ Final Cleanup ran: the task directory is deleted and the plan's `status` is `completed`
-☐ When the part has a further plan in the chain, its `depends-on` is now satisfied and it is reported as the next step
-☐ When the parts list has a further part, it is reported as the next part to plan — its `dependsOn` parts are now built, not only designed
-☐ The completion report states what was built, what was verified, anything left escalated, and `security-reviewer` notes from an `approved_with_notes` verdict
-☐ The completion report lists acceptance criteria proven only against mocks (no real-dependency check yet) and any verification deferred to another part
-☐ The completion report lists candidate patterns and architectural drift under one heading, for the user to confirm into the code system — or states there were none
-
-**ENFORCEMENT**: an unchecked item means the run is not finished. Reporting completion with an unverified item is worse than reporting the gap, because it removes the reader's reason to look.
-
-## Execution Flow
-
-```mermaid
-graph TD
-    DESIGN[Approved Design Docs, one per part] --> PART[Next part in dependency order]
-    PART --> PLAN[planner: work plan for this part, with its draft check]
-    PLAN --> STRATEGY[Ask commit strategy, first part only]
-    STRATEGY --> START[Batch approval for this part, with the draft check's open items]
-    START -->|user picks independent review| PREVIEW[document-reviewer: Revision Loop]
-    PREVIEW --> START
-    START --> ACTIVATE[planner update: status active]
-    ACTIVATE --> DECOMP[task-decomposer]
-    DECOMP --> ENV{Environment check}
-    ENV -->|Missing critical component| ESC0[Escalate before entering]
-    ENV -->|OK| AUTO[Start autonomous execution]
-    AUTO --> LOOP[Task execution loop]
-    LOOP --> CYCLE[Per-task cycle, see The Per-Task Cycle]
-    CYCLE -->|escalation| USERESC[Escalate to user]
-    CYCLE -->|task done| CHECK{Remaining tasks?}
-    CHECK -->|Yes| LOOP
-    CHECK -->|No| PIV[Post-Implementation Verification]
-    PIV --> VERIFY{code-verifier, code-reviewer, security-reviewer; test-auditor advisory}
-    VERIFY -->|Fail, cycles left| FIXMODE[task-executor Fix Mode → quality-fixer → commit]
-    FIXMODE --> VERIFY
-    VERIFY -->|Fail, no progress or cycle 2| USERESC
-    VERIFY -->|Pass| CLEAN[Final Cleanup]
-    CLEAN --> MORE{Remaining parts?}
-    MORE -->|Yes| PART
-    MORE -->|No| REPORT[Completion report]
-
-    LOOP --> INTERRUPT{User input?}
-    INTERRUPT -->|None| CYCLE
-    INTERRUPT -->|Yes| REQCHECK{Requirement change?}
-    REQCHECK -->|No| CYCLE
-    REQCHECK -->|Yes| STOP[Stop autonomous execution]
-    STOP --> RA[Re-analyze with requirement-analyzer]
-```
+- What was built and what was verified; any phase left unticked, uncommitted (under `manual`, and under `per-feature` on a part that is not the last, the changes are in the working tree) or escalated
+- Verification findings still open after cycle 2, and `security-reviewer` notes from an `approved_with_notes` verdict
+- Last part: the feature run's result. Any other part: that the feature run is still to come
+- Acceptance criteria proven only against mocks (no real-dependency check yet) and any verification deferred to another part
+- Candidate patterns and architectural drift under one heading, for the user to confirm into the code system — or that there were none
+- The next plan in the part's chain, or the next part to plan — its `dependsOn` parts are now built, not only designed

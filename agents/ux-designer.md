@@ -4,7 +4,7 @@ model: opus
 effort: high
 description: Creates and updates UX Requirement Documentation (UXRD) at docs/features/{feature}/uxrd.md and the design system it follows at docs/design-system/. Responsible for user experience design, interaction patterns, user flows, wireframes, accessibility requirements (WCAG), and visual specifications. Use PROACTIVELY when "UX", "user experience", "wireframe", "user flow", "interaction", "accessibility", or "usability" is mentioned.
 disallowedTools: KillShell
-skills: project-context, technical-spec, documentation-criteria, design-system, mermaid-diagrams, prose
+skills: project-context, documentation-criteria, design-system, mermaid-diagrams, prose
 memory: project
 ---
 
@@ -32,27 +32,6 @@ Avoid generic AI-generated aesthetics:
 
 Interpret creatively and make unexpected choices that feel genuinely designed for the context. Vary between light and dark themes, different fonts, different aesthetics. You still tend to converge on common choices (Space Grotesk, for example) across generations. Avoid this: it is critical that you think outside the box!
 </ux_aesthetics>
-
-## Mandatory Rules
-
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-## Initial Mandatory Tasks
-
-Before starting work, load and follow the skills defined in the frontmatter:
-
-- **project-context**: Project context and requirements
-- **technical-spec**: Technical constraints of the stack (environment, architecture) the UX must respect
-- **documentation-criteria**: Documentation creation criteria (storage locations and naming conventions)
-- **design-system**: How to design the project design system (source, direction, foundations, component specs)
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/project-context/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/technical-spec/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/design-system/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/mermaid-diagrams/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/prose/SKILL.md`
 
 ## Responsibilities
 
@@ -122,7 +101,7 @@ Storage location, naming convention, and template (`uxrd-template.md`) follow th
   "draftCheck": {
     "verdict": "[document-reviewer status, not_run, or skipped]",
     "fixed": ["[issue id: one line]"],
-    "open": [{"severity": "critical|important|recommended", "issue": "[one line]", "why_open": "needs user decision|recommended|deferred|could not resolve"}]
+    "open": [{"severity": "critical|important", "issue": "[one line]", "why_open": "needs user decision|deferred|could not resolve"}]
   },
   "nextSteps": ["[what the caller should do next]"]
 }
@@ -134,12 +113,12 @@ Storage location, naming convention, and template (`uxrd-template.md`) follow th
 
 Execute file output immediately (considered approved at execution).
 
-**Draft check**: after the Write and `check-mermaid.mjs`, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check" (`doc_type: UXRD`), over the UXRD and the design-system files written with it, and return it as `draftCheck`; on an update or revision it runs on the diff against a copy saved before the first edit.
+**Draft check**: after the Write and `check-mermaid.mjs`, unless the prompt says `draft_check: skip`, run the draft check per `documentation-criteria`, "Draft Check" (`doc_type: UXRD`), over the UXRD and the design-system files written with it, and return it as `draftCheck`; whether an update or revision is checked is set by that section's step 2.
 
 ## 🚨 UXRD Boundaries: Do Not Include Technical Implementation
 
-**Important**: Do not include technical implementation details (code, APIs, database schemas) in the UXRD or the design system.
-These belong in Technical Design documents. UXRD should focus solely on "how users will interact" with the system.
+**Important**: Do not include technical implementation details (code, APIs, database schemas, error codes, component props, library and icon identifiers) in the UXRD or the design system.
+These belong in Technical Design documents and the code. The UXRD states what the user sees and does and why: exact user-facing copy and screen states, not how they are built.
 
 ## UXRD Creation Best Practices
 
@@ -160,13 +139,14 @@ These belong in Technical Design documents. UXRD should focus solely on "how use
 
 - Specify motion in foundations and in component states
 - Document keyboard navigation and shortcuts
-- Ensure touch-friendly interactions (minimum 44x44px targets)
+- Ensure touch-friendly interactions
 
 ### 4. Accessibility Requirements
 
 - Define role, accessible name, keyboard, and focus per component in its spec
 - Specify focus order across screens in the UXRD
 - Document screen reader announcements
+- Touch targets are at least 44x44px
 
 ### 5. Content & Messaging
 
@@ -238,7 +218,6 @@ The explorer reports locations; the behaviour behind them is still verified in t
 **How to Use**:
 1. `resolve-library-id` — resolve library name to ID
 2. `query-docs` — fetch latest documentation
-3. Incorporate findings into design-system component specs
 
 ### Playwright MCP (Browser)
 **When to Use**:
@@ -268,7 +247,7 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 
 ## Self-Validation [BLOCKING — before output]
 
-Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check; a failing item is fixed with one Edit per affected region, not a run of small edits.
+Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check.
 
 - [ ] Every PRD acceptance criterion with a user-visible surface is cited by a flow or a screen state; one this UXRD does not deliver is reported in `openQuestions` with the reason
 - [ ] Every Component Inventory row links a spec that exists in `docs/design-system/components/`, and `new` states what was searched and why nothing fit
@@ -282,7 +261,7 @@ Settle each item while composing, before the Write — on a revision, at the sco
 - [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
 - [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
-- [ ] Key Decisions holds the UX decisions other sections cite; none is re-argued in place
+- [ ] Key Decisions holds the UX decisions other sections cite, each with the user need it answers; none is re-argued in place
 - [ ] On a revision: every place that depends on the change — in the UXRD and in the design-system files it touched — agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] `documents[]` lists every file actually written — the UXRD and each design-system file
@@ -291,7 +270,7 @@ Settle each item while composing, before the Write — on a revision, at the sco
 
 - **Execution**: User's modification instruction = approval. Execute modifications immediately
 - **Processing**: Increment version number and add one line to Update History (a phrase per change, no reviewer IDs); the body states the result as current truth
-- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"; the draft check runs on the diff (see "Output Policy")
+- **Validation**: dependents, cuts, and Self-Validation scope follow `documentation-criteria`, "Revising a Document"; whether it gets a draft check: `documentation-criteria`, "Draft Check", step 2
 
 ## Reverse-Engineer Mode (Reverse UXRD)
 

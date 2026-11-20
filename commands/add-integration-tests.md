@@ -12,8 +12,6 @@ argument-hint: <design doc name or path>
 
 **Core Identity**: "I am not a worker. I am an orchestrator."
 
-**First Action**: Register Steps 1-7 to TodoWrite before any execution.
-
 **Why Delegate**: Orchestrator's context is shared across all steps. Direct implementation consumes context needed for review and quality check phases. Subagents work in isolated context.
 
 **Execution Method**:
@@ -49,7 +47,7 @@ Invoke acceptance-test-generator using Task tool:
 
 ### Step 3: Test Implementation
 
-Skeleton test cases are hollow tests, so task-executor implements them in Fix Mode — no task file:
+Skeleton test cases are hollow tests, so task-executor implements them in Fix Mode — no plan phase:
 - `subagent_type`: "task-executor"
 - `description`: "Implement integration tests"
 - `prompt`: "incompleteImplementations: [one {type: hollow_test, location: <skeleton file>, description: 'implement every test case in this skeleton; skip a case an existing test already catches (testing-principles, Test Selection) and say so'} per path from Step 2 generatedFiles]. Design Doc: [path from Step 1]."
@@ -82,9 +80,9 @@ Invoke task-executor using Task tool:
 Invoke quality-fixer using Task tool:
 - `subagent_type`: "quality-fixer"
 - `description`: "Quality gate check"
-- `prompt`: "Execute final quality checks for test files: [skeleton files from Step 2 generatedFiles]"
+- `prompt`: "scope: feature. Execute final quality checks; the new test files are: [skeleton files from Step 2 generatedFiles]"
 
-**Expected output**: `approved` (true/false)
+**Expected output**: `approved` (true/false), `scope`
 
 ### Step 7: Final Report and Commit
 

@@ -7,7 +7,7 @@ description: This skill governs the product phase of a workflow — turning a re
 
 The product phase answers **what to build and why**. It ends when the requirements, business value, and user experience are agreed — before anyone decides how to build it.
 
-Mechanics common to every phase — how to invoke subagents, response contracts, delegation boundaries, file ownership, TodoWrite — live in the `workflow-orchestration` skill. Technical design picks up where this phase stops: see `workflow-technical`.
+Mechanics common to every phase — how to invoke subagents, response contracts, delegation boundaries, file ownership — live in the `workflow-orchestration` skill. Technical design picks up where this phase stops: see `workflow-technical`.
 
 Keeping the phases separate is what stops a solution from being chosen before the problem is agreed. A Design Doc written while requirements are still moving encodes assumptions nobody signed off on.
 
@@ -17,14 +17,9 @@ Keeping the phases separate is what stops a solution from being chosen before th
 
 **Out of scope**: architecture decisions, interface definitions, data models, implementation planning — all `workflow-technical`. When a product question can only be settled by a technical fact ("is this even feasible?"), record it as an open question and resolve it in the technical phase rather than pre-deciding the design here.
 
-## Entry Gate [BLOCKING]
+## Before the First Agent
 
-This is the first phase, so its entry gate checks the session rather than a predecessor.
-
-☐ The request is stated in the user's own terms, not already restated as a solution
-☐ Any existing PRD or UXRD for this feature has been located (glob `docs/features/*/prd.md`, `docs/features/*/uxrd.md`) — an existing document is updated, not silently duplicated
-
-**ENFORCEMENT**: when an item is unchecked, complete it before invoking any agent. Starting on an unlocated existing PRD produces a second one, and neither is then authoritative.
+Locate any existing PRD or UXRD for this feature (glob `docs/features/*/prd.md`, `docs/features/*/uxrd.md`): an existing document is updated, and starting without it produces a second one, neither of them authoritative.
 
 ## Flow
 
@@ -61,7 +56,7 @@ The flow is the same shape at every scale — a PRD is always written — and di
 
 No UXRD, no technical documents → `workflow-execution` for a simplified plan.
 
-A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's task lines cite it.
+A lite PRD for a two-file fix is a page, not a ceremony: it is where the acceptance criterion and the part name live, and the plan's work items cite it.
 
 ## Parts
 
@@ -87,31 +82,18 @@ When `requirement-analyzer` reports a `decidingAxis` other than `files`, state i
 
 Requirements change mid-flow. Detecting that early is cheaper than discovering it during implementation.
 
-**Stop the flow and return to requirement-analyzer** when a user response contains:
-- Mentions of new features or behaviors (additional operations, display on a different screen)
-- Added constraints or conditions (data volume limits, permission controls)
-- Changed technical requirements (processing method, output format)
+**Stop the flow and return to requirement-analyzer** when a user response matches `workflow-orchestration`, "Requirement Change Detection During Flow", or contains:
 - A change to which parts exist or what they cover — a PRD change, through `prd-creator` in `update` mode and PRD re-approval
 
 Restart from `requirement-analyzer` with the integrated requirements rather than patching the current document. A change that arrives during execution is applied as `workflow-execution`, "Resuming after a stop that changes documents", describes. Two things survive a restart: an already implemented part is **frozen** (its code is committed; a change to it is a new feature), and a part whose requirements the change does not touch keeps its approved design.
 
 ## Revision Loop
 
-Verdict handling, the two-review cap, re-review scope, and the one-round rule for a change that touches several documents are defined once in `workflow-orchestration`, "Revision Loop". The owners in this phase are `prd-creator` for a PRD, `ux-designer` for a UXRD. A re-review is a cold read of the coordinates only — path, `doc_type`, `review_scope: changes`, `diff_base`, and the prior issues verbatim; never the author's summary.
+Verdict handling, the two-review cap, re-review scope, and the one-round rule for a change that touches several documents are defined once in `workflow-orchestration`, "Revision Loop". The owners in this phase are `prd-creator` for a PRD, `ux-designer` for a UXRD.
 
-The orchestrator never edits a document itself — see `workflow-orchestration`, "File Ownership by Agent".
+## Handoff to `workflow-technical`
 
-## Exit Gate [BLOCKING]
-
-Run before handing off to `workflow-technical`. When any item is unsatisfied, stay in this phase — the technical phase cannot recover a missing product decision, it can only guess at one.
-
-☐ The user has confirmed the requirements at the requirement stop
-☐ Scale is recorded with its `decidingAxis`, and a non-`files` deciding axis was stated to the user
-☐ PRD exists at the depth the scale requires and is approved
-☐ UXRD exists and is approved, together with the `docs/design-system/` files it created or changed, **or** the work has no UI surface and that is recorded, **or** the scale is small
-☐ The parts list is confirmed — the approved PRD's Delivery Parts section. Every part has a name, the requirements it covers, a `cutAlong` seam, and `dependsOn` entries that name other parts in the list, and the dependency graph has no cycle
-☐ Every open question is written down with the decision it blocks and who resolves it — not carried forward in conversation
-☐ Every `critical` or `important` finding — open in the author's draft check or raised by an independent review — is resolved, or the user accepted it at the stop
+The technical phase cannot recover a missing product decision, it can only guess at one, so the phase hands over once the requirements are confirmed, the PRD (and the UXRD, when the work has a UI surface) is approved, and every open question is written down.
 
 **Handoff payload** — concrete paths, not a summary:
 
@@ -122,5 +104,3 @@ Run before handing off to `workflow-technical`. When any item is unsatisfied, st
 | Parts list | `{name, covers, cutAlong, dependsOn}` per part, in dependency order — copied from the PRD's Delivery Parts section. `cutAlong` is what the technical phase routes on (`frontend` → `technical-designer-frontend` and `ui-analyzer`) |
 | Scale | `{small\|medium\|large}` plus `decidingAxis` |
 | Open questions | List of `question → decision it blocks → owner` |
-
-**ENFORCEMENT**: an unchecked item means the phase is not finished. Report which item is unmet and what would satisfy it; do not proceed to technical design.

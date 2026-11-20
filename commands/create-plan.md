@@ -44,7 +44,7 @@ Follow the planning process below:
    ! ls -la docs/features/*/design-*.md | head -10
    - Check for existence of design documents, notify user if none exist
    - Present options if multiple exist (can be specified with $ARGUMENTS)
-   - The design's `Part` section names the parts it depends on: when one of them has no `completed` plan yet, say so — the plan will be written against that part's design rather than its code, and the parts list's order says it should normally be built first
+   - The design's header (`Depends on`) names the parts it depends on: when one of them is not built yet, say so — the plan will be written against that part's design rather than its code, and the parts list's order says it should normally be built first
 
 2. **Test Skeleton Lookup**
    - Skeletons are normally generated per part in the technical phase (`[feature]-[part].int.test.*`, `[feature]-[part].e2e.test.*`); locate them for this part and pass their paths to work-planner
@@ -61,11 +61,10 @@ Follow the planning process below:
    prompt: "doc_type: WorkPlan; target: [path]. [SYSTEM CONSTRAINT] This agent operates within create-plan command scope."
    ```
    - `approved_with_conditions` or `needs_revision` → re-invoke `work-planner` with `draft_check: skip` and the `critical` and `important` issues, then one re-review with `review_scope: changes`
-   - A re-review that is not `approved` → **STOP** and present the issues to the user; `recommended` issues are listed at plan approval for the user to pick; `rejected` goes straight to the user (`workflow-orchestration`, "Revision Loop")
+   - A re-review that is not `approved` → **STOP** and present the issues to the user; `rejected` goes straight to the user (`workflow-orchestration`, "Revision Loop")
 
 5. **Plan Approval**
    - Interact with user to complete plan and obtain approval for plan content
-   - After approval, invoke `work-planner` in `update` mode to set the plan's `status: active` — `/build` runs only the active plan
 
 **Think deeply** Create a work plan from the selected design document, clarifying specific implementation steps and risks.
 

@@ -8,6 +8,36 @@ and the plugins adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 Versions below are the marketplace version; affected plugin versions are noted
 per entry.
 
+## [0.21.19] — 2026-11-20
+
+The plan phase becomes the unit of execution, and test runs follow it; prompts
+and templates are trimmed to what agents act on and readers use. Affects
+`backend-overture` 0.18.22, `frontend-overture` 0.18.22, `fullstack-overture`
+0.18.22, `gamedev-overture` 0.20.18, `strategy-overture` 0.20.6.
+
+### Changed
+
+- **Documents fix what others depend on.** In the reference project about 60–70% of PRD and Design Doc revisions changed internal names, mechanisms or a fact repeated across sections. `authoring-rules.md` now states three rules once: say why before what; a section with a diagram leads with it and the text adds only what the picture cannot show; a document fixes observable behaviour, what crosses a boundary and costly-to-reverse decisions, and leaves internals to the implementer. Authors, `document-reviewer`, the executors, `code-verifier` and `code-reviewer` follow it: the reviewer does not ask for detail below that line, the executor escalates a missing or contradictory contract and decides the rest by the project's patterns, and the verifiers do not report what the document leaves open.
+- **The plan cites the design; it does not copy it.** A phase's `#### Contracts` holds pointer lines to the Design Doc sections whose values must be reproduced exactly, to a binding ADR section, and — for a UI phase — to UXRD items and design-system specs. The executor reads the cited section and checks against it at its Exit Gate. Reference Contract Values, ADR Bindings, Connection Map, Verification Strategy, Risks, Scope Boundary, Completion Condition and the plan's Update History are gone; `plan: N of M`, `depends-on`, the QA phase and Operational Verification are written only when they apply. The simplified plan is the same template without the design-dependent parts.
+- **Design Doc, ADR, PRD and UXRD templates lose what nothing read.** The Fact Disposition appendix, duplicate Part fields and stale header fields are removed; ADR rationale and options are one section; Should Have, Could Have and Undetermined Items appear only with content. Diagrams and the C1–C4 levels are unchanged.
+- **Replies carry what the caller acts on.** Unused response fields are dropped from executors, quality-fixers, reviewers and authors; analyzers report the facts a design must account for instead of an inventory; `document-reviewer` reports only `critical` and `important` findings; `test-auditor` reports only tests to merge, drop or move. Agents that cannot write files return findings, which the orchestrator forwards as returned; the fix cycle forwards only the finding types that are fixes.
+- **`code-navigation` makes LSP reachable.** LSP is a deferred tool, and agents that never loaded it fell back to text search. The skill now opens with loading it and says what to do when it is unavailable or returns only the declaration.
+- **The quality check sequence lives in the quality-fixers.** It was in `ai-development-guide` and `frontend-ai-guide`, which executors preload, so executors ran lint, format and build themselves.
+- **Executor file scope.** An edit outside Target Files is made when the file sits in a directory that holds a Target File (or is its test file) and no exported signature, schema, route or shared type changes; it goes into `filesModified` and the phase's Investigation Notes so the gate and the verifiers see it. Anything else is `out_of_scope_file`.
+- **Fewer repeat runs.** A verifier is re-run only on non-mechanical fix locations. A revision gets a draft check only when it alters a requirement, a decision or a contract; the approval stop states the draft-check verdict.
+- **Plan resolution and routing.** A plan is found by its unticked work items; the `status` field is gone. A part's "Cut along" selects the backend or frontend executor pair. `/build` and `/front-build` started on their own ask plan approval and commit strategy in one question.
+- **The medium gamedev flow stops for GDD approval**, as its other modes already did.
+
+- **The plan phase is the unit of execution.** A plan phase was split into task files before anything ran, so the same work was described twice and every task paid for its own executor run and gate. The work plan now carries the detail: `work-planner` and `gamedev-work-planner` write each phase with its target files, investigation targets, contracts, work items and proof obligations, sized to what one executor run finishes and one commit holds. `task-executor` and `task-executor-frontend` take a plan path and a phase number, implement the whole phase and tick its work items in the plan. Execution starts right after the plan's batch approval. In gamedev the six game phases are stages, each holding one or more plan phases.
+- **Unit tests of what changed at a phase end; one full run per feature.** A full suite at every commit and phase end re-ran the same tests many times over one feature. The executor works test-first (TDD) and runs only the unit tests of the units it touches, plus one typecheck of the touched package; it writes the phase's integration and e2e test files without running them. `quality-fixer` and `quality-fixer-frontend` take a `scope` from the orchestrator: `phase` (every plan phase end — static checks plus the unit test files of the changed files, from the executor's `filesModified` and `testsAdded`) and `feature` (once, after the last part's post-implementation verification and before its Final Cleanup — the whole unit suite, integration, e2e, coverage). The verification fix cycle uses `phase` scope with the files the fix changed. `/build` and `/front-build` on a part that is not the last end without the feature run and say so in the completion report. `workflow-execution` holds the cadence ("The Feature Run").
+- **Commit strategies are `per-phase` (default), `per-feature` and `manual`.** A commit falls between phases; under `per-feature` the single commit follows the feature run.
+
+### Removed
+
+- **`task-decomposer`, task files and the task template.** The plan's phases carry the work items, so there is no decomposition step, no task directory beside the plan, and no `per-task` commit strategy. Research deliverables live in `docs/features/{feature}/{part}/analysis/`.
+- **The "6+ files changed in a single task" auto-stop trigger.** A file outside the phase's Target Files is already covered by the file-scope rule and the `out_of_scope_file` escalation.
+- **Instructions no agent acted on.** TodoWrite registration, manual skill-file loading, date retrieval, unused MCP sections, `code-explorer` fan-out and checklists that restated an agent's own steps; preloaded skills an agent's body never used.
+
 ## [0.21.3] — 2026-10-28
 
 Parts become a product decision and a PRD is written at every scale, with a

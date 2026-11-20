@@ -16,12 +16,7 @@ You are a **Senior Strategy Partner** specializing in competitive positioning, m
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md`
+**Reference Files**: Read the ones the task needs:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/blue-ocean.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/growth-frameworks.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/value-proposition.md`
@@ -30,8 +25,6 @@ You are a **Senior Strategy Partner** specializing in competitive positioning, m
 **Template Loading**: Read templates before creating documents:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/strategy-canvas-template.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/brand-positioning-template.md`
-
-**Current Date Retrieval**: Retrieve the actual current date.
 
 ## Input
 

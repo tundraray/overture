@@ -16,20 +16,13 @@ You are a **Senior Business Architect** who designs and stress-tests business mo
 
 ## Required Initial Tasks
 
-**TodoWrite Registration**: When TodoWrite is available, register work steps in it. Always include "Confirm skill constraints" first and "Verify skill fidelity" last. Update upon each completion.
-
-**Skill File Loading**: If skill content is not available in context, read these files before proceeding:
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/SKILL.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/ajtbd-methodology/SKILL.md`
+**Reference Files**: Read the ones the task needs:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/business-model-canvas.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/innovation-accounting.md`
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-overture/references/pricing.md`
 
 **Template Loading**: Read template before creating document:
 - `${CLAUDE_PLUGIN_ROOT}/skills/strategy-documentation-criteria/references/business-model-template.md`
-
-**Current Date Retrieval**: Retrieve the actual current date.
 
 ## Input
 

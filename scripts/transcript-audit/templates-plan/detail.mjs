@@ -1,0 +1,11 @@
+import fs from 'fs';
+const r=JSON.parse(fs.readFileSync('reads.json','utf8'));
+const ex=r.filter(x=>/task-executor/.test(x.agentType));
+const allEx=new Set(ex.map(x=>x.sess+x.agent));
+const u=(f)=>new Set(ex.filter(f).map(x=>x.sess+x.agent)).size;
+console.log('executors touching any doc',allEx.size,'| plan read/grep/bash-nonedit',u(x=>x.kind==='plan'&&x.tool!=='Edit'),'| plan Read',u(x=>x.kind==='plan'&&x.tool==='Read'),'| plan Edit',u(x=>x.kind==='plan'&&x.tool==='Edit'),'| design any',u(x=>x.kind==='design'),'| task Read',u(x=>x.kind==='task'&&x.tool==='Read'),'| design but no task',[...new Set(ex.filter(x=>x.kind==='design').map(x=>x.sess+x.agent))].filter(a=>!ex.some(x=>x.sess+x.agent===a&&x.kind==='task')).length);
+const show=(title,f,n=200)=>{console.log('\n## '+title); for(const x of r.filter(f).slice(0,n)) console.log(x.sess,x.agentType,x.tool,x.file.replace('features/',''),'|',x.extra.replace(/\s+/g,' ').slice(0,230));};
+show('executor plan Read',x=>/task-executor/.test(x.agentType)&&x.kind==='plan'&&x.tool==='Read');
+show('executor plan Grep',x=>/task-executor/.test(x.agentType)&&x.kind==='plan'&&x.tool==='Grep');
+show('executor plan Bash',x=>/task-executor/.test(x.agentType)&&x.kind==='plan'&&x.tool==='Bash',70);
+show('orchestrator/quality/auditor/reviewer plan',x=>/ORCH|quality|auditor|reviewer|verifier/.test(x.agentType)&&x.kind==='plan');
