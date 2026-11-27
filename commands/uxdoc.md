@@ -86,7 +86,7 @@ prompt: "Requirements: [user requirements]. Execute requirement analysis with fo
 ```yaml
 subagent_type: ux-designer
 description: "UXRD creation"
-prompt: "Create UXRD based on the following confirmed requirements: [requirement-analyzer output]. PRD Reference: docs/features/[feature]/prd.md. Design System: docs/design-system/ (create if absent). Operation mode: [create|update|reverse-engineer]. Include user flows, interaction states, accessibility requirements (WCAG), a Component Inventory linking to the design-system component specs, and responsive design breakpoints. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Create UX Requirement Documentation only — do not include technical implementation details."
+prompt: "Create UXRD based on the following confirmed requirements: [requirement-analyzer output]. PRD Reference: docs/features/[feature]/prd.md. Design System: docs/design-system/ (create if absent). Operation mode: [create|update|reverse-engineer]. [SYSTEM CONSTRAINT] This agent operates within /uxdoc command scope. Create UX Requirement Documentation only — do not include technical implementation details."
 ```
 
 ### 3. Document Review Phase

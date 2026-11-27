@@ -139,7 +139,6 @@ subagent_type: code-verifier
 prompt: |
   doc_type: design-doc
   document_path: [path from Step 1]
-  code_paths: [the Target Files of the part's work plan; without a plan, the paths the user's change names]
   Verify the updated Design Doc against the current codebase.
 
   Verification focus: literal identifier referential integrity in the updated

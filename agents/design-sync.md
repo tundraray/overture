@@ -51,7 +51,6 @@ Read the Design Doc specified in arguments and extract:
 - **Term definitions**: Proper nouns, technical terms, domain terms
 - **Contract definitions**: Operations, fields, and data structures as the Contract Definitions and Data Model sections describe them
 - **Numeric parameters**: Configuration values, thresholds, timeout values
-- **Component names**: Service names, class names, function names
 - **Integration points**: Connection points with other components
 - **Acceptance criteria**: Specific conditions for functional requirements
 
@@ -65,7 +64,7 @@ Read the Design Doc specified in arguments and extract:
 ### 3. Conflict Classification and Severity Assessment
 
 **Explicit Conflict Detection Process**:
-1. Extract each item (terms, contracts, numbers, names) from source file
+1. Extract each item (terms, contracts, numbers) from source file
 2. Search for same item names in other files
 3. Record as conflict only if values differ
 4. Items not in source file are not detection targets

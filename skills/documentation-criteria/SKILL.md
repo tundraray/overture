@@ -82,10 +82,10 @@ Deep nesting, a function used in several places, adding a state to an existing m
 
 | Depth | When | Sections |
 |-------|------|----------|
-| `full` | Large scale | Every template section not marked *when applicable*, including Constraints and Risks |
-| `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements only where the feature sets one, Delivery Parts, Success Criteria, Constraints and Risks when the feature has any, Undetermined Items while any remain |
+| `full` | Large scale | Every template section not marked *when applicable* |
+| `lite` | Medium and small scale | Snapshot, Background, Users and Use Cases, Functional Requirements with MoSCoW and acceptance criteria, Non-Functional Requirements, Delivery Parts, Success Criteria and Constraints and Risks when the feature has any, Undetermined Items while any remain |
 
-A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. `document-reviewer` receives the depth and applies Gate 0 accordingly. An existing PRD is updated rather than duplicated, at whatever depth it already has.
+A lite PRD is a short document, not a sketchy one: every requirement it lists still carries an acceptance criterion and a MoSCoW priority, and every Must Have belongs to a part. An existing PRD is updated rather than duplicated, at whatever depth it already has.
 
 **Excludes**:
 - **How the system does it** (→Design Doc) — field and schema lists, storage technology, protocols, library choices and versions, file paths, process and recovery mechanics; an inventory of existing dependencies (→the design's codebase analysis). A requirement states the capability and its observable outcome; a technical choice the user fixed as a product decision is one line in Constraints and Risks
@@ -101,10 +101,10 @@ A lite PRD is a short document, not a sketchy one: every requirement it lists st
 
 **Includes**:
 - AC coverage: each user-visible PRD acceptance criterion cited by ID in the flow or screen state that delivers it
-- Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
+- Component Inventory: each component this UXRD's screens use, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the PRD use cases it implements
-- Screens: wireframe, layout, and the screen's own states (loading, empty, error)
-- Global accessibility rules (target level cited from the PRD, focus order across screens, announcements), responsive behaviour per screen, and the feature's one list of microcopy
+- Screens: wireframe, placement and behaviour, and the screen's own states (loading, empty, error)
+- Global accessibility rules (focus moves no component spec decides, announcements), responsive behaviour per screen, and the feature's one list of microcopy
 - UX decisions taken here, each with an ID other documents cite — including any change to an existing foundation or component
 
 **Excludes**:

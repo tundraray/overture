@@ -74,6 +74,7 @@ docs/design-system/
 - **Base unit**: [e.g. 4 px]
 - **Scale**: [the steps used]
 - **Density**: [compact / comfortable, and where each applies]
+- **Minimum touch target**: [size]
 
 ## Shape & Elevation
 

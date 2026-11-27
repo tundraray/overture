@@ -16,10 +16,10 @@ The questions for the `code-explorer` sweep in `technical-design`, "Existing Cod
 
 | Question | Ask code-explorer | Feeds |
 |----------|-------------------|-------|
-| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | C3 and C4; Key Decisions |
+| Where does comparable functionality already live, and how is it wired in? | `query: existing implementations of <capability>; breadth: thorough` | C3 and C4; Building-block Inventory |
 | What must know about a new unit for it to run — registration, DI, routes, subscriptions, config? | `query: where <comparable unit> is registered and constructed; breadth: medium` | C3; Runtime Flows |
 | What conventions does this layer follow — error handling, validation placement, transaction boundaries? | `query: how <layer> handles errors and validation; breadth: medium` | Runtime Flows |
-| Is there an abstraction here to extend instead of a new one to introduce? | `query: abstractions over <concept>; breadth: thorough` | Key Decisions |
+| Is there an abstraction here to extend instead of a new one to introduce? | `query: abstractions over <concept>; breadth: thorough` | Building-block Inventory |
 | How does data reach and leave this area today? | `query: producers and consumers of <data>; breadth: medium` | Runtime Flows |
 
 ## Data Representation Decision【Required】

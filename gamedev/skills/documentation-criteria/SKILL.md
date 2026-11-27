@@ -105,10 +105,10 @@ Game-specific decisions that commonly meet all three: save-file format, netcode 
 
 **Includes**:
 - AC coverage: each user-visible feature-spec acceptance criterion cited by ID in the flow or screen state that delivers it
-- Component Inventory: each component the feature uses, linked to its design-system spec and marked reused, extended, or new
+- Component Inventory: each component this UXRD's screens use, linked to its design-system spec and marked reused, extended, or new
 - User flows through the screens, each citing the acceptance-criteria IDs it implements
 - Screens: wireframe, layout, and the screen's own states (loading, empty, error)
-- Global accessibility rules (target level cited from the feature spec, focus and input navigation across screens, announcements), behaviour per resolution or breakpoint, and the feature's one list of microcopy
+- Global accessibility rules (focus and input moves no component spec decides, announcements), behaviour per resolution or breakpoint, and the feature's one list of microcopy
 - UX decisions taken here, each with an ID other documents cite — including any change to an existing foundation or component
 
 **Excludes**:

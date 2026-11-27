@@ -45,7 +45,7 @@ One phrase of character ("calm, dense tool for long sessions") and two or three 
 
 - **Typography** — a scale with a clear hierarchy: few sizes, each role distinct at a glance. Body size and line height fit the reading the product demands. Name the family and its fallback, and confirm it covers the product's languages and scripts.
 - **Color** — roles, not palettes: surface, text, muted, border, accent, danger (success and warning when used). Each role has a light and a dark value when the product is themed. Contrast targets come from the WCAG level the PRD (gamedev: feature spec) sets (AA: 4.5:1 for body text, 3:1 for large text and UI parts); check each text/surface pair in both modes.
-- **Spacing & density** — one base unit and a short scale; say where compact and comfortable density apply.
+- **Spacing & density** — one base unit and a short scale; say where compact and comfortable density apply, and the minimum touch target.
 - **Shape & elevation** — radius, border, and shadow per element class; elevation signals layering, not decoration.
 - **Motion** — a character (quick and quiet, or expressive) and a duration per kind; what replaces movement under reduced motion.
 - **Iconography** — one set, its size and stroke, and when an icon needs a visible label.

@@ -20,7 +20,7 @@
 
 #### KD-1: [what was decided, in one sentence]
 
-[Why: the problem it settles and what it buys, in words a newcomer follows. Then the options a reviewer would raise, by name, and why each lost — a sentence or two each.]
+[Why: the problem it settles and what it buys, in words a newcomer follows — the reason, not the mechanism behind it. Then the options a reviewer would raise, by name, and why each lost — a sentence or two each.]
 
 ## Terms
 
@@ -40,11 +40,11 @@
 
 **Constraints**
 
-- [each agreed constraint — parallel operation, backward compatibility, performance measurement — in a sentence, with how the design meets it]
+- [each constraint agreed for this part — parallel operation, backward compatibility, performance measurement — in a sentence, with how the design meets it; the project's standing rules stay in project-context and the code system]
 
 ## Building-block Inventory
 
-<!-- Answers: which modules, services, utilities and components does this part touch, and is each one reused, extended or new? Present when docs/code-system/ exists. -->
+<!-- Answers: which blocks of this part follow a catalogued pattern, and which are new? A row only for a block that cites a code-system pattern or is `new`. Present when docs/code-system/ exists. -->
 
 Follows the [code system](../../code-system/README.md).
 
@@ -100,7 +100,7 @@ Follows the [code system](../../code-system/README.md).
 
 ### Contract Definitions
 
-<!-- Answers: what can a caller — another part, the UI, an external system — rely on? Exact where a value crosses that boundary; nothing about what sits behind it. -->
+<!-- Answers: what can a caller — another part, the UI, an external system — rely on? Only what this part offers: a contract it consumes is the link under Depends on. Exact where a value crosses that boundary; nothing about what sits behind it. -->
 
 - **[route / method / event name]** — [what it does for the caller, naming its input, in a sentence]. Returns [result, by name]. [Each failure the caller handles, and what it sees.]
 
@@ -138,18 +138,9 @@ Follows the [code system](../../code-system/README.md).
 
 1. [a rule that holds in every state, in a sentence]
 
-## Test Strategy
-
-<!-- Answers: how will we know it works? Use cases in the words of the domain, grouped under sub-headings only when the list is long; a non-functional use case only when the part has a threshold to prove. -->
-
-- **UC-1: [short name]** — covers [AC ids]
-  - Given: [starting state, in domain terms]
-  - When: [what the user or calling system does]
-  - Then: [what they observe]
-
 ## Security Considerations
 
-<!-- Answers: who could misuse it, and what protects against that? -->
+<!-- Answers: who could misuse it, and what protects against that? One line when the part adds no new entry point. -->
 
 - **Authentication & Authorization**: [what protects new entry points and resource access]
 - **Input Validation**: [where external input enters and how it is validated]

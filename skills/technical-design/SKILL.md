@@ -7,14 +7,6 @@ description: This skill governs how a Design Doc and an ADR are authored — inp
 
 How `technical-designer` and `technical-designer-frontend` author a Design Doc and an ADR. Each agent adds the questions, sweeps, and checks of its layer; where the two differ only in nouns, a component, a prop, and a usage site stand for an operation, a field, and a caller.
 
-## Responsibilities
-
-1. Identify and evaluate technical options
-2. Create the Design Doc for a part, and the ADR when a decision passes the test
-3. Define acceptance criteria that a test can verify
-4. Analyze trade-offs and verify consistency with the existing architecture
-5. Research current technology information and cite sources
-
 ## Documents
 
 - **Design Doc**: one per part at medium and large scale, at `docs/features/[feature-name]/design-[part].md`, from `design-template.md` in `documentation-criteria`
@@ -48,11 +40,9 @@ prompt: "query: how outbound webhooks are registered and dispatched today; bread
 - **Similar functionality is technical debt** → propose the improvement as a Key Decision before building alongside it
 - **None found** → proceed with a new implementation, and record `coverage.searched` as the evidence
 
-"No existing abstraction fits" is a claim, and the sweep's coverage is what supports it. Without that evidence a second way of doing the same thing enters the codebase by default rather than by decision. The Building-block Inventory holds the outcome per block — reused, extended or new, with what was searched — and the draft check covers it like any other section.
+"No existing abstraction fits" is a claim, and the sweep's coverage is what supports it. Without that evidence a second way of doing the same thing enters the codebase by default rather than by decision. The outcome is recorded once, in the Building-block Inventory: a `new` row says what was searched and why nothing fit, and the draft check covers it like any other section.
 
-**Existing interface** (when changing an existing feature). List the target unit's public surface — the 5 most significant when there are more than 10. Its consumers come from the Change Impact sweep.
-
-**Use the results in the Design Doc.** State the similar-functionality outcome in the Key Decision it drives — the implementation found, or "none, having searched <coverage>". An LSP-resolved consumer list is evidence, a text-matched one is a candidate list, and the Design Doc does not present them as the same thing.
+**Use the results in the Design Doc.** An LSP-resolved consumer list is evidence, a text-matched one is a candidate list, and the Design Doc does not present them as the same thing.
 
 **Self-serve before recording an open question.** A fact discoverable in the code is answered, not deferred: run one `code-explorer` query before an unknown becomes an `openQuestions` entry, and one broader retry (`breadth: thorough`) when the first comes back empty. Then stop — a product or priority call, another team's decision, or a genuine contradiction between sources goes to the user. The entry records what was searched, so the reader can tell a decision nobody can make from a lookup nobody ran.
 
@@ -60,7 +50,7 @@ prompt: "query: how outbound webhooks are registered and dispatched today; bread
 
 Performed at the beginning of Design Doc creation. List what was agreed with the user: what changes, what does not, and the constraints — parallel operation, compatibility, browser support, accessibility, performance targets and how they are measured.
 
-Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** with how the design meets each. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
+Record them in the template's Part section as plain sentences: **Out of scope**, and **Constraints** — those agreed for this part, not the project's standing rules — with how the design meets each. No design element contradicts an agreement; one the design cannot meet is an open question, not a silent omission.
 
 ## Change Impact【Required】
 
@@ -70,23 +60,15 @@ Obtain the impact set from `code-explorer` rather than assuming it — assumed c
 - Removing or renaming → `query: every reference to <symbol>; breadth: thorough`
 - Claiming something is unaffected → only for what the sweep actually covered; check `coverage.notSearched` first
 
-The design describes the change, not a list of files: new and changed elements show by node colour in the architecture diagrams, a change to an existing contract that existing callers must follow is a Key Decision saying how they keep working, and what stays untouched goes to Part, Out of scope. The list of files and components to change is the work plan's.
+The design describes the change, not a list of files: new and changed elements show by node colour in the architecture diagrams, a change to an existing contract that existing callers must follow is a Key Decision saying how they keep working, and what stays untouched goes to Part, Out of scope. The files to change are found by the executor.
 
 ## Contracts at the Part's Boundary【Required】
 
-Define in Contract Definitions what crosses the part's boundary — to another part, the UI, an external system, or a store: each operation's input, output (sync or async), and the failures the caller handles; for a UI part, the calls it makes, how errors surface, and the props and events of a component other parts reuse. Exact where a caller relies on a value; what sits behind the boundary is the implementer's (`documentation-criteria` "Writing for the Reader"). One item per operation, in sentences.
+Define in Contract Definitions what the part offers across its boundary — to another part, the UI, an external system, or a store: each operation's input, output (sync or async), and the failures the caller handles; for a UI part, how errors surface, and the props and events of a component other parts reuse. A contract the part consumes is a link to the design that offers it. Exact where a caller relies on a value; what sits behind the boundary is the implementer's (`documentation-criteria` "Writing for the Reader"). One item per operation, in sentences.
 
 Confirm and document conflicts with existing systems (priority, naming conventions, props patterns) to prevent integration inconsistencies.
 
 **State Transitions** (when applicable): document state definitions and transitions for stateful components, and the invariants as plain sentences.
-
-## Design Principles
-
-1. **Consistency first**: follow the patterns `docs/code-system/` catalogues, and the existing code where it is silent; a new pattern is a Key Decision and a new pattern file (`code-system`, "Part A")
-2. **Appropriate abstraction**: design for the current requirements and apply YAGNI (follow project rules)
-3. **Testability**: parameterized dependencies (dependency injection, function parameters, props) and mockable boundaries
-4. **Test derivation from acceptance criteria**: use cases that prove each acceptance criterion through observable behaviour
-5. **Explicit trade-offs**: evaluate the benefits and drawbacks of each option quantitatively
 
 ## Acceptance Criteria Scoping
 
@@ -103,7 +85,7 @@ A Design Doc decides *what* is built and *how the parts meet*; the code is writt
 
 | Allowed | Not allowed |
 |---|---|
-| Identifiers that exist in code or cross the part's boundary, spelled exactly (`GET /api/threads`, `THREAD_NOT_FOUND`, `ThreadsService`) | Schema, type, component, or hook source (zod, TS interfaces, Props types, classes, DTOs, TSX, SQL DDL) — or the same copied into a table field by field, with column lists |
+| Identifiers that cross the part's boundary, spelled exactly (`GET /api/threads`, `THREAD_NOT_FOUND`); an existing internal name (`ThreadsService`) on a diagram, in the text under it, or in the Building-block Inventory | Schema, type, component, or hook source (zod, TS interfaces, Props types, classes, DTOs, TSX, SQL DDL) — or the same copied into a table field by field, with column lists |
 | Contracts, shapes, and props described per the template's Contract Definitions | Function bodies, "key fragments", snippets of changed files |
 | Mermaid diagrams; a link to existing code in the text under a diagram | Config files, styling code, command lines beyond the build/test commands the project already has |
 
@@ -150,9 +132,8 @@ The agent adds the items of its layer. On a code-system-only run (`/code-context
 - [ ] The change impact comes from a resolved consumer list, not an assumed one; a claim that something is unaffected covers only what the sweep reached; every changed existing contract is a Key Decision saying how existing callers keep working
 - [ ] The ADR test was applied and its outcome recorded — an approved ADR, or which part of the test failed; existing ADRs whose decisions the design follows are linked under Part, Prerequisite ADRs
 - [ ] An ADR, when written, restates its KD-n: its options are the ones the KD names, each reason and consequence traces to the Design Doc, and nothing new is introduced — a claim not in the Design Doc is removed from the ADR, and a Design Doc change it would need goes in `nextSteps`; the approved Design Doc is not edited during ADR work
-- [ ] An identifier the document names exists in code or crosses the part's boundary, and is spelled exactly; a name for code not yet written is the implementer's
+- [ ] An identifier the prose names crosses the part's boundary and is spelled exactly; an existing internal name appears on a diagram, in the text under it, or in the Building-block Inventory; a name for code not yet written is the implementer's
 - [ ] No code: the document passes No Code in Design Docs and ADRs
-- [ ] Test Strategy is a list of use cases; every acceptance criterion is named by a use case, or recorded as out of scope
 - [ ] `check-mermaid.mjs` passed on the whole document in this pass (or the summary says it could not run and why)
 - [ ] Cold read: from the Overview alone, a reader who has not followed the feature can say what this part does and how it works in outline
 - [ ] `documentation-criteria` "Writing for the Reader" holds
