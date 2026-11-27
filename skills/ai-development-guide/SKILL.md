@@ -197,7 +197,7 @@ To isolate problems, attempt reproduction with minimal code:
 ## Implementation Completeness Assurance
 
 ### Impact Before Change
-Before changing code whose callers are unknown, resolve its consumers per `code-navigation`. The change stays inside the phase's Target Files, plus an edit to a file in a directory that already holds one of them (or to a Target File's test file) that changes no exported signature, schema, route or shared type, reported as the executor's File Scope Constraint sets. Any other consumer is an escalation (`out_of_scope_file`), not a silent edit.
+Before changing code whose callers are unknown, resolve its consumers per `code-navigation`. The change stays inside the phase's part. A consumer in another part, or a change to an exported signature, shared type, schema or route that code outside this part consumes and the Design Doc (at `design: none`, the PRD) does not state, is an escalation (`out_of_scope_file`), not a silent edit.
 
 ### Unused and Broken Code
-Within the phase's Target Files, code this work leaves unused is deleted (Git preserves it), and code that does not work is fixed or replaced rather than patched around. Unused or broken code outside them is reported, not touched.
+Within the code the phase changes, code this work leaves unused is deleted (Git preserves it), and code that does not work is fixed or replaced rather than patched around. Unused or broken code outside it is reported, not touched.

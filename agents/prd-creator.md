@@ -22,9 +22,7 @@ You are a specialized AI assistant for creating Product Requirements Documents (
 
 ## When PRD is Needed
 
-A PRD is written for **every** change the workflow routes, at every scale. What varies is its depth: `full` at large scale, `lite` at medium and small, with the sections of each listed in `documentation-criteria`, "PRD depth".
-
-A lite PRD is short, not vague: each requirement still carries an acceptance criterion and a priority, and each Must Have belongs to a part. When a PRD already covers the feature, update it at its existing depth rather than writing a second one.
+A PRD is written for **every** change the workflow routes, at every scale. What varies is its depth — `documentation-criteria`, "PRD depth".
 
 ## Required Information
 
@@ -103,22 +101,8 @@ Carry `resolvedBy` into Confidence Gating: an LSP-resolved location is **Verifie
 
 ## PRD Creation Best Practices
 
-### 1. User-Centric Description
-- State each requirement as what the user can do, the need it answers, and its observable outcome; how the system delivers it — fields, storage, protocols, libraries, file paths — is the Design Doc's, and how the interface words and shows it is the UXRD's (`documentation-criteria`, PRD "Excludes")
-- When the users are developers or operators (an internal capability), the outcome is still what they observe: a task rejected with its reason, a restart that loses nothing — not the table it is written to
-- Avoid jargon, use business terminology
-
-### 2. Clear Prioritization
-- Utilize MoSCoW method (Must/Should/Could/Won't)
-- Make trade-offs explicit
-
-### 3. Success Criteria
-- A success criterion says how, after release, the goal is seen to be reached: what is measured, the target, and where it is read
-- Write as many as the goal needs; do not invent a metric to fill a count, and never restate an acceptance criterion as a test run
-- An internal capability with no measure beyond its acceptance criteria gets one line naming the use cases that prove it
-
-### 4. Consistency with Existing PRDs
-- Ensure terminology consistency across the project
+- When the users are developers or operators (an internal capability), an acceptance criterion still states what they observe: a task rejected with its reason, a restart that loses nothing — not the table it is written to
+- Use the terms the project's existing PRDs use
 
 ## Diagram Creation (mermaid-diagrams skill)
 
@@ -130,13 +114,11 @@ The **part dependency diagram** is drawn at either depth when there are three or
 
 Settle each item while composing, before the Write — on a revision, at the scope `documentation-criteria` "Revising a Document" sets. After the Write the items are a check.
 
-- [ ] The document's depth matches the one requested, and every section the depth requires is present — a lite PRD omits the full-depth sections, never the core ones
-- [ ] Each success criterion names what is measured, its target, and where it is read — or, for an internal capability, cites the use cases that prove it; none restates an acceptance criterion as a test run
-- [ ] Acceptance criteria describe observable outcomes, not implementation
+- [ ] The document's depth matches the one requested, and every required section is present
+- [ ] Each requirement's body is one sentence; its acceptance criteria carry the rules and describe observable outcomes, not implementation
 - [ ] MoSCoW priorities are assigned to every requirement, with Won't recorded explicitly rather than omitted
-- [ ] The document contains no technical selection or implementation phasing — both belong downstream; parts are scope slices, not phases
-- [ ] No interface detail, no design detail (field lists, storage, protocols, library versions, file paths, process mechanics), no decisions for the design, no ADR signals (`documentation-criteria`, PRD "Excludes"); a technical choice the user fixed is one line in Constraints and Risks
-- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, every unfamiliar term is explained where it first appears or in Terms, and nothing in the body is shorthand only the author can expand
+- [ ] Nothing `documentation-criteria`, PRD "Excludes" names is in the document — parts are scope slices, not phases; a technical choice the user fixed is one line in Constraints and Risks
+- [ ] Reader rules hold (`documentation-criteria`, "Writing for the Reader"): a newcomer who reads only the Snapshot can retell what the document decides, and nothing in the body is shorthand only the author can expand
 - [ ] Prose rules applied while drafting; one read-through of the written document found no stall
 - [ ] Only what this document owns and has decided (`documentation-criteria`, "Write what this document decides")
 - [ ] On a revision: every place that depends on the change agrees with it, and nothing points at removed content (`documentation-criteria`, "Revising a Document")

@@ -26,7 +26,7 @@ Substitute the domain's agent wherever this skill says **`{planner}`**. Nothing 
 
 ### One part at a time
 
-Planning and execution run **per part**, in the dependency order of the parts list: plan the first part, take its batch approval, build it through its completion report, then plan the next. The whole feature was designed before this phase began, so every contract a part consumes is settled; building in order adds that the upstream part's *code* exists too, and the downstream plan can name real files where the upstream plan could only name designed ones.
+Planning and execution run **per part**, in the dependency order of the parts list: plan the first part, take its batch approval, build it through its completion report, then plan the next. The whole feature was designed before this phase began, so every contract a part consumes is settled; building in order adds that the upstream part's *code* exists too, for the downstream executor to build on.
 
 Commit strategy is asked once, in the first part's batch approval, and holds for the feature. Batch approval is taken per part: it approves one plan, and one plan covers one part.
 
@@ -58,7 +58,7 @@ A command that resumes execution (`/build`, `/front-build`) finds its plan this 
 
 **Which agents run it.** Look up the plan's `part` (frontmatter) in the PRD's Delivery Parts: a part whose "Cut along" is `frontend` runs with `task-executor-frontend` and `quality-fixer-frontend` (`/front-build`), every other part with `task-executor` and `quality-fixer` (`/build`). Each of the two commands stops when the resolved plan belongs to the other and names the command to run instead. gamedev-overture has one pair and skips this check.
 
-Execution resumes at the plan's first `### Phase N` that holds an unticked or `[🔄]` work item; the executor continues from the unticked items. A phase whose items are all `[x]` while its files are still uncommitted under `per-phase` gets its gate (`scope: phase`) and its commit first.
+Execution resumes at the plan's first `### Phase N` that holds an unticked or `[🔄]` work item; the executor continues from the unticked items. A phase whose items are all `[x]` while its files are still uncommitted under `per-phase` gets its gate (`scope: phase`, `changedFiles` from the phase's `Files changed:` list) and its commit first.
 
 ## Entry Conditions
 
@@ -81,7 +81,7 @@ Once the environment check passes, batch approval delegates authority to the sub
 
 | Agent | Delegated authority |
 |-------|---------------------|
-| task-executor(-frontend) | Implementation — may use Edit/Write within the phase's file scope (its Target Files, and an edit that passes the executor's File Scope test) |
+| task-executor(-frontend) | Implementation — may Edit/Write whatever code in its part the phase's work items require |
 | quality-fixer(-frontend) | Fix authority — automatic quality error fixes |
 
 The orchestrator itself gains no write authority: it still coordinates only.
@@ -156,7 +156,7 @@ The phase cycle checks each phase in isolation. It cannot detect drift between t
 | `security-reviewer` | Design Doc path, the part's file list |
 | `test-auditor` | `testPaths`: the test files in the part's file list; Design Doc path |
 
-**The part's file list** is the union of `filesModified` and `testsAdded` from this run's phase results, committed or not, plus, for this part's phases completed before this run, their Target Files and the files their Investigation Notes record as edited outside them (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
+**The part's file list** is the union of `filesModified` and `testsAdded` from this run's phase results, committed or not, plus, for this part's phases completed before this run, the `Files changed:` lists in their Investigation Notes (a resumed `/build` has no earlier results in context). A `git diff` against `main` misses uncommitted work under `per-feature` and `manual`, is empty on `main` itself, and from the second part on carries the first part's code into a check against the wrong Design Doc.
 
 **Small scale** (and gamedev Prototype mode) has no Design Doc: `code-verifier` runs with `doc_type: prd` against the lite PRD (skipped on the gamedev path — the lite feature spec is not a `code-verifier` document type), `code-reviewer`, `security-reviewer` and `test-auditor` take the lite PRD or feature spec in place of the Design Doc, and Fix Mode below receives the same path.
 
@@ -203,7 +203,7 @@ If deletion fails, report the failure but do not block the completion report.
 
 **Resuming after a stop that changes documents.** When the user's answer to an escalation changes the PRD, UXRD, a Design Doc, the code system, or the plan, apply it with `workflow-orchestration`, "Revision Loop" → "One change, one round across documents": every owner updates first, one review round over the changed set, one approval. Then the phase cycle resumes at the phase that escalated.
 
-An `out_of_scope_file` escalation means the phase needs an edit outside the directories of its Target Files (or a Target File's test file), or one that changes an exported signature, schema, route or shared type — the executor makes and records any other edit itself — so it goes to the user like any other escalation.
+An `out_of_scope_file` escalation means the phase needs a change to another part's code, or to an exported signature, shared type, schema or route that code outside this part consumes and the Design Doc (at `design: none`, the PRD) does not state — the executor makes and records any other change itself — so it goes to the user like any other escalation, with the file and the reason.
 
 ### Quantitative Auto-Stop Triggers
 

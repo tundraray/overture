@@ -44,14 +44,6 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 7. Ensure consistency with existing UI/UX patterns
 8. Specify what the user sees while waiting (feedback, loading and skeleton states); timing targets come from the PRD's non-functional requirements, or become an open question
 
-## When UXRD is Needed
-
-- Designing new user interfaces or experiences
-- Major UI/UX changes to existing features
-- Adding new interaction patterns or components
-- Accessibility improvements or compliance requirements
-- Design system updates or new component creation
-
 ## Required Information
 
 - **Operation Mode**:
@@ -119,48 +111,6 @@ Execute file output immediately (considered approved at execution).
 
 **Important**: Do not include technical implementation details (code, APIs, database schemas, error codes, component props, library and icon identifiers) in the UXRD or the design system.
 These belong in Technical Design documents and the code. The UXRD states what the user sees and does and why: exact user-facing copy and screen states, not how they are built.
-
-## UXRD Creation Best Practices
-
-### 1. User-Centered Design
-
-- Prioritize user needs and mental models
-- Design for accessibility first, at the WCAG level the PRD sets
-- Include specific user scenarios and edge cases
-- Consider cognitive load and usability
-
-### 2. Visual Hierarchy & Layout
-
-- Define clear visual hierarchy for all states
-- Specify responsive breakpoints (mobile-first approach)
-- Ensure consistency with existing UI patterns
-
-### 3. Interaction Design
-
-- Specify motion in foundations and in component states
-- Document keyboard navigation and shortcuts
-- Ensure touch-friendly interactions
-
-### 4. Accessibility Requirements
-
-- Define role, accessible name, keyboard, and focus per component in its spec
-- Specify focus order across screens in the UXRD
-- Document screen reader announcements
-- Touch targets are at least 44x44px
-
-### 5. Content & Messaging
-
-- Define microcopy for all UI states
-- Specify error messages and validation feedback
-- Document empty states and loading states
-- Ensure consistent tone of voice
-
-### 6. Consistency with Design System
-
-- Reuse components from `docs/design-system/` before adding one
-- Visual values cite foundations roles, not raw values
-- Ensure terminology consistency across UI
-- Follow established patterns
 
 ## Deep Analysis for Complex UX
 
@@ -241,7 +191,6 @@ Every diagram follows the `mermaid-diagrams` skill — palette, redraw test, pat
 
 **User flow diagram** and **wireframe/layout diagram** are mandatory for UXRD creation. Use additional diagrams for:
 
-- Component hierarchy and relationships
 - State transition diagrams for complex interactions
 - Information architecture diagrams
 
@@ -254,7 +203,7 @@ Settle each item while composing, before the Write — on a revision, at the sco
 - [ ] Each new or extended spec covers every reachable state, with unreachable ones deleted
 - [ ] No component spec content (states, variants, per-component accessibility) is inside the UXRD
 - [ ] Design-system files contain no code, and cite the brand book or external design system instead of restating it
-- [ ] Accessibility requirements name a level and the specific behavior, not a general commitment
+- [ ] Accessibility requirements name the specific behavior, not a general commitment
 - [ ] The document contains no technical implementation detail — that belongs to the Design Doc
 - [ ] Nothing from the PRD is restated: no summary or background retold, no AC or use case text retold in a flow or a screen — each is cited by ID, and every flow names the UC and AC ids it implements
 - [ ] Terms and Undetermined Items carry only UX terms and UX questions; product questions are returned in `openQuestions` for the PRD
@@ -311,7 +260,7 @@ Mode for extracting UX specifications from existing UI implementation to create 
 
    - Document current UX patterns and interaction flows
    - Specify all UI states with visual descriptions
-   - Define accessibility features and compliance level
+   - Define accessibility features
    - Clearly add UX improvement requirements
    - Record the components found in `docs/design-system/` and link them from the Component Inventory
 

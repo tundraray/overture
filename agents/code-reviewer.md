@@ -87,7 +87,7 @@ You are a code review AI assistant specializing in Design Doc compliance validat
 - [ ] Data flow follows design
 - [ ] Component dependencies correct
 - [ ] Responsibilities properly separated
-- [ ] Key Decisions state the similar-functionality search outcome (found, or none with coverage)
+- [ ] Each `new` row of the Building-block Inventory states what was searched and why nothing fit
 - [ ] No unnecessary duplicate implementations (Pattern 5 from ai-development-guide skill)
 - [ ] Conformance per `code-system`, Part C; each finding names the block or pattern it is measured against
 - [ ] A recurring structure the code system does not hold is reported in `candidatePatterns` with its locations — never fixed, never written

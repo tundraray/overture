@@ -20,13 +20,13 @@ Read `${CLAUDE_PLUGIN_ROOT}/skills/documentation-criteria/references/authoring-r
 3. Evaluate completeness and quality
 4. Provide improvement suggestions
 5. Determine approval status
-6. **No Code in Design Docs and ADRs**: source code a Design Doc or ADR excludes (`documentation-criteria`, their definitions) is a `critical` issue per code block, with `revision_agent` set to the document's author; Mermaid is not code. The suggestion names the replacement: a contract described in Contract Definitions, or a use case
+6. **No Code in Design Docs and ADRs**: source code a Design Doc or ADR excludes (`documentation-criteria`, their definitions) is a `critical` issue per code block, with `revision_agent` set to the document's author; Mermaid is not code. The suggestion names the replacement: a contract described in Contract Definitions
 
 ## Input Parameters
 
 - **doc_type**: Document type (`PRD`/`GDD`/`FeatureSpec`/`UXRD`/`ADR`/`DesignDoc`/`WorkPlan`)
 - **target**: Document path to review; for a UXRD, also the design-system files created or changed in the same pass; for a Design Doc, likewise the code-system files
-- **depth** (PRD and FeatureSpec only): `full` | `lite` — decides which Gate 0 items apply
+- **depth** (PRD and FeatureSpec only): `full` | `lite` — for a Feature Spec, decides which Gate 0 items apply
 - **review_scope**: `full` (default) | `changes` — `changes` on a re-review or an update review; see Step 2b
 - **diff_base** (with `review_scope: changes`): a git ref, or the path of a copy of the reviewed version (documents are usually uncommitted, and then `HEAD` shows nothing)
 
@@ -67,12 +67,12 @@ Before quality assessment, verify all mandatory sections exist per doc_type:
 
 Section names below are the template headings, so a template-compliant document passes by construction.
 
-**For PRD** (both depths):
+**For PRD:**
 - [ ] Snapshot and Background, non-empty
 - [ ] Users and Use Cases exist
 - [ ] Functional Requirements with Must Have and Won't Have (Should Have and Could Have only when the feature has such requirements), each requirement carrying an AC and each Won't Have item its reason
 - [ ] Delivery Parts table with at least one part, and a Part Dependency Diagram when there are three or more
-- [ ] Success Criteria present — a measure with its target, or one line citing the use cases that prove an internal capability
+- [ ] Success Criteria, when the section is present: each a measure with its target
 
 **Reader rules — every human document, not a Work Plan** (Gate 1; each rule is defined in `documentation-criteria` `references/authoring-rules.md`, "Writing for the Reader", and the issue names it):
 - [ ] **Snapshot** — `important` when, from the header and Snapshot alone, you cannot state what the document decides and what problem it solves
@@ -86,10 +86,6 @@ A version mismatch between two documents is never an issue on its own.
 **For PRD and UXRD — document boundary** (Gate 1, `important` per finding; `revision_agent` is the owner of the document that holds the misplaced fact):
 - [ ] Nothing the document's Excludes in `documentation-criteria` names appears in it; a technical choice the user fixed appears once in a PRD, in Constraints and Risks
 - [ ] When both exist, a fact found in both is reported once, against the document that does not own it
-
-**For PRD** (`full` depth only, in addition):
-- [ ] Non-Functional Requirements with target values
-- [ ] Constraints and Risks, non-empty
 
 **For Feature Spec** (gamedev; both depths):
 - [ ] Header, Snapshot, and Problem Statement, non-empty
@@ -111,7 +107,7 @@ A version mismatch between two documents is never an issue on its own.
 - [ ] Snapshot with Key Decisions
 - [ ] User-visible PRD (gamedev: feature spec) ACs are cited by ID in the flow or screen state that delivers them; AC text is not restated
 - [ ] Design System section with a Component Inventory, every row linking a spec that exists in `docs/design-system/components/`
-- [ ] User Flows (primary, alternative, error), each naming the PRD use cases it implements (gamedev: the feature spec's AC ids)
+- [ ] User Flows (primary and error; alternative when the path branches), each naming the PRD use cases it implements (gamedev: the feature spec's AC ids)
 - [ ] Screens, each with a layout
 - [ ] Accessibility
 
@@ -121,7 +117,6 @@ A version mismatch between two documents is never an issue on its own.
 - [ ] Acceptance Criteria: PRD ACs cited by ID without restating them, design-level criteria as plain sentences
 - [ ] Contract Definitions present
 - [ ] Building-block Inventory, when `docs/code-system/` exists: every `reused` or `extended` row linking a pattern that exists in `docs/code-system/patterns/`, every `new` row naming what was searched
-- [ ] Test Strategy is a list of use cases (Given / When / Then), every AC named by at least one; no test files, frameworks, fixtures, or helpers
 - [ ] Architecture as C1–C4 per `mermaid-diagrams` `references/c4-levels.md`: the levels drawn are the ones the change touches, and at least one is drawn — a not-yet-existing unit named by its role on C3 or C4 is correct, and its name and step order are not checked as commitments; and Runtime Flows with a sequence diagram for each AC that crosses a container boundary or has a failure path that changes state
 - [ ] Security Considerations present
 
@@ -134,7 +129,7 @@ A version mismatch between two documents is never an issue on its own.
 
 **For Work Plan:**
 - [ ] Frontmatter complete: `feature`, `part` (a name from the PRD's Delivery Parts), `design` (`design-{part}.md`, or `none` for a simplified plan — small scale, or gamedev Prototype mode), `temporary: true`; when the part has more than one plan, also `plan: N of M` and, after the first plan, `depends-on` resolving to an existing sibling
-- [ ] Snapshot, and Implementation Phases, each with Target Files and Work Items; any other phase section is present only when it has content
+- [ ] Snapshot, and Implementation Phases, each with Work Items; any other phase section is present only when it has content
 
 **Gate 0 Rule**: If ANY required section is missing or empty, return `needs_revision` immediately with each missing section as a `critical` issue. Do NOT proceed to Gate 1.
 
@@ -147,7 +142,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 **Mandatory Quality Checks** (apply to all document types; a Work Plan gets only 3–5):
 1. **Rationale Verification**: Each design decision has a documented "why" — rationales must reference a requirement, constraint, standard, or existing pattern
 2. **Measurability Check**: Acceptance criteria are quantifiable or objectively verifiable (no vague language like "should be fast")
-3. **Consistency Check**: No internal contradictions within the document; sections reference each other correctly
+3. **Consistency Check**: No contradictions within the document or with the documents it cites; sections reference each other correctly
 4. **Completeness Check**: No TODO/TBD/placeholder markers remain in the document
 5. **Cross-reference Check**: Referenced documents, sections, interfaces, or external resources actually exist and are accessible
 
@@ -164,19 +159,10 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 - **Spec completeness**: each new or extended spec has Purpose, Anatomy, States, and Accessibility, and lists the UXRD under Used In
 
 **Work Plan-specific checks** — consistency with the documentation only; a plan is temporary AI working state (`documentation-criteria`):
-- **Nothing beyond the documents**: a deliverable, value, contract, or behaviour that no PRD, UXRD, Design Doc, or ADR states, or one that contradicts them — `important`. How a phase does its work — files, steps, test titles — is the plan's own detail, not a finding
+- **Nothing beyond the documents**: a deliverable, value, contract, or behaviour that no PRD, UXRD, Design Doc, or ADR states, or one that contradicts them — `important`
 - **Design coverage**: every Design Doc item (or PRD requirement at small scale) is cited by a work item ("covers DD §X / AC-n") or has a justified gap
 - **Contracts**: a phase that must reproduce an exact value the design specifies points at that Design Doc section under `#### Contracts`, and a phase an ADR binds points at the ADR section; the value or decision is pointed at, not copied
 - **Frontmatter validity**: `part` is in the PRD's Delivery Parts; `plan: N of M`, when the part has more than one plan, is consistent with the sibling plans
-
-**Additional checks** (beyond the five mandatory ones):
-- Consistency check: Detect contradictions between documents
-- Completeness check: Confirm coverage of required elements
-- Rule compliance check: Compatibility with project rules
-- Feasibility check: Technical and resource perspectives
-- Assessment consistency check: Verify alignment between scale assessment and document requirements
-- Failure scenario review: Identify failure scenarios across normal usage, high load, and external failures; specify which design element becomes the bottleneck
-- Complexity justification: new persistent state and each new boundary crossing has a stated reason that names the requirement or constraint that needs it
 
 ## Output Format
 
@@ -189,7 +175,7 @@ Gate 1 performs deep quality analysis. It is only executed when Gate 0 has passe
 | status | `approved`, `approved_with_conditions`, `needs_revision`, `rejected` — the field the orchestrator's revision loop keys on |
 | revision_agent | Agent to fix issues: `prd-creator`, `sr-game-designer`, `mid-game-designer`, `ux-designer`, `game-ui-designer`, `technical-designer`, `technical-designer-frontend`, `work-planner`, `gamedev-work-planner`. Present whenever `status` is not `approved` |
 | issues[].severity | `critical`, `important` |
-| issues[].category | `consistency`, `completeness`, `compliance`, `clarity`, `feasibility` |
+| issues[].category | `consistency`, `completeness`, `compliance`, `clarity` |
 | deferred | With `review_scope: changes`: `important` findings in text the change did not touch. They do not affect the status and are shown to the user, not sent to the owner |
 
 **revision_agent mapping**:

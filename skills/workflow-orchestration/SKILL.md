@@ -135,7 +135,7 @@ Edit, Write, and MultiEdit are performed by subagents, never by the orchestrator
 | `docs/game-design/features/*-spec.md` (feature spec) | mid-game-designer (gamedev) |
 | `docs/adr/*.md` | technical-designer(-frontend) |
 | `docs/features/*/design-*.md` | technical-designer(-frontend) |
-| `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes and a phase's Investigation Notes |
+| `docs/features/*/*/*.md` (work plans) | work-planner (gamedev: gamedev-work-planner); executors may Edit progress checkboxes and a phase's Investigation Notes (what they found and decided, `Files changed:`) |
 | `docs/features/{feature}/{part}/analysis/*.md` | task-executor(-frontend) — research deliverables |
 | `src/**/*`, `tests/**/*` (code) | task-executor(-frontend) |
 | Any file (quality fixes) | quality-fixer(-frontend) |

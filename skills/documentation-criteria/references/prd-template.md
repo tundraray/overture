@@ -20,7 +20,7 @@ Reader rules: documentation-criteria, "Writing for the Reader".
 
 ## Terms
 
-<!-- When applicable. Later documents add only terms that are new to them. -->
+<!-- When applicable: words this feature coins or uses in a special sense. Later documents add only terms that are new to them. -->
 
 - **[Term]**: [what it means here, in a few plain words]
 
@@ -38,7 +38,7 @@ Reader rules: documentation-criteria, "Writing for the Reader".
 
 ### Use Cases
 
-<!-- Who, what they achieve, the outcome, and why it matters to them — no interface elements (buttons, menus, keys) and no system internals; the UXRD draws the path through the screens and later documents cite these IDs. -->
+<!-- One per user goal, not one per requirement: who, what they achieve, the outcome, and why it matters to them — no interface elements (buttons, menus, keys) and no system internals; the UXRD draws the path through the screens and later documents cite these IDs. -->
 
 - **UC-1**: [user] [achieves what] → [outcome], so that [value]
 - **UC-2**: [user] [achieves what] → [outcome], so that [value]
@@ -51,7 +51,7 @@ IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents 
 
 ### Must Have (MVP)
 
-- **FR-01. [Short name].** [What the user can do and the need it answers, in one or two sentences]
+- **FR-01. [Short name].** [What the user can do, in one sentence — every observable rule goes in the criteria below]
   - AC-01.1: Given [state], when [action], then [what the user observes — "the open thread is marked as current", not how it is worded, styled, or produced]
 - **FR-02. [Short name].** [...]
   - AC-02.1: [...]
@@ -78,7 +78,7 @@ IDs: requirements `FR-01`, their criteria `AC-01.1`, `AC-01.2`; later documents 
 
 ## Non-Functional Requirements
 
-<!-- Only the categories this feature sets a requirement for — performance, reliability, security, scalability, accessibility and responsiveness; delete the rest. When the feature sets none, one line: "none beyond project defaults".
+<!-- Only thresholds no acceptance criterion states — performance, reliability, security, scalability, accessibility and responsiveness; delete the rest. When there are none, one line: "none beyond project defaults".
 Each requirement has an ID (`NFR-01`) and states a target that can be checked. Accessibility and responsiveness give the target level only ("WCAG 2.1 AA", "usable from 360 px width"). -->
 
 ### [Category]
@@ -119,13 +119,13 @@ graph LR
 
 ## Success Criteria
 
-<!-- Acceptance criteria prove the feature works; success criteria prove it was worth building. -->
+<!-- When applicable: the feature has an outcome that can be measured after release. Acceptance criteria prove the feature works; success criteria prove it was worth building. -->
 
 - [what is measured] — [target], read from [where], by [when]
 
 ## Constraints and Risks
 
-<!-- Required at full depth; at lite depth, when the feature has any. -->
+<!-- When applicable: the feature has any. -->
 
 ### Constraints
 

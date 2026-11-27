@@ -34,7 +34,7 @@ Reader rules: documentation-criteria, "Writing for the Reader".
 
 ## Design System
 
-<!-- Workflow (create, reuse, extend): `design-system`, "Workflow". -->
+<!-- Workflow (create, reuse, extend): `design-system`, "Workflow". The inventory lists only the components this UXRD's own screens use. -->
 
 Follows the [design system](../../design-system/README.md).
 
@@ -74,11 +74,13 @@ flowchart TD
     E --> F
 ```
 
-[Why the path goes this way, and its limits]
+[Only what the diagram cannot show — delete when there is nothing]
 
 ### Alternative Flows
 
-[Edge cases and alternative paths, each naming the UC or AC ids it serves]
+<!-- When applicable: the path branches. -->
+
+[Each branch of the path, naming the UC or AC ids it serves]
 
 ### Error Flows
 
@@ -86,7 +88,7 @@ flowchart TD
 
 ## Screens
 
-<!-- Each screen is a composition of inventory components. Write what is specific to this screen — layout, placement, which variant is used, the screen's own states. -->
+<!-- Each screen is a composition of inventory components. Write what is specific to this screen — placement, behaviour, the screen's own states. -->
 
 ### Screen 1: [Screen Name]
 
@@ -108,7 +110,7 @@ flowchart TD
 
 **Layout**:
 
-- [Placement, alignment, and spacing specific to this screen — spacing values cite foundations]
+- [Placement and behaviour specific to this screen]
 
 **Screen states**:
 
@@ -128,8 +130,7 @@ flowchart TD
 
 <!-- Screen-level rules only. Role, accessible name, keyboard, and focus of each component live in its spec. -->
 
-- **Target level**: [cite the PRD (gamedev: feature spec) requirement that sets it, e.g. NFR-03]
-- **Focus order across screens**: [where focus lands on navigation, after dialogs close, after an item is removed]
+- **Focus order across screens**: [where focus lands on navigation, and any other focus move no component spec decides]
 - **Announcements**: [route changes and live updates the screen reader hears]
 - **Reduced motion**: [feature-specific behaviour beyond the foundations rule — delete the line when there is none]
 
@@ -141,9 +142,9 @@ flowchart TD
 
 <!-- The one list of strings in this feature — titles, labels, placeholders, validation, error, empty, and loading text. Localization works from this table; no second list. A component's generic copy rules are in its spec. -->
 
-| ID | Where (screen / component / state) | Text | Notes |
-|---|---|---|---|
-| MC-1 | [Screen — Button, primary] | [Label] | [one phrase] |
+| ID | Where (screen / component / state) | Text |
+|---|---|---|
+| MC-1 | [Screen — Button, primary] | [Label] |
 
 ## Undetermined Items
 

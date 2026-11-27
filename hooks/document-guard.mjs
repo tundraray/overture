@@ -105,7 +105,7 @@ const RULES = [
     updaters: [],
   },
   {
-    // research deliverables a plan phase lists among its Target Files
+    // research deliverables an executor writes while working a plan phase
     name: 'research deliverable',
     test: /^docs\/features\/[^/]+\/[^/]+\/analysis\/.+\.md$/,
     authors: ['task-executor', 'task-executor-frontend'],

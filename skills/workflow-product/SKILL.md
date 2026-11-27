@@ -71,7 +71,7 @@ Every stop in this phase is a genuine decision gate, not a status update. Use `A
 | Stop | After | What the user decides |
 |------|-------|----------------------|
 | Requirement confirmation | requirement-analyzer | Whether the understood scope and scale match intent; answers to open questions; a first look at the proposed parts |
-| PRD approval | prd-creator returns the PRD with its draft check | Whether the requirements and success criteria are right, and whether the Delivery Parts split is the right one — every scale |
+| PRD approval | prd-creator returns the PRD with its draft check | Whether the requirements are right, and whether the Delivery Parts split is the right one — every scale |
 | UXRD approval | ux-designer returns the UXRD with its draft check | Whether the flows, states, and accessibility posture are right, and the design-system foundations and components the UXRD created or changed — only when the work has a UI surface |
 
 Each stop happens **once per feature**. Per-part stops begin in the technical phase.

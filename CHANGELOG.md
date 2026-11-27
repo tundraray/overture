@@ -8,6 +8,36 @@ and the plugins adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 Versions below are the marketplace version; affected plugin versions are noted
 per entry.
 
+## [0.21.20] — 2026-11-27
+
+The work plan says what must be done; the executor owns the how; the PRD, UXRD
+and Design Doc drop detail that has no reader downstream. Affects
+`backend-overture` 0.18.23, `frontend-overture` 0.18.23, `fullstack-overture`
+0.18.23, `gamedev-overture` 0.20.19.
+
+### Changed
+
+- **A plan decomposes the work; it carries no technical detail.** `work-planner` and `gamedev-work-planner` build the phases from the PRD and the Design Doc and no longer read the codebase. A work item is one outcome the phase must leave true — a behaviour, capability or state — stated in the documents' terms and citing the AC or Design Doc section it covers; it names no file, function, signature or implementation step. A phase is one committable outcome that a single executor run finishes, and Work Items is the only section every phase has. Proof Obligations map each AC to its proof level (unit / integration / e2e) and, where a test skeleton exists, its path — no test titles.
+- **The executor finds the code.** `task-executor` and `task-executor-frontend` locate the code, decide the implementation, spawn `code-explorer` when the search is wide, and record a `Files changed:` list under the phase's Investigation Notes. `out_of_scope_file` now means the phase needs a change to another part's code, or to an exported signature, shared type, schema or route that code outside this part consumes and the Design Doc (at `design: none`, the PRD) does not state.
+- **`document-reviewer` checks a plan against the documents only.** Gate 0 requires Work Items in every phase; the definitions in `authoring-rules.md` and the note in `technical-design` no longer assign the list of files to the plan.
+- **PRD, UXRD and Design Doc are trimmed to what someone other than the implementer depends on.** The reference project's documents ran over their size targets, and much of the length either had no downstream consumer or pinned internal detail that changes during implementation. The templates lose the slots for that detail; authors and `document-reviewer` follow.
+- **PRD.** A functional requirement's body is one sentence and its observable rules live in its ACs. Non-Functional Requirements list only thresholds no AC states, and "none beyond project defaults" is valid at any depth. Success Criteria is present only when the feature has a measurable outcome, and `document-reviewer` checks it only when the section is present; Constraints and Risks is "when applicable" at either depth. Terms holds only words the feature coins or uses in a special sense; there is one use case per user goal. `prd-creator` states each instruction once: its "When PRD is Needed" and "Best Practices" sections are collapsed to what the template and `documentation-criteria` do not already say.
+- **UXRD.** Text under a screen states placement, behaviour and states — variants, tokens, sizes and durations stay in the design system. Text under a flow diagram says only what the diagram cannot show; Alternative Flows holds path branches and is present only when one exists. Under Accessibility, the focus item covers only the focus moves no component spec decides; Announcements and Reduced motion are unchanged. The Component Inventory lists only this UXRD's own screens' components.
+- **Design Doc.** Prose names what crosses the part's boundary and the decisions; an existing internal name appears on a diagram, in the text under it, or in the Building-block Inventory, and a Key Decision states the decision and its reason, not the mechanism. The Inventory has rows only for blocks that cite a code-system pattern or are `new`, and the reuse search is recorded in its `new` rows only, where `code-reviewer`'s reuse check now reads it. A part that consumes another part's contract links to it and lists only what it offers itself — a UI part's contracts no longer list the calls it makes to another part; Constraints holds only what was agreed for this part; Security Considerations may be one line when the part adds no entry point. Key Decisions own "why this technology"; an ADR restates its Key Decision. Files to change or remove, test-file lists and browser-check tables are the executor's.
+- **`design-sync` compares contracts, terms and dependencies**, not component names, across Design Docs.
+- **The design system's Spacing & density foundation names the minimum touch target.** The 44×44 px rule left `ux-designer` with its "Best Practices" list; the size is now a foundation the project decides.
+
+### Removed
+
+- **The Design Doc's Test Strategy use-case list**, and the reviewer's Gate 0 check for it.
+- **`document-reviewer`'s full-depth-only PRD Gate 0 items** (NFR target values, non-empty Constraints and Risks), so `depth` no longer affects the PRD's Gate 0; its "Additional checks" block and the `feasibility` issue category. The PRD `Depth` header stays.
+- **The UXRD's "Target level" accessibility line** (the PRD's NFR owns the WCAG level) and the Notes column of Content and Microcopy.
+- **Generic lists**: "Best Practices" and "When UXRD is Needed" in `ux-designer`, the "Include…" list in `/uxdoc`, and "Existing interface", "Responsibilities" and "Design Principles" in `technical-design`.
+- **`Target Files` and `Investigation Targets` plan sections**, and with them the `target_files_missing` and `investigation_target_not_found` escalations.
+- **`details.allowed_list`** from the `out_of_scope_file` escalation.
+- **`code_paths`** from the `/update-doc` `code-verifier` call.
+- **The file count in the phase size.**
+
 ## [0.21.19] — 2026-11-20
 
 The plan phase becomes the unit of execution, and test runs follow it; prompts

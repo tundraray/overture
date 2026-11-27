@@ -96,7 +96,7 @@ flowchart TB
 
 (Path animation omitted for brevity; a real C4 diagram carries it.)
 
-Under the chain, at most a few sentences on what the picture does not show. The files to change are the work plan's.
+Under the chain, at most a few sentences on what the picture does not show. The files to change are found by the executor.
 
 ## Consistency across levels
 

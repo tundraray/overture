@@ -28,7 +28,7 @@ Run during the code investigation, before writing the Design Doc body.
 
 1. **Read first**: `docs/code-system/` (README, the patterns the part may use), the Reference implementations those patterns name, and `codebase-analyzer` facts when the caller passes them — its `conformance` findings say where the code and the catalogue already disagree.
 2. **None exists** → create `README.md` (Source, Style, Layer map, Module boundaries, Index) and a `patterns/` file for each pattern the part relies on that the code already uses in two or more places. `/code-context` does this once for a whole project; a first Design Doc does it for what that part needs.
-3. **One exists** → follow it. For every module, service, utility or component the design introduces, decide reused / extended / new and write the row into the Design Doc's Building-block Inventory, naming what was searched in the catalogue and in the code before choosing `new`. A `new` block where a catalogued one fits, a new pattern, and a change to an existing pattern or README rule are each a Key Decision; a new or changed pattern file goes in the Index with the Design Doc in its Used In.
+3. **One exists** → follow it. For every module, service, utility or component the design touches, decide reused / extended / new; a block that cites a pattern or is `new` gets a row in the Design Doc's Building-block Inventory, a `new` row naming what was searched in the catalogue and in the code and why nothing fit. A `new` block where a catalogued one fits, a new pattern, and a change to an existing pattern or README rule are each a Key Decision; a new or changed pattern file goes in the Index with the Design Doc in its Used In.
 
 ### Source
 

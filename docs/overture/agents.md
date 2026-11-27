@@ -8,7 +8,7 @@ These agents work the same way whether you're building a REST API or a React app
 |-------|--------------|
 | **requirement-analyzer** | Figures out how complex your task is and picks the right workflow |
 | **expert-analyst** | Multi-perspective analysis from expert viewpoint (Security, Architecture, Performance, etc.) -- spawned in parallel |
-| **work-planner** | Breaks a design doc into plan phases, each with its work items spelled out and sized for one commit |
+| **work-planner** | Breaks a design doc into plan phases, each a list of outcomes sized for one commit |
 | **code-reviewer** | Checks your code against design docs to make sure nothing's missing |
 | **document-reviewer** | Reviews single document quality, completeness, and rule compliance |
 | **design-sync** | Verifies consistency across multiple Design Docs and detects conflicts |
@@ -29,7 +29,7 @@ These agents work the same way whether you're building a REST API or a React app
 | **integration-test-reviewer** | Reviews integration/E2E tests for skeleton compliance and quality |
 | **codebase-analyzer** | Read-only fact gathering before design — reads the affected code and what calls it, emits only the focus areas the designer must address |
 | **code-explorer** | Read-only code search — where something is and what touches it, or an undirected sweep for unused code across 7 categories; resolves symbols with LSP before text search |
-| **task-executor** | Implements one plan phase per run, test-first, running only the unit tests of what it touches |
+| **task-executor** | Implements one plan phase per run — finds the code and decides the how — test-first, running only the unit tests of what it touches |
 | **quality-fixer** | Static checks and the changed code's unit tests at each phase end, the full suite once per feature - and fixes what fails |
 | **rule-advisor** | Picks the best coding rules for your current task |
 
